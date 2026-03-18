@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Brain 2.0</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,400&family=Jost:wght@300;400;500;600&display=swap');
+:root{
+  --blush:#f2c4ce;--rose:#e8a0b0;--mauve:#c9a0b4;--lavender:#d4b8e0;
+  --sage:#b8cfb0;--cream:#fdf6f0;--warm:#f7ece4;--ink:#3a2a2e;--muted:#9a8088;--rule:#e0cec8;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{background:#f0e8e4;font-family:'Jost',sans-serif;color:var(--ink);min-height:100vh;}
+
+/* TOPBAR */
+.topbar{background:var(--cream);border-bottom:1px solid var(--rule);padding:14px 32px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;}
+.topbar-title{font-family:'Cormorant Garamond',serif;font-size:1.6rem;font-weight:300;letter-spacing:2px;}
+.topbar-title em{font-style:italic;color:var(--mauve);}
+.topbar-date{font-size:0.68rem;letter-spacing:2px;text-transform:uppercase;color:var(--muted);}
+.greeting{font-size:0.78rem;color:var(--muted);font-style:italic;}
+
+/* HUB */
+.hub{max-width:1100px;margin:0 auto;padding:28px 24px 60px;}
+
+/* SECTION HEADERS */
+.sec-title{font-family:'Cormorant Garamond',serif;font-size:1rem;font-weight:600;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin-bottom:14px;display:flex;align-items:center;gap:10px;}
+.sec-title:after{content:'';flex:1;height:1px;background:var(--rule);}
+
+/* GRIDS */
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+.grid-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px;}
+.grid-4{display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:14px;}
+.hero-row{display:grid;grid-template-columns:2fr 1fr;gap:14px;margin-bottom:28px;}
+
+/* CARDS */
+.card{background:var(--cream);border:1px solid var(--rule);border-radius:14px;padding:20px 22px;transition:transform .15s,box-shadow .15s;}
+.card:hover{transform:translateY(-2px);box-shadow:0 6px 20px rgba(180,130,140,.13);}
+.card-accent-blush{border-top:3px solid var(--blush);}
+.card-accent-sage{border-top:3px solid var(--sage);}
+.card-accent-lav{border-top:3px solid var(--lavender);}
+.card-accent-rose{border-top:3px solid var(--rose);}
+.card-accent-mauve{border-top:3px solid var(--mauve);}
+.card-label{font-size:0.6rem;letter-spacing:2.5px;text-transform:uppercase;color:var(--muted);margin-bottom:4px;}
+.card-title{font-family:'Cormorant Garamond',serif;font-size:1.05rem;font-weight:600;color:var(--ink);margin-bottom:6px;}
+.card-sub{font-size:0.74rem;color:var(--muted);line-height:1.5;}
+
+/* HERO CARD */
+.hero-card{background:linear-gradient(135deg,#fce8ef,#f0e0f0);border:1px solid var(--blush);border-radius:14px;padding:24px 26px;}
+.hero-title{font-family:'Cormorant Garamond',serif;font-size:1.5rem;font-weight:300;font-style:italic;color:var(--ink);margin-bottom:6px;}
+.hero-sub{font-size:0.74rem;color:var(--muted);line-height:1.6;margin-bottom:16px;}
+
+/* LAUNCH BUTTONS */
+.launch-btn{display:inline-flex;align-items:center;gap:5px;padding:8px 18px;background:var(--mauve);color:white;border:none;border-radius:20px;font-family:'Jost',sans-serif;font-size:0.76rem;font-weight:600;cursor:pointer;text-decoration:none;transition:background .15s;}
+.launch-btn:hover{background:var(--rose);}
+.launch-btn.ghost{background:var(--cream);color:var(--ink);border:1.5px solid var(--rule);}
+.launch-btn.ghost:hover{border-color:var(--rose);background:var(--warm);}
+
+/* QUICK LINKS */
+.quick-links{display:flex;flex-direction:column;gap:8px;}
+.quick-link{display:flex;align-items:center;gap:10px;padding:10px 14px;background:var(--warm);border:1px solid var(--rule);border-radius:10px;text-decoration:none;color:var(--ink);font-size:0.78rem;font-weight:500;transition:all .15s;}
+.quick-link:hover{border-color:var(--rose);background:var(--cream);}
+.quick-link-arrow{margin-left:auto;color:var(--muted);font-size:0.7rem;}
+
+/* DUE DATE ROW */
+.due-row{display:flex;align-items:center;gap:10px;padding:7px 0;border-bottom:1px solid var(--rule);font-size:0.78rem;}
+.due-row:last-child{border-bottom:none;}
+.due-dot{width:9px;height:9px;border-radius:50%;flex-shrink:0;}
+.due-name{flex:1;font-weight:500;}
+.due-date{font-size:0.68rem;color:var(--muted);}
+.due-pill{font-size:0.6rem;font-weight:600;letter-spacing:.4px;text-transform:uppercase;padding:2px 8px;border-radius:10px;white-space:nowrap;}
+.urgent{background:#fce4ec;color:#a0304a;}
+.soon{background:#fff8e1;color:#8a5a10;}
+.ok{background:#e8f5e9;color:#2a6a30;}
+
+/* PROG BAR */
+.prog-wrap{margin:8px 0 4px;}
+.prog-label{display:flex;justify-content:space-between;font-size:0.67rem;color:var(--muted);margin-bottom:4px;}
+.prog-bar{height:5px;background:var(--rule);border-radius:3px;overflow:hidden;}
+.prog-fill{height:100%;border-radius:3px;}
+.prog-fill.pink{background:linear-gradient(90deg,var(--blush),var(--mauve));}
+.prog-fill.sage{background:linear-gradient(90deg,#b8cfb0,#7aaa70);}
+.prog-fill.lav{background:linear-gradient(90deg,var(--lavender),#a880c8);}
+
+/* GOAL ROW */
+.goal-row{display:flex;align-items:center;gap:10px;padding:6px 0;border-bottom:1px solid var(--rule);font-size:0.78rem;}
+.goal-row:last-child{border-bottom:none;}
+.goal-check{width:16px;height:16px;border-radius:50%;border:1.5px solid var(--rule);flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:9px;}
+.goal-check.done{background:var(--sage);border-color:var(--sage);color:white;}
+
+/* PILL */
+.pill{display:inline-block;padding:2px 9px;border-radius:12px;font-size:0.6rem;font-weight:600;letter-spacing:.5px;text-transform:uppercase;}
+.pill-sage{background:#e8f5e4;color:#3a6a30;}
+.pill-muted{background:var(--warm);color:var(--muted);}
+.pill-amber{background:#fdf3e0;color:#8a5a10;}
+
+/* LANG CHIP */
+.lang-chip{display:flex;align-items:center;gap:8px;padding:8px 10px;background:var(--warm);border-radius:8px;margin-bottom:8px;font-size:0.78rem;}
+.lang-name{font-weight:500;font-size:0.78rem;}
+.lang-sub{font-size:0.67rem;color:var(--muted);}
+
+/* COURSE ROW */
+.course-row{display:flex;align-items:center;justify-content:space-between;padding:7px 0;border-bottom:1px solid var(--rule);font-size:0.78rem;}
+.course-row:last-child{border-bottom:none;}
+.course-name{font-weight:500;flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;padding-right:10px;}
+.course-pct{font-family:'Cormorant Garamond',serif;font-size:0.95rem;font-weight:600;color:var(--mauve);flex-shrink:0;}
+
+hr.divider{border:none;border-top:1px solid var(--rule);margin:14px 0;}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="topbar-title">Brain <em>2.0</em></div>
+  <div style="display:flex;align-items:center;gap:20px;">
+    <span class="greeting">your personal command center</span>
+    <span class="topbar-date" id="today-date"></span>
+  </div>
+</div>
+
+<div class="hub">
+
+  <!-- HERO -->
+  <div class="hero-row">
+    <div class="hero-card">
+      <div class="hero-title" id="hero-greeting">Good morning ✦</div>
+      <div class="hero-sub">This is your life hub — one place for everything that matters. Launch any module below, or check in on your week at a glance.</div>
+      <a href="weekly-audit/" class="launch-btn">Open Weekly Audit →</a>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:10px;">
+      <div style="font-size:0.6rem;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin-bottom:2px;">Quick launch</div>
+      <div class="quick-links">
+        <a href="weekly-audit/" class="quick-link">📋 Weekly Audit<span class="quick-link-arrow">↗</span></a>
+        <a href="finances/" class="quick-link">💳 Financial Tracker<span class="quick-link-arrow">↗</span></a>
+        <a href="language-portal/" class="quick-link">🌍 Language Portal<span class="quick-link-arrow">↗</span></a>
+        <a href="professional-dev/" class="quick-link">📊 Professional Dev<span class="quick-link-arrow">↗</span></a>
+      </div>
+    </div>
+  </div>
+
+  <!-- WEEKLY SNAPSHOT -->
+  <div class="sec-title" style="margin-bottom:14px;">This Week</div>
+  <div class="grid-4" style="margin-bottom:28px;">
+    <div class="card card-accent-blush">
+      <div class="card-label">Weekly Audit</div>
+      <div class="card-title" id="week-num">Week — of 52</div>
+      <div class="card-sub" id="week-year" style="margin-bottom:12px;">2026</div>
+      <a href="weekly-audit/" class="launch-btn" style="font-size:0.7rem;padding:6px 14px;">Open →</a>
+    </div>
+    <div class="card card-accent-sage">
+      <div class="card-label">Sunday Audit</div>
+      <div class="card-title">Weekly Ritual</div>
+      <div style="margin-top:8px;">
+        <div class="goal-row"><div class="goal-check">·</div><span>Brain Dump</span></div>
+        <div class="goal-row"><div class="goal-check">·</div><span>Life Wheel</span></div>
+        <div class="goal-row"><div class="goal-check">·</div><span>Set 3 Goals</span></div>
+        <div class="goal-row"><div class="goal-check">·</div><span>Letter to Self</span></div>
+      </div>
+    </div>
+    <div class="card card-accent-lav">
+      <div class="card-label">Year Progress</div>
+      <div class="card-title">2026</div>
+      <div class="prog-wrap">
+        <div class="prog-label"><span id="year-days-label">Day — of 365</span><span id="year-pct">—%</span></div>
+        <div class="prog-bar"><div class="prog-fill pink" id="year-bar" style="width:0%"></div></div>
+      </div>
+      <div class="card-sub" style="margin-top:6px;" id="year-remaining">— days remaining</div>
+    </div>
+    <div class="card card-accent-rose">
+      <div class="card-label">Next Up</div>
+      <div class="card-title">Coming Soon</div>
+      <div class="card-sub" style="margin-top:6px;">Add your upcoming events in your Weekly Audit calendar.</div>
+      <a href="weekly-audit/" class="launch-btn ghost" style="margin-top:12px;font-size:0.7rem;padding:5px 12px;">Go to Calendar →</a>
+    </div>
+  </div>
+
+  <!-- FINANCES + LANGUAGES -->
+  <div class="grid-2" style="margin-bottom:28px;">
+
+    <!-- FINANCES -->
+    <div>
+      <div class="sec-title">Finances</div>
+      <div class="card card-accent-blush">
+        <div class="card-label">Upcoming Credit Card Due Dates</div>
+        <div class="card-title" style="margin-bottom:10px;">Active Cards</div>
+        <div id="due-dates-list"></div>
+        <hr class="divider">
+        <div style="display:flex;gap:8px;flex-wrap:wrap;">
+          <a href="finances/" class="launch-btn" style="font-size:0.7rem;padding:6px 14px;">Full Tracker →</a>
+          <a href="https://secure.chase.com/web/auth/dashboard#/dashboard/overview" target="_blank" class="launch-btn ghost" style="font-size:0.7rem;padding:6px 14px;">Chase ↗</a>
+          <a href="https://app.useorigin.com/" target="_blank" class="launch-btn ghost" style="font-size:0.7rem;padding:6px 14px;">Origin ↗</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- LANGUAGES -->
+    <div>
+      <div class="sec-title">Languages</div>
+      <div class="card card-accent-mauve">
+        <div class="card-label">Active Languages</div>
+        <div class="card-title" style="margin-bottom:10px;">Current Study</div>
+        <div class="lang-chip">
+          <span style="font-size:1.1rem;">🇪🇸</span>
+          <div style="flex:1;">
+            <div class="lang-name">Spanish</div>
+            <div class="lang-sub">C1 · Phase 3 — Listening & Immersion</div>
+          </div>
+          <span class="pill pill-amber">Reactivating</span>
+        </div>
+        <div class="lang-chip">
+          <span style="font-size:1.1rem;">🇧🇷</span>
+          <div style="flex:1;">
+            <div class="lang-name">Portuguese BR</div>
+            <div class="lang-sub">A1 · Phase 1 — Foundation</div>
+          </div>
+          <span class="pill pill-muted">Beginner</span>
+        </div>
+        <hr class="divider">
+        <a href="language-portal/" class="launch-btn" style="font-size:0.7rem;padding:6px 14px;">Start a Session →</a>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- PROFESSIONAL DEV + PERSONAL DEV -->
+  <div class="grid-2" style="margin-bottom:28px;">
+
+    <!-- PROFESSIONAL DEV -->
+    <div>
+      <div class="sec-title">Professional Development</div>
+      <div class="card card-accent-sage">
+        <div class="card-label">Active Courses — Coursera</div>
+        <div class="card-title" style="margin-bottom:10px;">In Progress</div>
+        <div class="course-row"><span class="course-name">Microsoft Power BI Data Analyst</span><span class="course-pct">~23%</span></div>
+        <div class="course-row"><span class="course-name">Google UX Design</span><span class="course-pct">~30%</span></div>
+        <div class="course-row"><span class="course-name">Beginner: Figma UI/UX Essentials</span><span class="course-pct">11%</span></div>
+        <div class="course-row"><span class="course-name">Data Management: Quality & Communication</span><span class="course-pct">27%</span></div>
+        <hr class="divider">
+        <div style="display:flex;gap:8px;">
+          <a href="professional-dev/" class="launch-btn" style="font-size:0.7rem;padding:6px 14px;">Full Tracker →</a>
+          <a href="https://www.coursera.org/my-learning?myLearningTab=IN_PROGRESS" target="_blank" class="launch-btn ghost" style="font-size:0.7rem;padding:6px 14px;">Coursera ↗</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- PERSONAL DEV -->
+    <div>
+      <div class="sec-title">Personal Development</div>
+      <div class="card card-accent-lav">
+        <div class="card-label">2026 Focus Areas</div>
+        <div class="card-title" style="margin-bottom:10px;">Goals & Habits</div>
+        <div class="goal-row"><div class="goal-check">·</div><span>Health & Fitness</span><span class="pill pill-muted" style="margin-left:auto;">ongoing</span></div>
+        <div class="goal-row"><div class="goal-check">·</div><span>Language Learning</span><span class="pill pill-muted" style="margin-left:auto;">ongoing</span></div>
+        <div class="goal-row"><div class="goal-check">·</div><span>Professional Skills</span><span class="pill pill-muted" style="margin-left:auto;">ongoing</span></div>
+        <div class="goal-row"><div class="goal-check">·</div><span>Financial Goals</span><span class="pill pill-muted" style="margin-left:auto;">ongoing</span></div>
+        <hr class="divider">
+        <a href="weekly-audit/" class="launch-btn ghost" style="font-size:0.7rem;padding:6px 14px;">Open Weekly Audit →</a>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- TOOLS ROW -->
+  <div class="sec-title">Quick Access</div>
+  <div class="grid-4">
+    <a href="weekly-audit/" class="card card-accent-blush" style="text-decoration:none;display:block;">
+      <div style="font-size:1.6rem;margin-bottom:8px;">📋</div>
+      <div class="card-label">Tool</div>
+      <div class="card-title">Weekly Audit</div>
+      <div class="card-sub">Sunday review, goals, life wheel, letter to self</div>
+    </a>
+    <a href="finances/" class="card card-accent-sage" style="text-decoration:none;display:block;">
+      <div style="font-size:1.6rem;margin-bottom:8px;">💳</div>
+      <div class="card-label">Tool</div>
+      <div class="card-title">Financial Tracker</div>
+      <div class="card-sub">Credit cards, due dates, banking & investment links</div>
+    </a>
+    <a href="language-portal/" class="card card-accent-mauve" style="text-decoration:none;display:block;">
+      <div style="font-size:1.6rem;margin-bottom:8px;">🌍</div>
+      <div class="card-label">Tool</div>
+      <div class="card-title">Language Portal</div>
+      <div class="card-sub">Spanish & Portuguese session launcher, Anki, log</div>
+    </a>
+    <a href="professional-dev/" class="card card-accent-lav" style="text-decoration:none;display:block;">
+      <div style="font-size:1.6rem;margin-bottom:8px;">📊</div>
+      <div class="card-label">Tool</div>
+      <div class="card-title">Professional Dev</div>
+      <div class="card-sub">Coursera programs, course progress, skills tracker</div>
+    </a>
+  </div>
+
+</div>
+
+<script>
+var DAYS = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+var MONTHS = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+var MONTHS_SHORT = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+
+var now = new Date();
+var h = now.getHours();
+var greeting = h < 12 ? 'Good morning' : h < 17 ? 'Good afternoon' : 'Good evening';
+document.getElementById('hero-greeting').textContent = greeting + ' ✦';
+document.getElementById('today-date').textContent = DAYS[now.getDay()] + ', ' + MONTHS[now.getMonth()] + ' ' + now.getDate() + ', ' + now.getFullYear();
+
+// Week number
+var startOfYear = new Date(now.getFullYear(), 0, 1);
+var weekNum = Math.ceil(((now - startOfYear) / 86400000 + startOfYear.getDay() + 1) / 7);
+document.getElementById('week-num').textContent = 'Week ' + weekNum + ' of 52';
+document.getElementById('week-year').textContent = now.getFullYear();
+
+// Year progress
+var isLeap = now.getFullYear() % 4 === 0;
+var totalDays = isLeap ? 366 : 365;
+var dayOfYear = Math.ceil((now - startOfYear) / 86400000);
+var yearPct = (dayOfYear / totalDays * 100).toFixed(1);
+var remaining = totalDays - dayOfYear;
+document.getElementById('year-days-label').textContent = 'Day ' + dayOfYear + ' of ' + totalDays;
+document.getElementById('year-pct').textContent = yearPct + '%';
+document.getElementById('year-bar').style.width = yearPct + '%';
+document.getElementById('year-remaining').textContent = remaining + ' days remaining in ' + now.getFullYear();
+
+// Credit card due dates
+var CARDS = [
+  {name:'Chase Sapphire Preferred', day:22, color:'#f2c4ce'},
+  {name:'Venture X',                day:28, color:'#d4b8e0'},
+  {name:'Citi AAdvantage Platinum', day:1,  color:'#b8cfb0'},
+  {name:'Bilt Blue Card',           day:5,  color:'#b8d4f0'},
+  {name:'Marriott Bonvoy',          day:12, color:'#f7d9b0'},
+];
+
+function daysUntil(day) {
+  var n = new Date(); n.setHours(0,0,0,0);
+  var due = new Date(n.getFullYear(), n.getMonth(), day);
+  if (due < n) due = new Date(n.getFullYear(), n.getMonth()+1, day);
+  return Math.ceil((due - n) / 86400000);
+}
+
+function nextDueDate(day) {
+  var n = new Date(); n.setHours(0,0,0,0);
+  var due = new Date(n.getFullYear(), n.getMonth(), day);
+  if (due < n) due = new Date(n.getFullYear(), n.getMonth()+1, day);
+  return MONTHS_SHORT[due.getMonth()] + ' ' + due.getDate();
+}
+
+var sorted = CARDS.slice().sort(function(a,b){ return daysUntil(a.day) - daysUntil(b.day); });
+var list = document.getElementById('due-dates-list');
+sorted.slice(0,4).forEach(function(c) {
+  var d = daysUntil(c.day);
+  var cls = d<=7?'urgent':d<=14?'soon':'ok';
+  var label = d===0?'today!':d+'d';
+  var row = document.createElement('div'); row.className='due-row';
+  row.innerHTML = '<div class="due-dot" style="background:'+c.color+'"></div>' +
+    '<span class="due-name">'+c.name+'</span>' +
+    '<span class="due-date">'+nextDueDate(c.day)+'</span>' +
+    '<span class="due-pill '+cls+'">'+label+'</span>';
+  list.appendChild(row);
+});
+</script>
+</body>
+</html>
