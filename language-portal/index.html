@@ -1,0 +1,773 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Language Portal</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,400&family=Jost:wght@300;400;500;600&display=swap');
+:root{
+  --blush:#f2c4ce;--rose:#e8a0b0;--mauve:#c9a0b4;--cream:#fdf6f0;--warm:#f7ece4;
+  --ink:#3a2a2e;--muted:#9a8088;--rule:#e0cec8;
+  --es1:#f4d0c0;--es2:#c87050;--es-bg:#fdf0ea;
+  --pt1:#c0dcd4;--pt2:#50a088;--pt-bg:#eef8f4;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{background:#f0e8e4;font-family:'Jost',sans-serif;color:var(--ink);}
+
+.topbar{background:var(--cream);border-bottom:1px solid var(--rule);padding:14px 32px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;}
+.topbar-title{font-family:'Cormorant Garamond',serif;font-size:1.6rem;font-weight:300;letter-spacing:2px;}
+.topbar-title em{font-style:italic;color:var(--mauve);}
+.topbar-right{display:flex;align-items:center;gap:10px;}
+.back-btn{display:inline-flex;align-items:center;gap:6px;padding:6px 14px;border:1.5px solid var(--rule);border-radius:20px;font-size:0.72rem;color:var(--muted);cursor:pointer;background:transparent;font-family:'Jost',sans-serif;text-decoration:none;transition:all .15s;}
+.back-btn:hover{border-color:var(--rose);color:var(--ink);}
+.topbar-date{font-size:0.68rem;letter-spacing:2px;text-transform:uppercase;color:var(--muted);}
+
+.lang-tabs{display:flex;border-bottom:2px solid var(--rule);background:var(--cream);position:sticky;top:57px;z-index:99;}
+.lang-tab{padding:12px 28px;font-family:'Jost',sans-serif;font-size:0.78rem;font-weight:500;cursor:pointer;border:none;background:transparent;color:var(--muted);border-bottom:3px solid transparent;margin-bottom:-2px;transition:all .15s;}
+.lang-tab.es-active{color:var(--ink);border-bottom-color:var(--es2);}
+.lang-tab.pt-active{color:var(--ink);border-bottom-color:var(--pt2);}
+.lang-tab.log-active{color:var(--ink);border-bottom-color:var(--mauve);}
+
+.hub{max-width:980px;margin:0 auto;padding:24px 24px 60px;}
+.page{display:none;}.page.active{display:block;}
+
+.lang-hero{border-radius:14px;padding:22px 28px;margin-bottom:20px;display:grid;grid-template-columns:1fr auto;gap:16px;align-items:center;}
+.lang-hero.es{background:linear-gradient(135deg,#fce8e0,#f5d0c0);border:1px solid var(--es1);}
+.lang-hero.pt{background:linear-gradient(135deg,#d8f0e8,#c0e0d4);border:1px solid var(--pt1);}
+.hero-left{display:flex;align-items:center;gap:16px;}
+.hero-flag{font-size:2.4rem;}
+.hero-lang{font-family:'Cormorant Garamond',serif;font-size:1.6rem;font-weight:300;font-style:italic;}
+.hero-level{font-size:0.68rem;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin-top:2px;}
+.hero-phase-pill{display:inline-block;padding:3px 12px;border-radius:12px;font-size:0.65rem;font-weight:600;letter-spacing:1px;text-transform:uppercase;margin-top:6px;}
+.hero-phase-pill.es{background:#e8c0a8;color:#6a2810;}
+.hero-phase-pill.pt{background:#a8d4c4;color:#10503e;}
+.hero-right{text-align:right;}
+.phase-hours-label{font-size:0.6rem;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin-bottom:4px;}
+.phase-hours-num{font-family:'Cormorant Garamond',serif;font-size:1.8rem;font-weight:600;}
+.phase-hours-total{font-size:0.7rem;color:var(--muted);}
+.phase-bar{width:140px;height:5px;background:rgba(0,0,0,.08);border-radius:3px;overflow:hidden;margin:6px 0 0 auto;}
+.phase-fill{height:100%;border-radius:3px;transition:width .4s;}
+.phase-fill.es{background:var(--es2);}
+.phase-fill.pt{background:var(--pt2);}
+
+.session-box{background:var(--cream);border:1px solid var(--rule);border-radius:14px;padding:22px 24px;margin-bottom:20px;}
+.session-q{font-family:'Cormorant Garamond',serif;font-size:1.15rem;font-style:italic;margin-bottom:14px;}
+.skill-grid{display:grid;gap:10px;}
+.skill-grid.es-grid{grid-template-columns:repeat(5,1fr);}
+.skill-grid.pt-grid{grid-template-columns:repeat(4,1fr);}
+.skill-btn{border:1.5px solid var(--rule);background:var(--warm);border-radius:12px;padding:12px 8px;cursor:pointer;text-align:center;transition:all .18s;font-family:'Jost',sans-serif;}
+.skill-btn:hover{transform:translateY(-2px);}
+.skill-btn.es-sel{border-color:var(--es2);background:linear-gradient(135deg,#fce8e0,#f5d0c0);}
+.skill-btn.pt-sel{border-color:var(--pt2);background:linear-gradient(135deg,#d8f0e8,#c0e0d4);}
+.skill-icon{font-size:1.3rem;display:block;margin-bottom:5px;}
+.skill-name{font-size:0.72rem;font-weight:600;color:var(--ink);}
+
+.resource-panel{background:var(--warm);border:1px solid var(--rule);border-radius:12px;padding:18px 20px;margin-top:14px;}
+.rp-title{font-family:'Cormorant Garamond',serif;font-size:0.95rem;font-weight:600;margin-bottom:4px;}
+.rp-desc{font-size:0.72rem;color:var(--muted);font-style:italic;margin-bottom:14px;line-height:1.5;}
+.rp-links{display:flex;flex-direction:column;gap:8px;}
+.rp-link{display:flex;align-items:center;gap:10px;padding:10px 14px;background:var(--cream);border:1px solid var(--rule);border-radius:10px;text-decoration:none;color:var(--ink);transition:all .15s;}
+.rp-link:hover{border-color:var(--mauve);}
+.rp-link-icon{font-size:1rem;flex-shrink:0;}
+.rp-link-info{flex:1;}
+.rp-link-name{font-size:0.8rem;font-weight:500;}
+.rp-link-sub{font-size:0.67rem;color:var(--muted);margin-top:1px;}
+
+.log-row{display:flex;align-items:center;gap:10px;margin-top:14px;padding-top:14px;border-top:1px solid var(--rule);}
+.log-label{font-size:0.72rem;color:var(--muted);}
+.log-btns{display:flex;gap:6px;flex-wrap:wrap;}
+.log-btn{padding:5px 12px;border-radius:16px;border:1.5px solid var(--rule);background:var(--cream);font-family:'Jost',sans-serif;font-size:0.7rem;font-weight:500;cursor:pointer;transition:all .15s;}
+.log-btn:hover{border-color:var(--mauve);}
+.log-btn.flashed{border-color:var(--mauve);background:linear-gradient(135deg,#fce8ef,#f0e0f0);}
+
+.compact-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:20px;}
+.duo-mini{background:var(--cream);border:1px solid var(--rule);border-radius:12px;padding:14px 18px;}
+.duo-top{display:flex;align-items:center;gap:10px;margin-bottom:8px;}
+.duo-owl{font-size:1.3rem;}
+.duo-title{font-size:0.72rem;font-weight:600;}
+.duo-subtitle{font-size:0.62rem;color:var(--muted);}
+.duo-bar{height:5px;background:var(--rule);border-radius:3px;overflow:hidden;margin-bottom:6px;}
+.duo-fill{height:100%;border-radius:3px;}
+.duo-fill.es{background:linear-gradient(90deg,#f4a080,#e07050);}
+.duo-fill.pt{background:linear-gradient(90deg,#80c4a8,#50a088);}
+.duo-edit-row{display:flex;align-items:center;gap:6px;}
+.duo-input{width:46px;border:1.5px solid var(--rule);border-radius:8px;padding:3px 6px;font-size:0.76rem;font-family:'Jost',sans-serif;color:var(--ink);text-align:center;background:var(--warm);outline:none;}
+.duo-input:focus{border-color:var(--mauve);}
+.duo-count{font-size:0.72rem;color:var(--muted);}
+.duo-pct{margin-left:auto;font-size:0.72rem;color:var(--muted);font-family:'Cormorant Garamond',serif;font-weight:600;}
+
+.anki-section{background:var(--cream);border:1px solid var(--rule);border-radius:12px;padding:14px 18px;}
+.anki-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;}
+.anki-title{font-size:0.72rem;font-weight:600;}
+.add-anki-btn{font-size:0.65rem;color:var(--mauve);background:transparent;border:1.5px solid var(--rule);border-radius:10px;cursor:pointer;padding:2px 8px;font-family:'Jost',sans-serif;}
+.add-anki-btn:hover{border-color:var(--mauve);}
+.anki-deck{background:var(--warm);border-radius:8px;padding:10px 12px;margin-bottom:8px;position:relative;}
+.anki-deck:last-child{margin-bottom:0;}
+.anki-deck-name{font-size:0.76rem;font-weight:500;margin-bottom:6px;padding-right:40px;}
+.anki-stats-row{display:flex;gap:12px;}
+.anki-stat{text-align:center;}
+.anki-stat-num{font-family:'Cormorant Garamond',serif;font-size:1rem;font-weight:600;display:block;}
+.anki-stat-num.nc{color:#4a70c0;}.anki-stat-num.dc{color:#c04040;}.anki-stat-num.rc{color:#40904a;}
+.anki-stat-label{font-size:0.58rem;letter-spacing:1px;text-transform:uppercase;color:var(--muted);}
+.anki-edit-row{display:flex;gap:6px;margin-top:6px;flex-wrap:wrap;}
+.anki-field{display:flex;align-items:center;gap:4px;}
+.anki-field-label{font-size:0.6rem;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;}
+.anki-field-input{width:46px;border:1.5px solid var(--rule);border-radius:6px;padding:2px 5px;font-size:0.72rem;font-family:'Jost',sans-serif;color:var(--ink);text-align:center;background:var(--cream);outline:none;}
+.anki-field-input:focus{border-color:var(--mauve);}
+.anki-del{position:absolute;top:8px;right:8px;background:transparent;border:none;font-size:0.6rem;color:var(--muted);cursor:pointer;padding:2px 5px;border-radius:5px;}
+.anki-del:hover{background:#fce4ec;color:#a0304a;}
+
+.sec-label{font-family:'Cormorant Garamond',serif;font-size:1rem;font-weight:600;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin-bottom:12px;display:flex;align-items:center;gap:10px;}
+.sec-label:after{content:'';flex:1;height:1px;background:var(--rule);}
+.class-card{background:var(--cream);border:1px solid var(--rule);border-radius:12px;padding:14px 18px;margin-bottom:10px;position:relative;}
+.class-name{font-family:'Cormorant Garamond',serif;font-size:1rem;font-weight:600;margin-bottom:8px;}
+.class-details{display:grid;grid-template-columns:1fr 1fr;gap:4px 16px;}
+.class-row{display:flex;gap:6px;font-size:0.74rem;align-items:baseline;}
+.class-key{font-size:0.63rem;text-transform:uppercase;letter-spacing:.5px;color:var(--muted);min-width:72px;flex-shrink:0;}
+.class-del{position:absolute;top:10px;right:12px;background:transparent;border:none;font-size:0.65rem;color:var(--muted);cursor:pointer;padding:2px 6px;border-radius:5px;}
+.class-del:hover{background:#fce4ec;color:#a0304a;}
+.add-cls-btn{display:inline-flex;align-items:center;gap:6px;padding:7px 16px;border:1.5px solid var(--mauve);border-radius:20px;font-size:0.72rem;font-weight:600;color:var(--mauve);background:transparent;cursor:pointer;font-family:'Jost',sans-serif;transition:all .15s;}
+.add-cls-btn:hover{background:var(--blush);border-color:var(--rose);color:var(--ink);}
+
+/* SESSION LOG TAB */
+.log-summary-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:20px;}
+.log-summary-card{border-radius:12px;padding:16px 20px;}
+.log-summary-card.es{background:linear-gradient(135deg,#fce8e0,#f5d0c0);border:1px solid var(--es1);}
+.log-summary-card.pt{background:linear-gradient(135deg,#d8f0e8,#c0e0d4);border:1px solid var(--pt1);}
+.lsc-label{font-size:0.62rem;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin-bottom:4px;}
+.lsc-hrs{font-family:'Cormorant Garamond',serif;font-size:1.6rem;font-weight:600;}
+.lsc-hrs.es{color:var(--es2);}.lsc-hrs.pt{color:var(--pt2);}
+.lsc-sub{font-size:0.7rem;color:var(--muted);margin-top:2px;}
+.lsc-bar{height:4px;background:rgba(0,0,0,.08);border-radius:2px;overflow:hidden;margin-top:8px;}
+.lsc-fill{height:100%;border-radius:2px;transition:width .4s;}
+.lsc-fill.es{background:var(--es2);}.lsc-fill.pt{background:var(--pt2);}
+
+.log-filters{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px;align-items:center;}
+.lf-btn{padding:5px 14px;border:1.5px solid var(--rule);border-radius:16px;background:var(--cream);font-family:'Jost',sans-serif;font-size:0.7rem;font-weight:500;cursor:pointer;transition:all .15s;color:var(--muted);}
+.lf-btn:hover{border-color:var(--mauve);color:var(--ink);}
+.lf-btn.active{background:var(--mauve);border-color:var(--mauve);color:white;}
+.lf-btn.es-f.active{background:var(--es2);border-color:var(--es2);}
+.lf-btn.pt-f.active{background:var(--pt2);border-color:var(--pt2);}
+.lf-sep{width:1px;height:20px;background:var(--rule);}
+
+.log-total-bar{display:flex;align-items:center;gap:12px;padding:10px 16px;background:var(--warm);border:1px solid var(--rule);border-radius:10px;margin-bottom:12px;}
+.log-total-label{font-size:0.65rem;letter-spacing:2px;text-transform:uppercase;color:var(--muted);}
+.log-total-nums{font-family:'Cormorant Garamond',serif;font-size:1rem;font-weight:600;}
+.log-total-nums span{font-size:0.7rem;font-family:'Jost',sans-serif;font-weight:400;color:var(--muted);margin-left:6px;}
+
+.log-entries{display:flex;flex-direction:column;gap:8px;}
+.log-entry{background:var(--cream);border:1px solid var(--rule);border-radius:10px;padding:12px 16px;display:flex;align-items:center;gap:14px;}
+.log-entry-flag{font-size:1.1rem;flex-shrink:0;}
+.log-entry-info{flex:1;}
+.log-entry-skill{font-size:0.78rem;font-weight:600;}
+.log-entry-resource{font-size:0.7rem;color:var(--muted);margin-top:1px;}
+.log-entry-date{font-size:0.63rem;color:var(--muted);letter-spacing:.5px;margin-top:2px;}
+.log-entry-dur{font-family:'Cormorant Garamond',serif;font-size:1.1rem;font-weight:600;flex-shrink:0;}
+.log-entry-dur.es{color:var(--es2);}.log-entry-dur.pt{color:var(--pt2);}
+.log-del-btn{background:transparent;border:none;font-size:0.65rem;color:var(--muted);cursor:pointer;padding:3px 7px;border-radius:6px;flex-shrink:0;}
+.log-del-btn:hover{background:#fce4ec;color:#a0304a;}
+.log-empty{font-size:0.76rem;color:var(--muted);font-style:italic;padding:16px 0;}
+
+/* MODAL */
+.modal-overlay{display:none;position:fixed;inset:0;background:rgba(58,42,46,.35);z-index:200;align-items:center;justify-content:center;}
+.modal-overlay.open{display:flex;}
+.modal{background:var(--cream);border-radius:16px;border:1px solid var(--rule);padding:28px 32px;width:90%;max-width:500px;max-height:90vh;overflow-y:auto;}
+.modal-title{font-family:'Cormorant Garamond',serif;font-size:1.3rem;font-weight:600;margin-bottom:16px;}
+.f-field{margin-bottom:11px;}
+.f-label{font-size:0.62rem;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin-bottom:4px;display:block;}
+.f-input{width:100%;border:1.5px solid var(--rule);border-radius:8px;padding:8px 12px;font-size:0.8rem;font-family:'Jost',sans-serif;color:var(--ink);background:var(--warm);outline:none;}
+.f-input:focus{border-color:var(--mauve);}
+.f-row{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+.m-actions{display:flex;gap:10px;justify-content:flex-end;margin-top:16px;}
+.m-btn{padding:8px 20px;border-radius:20px;font-family:'Jost',sans-serif;font-size:0.78rem;font-weight:600;cursor:pointer;border:1.5px solid;transition:all .15s;}
+.m-cancel{background:var(--warm);border-color:var(--rule);color:var(--muted);}
+.m-save{background:var(--mauve);border-color:var(--mauve);color:white;}
+.m-save:hover{background:var(--rose);}
+
+.tool-link{display:flex;align-items:center;gap:10px;padding:11px 14px;background:var(--cream);border:1px solid var(--rule);border-radius:10px;text-decoration:none;color:var(--ink);font-size:0.78rem;font-weight:500;transition:all .15s;}
+.tool-link:hover{border-color:var(--rose);}
+</style>
+</head>
+<body>
+
+<!-- CLASS MODAL -->
+<div class="modal-overlay" id="cls-modal">
+  <div class="modal">
+    <div class="modal-title">Add a Class</div>
+    <div class="f-field"><label class="f-label">Course Name</label><input class="f-input" id="ci-name" type="text" placeholder="e.g. Portuguese for Beginners"></div>
+    <div class="f-row">
+      <div class="f-field"><label class="f-label">Language</label><select class="f-input" id="ci-lang"><option value="es">Spanish</option><option value="pt">Portuguese</option></select></div>
+      <div class="f-field"><label class="f-label">Level</label><input class="f-input" id="ci-level" type="text" placeholder="e.g. A1"></div>
+    </div>
+    <div class="f-field"><label class="f-label">Institution</label><input class="f-input" id="ci-org" type="text"></div>
+    <div class="f-field"><label class="f-label">Professor</label><input class="f-input" id="ci-prof" type="text"></div>
+    <div class="f-field"><label class="f-label">Location / Format</label><input class="f-input" id="ci-loc" type="text"></div>
+    <div class="f-row">
+      <div class="f-field"><label class="f-label">Days & Time</label><input class="f-input" id="ci-time" type="text" placeholder="e.g. Tuesdays 6–8pm"></div>
+      <div class="f-field"><label class="f-label">Dates</label><input class="f-input" id="ci-dates" type="text" placeholder="e.g. Jan–May 2026"></div>
+    </div>
+    <div class="f-field"><label class="f-label">Notes</label><input class="f-input" id="ci-notes" type="text"></div>
+    <div class="m-actions">
+      <button class="m-btn m-cancel" onclick="closeModal('cls-modal')">Cancel</button>
+      <button class="m-btn m-save" onclick="saveClass()">Add Class ✦</button>
+    </div>
+  </div>
+</div>
+
+<!-- ANKI MODAL -->
+<div class="modal-overlay" id="anki-modal">
+  <div class="modal">
+    <div class="modal-title">Add Anki Deck</div>
+    <div class="f-field"><label class="f-label">Deck Name</label><input class="f-input" id="ai-name" type="text" placeholder="e.g. Phase 1 · Phonology · IPA"></div>
+    <div class="f-field"><label class="f-label">Total Cards in Deck</label><input class="f-input" id="ai-total" type="number" min="0" value="0"></div>
+    <div class="m-actions">
+      <button class="m-btn m-cancel" onclick="closeModal('anki-modal')">Cancel</button>
+      <button class="m-btn m-save" onclick="saveAnkiDeck()">Add Deck ✦</button>
+    </div>
+  </div>
+</div>
+
+<!-- TOPBAR -->
+<div class="topbar">
+  <div class="topbar-title">Language <em>Portal</em></div>
+  <div class="topbar-right">
+    <a href="#" class="back-btn">← Brain 2.0</a>
+    <span class="topbar-date" id="today-date"></span>
+  </div>
+</div>
+
+<!-- TABS -->
+<div class="lang-tabs">
+  <button class="lang-tab es-active" id="tab-es" onclick="switchTab('es')">🇪🇸 Spanish</button>
+  <button class="lang-tab" id="tab-pt" onclick="switchTab('pt')">🇧🇷 Portuguese BR</button>
+  <button class="lang-tab" id="tab-log" onclick="switchTab('log')">📋 Session Log</button>
+</div>
+
+<!-- HUB -->
+<div class="hub">
+
+  <!-- ══ SPANISH ══ -->
+  <div class="page active" id="page-es">
+    <div class="lang-hero es">
+      <div class="hero-left">
+        <div class="hero-flag">🇪🇸</div>
+        <div>
+          <div class="hero-lang">Spanish</div>
+          <div class="hero-level">C1 · Upper Advanced · Reactivation Mode</div>
+          <span class="hero-phase-pill es">Phase 3 — Listening &amp; Immersion</span>
+        </div>
+      </div>
+      <div class="hero-right">
+        <div class="phase-hours-label">Phase Hours Logged</div>
+        <div class="phase-hours-num" id="es-hrs-display">0h</div>
+        <div class="phase-hours-total">of ~300h this phase</div>
+        <div class="phase-bar"><div class="phase-fill es" id="es-phase-bar" style="width:0%"></div></div>
+      </div>
+    </div>
+
+    <div class="session-box">
+      <div class="session-q">What do you feel like practicing today?</div>
+      <div class="skill-grid es-grid">
+        <button class="skill-btn" onclick="selectSkill('es','listening',this)"><span class="skill-icon">🎧</span><span class="skill-name">Listening</span></button>
+        <button class="skill-btn" onclick="selectSkill('es','speaking',this)"><span class="skill-icon">🗣️</span><span class="skill-name">Speaking</span></button>
+        <button class="skill-btn" onclick="selectSkill('es','reading',this)"><span class="skill-icon">📖</span><span class="skill-name">Reading</span></button>
+        <button class="skill-btn" onclick="selectSkill('es','writing',this)"><span class="skill-icon">✍️</span><span class="skill-name">Writing</span></button>
+        <button class="skill-btn" onclick="selectSkill('es','grammar',this)"><span class="skill-icon">🔬</span><span class="skill-name">Grammar</span></button>
+      </div>
+      <div id="es-resource-panel" style="display:none;"></div>
+      <div class="log-row" id="es-log-row" style="display:none;">
+        <span class="log-label">Log time:</span>
+        <div class="log-btns">
+          <button class="log-btn" onclick="logTime('es',15,event)">15 min</button>
+          <button class="log-btn" onclick="logTime('es',30,event)">30 min</button>
+          <button class="log-btn" onclick="logTime('es',45,event)">45 min</button>
+          <button class="log-btn" onclick="logTime('es',60,event)">60 min</button>
+          <button class="log-btn" onclick="logTime('es',90,event)">90 min</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="compact-grid">
+      <div class="duo-mini">
+        <div class="duo-top"><span class="duo-owl">🦉</span><div><div class="duo-title">Duolingo — Spanish</div><div class="duo-subtitle">Units completed on your path</div></div></div>
+        <div class="duo-bar"><div class="duo-fill es" id="duo-bar-es" style="width:0%"></div></div>
+        <div class="duo-edit-row">
+          <input class="duo-input" id="duo-es" type="number" min="0" max="160" value="37" onchange="updateDuo('es')">
+          <span class="duo-count">/ 160</span>
+          <span class="duo-pct" id="duo-es-pct"></span>
+        </div>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:10px;">
+        <a href="https://www.languagetransfer.org/free-courses-1#complete-spanish" target="_blank" class="tool-link"><span>🎙️</span>Language Transfer Spanish<span style="margin-left:auto;color:var(--muted);font-size:0.7rem;">↗</span></a>
+        <a href="https://www.spanishdict.com/" target="_blank" class="tool-link"><span>📖</span>SpanishDict<span style="margin-left:auto;color:var(--muted);font-size:0.7rem;">↗</span></a>
+        <a href="https://www.languagereactor.com/" target="_blank" class="tool-link"><span>🎬</span>Language Reactor<span style="margin-left:auto;color:var(--muted);font-size:0.7rem;">↗</span></a>
+      </div>
+    </div>
+
+    <div class="sec-label">Classes & Courses</div>
+    <div id="classes-es"></div>
+    <button class="add-cls-btn" onclick="openClassModal('es')">＋ Add Spanish Class</button>
+  </div>
+
+  <!-- ══ PORTUGUESE ══ -->
+  <div class="page" id="page-pt">
+    <div class="lang-hero pt">
+      <div class="hero-left">
+        <div class="hero-flag">🇧🇷</div>
+        <div>
+          <div class="hero-lang">Portuguese — BR</div>
+          <div class="hero-level">A1 · Beginner · Building Foundation</div>
+          <span class="hero-phase-pill pt">Phase 1 — Foundation</span>
+        </div>
+      </div>
+      <div class="hero-right">
+        <div class="phase-hours-label">Phase Hours Logged</div>
+        <div class="phase-hours-num" id="pt-hrs-display">0h</div>
+        <div class="phase-hours-total">of ~75h this phase</div>
+        <div class="phase-bar"><div class="phase-fill pt" id="pt-phase-bar" style="width:0%"></div></div>
+      </div>
+    </div>
+
+    <div class="session-box">
+      <div class="session-q">What do you feel like practicing today?</div>
+      <div class="skill-grid pt-grid">
+        <button class="skill-btn" onclick="selectSkill('pt','phonology',this)"><span class="skill-icon">🔊</span><span class="skill-name">Phonology</span></button>
+        <button class="skill-btn" onclick="selectSkill('pt','vocab',this)"><span class="skill-icon">🃏</span><span class="skill-name">Vocabulary</span></button>
+        <button class="skill-btn" onclick="selectSkill('pt','input',this)"><span class="skill-icon">🎧</span><span class="skill-name">Input</span></button>
+        <button class="skill-btn" onclick="selectSkill('pt','grammar',this)"><span class="skill-icon">🔬</span><span class="skill-name">Grammar</span></button>
+      </div>
+      <div id="pt-resource-panel" style="display:none;"></div>
+      <div class="log-row" id="pt-log-row" style="display:none;">
+        <span class="log-label">Log time:</span>
+        <div class="log-btns">
+          <button class="log-btn" onclick="logTime('pt',15,event)">15 min</button>
+          <button class="log-btn" onclick="logTime('pt',30,event)">30 min</button>
+          <button class="log-btn" onclick="logTime('pt',45,event)">45 min</button>
+          <button class="log-btn" onclick="logTime('pt',60,event)">60 min</button>
+          <button class="log-btn" onclick="logTime('pt',90,event)">90 min</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="sec-label">Anki Decks</div>
+    <div class="anki-section" style="margin-bottom:20px;">
+      <div class="anki-top">
+        <div class="anki-title">🃏 Active Decks</div>
+        <button class="add-anki-btn" onclick="document.getElementById('anki-modal').classList.add('open')">＋ Add Deck</button>
+      </div>
+      <div id="anki-decks"></div>
+      <a href="https://ankiweb.net/" target="_blank" style="display:inline-flex;align-items:center;gap:4px;margin-top:8px;font-size:0.7rem;color:var(--mauve);text-decoration:none;">Open AnkiWeb ↗</a>
+    </div>
+
+    <div class="compact-grid">
+      <div class="duo-mini">
+        <div class="duo-top"><span class="duo-owl">🦉</span><div><div class="duo-title">Duolingo — Portuguese</div><div class="duo-subtitle">Units completed on your path</div></div></div>
+        <div class="duo-bar"><div class="duo-fill pt" id="duo-bar-pt" style="width:0%"></div></div>
+        <div class="duo-edit-row">
+          <input class="duo-input" id="duo-pt" type="number" min="0" max="160" value="10" onchange="updateDuo('pt')">
+          <span class="duo-count">/ 160</span>
+          <span class="duo-pct" id="duo-pt-pct"></span>
+        </div>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:10px;">
+        <a href="https://www.dicio.com.br/" target="_blank" class="tool-link"><span>📖</span>Dicio — BR Dictionary<span style="margin-left:auto;color:var(--muted);font-size:0.7rem;">↗</span></a>
+        <a href="https://www.conjugacao.com.br/" target="_blank" class="tool-link"><span>📖</span>Conjugação de Verbos<span style="margin-left:auto;color:var(--muted);font-size:0.7rem;">↗</span></a>
+        <a href="https://brazilianpodclass-learn-portuguese.teachable.com/" target="_blank" class="tool-link"><span>🎙️</span>BrazilianPodClass<span style="margin-left:auto;color:var(--muted);font-size:0.7rem;">↗</span></a>
+      </div>
+    </div>
+
+    <div class="sec-label">Classes & Courses</div>
+    <div id="classes-pt"></div>
+    <button class="add-cls-btn" onclick="openClassModal('pt')" style="border-color:var(--pt2);color:var(--pt2);">＋ Add Portuguese Class</button>
+  </div>
+
+  <!-- ══ SESSION LOG ══ -->
+  <div class="page" id="page-log">
+    <div class="log-summary-grid">
+      <div class="log-summary-card es">
+        <div class="lsc-label">Spanish · Phase 3</div>
+        <div class="lsc-hrs es" id="log-es-hrs">0h 0m</div>
+        <div class="lsc-sub" id="log-es-pct">0% of ~300h phase</div>
+        <div class="lsc-bar"><div class="lsc-fill es" id="log-es-bar" style="width:0%"></div></div>
+      </div>
+      <div class="log-summary-card pt">
+        <div class="lsc-label">Portuguese BR · Phase 1</div>
+        <div class="lsc-hrs pt" id="log-pt-hrs">0h 0m</div>
+        <div class="lsc-sub" id="log-pt-pct">0% of ~75h phase</div>
+        <div class="lsc-bar"><div class="lsc-fill pt" id="log-pt-bar" style="width:0%"></div></div>
+      </div>
+    </div>
+    <div class="log-filters" id="log-filters"></div>
+    <div class="log-total-bar">
+      <span class="log-total-label">Showing</span>
+      <span class="log-total-nums" id="log-total-display">0 sessions<span>· 0h 0m total</span></span>
+    </div>
+    <div class="log-entries" id="log-entries">
+      <div class="log-empty">No sessions logged yet. Pick a skill, open a resource, then log your time.</div>
+    </div>
+  </div>
+
+</div><!-- end hub -->
+
+<script>
+var SK = 'langPortal5';
+var PHASE_HOURS = {es:300, pt:75};
+var MONTHS_SHORT = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+var DAYS_FULL = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+var MONTHS_FULL = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+
+var S = {
+  duo: {es:37, pt:10},
+  hours: {es:0, pt:0},
+  classes: [],
+  anki: [
+    {id:'a1', name:'Phase 1 · Phonology · IPA Deck',           reviewed:0, total:0},
+    {id:'a2', name:'Phase 1 · Phonology · Pronunciation',       reviewed:0, total:0},
+    {id:'a3', name:'Phase 1 · Vocab & Grammar · Dictionary PT', reviewed:0, total:0}
+  ],
+  log: []
+};
+
+var activeFilter = 'all';
+var activeSkill = {es:null, pt:null};
+var activeResource = {es:'—', pt:'—'};
+
+var ES_SKILLS = {
+  listening:{title:'Listening & Immersion',desc:'Freeflow listening is your most important activity at Phase 3. Immerse yourself in natural speech without pausing or looking things up.',links:[
+    {icon:'📺',name:'Dreaming Spanish',sub:'Comprehensible input · All levels · Endless episodes',url:'https://www.youtube.com/@DreamingSpanish/videos'},
+    {icon:'🎙️',name:'Radio Ambulante',sub:'Podcast · Journalism · Neutral Latin American Spanish',url:'https://radioambulante.org/en/'},
+    {icon:'🎙️',name:'News in Slow Spanish',sub:'Podcast · Learner-paced news · Spain dialect',url:'https://www.newsinslowspanish.com/'},
+    {icon:'🎙️',name:'Entiende tu Mente',sub:'Podcast · Psychology & mental health · Spain',url:'https://entiendetumente.info/archivo-podcasts/'}
+  ]},
+  speaking:{title:'Speaking & Shadowing',desc:'Shadow native speakers, monologue about your day, or do crosstalk with a native. Focus on fluidity — don\'t stress about perfection.',links:[
+    {icon:'📺',name:'Easy Spanish',sub:'Street interviews · Great for shadowing · Hard subtitles',url:'https://www.youtube.com/channel/UCAL4AMMMXKxHDu3FqZV6CbQ'},
+    {icon:'💬',name:'HelloTalk',sub:'Find native speakers for crosstalk & voice exchange',url:'https://www.hellotalk.com/'},
+    {icon:'💬',name:'Tandem',sub:'Language exchange partner app · Text & voice',url:'https://www.tandem.net/'},
+    {icon:'✍️',name:'Journaly',sub:'Write in Spanish · Get corrections from native speakers',url:'https://journaly.com/'}
+  ]},
+  reading:{title:'Freeflow Reading',desc:'Read without stopping to look up words. Use Language Reactor for dual-subtitle reading on Netflix or YouTube.',links:[
+    {icon:'🎬',name:'La Casa de las Flores · Netflix',sub:'Series · Comedy/Drama · Mexico · Beginner-friendly',url:'https://www.netflix.com/title/80160935'},
+    {icon:'🎬',name:'Aquí No Hay Quien Viva',sub:'Sitcom · Spain · ★★★★ · Great for casual reading',url:'https://anhqv.es/capitulos/'},
+    {icon:'🎬',name:'Language Reactor',sub:'Dual subtitles on Netflix & YouTube · Sentence mining',url:'https://www.languagereactor.com/'},
+    {icon:'📺',name:'Curiosamente',sub:'YouTube · Animated education · Intermediate · Subtitles',url:'https://www.youtube.com/@curiosamente'}
+  ]},
+  writing:{title:'Writing Practice',desc:'Write freely first — journal, react to a video, tell a story. Then review with AI or a tutor. Output practice activates everything you\'ve absorbed.',links:[
+    {icon:'✍️',name:'Journaly',sub:'Journal in Spanish · Native corrections · Free',url:'https://journaly.com/'},
+    {icon:'💬',name:'HelloTalk',sub:'Text native speakers · Casual writing in context',url:'https://www.hellotalk.com/'},
+    {icon:'📖',name:'Lawless Spanish',sub:'Grammar & idioms by level · Great reference while writing',url:'https://progress.lawlessspanish.com/revision'}
+  ]},
+  grammar:{title:'Grammar Brush-Up',desc:'At C1 you don\'t need heavy grammar study — look up patterns you notice in the wild and reactivate what\'s rusty.',links:[
+    {icon:'🎙️',name:'Language Transfer Spanish',sub:'Free audio course · Builds grammatical intuition fast',url:'https://www.languagetransfer.org/free-courses-1#complete-spanish'},
+    {icon:'📖',name:'SpanishDict',sub:'Best Spanish dictionary + grammar explanations',url:'https://www.spanishdict.com/'},
+    {icon:'📖',name:'Lawless Spanish',sub:'Grammar reference organized by level and topic',url:'https://progress.lawlessspanish.com/revision'}
+  ]}
+};
+
+var PT_SKILLS = {
+  phonology:{title:'Phonology & Pronunciation',desc:'Phase 1 starts with connecting written letters to sounds. Do your Anki IPA and Pronunciation decks, then listen and mimic native speech.',links:[
+    {icon:'📺',name:'Teach Yourself Portuguese',sub:'YouTube · Comprehensible input · Super Beginner · BR',url:'https://www.youtube.com/@TeachYourselfPortuguese'},
+    {icon:'📺',name:'Immerse in Portuguese',sub:'YouTube · Comprehensible input · Super Beginner · BR',url:'https://www.youtube.com/@ImmerseInPortuguese'},
+    {icon:'📺',name:'Mundo Bita',sub:'YouTube · Songs for kids · Excellent for phonology · BR',url:'https://youtube.com/@MundoBita?feature=shared'}
+  ]},
+  vocab:{title:'Vocabulary — Anki Study',desc:'Work through your Anki decks daily. The goal is building enough vocabulary to start comprehending simple input.',links:[
+    {icon:'🃏',name:'AnkiWeb — Open Your Decks',sub:'Phase 1 decks: IPA · Pronunciation · Dictionary of PT',url:'https://ankiweb.net/'},
+    {icon:'📺',name:'Portuguese with Eli',sub:'YouTube · Vocabulary in context · BR · Hard subtitles',url:'https://youtube.com/@portuguesewitheli'},
+    {icon:'📺',name:'Bárbara From Brazil',sub:'YouTube · Comprehensible input for vocab building · BR',url:'https://www.youtube.com/@B%C3%A1rbaraFromBrazilbfb'}
+  ]},
+  input:{title:'Comprehensible Input',desc:'Find content where visual context helps you understand even without knowing all the words. Let your brain absorb the patterns.',links:[
+    {icon:'📺',name:'Olga do Brasil',sub:'YouTube · Travel & life · Comprehensible input · BR',url:'https://youtube.com/@olgadobrasil'},
+    {icon:'📺',name:'Smile and Learn Português',sub:'YouTube · Kids content · Perfect comprehensible input · BR',url:'https://www.youtube.com/channel/UCYKeu41LiJOIoyEkStWqCLw'},
+    {icon:'📺',name:'Easy Portuguese',sub:'Street interviews · Hard subtitles · BR & varied',url:'https://www.youtube.com/@EasyPortugueseVideos'},
+    {icon:'🎙️',name:'BrazilianPodClass',sub:'Podcast · Learner · Beginner · BR',url:'https://brazilianpodclass-learn-portuguese.teachable.com/'}
+  ]},
+  grammar:{title:'Basic Grammar',desc:'Read about grammar principles enough to understand what you\'re hearing. Don\'t drill — just enough to recognize patterns during immersion.',links:[
+    {icon:'📺',name:'Português com Marcia Macedo',sub:'YouTube · Teaching · Beginner · BR',url:'https://www.youtube.com/c/Portugu%C3%AAscomMarciaMacedoBR'},
+    {icon:'📖',name:'Conjugação de Verbos',sub:'Verb conjugation reference · BR Portuguese',url:'https://www.conjugacao.com.br/'},
+    {icon:'📖',name:'Dicio — BR Dictionary',sub:'Monolingual dictionary · BR Portuguese · With example sentences',url:'https://www.dicio.com.br/'}
+  ]}
+};
+
+function switchTab(tab) {
+  document.querySelectorAll('.page').forEach(function(p){p.classList.remove('active');});
+  document.querySelectorAll('.lang-tab').forEach(function(t){t.classList.remove('es-active','pt-active','log-active');});
+  document.getElementById('page-'+tab).classList.add('active');
+  document.getElementById('tab-'+tab).classList.add(tab+'-active');
+  if (tab==='log') renderLog();
+}
+
+function selectSkill(lang, skill, btn) {
+  activeSkill[lang] = skill;
+  activeResource[lang] = '—';
+  document.querySelectorAll('#page-'+lang+' .skill-btn').forEach(function(b){b.classList.remove('es-sel','pt-sel');});
+  btn.classList.add(lang+'-sel');
+  var data = lang==='es' ? ES_SKILLS[skill] : PT_SKILLS[skill];
+  var linksHtml = data.links.map(function(l){
+    return '<a href="'+l.url+'" target="_blank" class="rp-link" onclick="activeResource[\''+lang+'\']= \''+l.name.replace(/'/g,'')+'\'">' +
+      '<span class="rp-link-icon">'+l.icon+'</span>' +
+      '<div class="rp-link-info"><div class="rp-link-name">'+l.name+'</div><div class="rp-link-sub">'+l.sub+'</div></div>' +
+      '<span style="color:var(--muted);font-size:0.72rem;">↗</span></a>';
+  }).join('');
+  var panel = document.getElementById(lang+'-resource-panel');
+  panel.innerHTML = '<div class="resource-panel"><div class="rp-title">'+data.title+'</div><div class="rp-desc">'+data.desc+'</div><div class="rp-links">'+linksHtml+'</div></div>';
+  panel.style.display = 'block';
+  document.getElementById(lang+'-log-row').style.display = 'flex';
+}
+
+function logTime(lang, mins, evt) {
+  var skill = activeSkill[lang] || 'General';
+  var skillData = lang==='es' ? ES_SKILLS[skill] : PT_SKILLS[skill];
+  var skillLabel = skillData ? skillData.title : skill;
+  var resource = activeResource[lang] || '—';
+  var now = new Date();
+  S.log.unshift({
+    id: 'l_'+Date.now(),
+    lang: lang,
+    skill: skill,
+    skillLabel: skillLabel,
+    resource: resource,
+    mins: mins,
+    date: now.toISOString(),
+  });
+  S.hours[lang] = (S.hours[lang]||0) + mins/60;
+  updateHours(lang);
+  saveState();
+  var btn = evt.target;
+  btn.classList.add('flashed');
+  setTimeout(function(){btn.classList.remove('flashed');}, 700);
+}
+
+function updateHours(lang) {
+  var h = S.hours[lang]||0;
+  var total = PHASE_HOURS[lang];
+  var th = Math.floor(h), tm = Math.round((h-th)*60);
+  var pct = Math.min(100,(h/total*100)).toFixed(0);
+  var display = h===0 ? '0h' : th>0 ? th+'h '+(tm?tm+'m':'') : tm+'m';
+  document.getElementById(lang+'-hrs-display').textContent = display;
+  document.getElementById(lang+'-phase-bar').style.width = pct+'%';
+}
+
+function updateDuo(lang) {
+  var val = Math.min(160,Math.max(0,parseInt(document.getElementById('duo-'+lang).value)||0));
+  S.duo[lang] = val;
+  var pct = (val/160*100).toFixed(0);
+  document.getElementById('duo-bar-'+lang).style.width = pct+'%';
+  document.getElementById('duo-'+lang+'-pct').textContent = pct+'%';
+  saveState();
+}
+
+function renderDuo() {
+  ['es','pt'].forEach(function(lang){
+    var val = S.duo[lang]||0;
+    document.getElementById('duo-'+lang).value = val;
+    var pct = (val/160*100).toFixed(0);
+    document.getElementById('duo-bar-'+lang).style.width = pct+'%';
+    document.getElementById('duo-'+lang+'-pct').textContent = pct+'%';
+  });
+}
+
+function renderLog() {
+  var months = {}, years = {}, hasEs = false, hasPt = false;
+  S.log.forEach(function(e){
+    var d = new Date(e.date);
+    var mk = d.getFullYear()+'-'+d.getMonth();
+    var yk = ''+d.getFullYear();
+    months[mk] = {y:d.getFullYear(), m:d.getMonth(), label:MONTHS_SHORT[d.getMonth()]+' '+d.getFullYear()};
+    years[yk] = d.getFullYear();
+    if (e.lang==='es') hasEs=true;
+    if (e.lang==='pt') hasPt=true;
+  });
+
+  // Summary cards
+  ['es','pt'].forEach(function(lang){
+    var h = S.hours[lang]||0;
+    var total = PHASE_HOURS[lang];
+    var th=Math.floor(h), tm=Math.round((h-th)*60);
+    var pct=Math.min(100,(h/total*100)).toFixed(0);
+    document.getElementById('log-'+lang+'-hrs').textContent = th+'h '+tm+'m';
+    document.getElementById('log-'+lang+'-pct').textContent = pct+'% of ~'+total+'h phase';
+    document.getElementById('log-'+lang+'-bar').style.width = pct+'%';
+  });
+
+  // Filters
+  var sortedMonths = Object.keys(months).sort().reverse();
+  var sortedYears = Object.keys(years).sort().reverse();
+  var fHtml = '<button class="lf-btn'+(activeFilter==='all'?' active':'')+'" onclick="setFilter(\'all\',this)">All</button>';
+  if (hasEs) fHtml += '<button class="lf-btn es-f'+(activeFilter==='lang-es'?' active':'')+'" onclick="setFilter(\'lang-es\',this)">🇪🇸 Spanish</button>';
+  if (hasPt) fHtml += '<button class="lf-btn pt-f'+(activeFilter==='lang-pt'?' active':'')+'" onclick="setFilter(\'lang-pt\',this)">🇧🇷 Portuguese</button>';
+  if (sortedYears.length) {
+    fHtml += '<div class="lf-sep"></div>';
+    sortedYears.forEach(function(y){ fHtml += '<button class="lf-btn'+(activeFilter==='year-'+y?' active':'')+'" onclick="setFilter(\'year-'+y+'\',this)">'+y+'</button>'; });
+  }
+  if (sortedMonths.length) {
+    fHtml += '<div class="lf-sep"></div>';
+    sortedMonths.forEach(function(mk){ fHtml += '<button class="lf-btn'+(activeFilter==='month-'+mk?' active':'')+'" onclick="setFilter(\'month-'+mk+'\',this)">'+months[mk].label+'</button>'; });
+  }
+  document.getElementById('log-filters').innerHTML = fHtml;
+
+  // Filter entries
+  var filtered = S.log.filter(function(e){
+    if (activeFilter==='all') return true;
+    if (activeFilter==='lang-es') return e.lang==='es';
+    if (activeFilter==='lang-pt') return e.lang==='pt';
+    var d = new Date(e.date);
+    if (activeFilter.startsWith('year-')) return ''+d.getFullYear()===activeFilter.replace('year-','');
+    if (activeFilter.startsWith('month-')) return d.getFullYear()+'-'+d.getMonth()===activeFilter.replace('month-','');
+    return true;
+  });
+
+  var totalMins = filtered.reduce(function(s,e){return s+e.mins;},0);
+  var th=Math.floor(totalMins/60), tm=totalMins%60;
+  document.getElementById('log-total-display').innerHTML = filtered.length+' session'+(filtered.length!==1?'s':'')+'<span>· '+th+'h '+tm+'m total</span>';
+
+  var container = document.getElementById('log-entries');
+  if (!filtered.length) { container.innerHTML = '<div class="log-empty">No sessions logged yet. Pick a skill, open a resource, then log your time.</div>'; return; }
+  container.innerHTML = '';
+  filtered.forEach(function(e){
+    var d = new Date(e.date);
+    var dateStr = MONTHS_SHORT[d.getMonth()]+' '+d.getDate()+', '+d.getFullYear();
+    var h=Math.floor(e.mins/60), m=e.mins%60;
+    var durStr = h>0 ? h+'h'+(m?' '+m+'m':'') : m+'m';
+    var flag = e.lang==='es'?'🇪🇸':'🇧🇷';
+    var div = document.createElement('div'); div.className='log-entry';
+    div.innerHTML =
+      '<span class="log-entry-flag">'+flag+'</span>'+
+      '<div class="log-entry-info">'+
+        '<div class="log-entry-skill">'+e.skillLabel+'</div>'+
+        (e.resource&&e.resource!=='—'?'<div class="log-entry-resource">'+e.resource+'</div>':'')+
+        '<div class="log-entry-date">'+dateStr+'</div>'+
+      '</div>'+
+      '<span class="log-entry-dur '+e.lang+'">'+durStr+'</span>'+
+      '<button class="log-del-btn" onclick="deleteLog(\''+e.id+'\')">✕</button>';
+    container.appendChild(div);
+  });
+}
+
+function setFilter(f, btn) {
+  activeFilter = f;
+  renderLog();
+}
+
+function deleteLog(id) {
+  var entry = S.log.find(function(e){return e.id===id;});
+  if (!entry) return;
+  S.hours[entry.lang] = Math.max(0,(S.hours[entry.lang]||0)-entry.mins/60);
+  S.log = S.log.filter(function(e){return e.id!==id;});
+  updateHours(entry.lang);
+  saveState();
+  renderLog();
+}
+
+// ANKI
+function saveAnkiDeck() {
+  var name = document.getElementById('ai-name').value.trim();
+  if (!name) return;
+  S.anki.push({id:'a_'+Date.now(), name:name, reviewed:0, total:parseInt(document.getElementById('ai-total').value)||0});
+  saveState(); renderAnki(); closeModal('anki-modal');
+}
+
+function updateAnkiField(id, field, val) {
+  var d = S.anki.find(function(a){return a.id===id;});
+  if (d) { d[field]=parseInt(val)||0; saveState(); }
+}
+
+function deleteAnkiDeck(id) {
+  if (!confirm('Remove this deck?')) return;
+  S.anki = S.anki.filter(function(a){return a.id!==id;});
+  saveState(); renderAnki();
+}
+
+function renderAnki() {
+  var c = document.getElementById('anki-decks');
+  if (!S.anki.length) { c.innerHTML='<p style="font-size:0.74rem;color:var(--muted);font-style:italic;">No decks added.</p>'; return; }
+  c.innerHTML='';
+  S.anki.forEach(function(d){
+    var pct = d.total > 0 ? Math.min(100, Math.round(d.reviewed/d.total*100)) : 0;
+    var div=document.createElement('div'); div.className='anki-deck';
+    div.innerHTML=
+      '<button class="anki-del" onclick="deleteAnkiDeck(\''+d.id+'\')">✕</button>'+
+      '<div class="anki-deck-name">'+d.name+'</div>'+
+      '<div style="display:flex;align-items:center;gap:12px;margin-bottom:6px;">'+
+        '<div style="flex:1;height:5px;background:var(--rule);border-radius:3px;overflow:hidden;">'+
+          '<div style="height:100%;width:'+pct+'%;background:var(--pt2);border-radius:3px;transition:width .3s;"></div>'+
+        '</div>'+
+        '<span style="font-family:\'Cormorant Garamond\',serif;font-size:0.95rem;font-weight:600;color:var(--pt2);flex-shrink:0;" id="anki-rev-'+d.id+'">'+d.reviewed+'</span>'+
+        '<span style="font-size:0.68rem;color:var(--muted);flex-shrink:0;">reviewed</span>'+
+        '<span style="font-size:0.68rem;font-weight:600;color:var(--muted);flex-shrink:0;">'+pct+'%</span>'+
+      '</div>'+
+      '<div style="display:flex;align-items:center;gap:8px;">'+
+        '<span style="font-size:0.65rem;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;">Update reviewed:</span>'+
+        '<input class="anki-field-input" type="number" min="0" value="'+d.reviewed+'" onchange="updateAnkiField(\''+d.id+'\',\'reviewed\',this.value);document.getElementById(\'anki-rev-'+d.id+'\').textContent=this.value||0;renderAnki();" style="width:56px;">'+
+        '<span style="font-size:0.65rem;color:var(--muted);">/ </span>'+
+        '<input class="anki-field-input" type="number" min="0" value="'+d.total+'" onchange="updateAnkiField(\''+d.id+'\',\'total\',this.value);renderAnki();" style="width:56px;" placeholder="total">'+
+        '<span style="font-size:0.65rem;color:var(--muted);">total cards</span>'+
+      '</div>';
+    c.appendChild(div);
+  });
+}
+
+// CLASSES
+function openClassModal(lang) {
+  document.getElementById('ci-lang').value = lang||'pt';
+  document.getElementById('cls-modal').classList.add('open');
+}
+
+function saveClass() {
+  var name = document.getElementById('ci-name').value.trim();
+  if (!name) return;
+  S.classes.push({id:'cl_'+Date.now(), lang:document.getElementById('ci-lang').value, name:name, level:document.getElementById('ci-level').value.trim(), org:document.getElementById('ci-org').value.trim(), prof:document.getElementById('ci-prof').value.trim(), loc:document.getElementById('ci-loc').value.trim(), time:document.getElementById('ci-time').value.trim(), dates:document.getElementById('ci-dates').value.trim(), notes:document.getElementById('ci-notes').value.trim()});
+  saveState(); renderClasses(); closeModal('cls-modal');
+}
+
+function deleteClass(id) {
+  if (!confirm('Remove this class?')) return;
+  S.classes = S.classes.filter(function(c){return c.id!==id;});
+  saveState(); renderClasses();
+}
+
+function renderClasses() {
+  ['es','pt'].forEach(function(lang){
+    var c = document.getElementById('classes-'+lang);
+    var list = S.classes.filter(function(x){return x.lang===lang;});
+    if (!list.length) { c.innerHTML='<p style="font-size:0.76rem;color:var(--muted);font-style:italic;margin-bottom:12px;">No classes added yet.</p>'; return; }
+    c.innerHTML='';
+    list.forEach(function(x){
+      var div=document.createElement('div'); div.className='class-card';
+      var rows='';
+      if(x.org)   rows+='<div class="class-row"><span class="class-key">Institution</span><span>'+x.org+'</span></div>';
+      if(x.prof)  rows+='<div class="class-row"><span class="class-key">Professor</span><span>'+x.prof+'</span></div>';
+      if(x.loc)   rows+='<div class="class-row"><span class="class-key">Location</span><span>'+x.loc+'</span></div>';
+      if(x.time)  rows+='<div class="class-row"><span class="class-key">Schedule</span><span>'+x.time+'</span></div>';
+      if(x.dates) rows+='<div class="class-row"><span class="class-key">Dates</span><span>'+x.dates+'</span></div>';
+      if(x.notes) rows+='<div class="class-row"><span class="class-key">Notes</span><span>'+x.notes+'</span></div>';
+      div.innerHTML='<button class="class-del" onclick="deleteClass(\''+x.id+'\')">✕ Remove</button>'+
+        '<div class="class-name">'+x.name+(x.level?' <span style="font-size:0.7rem;color:var(--muted);font-weight:400;">· '+x.level+'</span>':'')+'</div>'+
+        '<div class="class-details">'+rows+'</div>';
+      c.appendChild(div);
+    });
+  });
+}
+
+function closeModal(id) {
+  document.getElementById(id).classList.remove('open');
+  document.querySelectorAll('#'+id+' input, #'+id+' textarea').forEach(function(el){el.value='';});
+}
+
+function loadState() {
+  var raw = localStorage.getItem(SK);
+  if (raw) { try { S=JSON.parse(raw); } catch(e){} }
+}
+function saveState() { localStorage.setItem(SK, JSON.stringify(S)); }
+
+var now = new Date();
+document.getElementById('today-date').textContent = DAYS_FULL[now.getDay()]+', '+MONTHS_FULL[now.getMonth()]+' '+now.getDate()+', '+now.getFullYear();
+
+loadState();
+renderDuo();
+updateHours('es');
+updateHours('pt');
+renderAnki();
+renderClasses();
+</script>
+</body>
+</html>
