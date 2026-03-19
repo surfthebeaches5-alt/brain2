@@ -1,0 +1,421 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Professional Development Tracker</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,400&family=Jost:wght@300;400;500;600&display=swap');
+:root{--blush:#f2c4ce;--rose:#e8a0b0;--mauve:#c9a0b4;--lavender:#d4b8e0;--sage:#b8cfb0;--cream:#fdf6f0;--warm:#f7ece4;--ink:#3a2a2e;--muted:#9a8088;--rule:#e0cec8;}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{background:#f0e8e4;font-family:'Jost',sans-serif;color:var(--ink);}
+.topbar{background:var(--cream);border-bottom:1px solid var(--rule);padding:14px 32px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;}
+.topbar-title{font-family:'Cormorant Garamond',serif;font-size:1.6rem;font-weight:300;letter-spacing:2px;}
+.topbar-title em{font-style:italic;color:var(--mauve);}
+.topbar-right{display:flex;align-items:center;gap:12px;}
+.topbar-date{font-size:0.68rem;letter-spacing:2px;text-transform:uppercase;color:var(--muted);}
+.back-btn{display:inline-flex;align-items:center;gap:6px;padding:6px 14px;border:1.5px solid var(--rule);border-radius:20px;font-size:0.72rem;color:var(--muted);cursor:pointer;background:transparent;font-family:'Jost',sans-serif;text-decoration:none;transition:all .15s;}
+.back-btn:hover{border-color:var(--rose);color:var(--ink);}
+.add-btn{display:inline-flex;align-items:center;gap:6px;padding:6px 16px;border:1.5px solid var(--mauve);border-radius:20px;font-size:0.72rem;color:var(--mauve);cursor:pointer;background:transparent;font-family:'Jost',sans-serif;font-weight:600;transition:all .15s;}
+.add-btn:hover{background:var(--blush);border-color:var(--rose);color:var(--ink);}
+.hub{max-width:1000px;margin:0 auto;padding:24px 24px 60px;}
+.summary-bar{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:24px;}
+.summary-card{background:var(--cream);border:1px solid var(--rule);border-radius:12px;padding:14px 18px;text-align:center;}
+.summary-num{font-family:'Cormorant Garamond',serif;font-size:2rem;font-weight:600;color:var(--ink);line-height:1;}
+.summary-label{font-size:0.62rem;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin-top:4px;}
+.coursera-link{display:flex;align-items:center;justify-content:space-between;background:linear-gradient(135deg,#fce8ef,#f0e0f0);border:1px solid var(--blush);border-radius:12px;padding:12px 20px;margin-bottom:24px;}
+.coursera-label{font-size:0.78rem;font-weight:500;}
+.coursera-sub{font-size:0.68rem;color:var(--muted);margin-top:1px;}
+.open-btn{display:inline-flex;align-items:center;gap:5px;padding:6px 16px;background:var(--mauve);color:white;border:none;border-radius:16px;font-size:0.72rem;font-weight:600;cursor:pointer;font-family:'Jost',sans-serif;text-decoration:none;transition:all .15s;}
+.open-btn:hover{background:var(--rose);}
+.program-card{background:var(--cream);border:1px solid var(--rule);border-radius:14px;margin-bottom:16px;overflow:hidden;}
+.program-header{padding:16px 20px 12px;display:flex;align-items:center;gap:12px;cursor:pointer;user-select:none;}
+.program-header:hover{background:var(--warm);}
+.program-platform{font-size:0.6rem;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin-bottom:2px;}
+.program-name{font-family:'Cormorant Garamond',serif;font-size:1.05rem;font-weight:600;color:var(--ink);flex:1;}
+.prog-pct{font-family:'Cormorant Garamond',serif;font-size:1.1rem;font-weight:600;color:var(--mauve);}
+.chevron{font-size:0.7rem;color:var(--muted);transition:transform .2s;display:inline-block;}
+.chevron.open{transform:rotate(180deg);}
+.prog-bar-wrap{padding:0 20px 14px;}
+.prog-bar{height:5px;background:var(--rule);border-radius:3px;overflow:hidden;}
+.prog-fill{height:100%;border-radius:3px;background:linear-gradient(90deg,var(--blush),var(--mauve));transition:width .4s;}
+.courses-wrap{border-top:1px solid var(--rule);padding:0 20px;}
+.course-row{display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid var(--rule);}
+.course-row:last-child{border-bottom:none;}
+.course-status{width:20px;height:20px;border-radius:50%;border:1.5px solid var(--rule);display:flex;align-items:center;justify-content:center;font-size:9px;flex-shrink:0;cursor:pointer;transition:all .15s;}
+.course-status.done{background:var(--sage);border-color:var(--sage);color:white;}
+.course-status.in-progress{background:var(--blush);border-color:var(--rose);}
+.course-status.not-started{background:white;}
+.course-info{flex:1;min-width:0;}
+.course-name{font-size:0.8rem;font-weight:500;}
+.course-meta{font-size:0.66rem;color:var(--muted);margin-top:1px;}
+.mini-prog{width:80px;height:4px;background:var(--rule);border-radius:2px;overflow:hidden;flex-shrink:0;}
+.mini-fill{height:100%;border-radius:2px;background:linear-gradient(90deg,var(--blush),var(--mauve));}
+.course-pct-input{width:52px;border:1.5px solid var(--rule);border-radius:8px;padding:3px 6px;font-size:0.72rem;font-family:'Jost',sans-serif;color:var(--ink);text-align:center;background:var(--warm);outline:none;}
+.course-pct-input:focus{border-color:var(--mauve);}
+.pct-label{font-size:0.68rem;color:var(--muted);flex-shrink:0;}
+.del-btn{font-size:0.62rem;color:var(--muted);background:transparent;border:none;cursor:pointer;padding:2px 6px;border-radius:6px;transition:all .15s;flex-shrink:0;}
+.del-btn:hover{background:#fce4ec;color:#a0304a;}
+.add-course-row{display:flex;padding:8px 0;border-top:1px dashed var(--rule);margin-top:2px;}
+.add-course-btn{font-size:0.7rem;color:var(--mauve);background:transparent;border:none;cursor:pointer;font-family:'Jost',sans-serif;font-weight:600;}
+.add-course-btn:hover{color:var(--rose);}
+.del-prog-row{padding:6px 20px 12px;display:flex;justify-content:flex-end;}
+.modal-overlay{display:none;position:fixed;inset:0;background:rgba(58,42,46,.35);z-index:200;align-items:center;justify-content:center;}
+.modal-overlay.open{display:flex;}
+.modal{background:var(--cream);border-radius:16px;border:1px solid var(--rule);padding:28px 32px;width:90%;max-width:500px;}
+.modal-title{font-family:'Cormorant Garamond',serif;font-size:1.3rem;font-weight:600;margin-bottom:18px;}
+.form-field{margin-bottom:14px;}
+.form-label{font-size:0.65rem;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin-bottom:5px;display:block;}
+.form-input{width:100%;border:1.5px solid var(--rule);border-radius:8px;padding:8px 12px;font-size:0.8rem;font-family:'Jost',sans-serif;color:var(--ink);background:var(--warm);outline:none;}
+.form-input:focus{border-color:var(--mauve);}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+.modal-actions{display:flex;gap:10px;justify-content:flex-end;margin-top:20px;}
+.modal-btn{padding:8px 20px;border-radius:20px;font-family:'Jost',sans-serif;font-size:0.78rem;font-weight:600;cursor:pointer;border:1.5px solid;transition:all .15s;}
+.modal-cancel{background:var(--warm);border-color:var(--rule);color:var(--muted);}
+.modal-cancel:hover{border-color:var(--rose);color:var(--ink);}
+.modal-save{background:var(--mauve);border-color:var(--mauve);color:white;}
+.modal-save:hover{background:var(--rose);border-color:var(--rose);}
+</style>
+</head>
+<body>
+
+<div class="modal-overlay" id="modal-overlay">
+  <div class="modal">
+    <div class="modal-title">Add New Program</div>
+    <div class="form-field">
+      <label class="form-label">Program Name</label>
+      <input class="form-input" id="new-prog-name" type="text" placeholder="e.g. Google Data Analytics">
+    </div>
+    <div class="form-row">
+      <div class="form-field">
+        <label class="form-label">Platform</label>
+        <input class="form-input" id="new-prog-platform" type="text" placeholder="e.g. Coursera">
+      </div>
+      <div class="form-field">
+        <label class="form-label">Category</label>
+        <select class="form-input" id="new-prog-category">
+          <option>Data & Analytics</option>
+          <option>Design & UX</option>
+          <option>Business & Marketing</option>
+          <option>Technology & Engineering</option>
+          <option>Politics & Intl Relations</option>
+          <option>Languages</option>
+          <option>Leadership & Management</option>
+          <option>Finance & Economics</option>
+          <option>Health & Wellness</option>
+          <option>Other</option>
+        </select>
+      </div>
+    </div>
+    <div class="form-field">
+      <label class="form-label">First Course Name</label>
+      <input class="form-input" id="new-course-name" type="text" placeholder="Course 1 name">
+    </div>
+    <div class="modal-actions">
+      <button class="modal-btn modal-cancel" onclick="closeModal()">Cancel</button>
+      <button class="modal-btn modal-save" onclick="saveNewProgram()">Add Program ✦</button>
+    </div>
+  </div>
+</div>
+
+<div class="topbar">
+  <div class="topbar-title">Professional <em>Development</em></div>
+  <div class="topbar-right">
+    <a href="#" class="back-btn">← Brain 2.0</a>
+    <button class="add-btn" onclick="openModal()">＋ Add Program</button>
+    <span class="topbar-date" id="today-date"></span>
+  </div>
+</div>
+
+<div class="hub">
+  <div class="summary-bar" id="summary-bar"></div>
+  <div class="coursera-link">
+    <div>
+      <div class="coursera-label">Coursera — My Learning</div>
+      <div class="coursera-sub">All active and saved courses</div>
+    </div>
+    <a href="https://www.coursera.org/my-learning?myLearningTab=IN_PROGRESS" target="_blank" class="open-btn">Open Coursera ↗</a>
+  </div>
+  <div id="programs-wrap"></div>
+</div>
+
+<script>
+var CAT_COLORS = {
+  'Data & Analytics':          '#f2c4ce',
+  'Design & UX':               '#d4b8e0',
+  'Business & Marketing':      '#b8cfb0',
+  'Technology & Engineering':  '#c9a0b4',
+  'Politics & Intl Relations': '#b8d4f0',
+  'Languages':                 '#f0dea0',
+  'Leadership & Management':   '#f4b8d4',
+  'Finance & Economics':       '#a8d8d0',
+  'Health & Wellness':         '#b8d4b0',
+  'Other':                     '#e0cec8'
+};
+
+var DEFAULT_PROGRAMS = [
+  {
+    id:'p1', name:'Data Skills for Excel Professionals',
+    platform:'CFI', category:'Data & Analytics',
+    courses:[
+      {name:'Fundamentals of Data Analysis in Excel', pct:0, num:1, total:3},
+      {name:'Power Query Fundamentals',               pct:0, num:2, total:3},
+      {name:'Power Pivot Fundamentals',               pct:0, num:3, total:3}
+    ]
+  },
+  {
+    id:'p2', name:'Exam Prep PL-400: Microsoft Power Platform Developer',
+    platform:'Microsoft', category:'Technology & Engineering',
+    courses:[
+      {name:'Microsoft Power Platform: Extend the user experience',         pct:0, num:1, total:3},
+      {name:'Power Automate: Building and Managing Automated Workflows',     pct:0, num:2, total:3},
+      {name:'Extend Microsoft Power Platform with Seamless Integrations',    pct:0, num:3, total:3}
+    ]
+  },
+  {
+    id:'p3', name:'Data Management: Dictionaries, Quality and Communication',
+    platform:'Coursera', category:'Data & Analytics',
+    courses:[
+      {name:'Data Management: Dictionaries, Quality and Communication', pct:27, num:1, total:1}
+    ]
+  },
+  {
+    id:'p4', name:'Google UX Design',
+    platform:'Google / Coursera', category:'Design & UX',
+    courses:[
+      {name:'Foundations of User Experience (UX) Design',               pct:100, num:1, total:8},
+      {name:'Start the UX Design Process: Empathize, Define, Ideate',   pct:100, num:2, total:8},
+      {name:'Build Wireframes and Low-Fidelity Prototypes',             pct:37,  num:3, total:8},
+      {name:'Conduct UX Research and Test Early Concepts',              pct:0,   num:4, total:8},
+      {name:'Create High-Fidelity Designs and Prototypes in Figma',     pct:0,   num:5, total:8},
+      {name:'Build Dynamic User Interfaces (UI) for Websites',          pct:0,   num:6, total:8},
+      {name:'Design a User Experience for Social Good & Prepare for Jobs', pct:0, num:7, total:8},
+      {name:'Accelerate Your Job Search with AI',                       pct:0,   num:8, total:8}
+    ]
+  },
+  {
+    id:'p5', name:'Beginner: Figma UI / UX Design Essentials',
+    platform:'Skillshare', category:'Design & UX',
+    courses:[
+      {name:'Figma UI UX Design Essentials Pt.1: Tools & Foundations',  pct:33, num:1, total:3},
+      {name:'Figma UI UX Design Essentials Pt.2: Layout & Components',  pct:0,  num:2, total:3},
+      {name:'Figma UI UX Design Essentials Pt.3: Prototypes & Handoff', pct:0,  num:3, total:3}
+    ]
+  },
+  {
+    id:'p6', name:'Microsoft Power BI Data Analyst',
+    platform:'Microsoft / Coursera', category:'Data & Analytics',
+    courses:[
+      {name:'Preparing Data for Analysis with Microsoft Excel',      pct:100, num:1, total:8},
+      {name:'Harnessing the Power of Data with Power BI',            pct:71,  num:2, total:8},
+      {name:'Extract, Transform and Load Data in Power BI',          pct:0,   num:3, total:8},
+      {name:'Data Modeling in Power BI',                             pct:0,   num:4, total:8},
+      {name:'Data Analysis and Visualization with Power BI',         pct:0,   num:5, total:8},
+      {name:'Creative Designing in Power BI',                        pct:0,   num:6, total:8},
+      {name:'Deploy and Maintain Power BI Assets and Capstone',      pct:0,   num:7, total:8},
+      {name:'Microsoft PL-300 Exam Preparation and Practice',        pct:0,   num:8, total:8}
+    ]
+  },
+  {
+    id:'p7', name:'Global Diplomacy – Diplomacy in the Modern World',
+    platform:'University of London / Coursera', category:'Politics & Intl Relations',
+    courses:[
+      {name:'Global Diplomacy – Diplomacy in the Modern World', pct:0, num:1, total:1}
+    ]
+  },
+  {
+    id:'p8', name:'Business and Marketing Strategies',
+    platform:'University of London / Coursera', category:'Business & Marketing',
+    courses:[
+      {name:'Fundamentals of Marketing Strategy',     pct:0, num:1, total:4},
+      {name:'Fundamentals of International Business', pct:0, num:2, total:4},
+      {name:'Operations Systems Excellence',          pct:0, num:3, total:4},
+      {name:'Consumption, Marketing and Culture',     pct:0, num:4, total:4}
+    ]
+  }
+];
+
+var programs = [];
+var openState = {};
+
+function loadData() {
+  var raw = localStorage.getItem('profDevData2');
+  if (raw) {
+    try { programs = JSON.parse(raw); }
+    catch(e) { programs = JSON.parse(JSON.stringify(DEFAULT_PROGRAMS)); }
+  } else {
+    programs = JSON.parse(JSON.stringify(DEFAULT_PROGRAMS));
+    saveData();
+  }
+}
+
+function saveData() {
+  localStorage.setItem('profDevData2', JSON.stringify(programs));
+}
+
+function progPct(prog) {
+  if (!prog.courses.length) return 0;
+  return Math.round(prog.courses.reduce(function(s,c){return s+c.pct;},0) / prog.courses.length);
+}
+
+function renderSummary() {
+  var total = programs.length;
+  var inprog = programs.filter(function(p){var pc=progPct(p);return pc>0&&pc<100;}).length;
+  var allC = programs.reduce(function(a,p){return a.concat(p.courses);},[]);
+  var doneC = allC.filter(function(c){return c.pct>=100;}).length;
+  var overall = allC.length ? Math.round(allC.reduce(function(s,c){return s+c.pct;},0)/allC.length) : 0;
+  document.getElementById('summary-bar').innerHTML =
+    '<div class="summary-card" style="border-top:3px solid var(--blush)"><div class="summary-num">'+total+'</div><div class="summary-label">Programs</div></div>' +
+    '<div class="summary-card" style="border-top:3px solid var(--sage)"><div class="summary-num">'+inprog+'</div><div class="summary-label">In Progress</div></div>' +
+    '<div class="summary-card" style="border-top:3px solid var(--lavender)"><div class="summary-num">'+doneC+'</div><div class="summary-label">Courses Done</div></div>' +
+    '<div class="summary-card" style="border-top:3px solid var(--mauve)"><div class="summary-num">'+overall+'%</div><div class="summary-label">Overall Progress</div></div>';
+}
+
+function renderPrograms() {
+  var wrap = document.getElementById('programs-wrap');
+  wrap.innerHTML = '';
+  programs.forEach(function(prog, pi) {
+    var pct = progPct(prog);
+    var accent = CAT_COLORS[prog.category] || '#e0cec8';
+    var isOpen = openState[prog.id] !== false;
+
+    var card = document.createElement('div');
+    card.className = 'program-card';
+    card.style.borderTop = '3px solid ' + accent;
+
+    // header
+    var hdr = document.createElement('div');
+    hdr.className = 'program-header';
+    hdr.innerHTML =
+      '<div style="flex:1;min-width:0;">' +
+        '<div class="program-platform">' + prog.platform + ' · ' + prog.category + '</div>' +
+        '<div class="program-name">' + prog.name + '</div>' +
+      '</div>' +
+      '<div style="display:flex;align-items:center;gap:10px;flex-shrink:0;">' +
+        '<span class="prog-pct">' + pct + '%</span>' +
+        '<span class="chevron ' + (isOpen?'open':'') + '">▼</span>' +
+      '</div>';
+    hdr.onclick = (function(id, c){
+      return function() {
+        openState[id] = openState[id] === false ? true : false;
+        var cw = c.querySelector('.courses-wrap');
+        var ch = c.querySelector('.chevron');
+        cw.style.display = openState[id] === false ? 'none' : 'block';
+        ch.classList.toggle('open', openState[id] !== false);
+      };
+    })(prog.id, card);
+    card.appendChild(hdr);
+
+    // progress bar
+    var bw = document.createElement('div');
+    bw.className = 'prog-bar-wrap';
+    bw.innerHTML = '<div class="prog-bar"><div class="prog-fill" style="width:'+pct+'%;background:linear-gradient(90deg,'+accent+','+accent+'cc)"></div></div>';
+    card.appendChild(bw);
+
+    // courses
+    var cw = document.createElement('div');
+    cw.className = 'courses-wrap';
+    cw.style.display = isOpen ? 'block' : 'none';
+
+    prog.courses.forEach(function(course, ci) {
+      var st = course.pct >= 100 ? 'done' : course.pct > 0 ? 'in-progress' : 'not-started';
+      var sym = course.pct >= 100 ? '✓' : '';
+      var row = document.createElement('div');
+      row.className = 'course-row';
+      row.innerHTML =
+        '<div class="course-status ' + st + '" onclick="toggleCourse('+pi+','+ci+')">' + sym + '</div>' +
+        '<div class="course-info">' +
+          '<div class="course-name">' + course.name + '</div>' +
+          '<div class="course-meta">Course ' + course.num + ' of ' + course.total + '</div>' +
+        '</div>' +
+        '<div class="mini-prog"><div class="mini-fill" style="width:'+course.pct+'%"></div></div>' +
+        '<input class="course-pct-input" type="number" min="0" max="100" value="'+course.pct+'" ' +
+          'onchange="updatePct('+pi+','+ci+',this.value)" onclick="event.stopPropagation()">' +
+        '<span class="pct-label">%</span>' +
+        '<button class="del-btn" onclick="deleteCourse('+pi+','+ci+')">✕</button>';
+      cw.appendChild(row);
+    });
+
+    // add course
+    var ar = document.createElement('div');
+    ar.className = 'add-course-row';
+    ar.innerHTML = '<button class="add-course-btn" onclick="addCourse('+pi+')">＋ Add course</button>';
+    cw.appendChild(ar);
+    card.appendChild(cw);
+
+    // delete program
+    var dr = document.createElement('div');
+    dr.className = 'del-prog-row';
+    dr.innerHTML = '<button class="del-btn" onclick="deleteProgram('+pi+')">✕ Remove program</button>';
+    card.appendChild(dr);
+
+    wrap.appendChild(card);
+  });
+  renderSummary();
+}
+
+function updatePct(pi, ci, val) {
+  programs[pi].courses[ci].pct = Math.min(100, Math.max(0, parseInt(val)||0));
+  saveData(); renderPrograms();
+}
+
+function toggleCourse(pi, ci) {
+  programs[pi].courses[ci].pct = programs[pi].courses[ci].pct >= 100 ? 0 : 100;
+  saveData(); renderPrograms();
+}
+
+function addCourse(pi) {
+  var name = prompt('Course name:');
+  if (!name) return;
+  var total = programs[pi].courses.length + 1;
+  programs[pi].courses.forEach(function(c){c.total=total;});
+  programs[pi].courses.push({name:name, pct:0, num:total, total:total});
+  saveData(); renderPrograms();
+}
+
+function deleteCourse(pi, ci) {
+  if (!confirm('Remove this course?')) return;
+  programs[pi].courses.splice(ci, 1);
+  var total = programs[pi].courses.length;
+  programs[pi].courses.forEach(function(c,i){c.num=i+1;c.total=total;});
+  saveData(); renderPrograms();
+}
+
+function deleteProgram(pi) {
+  if (!confirm('Remove this entire program?')) return;
+  programs.splice(pi, 1);
+  saveData(); renderPrograms();
+}
+
+function openModal() { document.getElementById('modal-overlay').classList.add('open'); }
+function closeModal() {
+  document.getElementById('modal-overlay').classList.remove('open');
+  document.getElementById('new-prog-name').value = '';
+  document.getElementById('new-prog-platform').value = '';
+  document.getElementById('new-course-name').value = '';
+}
+function saveNewProgram() {
+  var name     = document.getElementById('new-prog-name').value.trim();
+  var platform = document.getElementById('new-prog-platform').value.trim() || 'Coursera';
+  var category = document.getElementById('new-prog-category').value;
+  var course   = document.getElementById('new-course-name').value.trim();
+  if (!name) return;
+  var id = 'p_' + Date.now();
+  programs.push({
+    id:id, name:name, platform:platform, category:category,
+    courses: course ? [{name:course, pct:0, num:1, total:1}] : []
+  });
+  openState[id] = true;
+  saveData(); renderPrograms(); closeModal();
+}
+
+var DAYS=['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+var MONTHS=['January','February','March','April','May','June','July','August','September','October','November','December'];
+var now = new Date();
+document.getElementById('today-date').textContent = DAYS[now.getDay()] + ', ' + MONTHS[now.getMonth()] + ' ' + now.getDate() + ', ' + now.getFullYear();
+
+loadData();
+renderPrograms();
+</script>
+</body>
+</html>
