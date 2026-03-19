@@ -295,7 +295,7 @@ function renderSummary() {
 function buildCard(prog, pi) {
   var pct = progPct(prog);
   var accent = CAT_COLORS[prog.category] || '#e0cec8';
-  var isOpen = openState[prog.id] !== false;
+  var isOpen = openState[prog.id] === true;
 
   var card = document.createElement('div');
   card.className = 'program-card';
