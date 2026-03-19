@@ -1,0 +1,573 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Weekly Life Audit</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Jost:wght@300;400;500;600&display=swap');
+:root{--blush:#f2c4ce;--rose:#e8a0b0;--mauve:#c9a0b4;--lavender:#d4b8e0;--sage:#b8cfb0;--cream:#fdf6f0;--warm:#f7ece4;--sand:#ede0d4;--ink:#3a2a2e;--muted:#9a8088;--rule:#e0cec8;}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{background:#f0e8e4;font-family:'Jost',sans-serif;color:var(--ink);}
+
+/* TOPBAR */
+.topbar{background:var(--cream);border-bottom:1px solid var(--rule);padding:14px 32px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;}
+.topbar-title{font-family:'Cormorant Garamond',serif;font-size:1.6rem;font-weight:300;letter-spacing:2px;}
+.topbar-title em{font-style:italic;color:var(--mauve);}
+.topbar-right{display:flex;align-items:center;gap:10px;}
+.back-btn{display:inline-flex;align-items:center;gap:6px;padding:6px 14px;border:1.5px solid var(--rule);border-radius:20px;font-size:0.72rem;color:var(--muted);cursor:pointer;background:transparent;font-family:'Jost',sans-serif;text-decoration:none;transition:all .15s;}
+.back-btn:hover{border-color:var(--rose);color:var(--ink);}
+.topbar-date{font-size:0.68rem;letter-spacing:2px;text-transform:uppercase;color:var(--muted);}
+
+/* TOOLBAR */
+#toolbar{max-width:980px;margin:0 auto 12px;display:flex;gap:8px;flex-wrap:wrap;align-items:center;padding:16px 0 0;}
+.tab-btn{padding:7px 15px;border:1.5px solid var(--mauve);background:var(--cream);color:var(--ink);font-family:'Jost',sans-serif;font-size:0.73rem;font-weight:500;cursor:pointer;border-radius:20px;letter-spacing:.5px;transition:all .15s;}
+.tab-btn:hover{background:var(--blush);border-color:var(--rose);}
+.tab-btn.active{background:var(--mauve);color:white;border-color:var(--mauve);}
+.pdf-btn{padding:7px 13px;border:1.5px solid var(--rose);background:var(--rose);color:white;font-family:'Jost',sans-serif;font-size:0.76rem;font-weight:600;cursor:pointer;border-radius:20px;}
+.pdf-btn:hover{background:var(--mauve);}
+
+#paper{max-width:980px;margin:0 auto;background:var(--cream);box-shadow:0 4px 30px rgba(180,130,140,.18);border-radius:4px;padding:40px 50px 52px;}
+.header{text-align:center;margin-bottom:32px;padding-bottom:24px;border-bottom:1px solid var(--rule);}
+.header-title{font-family:'Cormorant Garamond',serif;font-size:3rem;font-weight:300;color:var(--ink);letter-spacing:2px;line-height:1.1;}
+.header-title em{font-style:italic;color:var(--mauve);}
+.header-sub{display:flex;justify-content:center;gap:24px;margin-top:12px;font-size:0.7rem;letter-spacing:2px;text-transform:uppercase;color:var(--muted);}
+.header-sub span{display:flex;align-items:center;gap:6px;}
+.header-sub span:before{content:'✦';color:var(--blush);}
+.week-field{border:none;background:transparent;font-family:'Jost',sans-serif;font-size:0.7rem;color:var(--muted);outline:none;letter-spacing:2px;text-transform:uppercase;border-bottom:1px solid var(--rule);padding-bottom:2px;width:160px;text-align:center;}
+.page{display:none;}.page.active{display:block;}
+.sec-head{display:flex;align-items:center;gap:12px;margin-bottom:16px;}
+.sec-num{width:28px;height:28px;border-radius:50%;background:var(--blush);color:var(--ink);font-family:'Cormorant Garamond',serif;font-size:0.9rem;font-weight:600;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.sec-title{font-family:'Cormorant Garamond',serif;font-size:1.3rem;font-weight:400;letter-spacing:1px;}
+.sec-sub{font-size:0.72rem;color:var(--muted);margin-left:auto;font-style:italic;}
+hr.rule{border:none;border-top:1px solid var(--rule);margin:28px 0;}
+.ornament{text-align:center;color:var(--blush);font-size:1rem;letter-spacing:10px;margin-top:32px;}
+.write{background:var(--warm);border:1px solid var(--rule);border-radius:8px;padding:12px 14px;min-height:90px;font-family:'Jost',sans-serif;font-size:0.8rem;line-height:1.75;color:var(--ink);outline:none;transition:border-color .15s,box-shadow .15s;}
+.write:focus{border-color:var(--blush);box-shadow:0 0 0 3px rgba(242,196,206,.25);}
+.write[contenteditable]:empty:before{content:attr(data-ph);color:#c8aab0;font-style:italic;}
+.write.tall{min-height:130px;}
+.write.letter{min-height:200px;font-style:italic;line-height:1.95;font-family:'Cormorant Garamond',serif;font-size:0.95rem;}
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:24px;}
+.col-card{background:var(--warm);border:1px solid var(--rule);border-radius:10px;padding:18px 20px;}
+.col-card-title{font-family:'Cormorant Garamond',serif;font-size:1rem;font-weight:600;margin-bottom:4px;}
+.col-card-sub{font-size:0.7rem;color:var(--muted);font-style:italic;margin-bottom:10px;}
+.col-card .write{background:white;border-radius:6px;}
+.highlight-box{background:linear-gradient(135deg,#fce8ef,#f0e0f0);border:1px solid var(--blush);border-radius:12px;padding:20px 26px;text-align:center;margin-top:20px;}
+.highlight-icon{font-size:1.4rem;margin-bottom:6px;}
+.highlight-label{font-size:0.62rem;letter-spacing:3px;text-transform:uppercase;color:var(--muted);margin-bottom:8px;font-family:'Jost',sans-serif;}
+.highlight-write{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:1.15rem;color:var(--ink);outline:none;min-height:28px;display:block;}
+.highlight-write[contenteditable]:empty:before{content:"The single best thing that happened last week...";color:#c8aab0;}
+#wheel-wrap{display:grid;grid-template-columns:1fr 1fr;gap:32px;align-items:start;}
+.cat-row{display:flex;align-items:center;gap:8px;padding:7px 0;border-bottom:1px solid #f0e4e8;}
+.cat-swatch{width:12px;height:12px;border-radius:50%;flex-shrink:0;}
+.cat-name{font-size:0.78rem;flex:1;}
+.cat-score{font-family:'Cormorant Garamond',serif;font-weight:600;font-size:1rem;min-width:22px;text-align:right;}
+.score-btns{display:flex;gap:3px;}
+.sdot{width:14px;height:14px;border-radius:50%;border:1.5px solid #e0cec8;background:white;cursor:pointer;transition:all .1s;flex-shrink:0;}
+.focus-btn{font-size:0.6rem;padding:2px 9px;border:1.5px solid var(--rule);border-radius:12px;cursor:pointer;background:white;color:var(--muted);white-space:nowrap;font-family:'Jost',sans-serif;}
+.focus-btn.active{background:var(--mauve);color:white;border-color:var(--mauve);}
+#focus-panel{margin-top:16px;padding:16px 18px;background:linear-gradient(135deg,#fce8ef,#f0e0f0);border-radius:10px;border:1px solid var(--blush);}
+.focus-panel-title{font-size:0.62rem;letter-spacing:3px;text-transform:uppercase;color:var(--muted);margin-bottom:12px;}
+.focus-item{display:flex;gap:10px;align-items:flex-start;margin-bottom:12px;}
+.focus-dot{width:10px;height:10px;border-radius:50%;margin-top:4px;flex-shrink:0;}
+.focus-name{font-weight:600;font-size:0.78rem;margin-bottom:4px;}
+.goal-card{padding:18px 20px;border:1px solid var(--rule);background:var(--warm);margin-bottom:14px;border-radius:10px;}
+.goal-pill{display:inline-block;background:var(--blush);color:var(--ink);font-size:0.62rem;letter-spacing:2px;text-transform:uppercase;padding:3px 12px;border-radius:12px;margin-bottom:12px;}
+.goal-grid{display:grid;grid-template-columns:80px 1fr;gap:8px 12px;align-items:start;}
+.goal-key{font-size:0.65rem;font-weight:600;text-transform:uppercase;letter-spacing:.5px;color:var(--muted);padding-top:3px;}
+.goal-val{outline:none;border-bottom:1px dashed var(--rule);min-height:22px;font-size:0.8rem;font-family:'Jost',sans-serif;color:var(--ink);padding-bottom:2px;}
+.goal-val[contenteditable]:empty:before{content:attr(data-ph);color:#c8aab0;font-style:italic;}
+.time-legend{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:16px;}
+.legend-chip{display:flex;align-items:center;gap:6px;font-size:0.72rem;cursor:pointer;padding:4px 12px;border-radius:16px;border:1.5px solid transparent;transition:all .15s;user-select:none;}
+.legend-chip.selected{border-color:var(--ink);font-weight:600;}
+.chip-dot{width:11px;height:11px;border-radius:50%;flex-shrink:0;}
+.cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:8px;}
+.cal-head{text-align:center;font-size:0.62rem;letter-spacing:2px;text-transform:uppercase;color:var(--muted);padding-bottom:6px;border-bottom:1px solid var(--rule);font-weight:600;}
+.cal-day{background:var(--warm);border:1.5px solid var(--rule);min-height:110px;border-radius:8px;overflow:hidden;display:flex;flex-direction:column;}
+.cal-day-blocks{flex:1;padding:4px;display:flex;flex-direction:column;gap:3px;}
+.time-block{border-radius:5px;padding:4px 7px;font-size:0.68rem;line-height:1.4;position:relative;min-height:26px;}
+.time-block-text{outline:none;display:block;width:100%;background:transparent;font-family:'Jost',sans-serif;}
+.time-block-text[contenteditable]:empty:before{content:"tap to edit";opacity:.5;font-style:italic;}
+.time-block-del{position:absolute;top:2px;right:4px;font-size:0.6rem;cursor:pointer;opacity:0;border:none;background:transparent;}
+.time-block:hover .time-block-del{opacity:.6;}
+.add-block-btn{width:100%;border:none;background:transparent;padding:4px;font-size:0.75rem;cursor:pointer;color:var(--muted);text-align:center;border-top:1px dashed var(--rule);}
+.add-block-btn:hover{background:rgba(242,196,206,.2);color:var(--ink);}
+.cal-hint{font-size:0.7rem;color:var(--muted);font-style:italic;margin-bottom:12px;}
+.C1{background:#fce4ec;color:#7a2a3a;-webkit-print-color-adjust:exact;print-color-adjust:exact;}
+.C2{background:#e8f5e9;color:#2a5a30;-webkit-print-color-adjust:exact;print-color-adjust:exact;}
+.C3{background:#e3f2fd;color:#1a3a5a;-webkit-print-color-adjust:exact;print-color-adjust:exact;}
+.C4{background:#f3e5f5;color:#4a2a6a;-webkit-print-color-adjust:exact;print-color-adjust:exact;}
+.C5{background:#fff8e1;color:#6a4a10;-webkit-print-color-adjust:exact;print-color-adjust:exact;}
+.C6{background:#fce8d8;color:#6a3010;-webkit-print-color-adjust:exact;print-color-adjust:exact;}
+.letter-wrap{border:1px solid var(--blush);background:linear-gradient(to bottom,#fef9f6,#fdf0f4);border-radius:12px;padding:28px 32px;}
+.letter-sal{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:1rem;color:var(--mauve);margin-bottom:14px;}
+.letter-sign{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:0.95rem;color:var(--mauve);margin-top:20px;text-align:right;}
+#chron-toolbar{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-bottom:16px;padding:10px 14px;background:linear-gradient(135deg,#fce8ef,#f0e0f0);border-radius:10px;border:1px solid var(--blush);}
+#chron-toolbar button{padding:6px 16px;border:1.5px solid var(--mauve);font-family:'Jost',sans-serif;font-size:0.76rem;font-weight:500;cursor:pointer;border-radius:20px;transition:all .15s;}
+#chron-edit-btn{background:var(--mauve);color:white;border-color:var(--mauve);}
+#chron-edit-btn:hover,#chron-edit-btn.active{background:#a06080;}
+.chron-sec-btn{background:var(--cream);color:var(--ink);}
+.chron-sec-btn:hover{background:var(--blush);}
+#chron-toolbar label{font-family:'Jost',sans-serif;font-size:0.72rem;color:var(--ink);font-weight:600;}
+#chron-toolbar input[type=color]{width:28px;height:28px;border:2px solid var(--mauve);cursor:pointer;padding:1px;border-radius:20px;}
+#chron-paper{background:var(--cream);border:1px solid var(--rule);border-radius:8px;padding:32px 38px 40px;}
+.chron-masthead{border-top:3px solid var(--mauve);border-bottom:3px solid var(--mauve);padding:10px 0;text-align:center;margin-bottom:6px;}
+.chron-name{font-family:'Cormorant Garamond',serif;font-size:2.6rem;font-weight:300;color:var(--ink);letter-spacing:3px;font-style:italic;}
+.chron-tagline-row{display:flex;justify-content:space-between;align-items:center;border-top:1px solid var(--mauve);border-bottom:1px solid var(--mauve);padding:4px 0;margin-bottom:20px;font-size:0.72rem;color:var(--mauve);font-style:italic;font-family:'Cormorant Garamond',serif;}
+.chron-main{display:grid;grid-template-columns:2fr 1fr;gap:24px;margin-bottom:16px;}
+.chron-sec-label{display:block;font-family:'Jost',sans-serif;font-size:0.58rem;letter-spacing:3px;text-transform:uppercase;color:var(--mauve);border-top:2px solid var(--mauve);border-bottom:1px solid var(--rule);padding:3px 0;margin:0 0 12px;}
+.chron-headline{font-family:'Cormorant Garamond',serif;font-size:1.5rem;font-weight:600;line-height:1.2;color:var(--ink);margin-bottom:4px;}
+.chron-headline.chron-sm{font-size:1.1rem;}
+.chron-byline{font-size:0.7rem;color:var(--mauve);font-style:italic;margin-bottom:8px;border-bottom:1px solid var(--rule);padding-bottom:4px;font-family:'Cormorant Garamond',serif;}
+.chron-body{font-size:0.8rem;line-height:1.7;text-align:justify;color:var(--ink);margin-bottom:8px;font-family:'Cormorant Garamond',serif;}
+.chron-pullquote{border-top:2px solid var(--mauve);border-bottom:2px solid var(--mauve);padding:10px 16px;margin:14px 0;font-family:'Cormorant Garamond',serif;font-size:1rem;font-style:italic;color:var(--mauve);text-align:center;}
+.chron-article{margin-bottom:16px;}
+.chron-col-rule{border-left:1px solid var(--rule);padding-left:22px;}
+.chron-two-col{display:grid;grid-template-columns:1fr 1fr;gap:24px;}
+.chron-rule{border:none;border-top:1px solid var(--rule);margin:18px 0;}
+.chron-ornament{text-align:center;color:var(--blush);font-size:1rem;letter-spacing:8px;margin-top:20px;}
+.chron-sidebar-box{background:var(--warm);border:1px solid var(--rule);border-radius:8px;padding:12px 14px;font-size:0.78rem;line-height:1.6;}
+.chron-sb-title{font-family:'Jost',sans-serif;font-weight:600;font-size:0.65rem;letter-spacing:2px;text-transform:uppercase;color:var(--mauve);border-bottom:1px solid var(--rule);padding-bottom:4px;margin-bottom:8px;}
+.chron-sb-list{padding-left:12px;font-family:'Cormorant Garamond',serif;font-size:0.8rem;}
+.chron-sb-list li{margin-bottom:5px;}
+body.chron-edit-mode .chron-edit{background:rgba(255,220,230,.25);cursor:text;border-radius:3px;}
+body.chron-edit-mode .chron-edit:hover{background:rgba(255,200,220,.4);}
+body.chron-edit-mode .chron-edit:focus{background:rgba(255,190,210,.5);outline:2px dashed var(--rose);}
+
+.hub-wrap{max-width:980px;margin:0 auto;padding:0 0 60px;}
+
+@media print{
+  .topbar,#toolbar,#chron-toolbar{display:none!important;}
+  body{background:white!important;padding:0;}
+  #paper{box-shadow:none!important;border-radius:0!important;padding:20px 28px!important;}
+}
+</style>
+</head>
+<body>
+
+<!-- TOPBAR -->
+<div class="topbar">
+  <div class="topbar-title">Weekly <em>Life Audit</em></div>
+  <div class="topbar-right">
+    <a href="../" class="back-btn">← Brain 2.0</a>
+    <span class="topbar-date" id="today-date"></span>
+  </div>
+</div>
+
+<div class="hub-wrap">
+<div id="toolbar">
+  <button class="tab-btn active" onclick="goTab(0,this)">🧠 Brain Dump</button>
+  <button class="tab-btn" onclick="goTab(1,this)">🌸 Life Wheel</button>
+  <button class="tab-btn" onclick="goTab(2,this)">80/20 Review</button>
+  <button class="tab-btn" onclick="goTab(3,this)">Wins & Downfalls</button>
+  <button class="tab-btn" onclick="goTab(4,this)">Goals</button>
+  <button class="tab-btn" onclick="goTab(5,this)">Calendar</button>
+  <button class="tab-btn" onclick="goTab(6,this)">Letter to Self</button>
+  <button class="tab-btn" onclick="goTab(7,this)">📰 Weekly Chronicle</button>
+  <button class="pdf-btn" onclick="savePDF()" title="Save as PDF">⬇</button>
+</div>
+
+<div id="paper">
+  <div class="header">
+    <h1 class="header-title">Weekly <em>Life Audit</em></h1>
+    <div class="header-sub">
+      <span>Plan</span><span>Reflect</span><span>Grow</span>
+      <input class="week-field" type="text" placeholder="Week of ___________">
+    </div>
+  </div>
+
+  <!-- I: BRAIN DUMP -->
+  <div class="page active" id="p0">
+    <div class="sec-head"><div class="sec-num">I</div><div class="sec-title">Brain Dump</div><div class="sec-sub">Get everything out of your head first</div></div>
+    <p style="font-size:.73rem;color:var(--muted);font-style:italic;margin-bottom:20px;">Before anything else — empty your mind. Worries, to-dos, random thoughts, feelings, things you're excited about. No filter, no structure. Just get it all out.</p>
+    <div class="write" contenteditable data-save-id="brain_dump" style="min-height:320px;line-height:1.9;" data-ph="Anything and everything on your mind right now..."></div>
+  </div>
+
+  <!-- II: LIFE WHEEL -->
+  <div class="page" id="p1">
+    <div class="sec-head"><div class="sec-num">II</div><div class="sec-title">Life Wheel</div></div>
+    <div style="background:linear-gradient(135deg,#fce8ef,#f0e0f0);border:1px solid var(--blush);border-radius:10px;padding:10px 16px;margin-bottom:20px;font-size:0.74rem;line-height:1.6;color:var(--ink);">
+      <strong style="font-size:0.63rem;letter-spacing:2px;text-transform:uppercase;color:var(--muted);display:block;margin-bottom:5px;">How to rate ✦</strong>
+      Rate each area on <strong>how satisfied you feel right now.</strong><br>
+      <strong>1</strong> = neglected or painful · <strong>10</strong> = fully fulfilled.<br>
+      Then mark up to <strong>3 focus areas</strong> to intentionally nurture this week.
+    </div>
+    <div id="wheel-wrap">
+      <div style="text-align:center;"><canvas id="radar" width="380" height="380" style="max-width:100%;display:block;margin:0 auto;"></canvas></div>
+      <div>
+        <div id="cat-list"></div>
+        <div id="focus-panel" style="display:none;">
+          <div class="focus-panel-title">✦ Focus Areas This Week</div>
+          <div id="focus-items"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- III: 80/20 -->
+  <div class="page" id="p2">
+    <div class="sec-head"><div class="sec-num">III</div><div class="sec-title">80 / 20 Review</div><div class="sec-sub">What worked vs. what didn't</div></div>
+    <p style="font-size:.73rem;color:var(--muted);font-style:italic;margin-bottom:16px;">This is a <strong style="font-style:normal;">pattern analysis</strong>, not a list of what happened. Look at your habits and behaviors from the week and ask: what was actually moving the needle, and what was just noise, friction, or avoidance? The 80% side is where most of your energy probably went — but didn't serve you. The 20% side is the small handful of things that genuinely moved you forward. Identify them so you can repeat them. This is separate from your wins and downfalls — it's less about outcomes and more about <strong style="font-style:normal;">what to cut and what to double down on.</strong></p>
+    <div class="two-col">
+      <div class="col-card" style="border-top:3px solid #f4b8c4;">
+        <div class="col-card-title">✗ 80% — What Didn't Help</div>
+        <div class="col-card-sub">Patterns, habits, choices that held you back</div>
+        <div class="write tall" contenteditable data-save-id="eighty_bad" data-ph="e.g. Scrolling at night → killed my sleep and morning energy&#10;e.g. Skipping meals → led to overeating later&#10;e.g. Saying yes to everything → felt drained and behind&#10;e.g. Taking too many naps → wasted time, poor quality rest"></div>
+      </div>
+      <div class="col-card" style="border-top:3px solid #b8cfb0;">
+        <div class="col-card-title">✓ 20% — What Worked</div>
+        <div class="col-card-sub">The small things that actually moved you forward</div>
+        <div class="write tall" contenteditable data-save-id="eighty_good" data-ph="e.g. Prepping meals Sunday → ate better all week&#10;e.g. Going to the office 3x → stayed focused and accountable&#10;e.g. Morning walks → set a better tone for the day&#10;e.g. Texting a friend → felt more connected and less in my head"></div>
+      </div>
+    </div>
+    <div class="highlight-box">
+      <div class="highlight-icon">✨</div>
+      <div class="highlight-label">Weekly Highlight</div>
+      <div class="highlight-write" contenteditable data-save-id="highlight"></div>
+    </div>
+  </div>
+
+  <!-- IV: WINS & DOWNFALLS -->
+  <div class="page" id="p3">
+    <div class="sec-head"><div class="sec-num">IV</div><div class="sec-title">Wins & Downfalls</div><div class="sec-sub">Celebrate both — they're both data</div></div>
+    <div class="two-col">
+      <div class="col-card" style="border-top:3px solid #d4b8e0;">
+        <div class="col-card-title">🏆 Wins</div>
+        <div class="col-card-sub">Goals hit, habit streaks, proud moments</div>
+        <div class="write tall" contenteditable data-save-id="wins" data-ph="— Worked out 4x this week&#10;— Called a friend&#10;— Stayed within budget"></div>
+      </div>
+      <div class="col-card" style="border-top:3px solid #f2c4ce;">
+        <div class="col-card-title">🌱 Downfalls</div>
+        <div class="col-card-sub">Things to learn from — not to shame yourself with</div>
+        <div class="write tall" contenteditable data-save-id="downfalls" data-ph="— Skipped journaling 3 days&#10;— Overspent on eating out&#10;— Poor sleep habits"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- V: GOALS -->
+  <div class="page" id="p4">
+    <div class="sec-head"><div class="sec-num">V</div><div class="sec-title">Goals for Next Week</div><div class="sec-sub">1–3 achievable, specific goals only</div></div>
+    <p style="font-size:.73rem;color:var(--muted);font-style:italic;margin-bottom:20px;">Each goal needs a what, where, and when. The <strong style="font-style:normal;">2-minute version</strong> is the smallest possible action you could take toward that goal — so that on hard days, you still start. Starting is the habit; the rest follows.</p>
+    <div class="goal-card">
+      <div class="goal-pill">Goal 1</div>
+      <div class="goal-grid">
+        <span class="goal-key">What</span><div class="goal-val" contenteditable data-save-id="g1_what" data-ph="What will you do?"></div>
+        <span class="goal-key">Where</span><div class="goal-val" contenteditable data-save-id="g1_where" data-ph="Where?"></div>
+        <span class="goal-key">When</span><div class="goal-val" contenteditable data-save-id="g1_when" data-ph="Day & time?"></div>
+        <span class="goal-key">2-min ver.</span><div class="goal-val" contenteditable data-save-id="g1_2min" data-ph="The smallest possible start..."></div>
+      </div>
+    </div>
+    <div class="goal-card">
+      <div class="goal-pill">Goal 2</div>
+      <div class="goal-grid">
+        <span class="goal-key">What</span><div class="goal-val" contenteditable data-save-id="g2_what" data-ph="What will you do?"></div>
+        <span class="goal-key">Where</span><div class="goal-val" contenteditable data-save-id="g2_where" data-ph="Where?"></div>
+        <span class="goal-key">When</span><div class="goal-val" contenteditable data-save-id="g2_when" data-ph="Day & time?"></div>
+        <span class="goal-key">2-min ver.</span><div class="goal-val" contenteditable data-save-id="g2_2min" data-ph="The smallest possible start..."></div>
+      </div>
+    </div>
+    <div class="goal-card">
+      <div class="goal-pill">Goal 3</div>
+      <div class="goal-grid">
+        <span class="goal-key">What</span><div class="goal-val" contenteditable data-save-id="g3_what" data-ph="What will you do?"></div>
+        <span class="goal-key">Where</span><div class="goal-val" contenteditable data-save-id="g3_where" data-ph="Where?"></div>
+        <span class="goal-key">When</span><div class="goal-val" contenteditable data-save-id="g3_when" data-ph="Day & time?"></div>
+        <span class="goal-key">2-min ver.</span><div class="goal-val" contenteditable data-save-id="g3_2min" data-ph="The smallest possible start..."></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- VI: CALENDAR -->
+  <div class="page" id="p5">
+    <div class="sec-head"><div class="sec-num">VI</div><div class="sec-title">Time-Block Your Week</div><div class="sec-sub">Select a color, then click + to add a block</div></div>
+    <p class="cal-hint">① Pick a category → ② Click + to add a block → ③ Type your event → ④ Hover & click × to delete</p>
+    <div class="time-legend" id="legend">
+      <div class="legend-chip selected C1" onclick="selectColor(1,this)"><div class="chip-dot" style="background:#f4b8c4"></div>Work</div>
+      <div class="legend-chip C2" onclick="selectColor(2,this)"><div class="chip-dot" style="background:#b8cfb0"></div>Health</div>
+      <div class="legend-chip C3" onclick="selectColor(3,this)"><div class="chip-dot" style="background:#b8d4f0"></div>Social</div>
+      <div class="legend-chip C4" onclick="selectColor(4,this)"><div class="chip-dot" style="background:#d4b8e0"></div>Romance</div>
+      <div class="legend-chip C5" onclick="selectColor(5,this)"><div class="chip-dot" style="background:#f0dea0"></div>Learning</div>
+      <div class="legend-chip C6" onclick="selectColor(6,this)"><div class="chip-dot" style="background:#f0c8a8"></div>Self-Care</div>
+    </div>
+    <div class="cal-grid">
+      <div class="cal-head">Mon</div><div class="cal-head">Tue</div><div class="cal-head">Wed</div><div class="cal-head">Thu</div><div class="cal-head">Fri</div><div class="cal-head">Sat</div><div class="cal-head">Sun</div>
+      <div class="cal-day"><div class="cal-day-blocks" id="cb0"></div><button class="add-block-btn" onclick="addBlock(0)">+ add</button></div>
+      <div class="cal-day"><div class="cal-day-blocks" id="cb1"></div><button class="add-block-btn" onclick="addBlock(1)">+ add</button></div>
+      <div class="cal-day"><div class="cal-day-blocks" id="cb2"></div><button class="add-block-btn" onclick="addBlock(2)">+ add</button></div>
+      <div class="cal-day"><div class="cal-day-blocks" id="cb3"></div><button class="add-block-btn" onclick="addBlock(3)">+ add</button></div>
+      <div class="cal-day"><div class="cal-day-blocks" id="cb4"></div><button class="add-block-btn" onclick="addBlock(4)">+ add</button></div>
+      <div class="cal-day"><div class="cal-day-blocks" id="cb5"></div><button class="add-block-btn" onclick="addBlock(5)">+ add</button></div>
+      <div class="cal-day"><div class="cal-day-blocks" id="cb6"></div><button class="add-block-btn" onclick="addBlock(6)">+ add</button></div>
+    </div>
+  </div>
+
+  <!-- VII: LETTER -->
+  <div class="page" id="p6">
+    <div class="sec-head"><div class="sec-num">VII</div><div class="sec-title">Letter from Future You</div><div class="sec-sub">Next Sunday's perspective · past tense · specific · proud</div></div>
+    <p style="font-size:.73rem;color:var(--muted);font-style:italic;margin-bottom:14px;">Write as if it's already next Sunday and the week went exactly as you hoped. What happened? How did you show up?</p>
+    <div class="letter-wrap">
+      <div class="letter-sal">Dear current me,</div>
+      <div class="write letter" contenteditable data-save-id="letter" data-ph="This week was everything I hoped it would be. On Monday I finally..."></div>
+      <div class="letter-sign">With love, Future You 🌸</div>
+    </div>
+  </div>
+
+  <!-- VIII: WEEKLY CHRONICLE -->
+  <div class="page" id="p7">
+    <div id="chron-toolbar">
+      <button id="chron-edit-btn" onclick="toggleChron()">✏️ Edit Chronicle</button>
+      <label>Accent:</label>
+      <input type="color" id="chron-color" value="#c9a0b4" onchange="setChronAccent(this.value)">
+      <button class="chron-sec-btn" onclick="addChronSection()">＋ Section</button>
+      <button class="chron-sec-btn" onclick="addChronSidebar()">＋ Sidebar</button>
+    </div>
+    <div id="chron-paper">
+      <div class="chron-masthead">
+        <div class="chron-name chron-edit" contenteditable="false" data-save-id="ch_name">The Weekly Chronicle</div>
+      </div>
+      <div class="chron-tagline-row">
+        <span class="chron-edit" contenteditable="false" data-save-id="ch_loc">Washington, D.C. · Est. 2025</span>
+        <span class="chron-edit" contenteditable="false" data-save-id="ch_tagline">"All the News That's Fit to Remember"</span>
+        <span class="chron-edit" contenteditable="false" data-save-id="ch_week">Week of ___________</span>
+      </div>
+      <div class="chron-main">
+        <div>
+          <span class="chron-sec-label chron-edit" contenteditable="false" data-save-id="ch_sec1">Top Story</span>
+          <div class="chron-headline chron-edit" contenteditable="false" data-save-id="ch_headline1">Write Your Lead Headline Here</div>
+          <div class="chron-byline chron-edit" contenteditable="false" data-save-id="ch_byline1">By Your Name · This Week</div>
+          <p class="chron-body chron-edit" contenteditable="false" data-save-id="ch_body1">Click "Edit Chronicle" above, then click any text to start writing.</p>
+          <div class="chron-pullquote chron-edit" contenteditable="false" data-save-id="ch_pullquote">"A memorable quote or reflection from the week."</div>
+          <p class="chron-body chron-edit" contenteditable="false" data-save-id="ch_body2">Continue the story here with more detail, context, or reflection.</p>
+        </div>
+        <div>
+          <div class="chron-sidebar-box">
+            <div class="chron-sb-title chron-edit" contenteditable="false" data-save-id="ch_brief_title">Week in Brief</div>
+            <ul class="chron-sb-list">
+              <li class="chron-edit" contenteditable="false" data-save-id="ch_brief1">✦ Highlight one</li>
+              <li class="chron-edit" contenteditable="false" data-save-id="ch_brief2">✦ Highlight two</li>
+              <li class="chron-edit" contenteditable="false" data-save-id="ch_brief3">✦ Highlight three</li>
+              <li class="chron-edit" contenteditable="false" data-save-id="ch_brief4">✦ Highlight four</li>
+              <li class="chron-edit" contenteditable="false" data-save-id="ch_brief5">✦ Highlight five</li>
+            </ul>
+          </div>
+          <div class="chron-sidebar-box" style="margin-top:12px">
+            <div class="chron-sb-title chron-edit" contenteditable="false" data-save-id="ch_ahead_title">Looking Ahead</div>
+            <p class="chron-edit" style="font-size:0.76rem;line-height:1.6;font-family:'Cormorant Garamond',serif;" contenteditable="false" data-save-id="ch_ahead">What's coming up next week.</p>
+          </div>
+        </div>
+      </div>
+      <hr class="chron-rule">
+      <span class="chron-sec-label chron-edit" contenteditable="false" data-save-id="ch_sec2">This Week's Stories</span>
+      <div class="chron-two-col">
+        <div class="chron-article">
+          <div class="chron-headline chron-sm chron-edit" contenteditable="false" data-save-id="ch_headline2">Second Story Headline</div>
+          <div class="chron-byline chron-edit" contenteditable="false" data-save-id="ch_byline2">By Your Name · This Week</div>
+          <p class="chron-body chron-edit" contenteditable="false" data-save-id="ch_body3">Your second story goes here.</p>
+        </div>
+        <div class="chron-article chron-col-rule">
+          <div class="chron-headline chron-sm chron-edit" contenteditable="false" data-save-id="ch_headline3">Third Story Headline</div>
+          <div class="chron-byline chron-edit" contenteditable="false" data-save-id="ch_byline3">By Your Name · This Week</div>
+          <p class="chron-body chron-edit" contenteditable="false" data-save-id="ch_body4">Your third story — something lighter.</p>
+        </div>
+      </div>
+      <hr class="chron-rule">
+      <span class="chron-sec-label chron-edit" contenteditable="false" data-save-id="ch_sec3">Weekly Reflection</span>
+      <div class="chron-article">
+        <div class="chron-headline chron-sm chron-edit" contenteditable="false" data-save-id="ch_closing_head">Closing Thoughts</div>
+        <p class="chron-body chron-edit" contenteditable="false" data-save-id="ch_closing_body">Use this space for a weekly reflection — what you learned, what you're grateful for, what you'd do differently.</p>
+      </div>
+      <div id="chron-extra"></div>
+      <div class="chron-ornament">✦ ✿ ✦</div>
+    </div>
+  </div>
+
+  <div class="ornament">✦ ✿ ✦</div>
+  <div style="text-align:center;margin-top:28px;padding-top:20px;border-top:1px solid var(--rule);">
+    <p style="font-size:0.68rem;color:var(--muted);font-style:italic;margin-bottom:10px;">Ready for a fresh week? This will clear all your entries.</p>
+    <button onclick="newWeek()" style="padding:9px 24px;border:1.5px solid var(--rule);background:var(--warm);color:var(--muted);font-family:'Jost',sans-serif;font-size:0.74rem;font-weight:500;cursor:pointer;border-radius:20px;" onmouseover="this.style.borderColor='var(--rose)';this.style.color='var(--ink)'" onmouseout="this.style.borderColor='var(--rule)';this.style.color='var(--muted)'">↺ Start New Week</button>
+  </div>
+</div>
+</div><!-- end hub-wrap -->
+
+<script>
+function goTab(n, btn) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.getElementById('p' + n).classList.add('active');
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  if (n === 1) setTimeout(drawRadar, 50);
+  saveData();
+}
+
+const CATS = [
+  {label:'Career',            color:'#f2c4ce'},
+  {label:'Finances',          color:'#f7d9b0'},
+  {label:'Health & Fitness',  color:'#b8cfb0'},
+  {label:'Social Life',       color:'#b8d4f0'},
+  {label:'Romance',           color:'#d4b8e0'},
+  {label:'Learning & Growth', color:'#f0dea0'},
+  {label:'Creative Life',     color:'#f4b8d4'},
+  {label:'Self-Care',         color:'#a8d8d0'},
+];
+const scores = Array(8).fill(0);
+const focusAreas = [];
+const N=8, CX=190, CY=190, R=158;
+function ang(i){ return (2*Math.PI*i/N) - Math.PI/2; }
+function pt(i,s){ const r=(s/10)*R, a=ang(i); return [CX+r*Math.cos(a), CY+r*Math.sin(a)]; }
+
+function drawRadar() {
+  const cv = document.getElementById('radar'); if (!cv) return;
+  const ctx = cv.getContext('2d'); ctx.clearRect(0,0,380,380);
+  for (let r=1;r<=10;r++) { ctx.beginPath(); ctx.arc(CX,CY,(r/10)*R,0,2*Math.PI); ctx.strokeStyle=r%2===0?'#e8d8dc':'#f4ecee'; ctx.lineWidth=r%5===0?1.2:.6; ctx.stroke(); }
+  for (let i=0;i<N;i++) { const [x,y]=pt(i,10); ctx.beginPath(); ctx.moveTo(CX,CY); ctx.lineTo(x,y); ctx.strokeStyle='#e0cec8'; ctx.lineWidth=1; ctx.stroke(); }
+  for (let i=0;i<N;i++) { if (!scores[i]) continue; const ni=(i+1)%N; const [x1,y1]=pt(i,scores[i]), [x2,y2]=pt(ni,scores[ni]||0); ctx.beginPath(); ctx.moveTo(CX,CY); ctx.lineTo(x1,y1); ctx.lineTo(x2,y2); ctx.closePath(); ctx.fillStyle=CATS[i].color+'bb'; ctx.fill(); ctx.strokeStyle=CATS[i].color; ctx.lineWidth=1.5; ctx.stroke(); }
+  if (scores.some(s=>s>0)) { ctx.beginPath(); for (let i=0;i<N;i++) { const [x,y]=pt(i,scores[i]||0); i?ctx.lineTo(x,y):ctx.moveTo(x,y); } ctx.closePath(); ctx.strokeStyle='#c8a0a8'; ctx.lineWidth=1.8; ctx.stroke(); }
+  for (let i=0;i<N;i++) for (let s=1;s<=10;s++) { const [x,y]=pt(i,s); ctx.beginPath(); ctx.arc(x,y,scores[i]>=s?5:3.5,0,2*Math.PI); ctx.fillStyle=scores[i]>=s?CATS[i].color:'#fdf6f0'; ctx.strokeStyle=scores[i]>=s?'#a08090':'#e0cec8'; ctx.lineWidth=1.2; ctx.fill(); ctx.stroke(); }
+  focusAreas.forEach(fi => { const [x,y]=pt(fi,Math.max(scores[fi],1)); ctx.font='bold 13px serif'; ctx.fillStyle='#a06080'; ctx.textAlign='center'; ctx.textBaseline='middle'; ctx.fillText('★',x,y-11); });
+  for (let i=0;i<N;i++) { const a=ang(i), lx=CX+(R+22)*Math.cos(a), ly=CY+(R+22)*Math.sin(a); ctx.font=(focusAreas.includes(i)?'600 ':'')+'10.5px Jost,sans-serif'; ctx.fillStyle=focusAreas.includes(i)?'#7a2a4a':'#7a5060'; ctx.textAlign='center'; ctx.textBaseline='middle'; ctx.fillText(CATS[i].label,lx,ly); }
+}
+
+document.getElementById('radar').addEventListener('click', function(e) {
+  const r=this.getBoundingClientRect(), sx=380/r.width, sy=380/r.height;
+  const mx=(e.clientX-r.left)*sx, my=(e.clientY-r.top)*sy;
+  let bc=-1, bs=0, bd=999;
+  for (let i=0;i<N;i++) for (let s=1;s<=10;s++) { const [x,y]=pt(i,s), d=Math.hypot(mx-x,my-y); if (d<bd) { bd=d; bc=i; bs=s; } }
+  if (bd<20 && bc>=0) { scores[bc]=scores[bc]===bs?0:bs; updateRow(bc); drawRadar(); saveData(); }
+});
+
+function buildCatList() {
+  const el = document.getElementById('cat-list'); el.innerHTML='';
+  CATS.forEach((c,i) => {
+    const row=document.createElement('div'); row.className='cat-row';
+    row.innerHTML=`<div class="cat-swatch" style="background:${c.color}"></div><span class="cat-name">${c.label}</span><div class="score-btns" id="sd-${i}"></div><span class="cat-score" id="cs-${i}" style="color:#c8a0a8">—</span><button class="focus-btn" id="fb-${i}" onclick="toggleFocus(${i})">☆</button>`;
+    el.appendChild(row); buildDots(i);
+  });
+}
+
+function buildDots(i) {
+  const w=document.getElementById('sd-'+i); w.innerHTML='';
+  for (let s=1;s<=10;s++) { const d=document.createElement('div'); d.className='sdot'; if (scores[i]>=s) { d.style.background=CATS[i].color; d.style.borderColor=CATS[i].color; } d.onclick=(()=>{ const si=s,ci=i; return ()=>{ scores[ci]=scores[ci]===si?0:si; updateRow(ci); drawRadar(); saveData(); }; })(); w.appendChild(d); }
+}
+
+function updateRow(i) {
+  buildDots(i);
+  const sc=document.getElementById('cs-'+i); sc.textContent=scores[i]||'—';
+  sc.style.color=scores[i]>=7?'#6a9a60':scores[i]>=4?'#c06080':scores[i]>0?'#a03050':'#c8a0a8';
+}
+
+function toggleFocus(i) {
+  const idx=focusAreas.indexOf(i); if (idx>=0) focusAreas.splice(idx,1); else { if (focusAreas.length>=3) return; focusAreas.push(i); }
+  const btn=document.getElementById('fb-'+i); btn.textContent=focusAreas.includes(i)?'★':'☆'; btn.classList.toggle('active',focusAreas.includes(i));
+  renderFocusPanel(); drawRadar(); saveData();
+}
+
+function renderFocusPanel() {
+  const panel=document.getElementById('focus-panel'), items=document.getElementById('focus-items');
+  if (!focusAreas.length) { panel.style.display='none'; return; }
+  panel.style.display='block';
+  const saved={}; panel.querySelectorAll('.focus-item').forEach(fi=>{ const w=fi.querySelector('[data-save-id]'); if(w) saved[fi.dataset.idx]=w.innerHTML; });
+  items.innerHTML='';
+  focusAreas.forEach(fi => {
+    const div=document.createElement('div'); div.className='focus-item'; div.dataset.idx=fi;
+    div.innerHTML=`<div class="focus-dot" style="background:${CATS[fi].color}"></div><div style="flex:1"><div class="focus-name">${CATS[fi].label}</div><div class="write" contenteditable data-save-id="focus_${fi}" style="min-height:34px;font-size:.75rem;margin-top:3px;border-radius:6px;" data-ph="What will you focus on?">${saved[fi]||''}</div></div>`;
+    items.appendChild(div);
+  });
+}
+
+let activeColor = 1;
+function selectColor(n, el) { activeColor=n; document.querySelectorAll('.legend-chip').forEach(c=>c.classList.remove('selected')); el.classList.add('selected'); }
+function addBlock(day) {
+  const container=document.getElementById('cb'+day); const block=document.createElement('div');
+  block.className='time-block C'+activeColor; block.dataset.color=activeColor;
+  block.innerHTML=`<button class="time-block-del" onclick="this.parentElement.remove();saveData()">×</button><div class="time-block-text" contenteditable data-ph="event..."></div>`;
+  container.appendChild(block); block.querySelector('.time-block-text').focus();
+  block.querySelector('.time-block-text').addEventListener('input', saveData);
+}
+
+let chronEdit = false;
+function toggleChron() {
+  chronEdit=!chronEdit; document.body.classList.toggle('chron-edit-mode', chronEdit);
+  const btn=document.getElementById('chron-edit-btn'); btn.textContent=chronEdit?'🔒 Lock Chronicle':'✏️ Edit Chronicle'; btn.classList.toggle('active', chronEdit);
+  document.querySelectorAll('.chron-edit').forEach(el=>{ el.contentEditable=chronEdit?'true':'false'; });
+}
+function setChronAccent(hex) {
+  document.querySelectorAll('.chron-sec-label,.chron-byline,.chron-pullquote,.chron-sb-title').forEach(el=>el.style.color=hex);
+  document.querySelectorAll('.chron-masthead').forEach(el=>{ el.style.borderTopColor=hex; el.style.borderBottomColor=hex; });
+  document.querySelectorAll('.chron-pullquote').forEach(el=>{ el.style.borderTopColor=hex; el.style.borderBottomColor=hex; });
+  document.querySelectorAll('.chron-tagline-row').forEach(el=>{ el.style.borderTopColor=hex; el.style.borderBottomColor=hex; el.style.color=hex; });
+  document.querySelectorAll('.chron-sec-label').forEach(el=>el.style.borderTopColor=hex);
+  document.querySelectorAll('.chron-name').forEach(el=>el.style.color=hex);
+}
+function addChronSection() {
+  const container=document.getElementById('chron-extra'); const e=chronEdit?'true':'false'; const id=Date.now();
+  const sec=document.createElement('div');
+  sec.innerHTML=`<hr class="chron-rule"><span class="chron-sec-label chron-edit" contenteditable="${e}" data-save-id="cx_sec_${id}">New Section</span><div class="chron-two-col"><div class="chron-article"><div class="chron-headline chron-sm chron-edit" contenteditable="${e}" data-save-id="cx_h1_${id}">Story Headline</div><div class="chron-byline chron-edit" contenteditable="${e}" data-save-id="cx_b1_${id}">By Your Name · This Week</div><p class="chron-body chron-edit" contenteditable="${e}" data-save-id="cx_p1_${id}">Write your story here...</p></div><div class="chron-article chron-col-rule"><div class="chron-headline chron-sm chron-edit" contenteditable="${e}" data-save-id="cx_h2_${id}">Story Headline</div><div class="chron-byline chron-edit" contenteditable="${e}" data-save-id="cx_b2_${id}">By Your Name · This Week</div><p class="chron-body chron-edit" contenteditable="${e}" data-save-id="cx_p2_${id}">Write your story here...</p></div></div>`;
+  container.appendChild(sec); if (!chronEdit) toggleChron();
+}
+function addChronSidebar() {
+  const container=document.getElementById('chron-extra'); const e=chronEdit?'true':'false'; const id=Date.now();
+  const box=document.createElement('div'); box.style.margin='16px 0';
+  box.innerHTML=`<div class="chron-sidebar-box"><div class="chron-sb-title chron-edit" contenteditable="${e}" data-save-id="cx_st_${id}">Sidebar Title</div><p class="chron-edit" style="font-size:0.78rem;line-height:1.6;font-family:'Cormorant Garamond',serif;" contenteditable="${e}" data-save-id="cx_sp_${id}">Add your sidebar content here.</p></div>`;
+  container.appendChild(box); if (!chronEdit) toggleChron();
+}
+
+function saveData() {
+  const data = {};
+  document.querySelectorAll('[contenteditable][data-save-id]').forEach(el => { data[el.dataset.saveId] = el.innerHTML; });
+  const weekField = document.querySelector('.week-field'); if (weekField) data['week_field'] = weekField.value;
+  data['scores'] = JSON.stringify(scores); data['focusAreas'] = JSON.stringify(focusAreas);
+  const activeTab = document.querySelector('.page.active'); if (activeTab) data['activeTab'] = activeTab.id;
+  const calBlocks = [];
+  for (let d=0;d<7;d++) { const container = document.getElementById('cb'+d); if (container) { container.querySelectorAll('.time-block').forEach(b => { calBlocks.push({ day:d, color:b.dataset.color, text:b.querySelector('.time-block-text').innerHTML }); }); } }
+  data['calBlocks'] = JSON.stringify(calBlocks);
+  localStorage.setItem('weeklyAudit', JSON.stringify(data));
+}
+
+function restoreData() {
+  const raw = localStorage.getItem('weeklyAudit'); if (!raw) return;
+  const data = JSON.parse(raw);
+  const weekField = document.querySelector('.week-field'); if (weekField && data['week_field']) weekField.value = data['week_field'];
+  if (data['scores']) JSON.parse(data['scores']).forEach((s,i) => { scores[i]=s; });
+  if (data['focusAreas']) JSON.parse(data['focusAreas']).forEach(fi => { if (!focusAreas.includes(fi)) focusAreas.push(fi); });
+  if (data['activeTab']) {
+    const tabIndex = parseInt(data['activeTab'].replace('p',''));
+    const tabBtn = document.querySelectorAll('.tab-btn')[tabIndex];
+    if (tabBtn) { document.querySelectorAll('.page').forEach(p=>p.classList.remove('active')); document.getElementById('p'+tabIndex).classList.add('active'); document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active')); tabBtn.classList.add('active'); }
+  }
+  if (data['calBlocks']) {
+    JSON.parse(data['calBlocks']).forEach(b => {
+      const container = document.getElementById('cb'+b.day); if (!container) return;
+      const block = document.createElement('div'); block.className='time-block C'+b.color; block.dataset.color=b.color;
+      block.innerHTML=`<button class="time-block-del" onclick="this.parentElement.remove();saveData()">×</button><div class="time-block-text" contenteditable data-ph="event...">${b.text}</div>`;
+      container.appendChild(block); block.querySelector('.time-block-text').addEventListener('input', saveData);
+    });
+  }
+  buildCatList(); scores.forEach((s, i) => { if (s > 0) updateRow(i); }); drawRadar(); renderFocusPanel();
+  setTimeout(() => { document.querySelectorAll('[contenteditable][data-save-id]').forEach(el => { if (data[el.dataset.saveId] !== undefined) el.innerHTML = data[el.dataset.saveId]; }); }, 150);
+}
+
+function savePDF() {
+  for (let i=0;i<=7;i++) { const p=document.getElementById('p'+i); if (p) p.style.cssText='display:block!important;'+(i>0?'page-break-before:always!important;':''); }
+  setTimeout(()=>{
+    window.print();
+    for (let i=0;i<=7;i++) { const p=document.getElementById('p'+i); if (p) p.style.cssText=p.classList.contains('active')?'display:block;':'display:none;'; }
+  }, 300);
+}
+
+function newWeek() {
+  if (!confirm('Start a new week? This will clear all your entries.')) return;
+  localStorage.removeItem('weeklyAudit'); location.reload();
+}
+
+// Date
+const DAYS=['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+const MONTHS=['January','February','March','April','May','June','July','August','September','October','November','December'];
+const now = new Date();
+document.getElementById('today-date').textContent = DAYS[now.getDay()]+', '+MONTHS[now.getMonth()]+' '+now.getDate()+', '+now.getFullYear();
+
+restoreData();
+document.getElementById('paper').addEventListener('input', saveData);
+document.querySelector('.week-field').addEventListener('input', saveData);
+</script>
+</body>
+</html>
