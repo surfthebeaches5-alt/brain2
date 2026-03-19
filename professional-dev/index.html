@@ -18,7 +18,7 @@ body{background:#f0e8e4;font-family:'Jost',sans-serif;color:var(--ink);}
 .back-btn:hover{border-color:var(--rose);color:var(--ink);}
 .add-btn{display:inline-flex;align-items:center;gap:6px;padding:6px 16px;border:1.5px solid var(--mauve);border-radius:20px;font-size:0.72rem;color:var(--mauve);cursor:pointer;background:transparent;font-family:'Jost',sans-serif;font-weight:600;transition:all .15s;}
 .add-btn:hover{background:var(--blush);border-color:var(--rose);color:var(--ink);}
-.hub{max-width:1000px;margin:0 auto;padding:24px 24px 60px;}
+.hub{max-width:1100px;margin:0 auto;padding:24px 24px 60px;}
 .summary-bar{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:24px;}
 .summary-card{background:var(--cream);border:1px solid var(--rule);border-radius:12px;padding:14px 18px;text-align:center;}
 .summary-num{font-family:'Cormorant Garamond',serif;font-size:2rem;font-weight:600;color:var(--ink);line-height:1;}
@@ -28,7 +28,24 @@ body{background:#f0e8e4;font-family:'Jost',sans-serif;color:var(--ink);}
 .coursera-sub{font-size:0.68rem;color:var(--muted);margin-top:1px;}
 .open-btn{display:inline-flex;align-items:center;gap:5px;padding:6px 16px;background:var(--mauve);color:white;border:none;border-radius:16px;font-size:0.72rem;font-weight:600;cursor:pointer;font-family:'Jost',sans-serif;text-decoration:none;transition:all .15s;}
 .open-btn:hover{background:var(--rose);}
-.program-card{background:var(--cream);border:1px solid var(--rule);border-radius:14px;margin-bottom:16px;overflow:hidden;}
+
+/* ── TWO TRUE INDEPENDENT COLUMNS ── */
+/* Cards flow into left col (even indices) and right col (odd indices).
+   Each column is its own flex container — completely independent heights. */
+.columns-wrap{
+  display:flex;
+  gap:16px;
+  align-items:flex-start;
+}
+.col{
+  flex:1;
+  display:flex;
+  flex-direction:column;
+  gap:16px;
+  min-width:0;
+}
+
+.program-card{background:var(--cream);border:1px solid var(--rule);border-radius:14px;overflow:hidden;}
 .program-header{padding:16px 20px 12px;display:flex;align-items:center;gap:12px;cursor:pointer;user-select:none;}
 .program-header:hover{background:var(--warm);}
 .program-platform{font-size:0.6rem;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin-bottom:2px;}
@@ -38,7 +55,7 @@ body{background:#f0e8e4;font-family:'Jost',sans-serif;color:var(--ink);}
 .chevron.open{transform:rotate(180deg);}
 .prog-bar-wrap{padding:0 20px 14px;}
 .prog-bar{height:5px;background:var(--rule);border-radius:3px;overflow:hidden;}
-.prog-fill{height:100%;border-radius:3px;background:linear-gradient(90deg,var(--blush),var(--mauve));transition:width .4s;}
+.prog-fill{height:100%;border-radius:3px;transition:width .4s;}
 .courses-wrap{border-top:1px solid var(--rule);padding:0 20px;}
 .course-row{display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid var(--rule);}
 .course-row:last-child{border-bottom:none;}
@@ -47,10 +64,10 @@ body{background:#f0e8e4;font-family:'Jost',sans-serif;color:var(--ink);}
 .course-status.in-progress{background:var(--blush);border-color:var(--rose);}
 .course-status.not-started{background:white;}
 .course-info{flex:1;min-width:0;}
-.course-name{font-size:0.8rem;font-weight:500;}
+.course-name{font-size:0.8rem;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
 .course-meta{font-size:0.66rem;color:var(--muted);margin-top:1px;}
 .mini-prog{width:80px;height:4px;background:var(--rule);border-radius:2px;overflow:hidden;flex-shrink:0;}
-.mini-fill{height:100%;border-radius:2px;background:linear-gradient(90deg,var(--blush),var(--mauve));}
+.mini-fill{height:100%;border-radius:2px;}
 .course-pct-input{width:52px;border:1.5px solid var(--rule);border-radius:8px;padding:3px 6px;font-size:0.72rem;font-family:'Jost',sans-serif;color:var(--ink);text-align:center;background:var(--warm);outline:none;}
 .course-pct-input:focus{border-color:var(--mauve);}
 .pct-label{font-size:0.68rem;color:var(--muted);flex-shrink:0;}
@@ -136,7 +153,11 @@ body{background:#f0e8e4;font-family:'Jost',sans-serif;color:var(--ink);}
     </div>
     <a href="https://www.coursera.org/my-learning?myLearningTab=IN_PROGRESS" target="_blank" class="open-btn">Open Coursera ↗</a>
   </div>
-  <div id="programs-wrap"></div>
+  <!-- Two truly independent columns -->
+  <div class="columns-wrap">
+    <div class="col" id="col-left"></div>
+    <div class="col" id="col-right"></div>
+  </div>
 </div>
 
 <script>
@@ -271,86 +292,95 @@ function renderSummary() {
     '<div class="summary-card" style="border-top:3px solid var(--mauve)"><div class="summary-num">'+overall+'%</div><div class="summary-label">Overall Progress</div></div>';
 }
 
-function renderPrograms() {
-  var wrap = document.getElementById('programs-wrap');
-  wrap.innerHTML = '';
-  programs.forEach(function(prog, pi) {
-    var pct = progPct(prog);
-    var accent = CAT_COLORS[prog.category] || '#e0cec8';
-    var isOpen = openState[prog.id] !== false;
+function buildCard(prog, pi) {
+  var pct = progPct(prog);
+  var accent = CAT_COLORS[prog.category] || '#e0cec8';
+  var isOpen = openState[prog.id] !== false;
 
-    var card = document.createElement('div');
-    card.className = 'program-card';
-    card.style.borderTop = '3px solid ' + accent;
+  var card = document.createElement('div');
+  card.className = 'program-card';
+  card.style.borderTop = '3px solid ' + accent;
 
-    // header
-    var hdr = document.createElement('div');
-    hdr.className = 'program-header';
-    hdr.innerHTML =
-      '<div style="flex:1;min-width:0;">' +
-        '<div class="program-platform">' + prog.platform + ' · ' + prog.category + '</div>' +
-        '<div class="program-name">' + prog.name + '</div>' +
+  var hdr = document.createElement('div');
+  hdr.className = 'program-header';
+  hdr.innerHTML =
+    '<div style="flex:1;min-width:0;">' +
+      '<div class="program-platform">' + prog.platform.toUpperCase() + ' · ' + prog.category.toUpperCase() + '</div>' +
+      '<div class="program-name">' + prog.name + '</div>' +
+    '</div>' +
+    '<div style="display:flex;align-items:center;gap:10px;flex-shrink:0;">' +
+      '<span class="prog-pct">' + pct + '%</span>' +
+      '<span class="chevron ' + (isOpen?'open':'') + '">▼</span>' +
+    '</div>';
+  hdr.onclick = (function(id, c){
+    return function() {
+      openState[id] = openState[id] === false ? true : false;
+      var cw = c.querySelector('.courses-wrap');
+      var ch = c.querySelector('.chevron');
+      cw.style.display = openState[id] === false ? 'none' : 'block';
+      ch.classList.toggle('open', openState[id] !== false);
+    };
+  })(prog.id, card);
+  card.appendChild(hdr);
+
+  var bw = document.createElement('div');
+  bw.className = 'prog-bar-wrap';
+  bw.innerHTML = '<div class="prog-bar"><div class="prog-fill" style="width:'+pct+'%;background:linear-gradient(90deg,'+accent+','+accent+'cc)"></div></div>';
+  card.appendChild(bw);
+
+  var cw = document.createElement('div');
+  cw.className = 'courses-wrap';
+  cw.style.display = isOpen ? 'block' : 'none';
+
+  prog.courses.forEach(function(course, ci) {
+    var st = course.pct >= 100 ? 'done' : course.pct > 0 ? 'in-progress' : 'not-started';
+    var sym = course.pct >= 100 ? '✓' : '';
+    var row = document.createElement('div');
+    row.className = 'course-row';
+    row.innerHTML =
+      '<div class="course-status ' + st + '" onclick="toggleCourse('+pi+','+ci+')">' + sym + '</div>' +
+      '<div class="course-info">' +
+        '<div class="course-name">' + course.name + '</div>' +
+        '<div class="course-meta">Course ' + course.num + ' of ' + course.total + '</div>' +
       '</div>' +
-      '<div style="display:flex;align-items:center;gap:10px;flex-shrink:0;">' +
-        '<span class="prog-pct">' + pct + '%</span>' +
-        '<span class="chevron ' + (isOpen?'open':'') + '">▼</span>' +
-      '</div>';
-    hdr.onclick = (function(id, c){
-      return function() {
-        openState[id] = openState[id] === false ? true : false;
-        var cw = c.querySelector('.courses-wrap');
-        var ch = c.querySelector('.chevron');
-        cw.style.display = openState[id] === false ? 'none' : 'block';
-        ch.classList.toggle('open', openState[id] !== false);
-      };
-    })(prog.id, card);
-    card.appendChild(hdr);
-
-    // progress bar
-    var bw = document.createElement('div');
-    bw.className = 'prog-bar-wrap';
-    bw.innerHTML = '<div class="prog-bar"><div class="prog-fill" style="width:'+pct+'%;background:linear-gradient(90deg,'+accent+','+accent+'cc)"></div></div>';
-    card.appendChild(bw);
-
-    // courses
-    var cw = document.createElement('div');
-    cw.className = 'courses-wrap';
-    cw.style.display = isOpen ? 'block' : 'none';
-
-    prog.courses.forEach(function(course, ci) {
-      var st = course.pct >= 100 ? 'done' : course.pct > 0 ? 'in-progress' : 'not-started';
-      var sym = course.pct >= 100 ? '✓' : '';
-      var row = document.createElement('div');
-      row.className = 'course-row';
-      row.innerHTML =
-        '<div class="course-status ' + st + '" onclick="toggleCourse('+pi+','+ci+')">' + sym + '</div>' +
-        '<div class="course-info">' +
-          '<div class="course-name">' + course.name + '</div>' +
-          '<div class="course-meta">Course ' + course.num + ' of ' + course.total + '</div>' +
-        '</div>' +
-        '<div class="mini-prog"><div class="mini-fill" style="width:'+course.pct+'%"></div></div>' +
-        '<input class="course-pct-input" type="number" min="0" max="100" value="'+course.pct+'" ' +
-          'onchange="updatePct('+pi+','+ci+',this.value)" onclick="event.stopPropagation()">' +
-        '<span class="pct-label">%</span>' +
-        '<button class="del-btn" onclick="deleteCourse('+pi+','+ci+')">✕</button>';
-      cw.appendChild(row);
-    });
-
-    // add course
-    var ar = document.createElement('div');
-    ar.className = 'add-course-row';
-    ar.innerHTML = '<button class="add-course-btn" onclick="addCourse('+pi+')">＋ Add course</button>';
-    cw.appendChild(ar);
-    card.appendChild(cw);
-
-    // delete program
-    var dr = document.createElement('div');
-    dr.className = 'del-prog-row';
-    dr.innerHTML = '<button class="del-btn" onclick="deleteProgram('+pi+')">✕ Remove program</button>';
-    card.appendChild(dr);
-
-    wrap.appendChild(card);
+      '<div class="mini-prog"><div class="mini-fill" style="width:'+course.pct+'%;background:linear-gradient(90deg,'+accent+','+accent+'cc)"></div></div>' +
+      '<input class="course-pct-input" type="number" min="0" max="100" value="'+course.pct+'" ' +
+        'onchange="updatePct('+pi+','+ci+',this.value)" onclick="event.stopPropagation()">' +
+      '<span class="pct-label">%</span>' +
+      '<button class="del-btn" onclick="deleteCourse('+pi+','+ci+')">✕</button>';
+    cw.appendChild(row);
   });
+
+  var ar = document.createElement('div');
+  ar.className = 'add-course-row';
+  ar.innerHTML = '<button class="add-course-btn" onclick="addCourse('+pi+')">＋ Add course</button>';
+  cw.appendChild(ar);
+  card.appendChild(cw);
+
+  var dr = document.createElement('div');
+  dr.className = 'del-prog-row';
+  dr.innerHTML = '<button class="del-btn" onclick="deleteProgram('+pi+')">✕ Remove program</button>';
+  card.appendChild(dr);
+
+  return card;
+}
+
+function renderPrograms() {
+  var colLeft  = document.getElementById('col-left');
+  var colRight = document.getElementById('col-right');
+  colLeft.innerHTML  = '';
+  colRight.innerHTML = '';
+
+  programs.forEach(function(prog, pi) {
+    var card = buildCard(prog, pi);
+    // Even indices → left column, odd → right column
+    if (pi % 2 === 0) {
+      colLeft.appendChild(card);
+    } else {
+      colRight.appendChild(card);
+    }
+  });
+
   renderSummary();
 }
 
@@ -401,13 +431,15 @@ function saveNewProgram() {
   var course   = document.getElementById('new-course-name').value.trim();
   if (!name) return;
   var id = 'p_' + Date.now();
-  programs.push({
-    id:id, name:name, platform:platform, category:category,
-    courses: course ? [{name:course, pct:0, num:1, total:1}] : []
-  });
+  programs.push({id:id, name:name, platform:platform, category:category,
+    courses: course ? [{name:course, pct:0, num:1, total:1}] : []});
   openState[id] = true;
   saveData(); renderPrograms(); closeModal();
 }
+
+document.getElementById('modal-overlay').addEventListener('click', function(e){
+  if (e.target === this) closeModal();
+});
 
 var DAYS=['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
 var MONTHS=['January','February','March','April','May','June','July','August','September','October','November','December'];
