@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Financial Tracker</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,400&family=Jost:wght@300;400;500;600&display=swap');
+:root{--blush:#f2c4ce;--rose:#e8a0b0;--mauve:#c9a0b4;--lavender:#d4b8e0;--sage:#b8cfb0;--cream:#fdf6f0;--warm:#f7ece4;--ink:#3a2a2e;--muted:#9a8088;--rule:#e0cec8;}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{background:#f0e8e4;font-family:'Jost',sans-serif;color:var(--ink);}
+
+.topbar{background:var(--cream);border-bottom:1px solid var(--rule);padding:14px 32px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;}
+.topbar-title{font-family:'Cormorant Garamond',serif;font-size:1.6rem;font-weight:300;letter-spacing:2px;}
+.topbar-title em{font-style:italic;color:var(--mauve);}
+.topbar-date{font-size:0.68rem;letter-spacing:2px;text-transform:uppercase;color:var(--muted);}
+.back-btn{display:inline-flex;align-items:center;gap:6px;padding:6px 14px;border:1.5px solid var(--rule);border-radius:20px;font-size:0.72rem;color:var(--muted);cursor:pointer;background:transparent;font-family:'Jost',sans-serif;text-decoration:none;transition:all .15s;}
+.back-btn:hover{border-color:var(--rose);color:var(--ink);}
+
+.hub{max-width:1000px;margin:0 auto;padding:24px 24px 60px;}
+
+.sec-title{font-family:'Cormorant Garamond',serif;font-size:1rem;font-weight:600;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin-bottom:12px;display:flex;align-items:center;gap:10px;}
+.sec-title:after{content:'';flex:1;height:1px;background:var(--rule);}
+
+.card{background:var(--cream);border:1px solid var(--rule);border-radius:14px;padding:18px 22px;}
+.card-accent{border-top:3px solid var(--blush);}
+.card-accent-sage{border-top:3px solid var(--sage);}
+.card-accent-lav{border-top:3px solid var(--lavender);}
+.card-accent-mauve{border-top:3px solid var(--mauve);}
+.card-label{font-size:0.6rem;letter-spacing:2.5px;text-transform:uppercase;color:var(--muted);margin-bottom:3px;}
+.card-title{font-family:'Cormorant Garamond',serif;font-size:1.05rem;font-weight:600;color:var(--ink);margin-bottom:12px;}
+
+/* BANNER */
+.upcoming-banner{background:linear-gradient(135deg,#fce8ef,#f0e0f0);border:1px solid var(--blush);border-radius:14px;padding:16px 22px;margin-bottom:20px;display:flex;align-items:center;gap:20px;flex-wrap:wrap;}
+.banner-label{font-size:0.58rem;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin-bottom:3px;}
+.banner-item{flex:1;min-width:130px;}
+.banner-card-name{font-family:'Cormorant Garamond',serif;font-size:1.05rem;font-weight:600;}
+.banner-days{font-size:0.7rem;color:var(--muted);margin-top:1px;}
+.banner-divider{width:1px;height:34px;background:var(--rule);flex-shrink:0;}
+
+/* MAIN LAYOUT */
+.main-layout{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:20px;align-items:start;}
+
+/* CC ROWS — tighter */
+.cc-row{display:flex;align-items:center;gap:10px;padding:7px 0;border-bottom:1px solid var(--rule);}
+.cc-row:last-child{border-bottom:none;}
+.cc-dot{width:9px;height:9px;border-radius:50%;flex-shrink:0;}
+.cc-info{flex:1;min-width:0;}
+.cc-name{font-size:0.79rem;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.cc-due{font-size:0.65rem;color:var(--muted);margin-top:1px;}
+.cc-urgency{font-size:0.6rem;font-weight:600;letter-spacing:.4px;text-transform:uppercase;padding:2px 8px;border-radius:10px;white-space:nowrap;flex-shrink:0;}
+.urgent{background:#fce4ec;color:#a0304a;}
+.soon{background:#fff8e1;color:#8a5a10;}
+.ok{background:#e8f5e9;color:#2a6a30;}
+
+.cc-actions{display:flex;align-items:center;gap:6px;flex-shrink:0;}
+.portal-btn{display:inline-flex;align-items:center;padding:3px 10px;border:1.5px solid var(--rule);border-radius:12px;font-size:0.65rem;font-weight:500;color:var(--muted);text-decoration:none;transition:all .15s;font-family:'Jost',sans-serif;white-space:nowrap;}
+.portal-btn:hover{border-color:var(--mauve);color:var(--ink);}
+.toggle-btn{padding:3px 10px;border-radius:12px;font-size:0.65rem;font-weight:600;cursor:pointer;border:1.5px solid;transition:all .15s;font-family:'Jost',sans-serif;white-space:nowrap;}
+.toggle-active{background:#e8f5e9;color:#2a6a30;border-color:#b8cfb0;}
+.toggle-inactive{background:var(--warm);color:var(--muted);border-color:var(--rule);}
+
+/* RIGHT COLUMN STACK */
+.right-stack{display:flex;flex-direction:column;gap:14px;}
+
+/* LINK ROWS */
+.link-row{display:flex;align-items:center;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--rule);}
+.link-row:last-child{border-bottom:none;}
+.link-label{font-size:0.8rem;font-weight:500;}
+.link-btn{display:inline-flex;align-items:center;gap:4px;padding:4px 12px;border:1.5px solid var(--rule);border-radius:12px;font-size:0.68rem;font-weight:500;color:var(--muted);text-decoration:none;transition:all .15s;font-family:'Jost',sans-serif;white-space:nowrap;}
+.link-btn:hover{border-color:var(--mauve);color:var(--ink);background:var(--warm);}
+.link-btn.primary{background:var(--mauve);color:white;border-color:var(--mauve);}
+.link-btn.primary:hover{background:var(--rose);border-color:var(--rose);}
+
+/* TOOLS GRID */
+.tools-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+.tool-item{display:flex;align-items:center;justify-content:space-between;padding:10px 14px;background:var(--warm);border:1px solid var(--rule);border-radius:10px;}
+.tool-name{font-size:0.78rem;font-weight:500;}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="topbar-title">Financial <em>Tracker</em></div>
+  <div style="display:flex;align-items:center;gap:16px;">
+    <a href="../" class="back-btn">← Brain 2.0</a>
+    <span class="topbar-date" id="today-date"></span>
+  </div>
+</div>
+
+<div class="hub">
+
+  <!-- BANNER -->
+  <div class="upcoming-banner" id="banner"></div>
+
+  <!-- MAIN LAYOUT -->
+  <div class="main-layout">
+
+    <!-- LEFT: CREDIT CARDS -->
+    <div>
+      <div class="sec-title">Credit Cards</div>
+      <div class="card card-accent">
+        <div class="card-label">Due Dates & Portals</div>
+        <div class="card-title">All Cards</div>
+        <div id="cc-list"></div>
+      </div>
+    </div>
+
+    <!-- RIGHT: BANKS + INVESTMENTS -->
+    <div class="right-stack">
+
+      <div>
+        <div class="sec-title">Bank Accounts</div>
+        <div class="card card-accent-sage">
+          <div id="bank-list"></div>
+        </div>
+      </div>
+
+      <div>
+        <div class="sec-title">Investments & Retirement</div>
+        <div class="card card-accent-lav">
+          <div id="invest-list"></div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- TOOLS FULL WIDTH -->
+  <div class="sec-title">Financial Tools</div>
+  <div class="card card-accent-mauve">
+    <div class="tools-grid" id="tools-list"></div>
+  </div>
+
+</div>
+
+<script>
+const CARDS = [
+  {name:'Chase Sapphire Preferred', day:22, month:3, url:'https://secure.chase.com/web/auth/dashboard#/dashboard/overview', color:'#f2c4ce', active:true},
+  {name:'Marriott Bonvoy',          day:12, month:4, url:'https://secure.chase.com/web/auth/dashboard#/dashboard/overview', color:'#f7d9b0', active:true},
+  {name:'Venture X',                day:28, month:3, url:'https://myaccounts.capitalone.com/#/accountSummary',              color:'#d4b8e0', active:true},
+  {name:'Bilt Blue Card',           day:5,  month:4, url:'https://www.bilt.com',                                           color:'#b8d4f0', active:true},
+  {name:'Citi AAdvantage Platinum', day:1,  month:4, url:'https://www.citi.com/',                                          color:'#b8cfb0', active:true},
+  {name:'AAdvantage Aviator',       day:18, month:3, url:'https://www.aviatormastercard.com/servicing/home',               color:'#e0cec8', active:false},
+  {name:'Discover',                 day:24, month:3, url:'https://card.discover.com/web/achome/homepage',                  color:'#c8c8d8', active:false},
+];
+
+const BANKS = [
+  {name:'SchoolsFirst FCU', url:'https://online.schoolsfirstfcu.org/gateway/schoolsfirstfcu/login#/'},
+  {name:'SoFi',             url:'https://login.sofi.com/'},
+];
+
+const INVESTMENTS = [
+  {name:'Fidelity', sub:'401k & Roth IRA', url:'https://digital.fidelity.com/ftgw/digital/portfolio/summary?poe=wiUser'},
+];
+
+const TOOLS = [
+  {name:'Origin',                              url:'https://app.useorigin.com/', primary:true},
+  {name:'2026 Financial Allocations Spreadsheet', url:'https://docs.google.com/spreadsheets/d/12XIOUZYGcwYSgt7mX99h6DRS3w5KgfllyZZ8VLRUIN8/edit?usp=sharing', primary:true},
+  {name:'Venmo',                               url:'https://venmo.com/'},
+  {name:'PayPal',                              url:'https://paypal.com/signin'},
+];
+
+const activeState = {};
+CARDS.forEach((c,i) => activeState[i] = c.active);
+
+const MONTH_NAMES = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+const DAY_NAMES   = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+const MONTH_FULL  = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+
+function daysUntil(day, month) {
+  const now = new Date(); now.setHours(0,0,0,0);
+  const yr = now.getFullYear();
+  let due = new Date(yr, month-1, day);
+  if (due < now) due = new Date(yr+1, month-1, day);
+  return Math.ceil((due - now)/(1000*60*60*24));
+}
+
+function urgency(d) {
+  if (d<=7)  return {cls:'urgent', label:d===0?'today!':d+'d'};
+  if (d<=14) return {cls:'soon',   label:d+'d'};
+  return             {cls:'ok',    label:d+'d'};
+}
+
+function renderCards() {
+  const list = document.getElementById('cc-list'); list.innerHTML='';
+  CARDS.forEach((c,i) => {
+    const isActive = activeState[i];
+    const d = daysUntil(c.day, c.month);
+    const u = urgency(d);
+    const row = document.createElement('div'); row.className='cc-row';
+    row.innerHTML=`
+      <div class="cc-dot" style="background:${c.color}"></div>
+      <div class="cc-info">
+        <div class="cc-name">${c.name}</div>
+        <div class="cc-due">Due ${MONTH_NAMES[c.month-1]} ${c.day}</div>
+      </div>
+      ${isActive ? `<span class="cc-urgency ${u.cls}">${u.label}</span>` : ''}
+      <div class="cc-actions">
+        <a href="${c.url}" target="_blank" class="portal-btn">Portal ↗</a>
+        <button class="toggle-btn ${isActive?'toggle-active':'toggle-inactive'}" onclick="toggleCard(${i})">
+          ${isActive?'Active':'Inactive'}
+        </button>
+      </div>`;
+    list.appendChild(row);
+  });
+}
+
+function toggleCard(i) {
+  activeState[i]=!activeState[i];
+  saveState(); renderCards(); renderBanner();
+}
+
+function renderBanner() {
+  const banner = document.getElementById('banner');
+  const active = CARDS.map((c,i)=>({...c,i})).filter(c=>activeState[c.i]);
+  active.sort((a,b)=>daysUntil(a.day,a.month)-daysUntil(b.day,b.month));
+  const top = active.slice(0,3);
+  if (!top.length){banner.style.display='none';return;}
+  banner.style.display='flex';
+  banner.innerHTML=`<div style="font-size:0.62rem;letter-spacing:2px;text-transform:uppercase;color:var(--muted);white-space:nowrap;align-self:center;">Next up ✦</div>`+
+    top.map((c,idx)=>{
+      const d=daysUntil(c.day,c.month);
+      return `${idx>0?'<div class="banner-divider"></div>':''}
+      <div class="banner-item">
+        <div class="banner-label">Due in ${d} day${d!==1?'s':''}</div>
+        <div class="banner-card-name">${c.name}</div>
+        <div class="banner-days">${MONTH_NAMES[c.month-1]} ${c.day} · <a href="${c.url}" target="_blank" style="color:var(--mauve);text-decoration:none;font-size:0.68rem;">Pay now ↗</a></div>
+      </div>`;
+    }).join('');
+}
+
+function renderLinkList(id, items) {
+  const el=document.getElementById(id); el.innerHTML='';
+  items.forEach(item=>{
+    const row=document.createElement('div'); row.className='link-row';
+    row.innerHTML=`
+      <div>
+        <div class="link-label">${item.name}</div>
+        ${item.sub?`<div style="font-size:0.68rem;color:var(--muted);margin-top:1px;">${item.sub}</div>`:''}
+      </div>
+      <a href="${item.url}" target="_blank" class="link-btn ${item.primary?'primary':''}">Open ↗</a>`;
+    el.appendChild(row);
+  });
+}
+
+function renderTools() {
+  const el=document.getElementById('tools-list'); el.innerHTML='';
+  TOOLS.forEach(t=>{
+    const item=document.createElement('div'); item.className='tool-item';
+    item.innerHTML=`<span class="tool-name">${t.name}</span>
+      <a href="${t.url}" target="_blank" class="link-btn ${t.primary?'primary':''}">Open ↗</a>`;
+    el.appendChild(item);
+  });
+}
+
+function saveState(){localStorage.setItem('financeActive',JSON.stringify(activeState));}
+function loadState(){
+  const raw=localStorage.getItem('financeActive');
+  if(!raw)return;
+  Object.assign(activeState,JSON.parse(raw));
+}
+
+const now=new Date();
+document.getElementById('today-date').textContent=DAY_NAMES[now.getDay()]+', '+MONTH_FULL[now.getMonth()]+' '+now.getDate()+', '+now.getFullYear();
+
+loadState();
+renderBanner();
+renderCards();
+renderLinkList('bank-list',BANKS);
+renderLinkList('invest-list',INVESTMENTS);
+renderTools();
+</script>
+</body>
+</html>
