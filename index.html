@@ -293,9 +293,9 @@ hr.divider{border:none;border-top:1px solid var(--rule);margin:14px 0;}
 
 <script>
 var pwd = localStorage.getItem('brain2auth');
-if (pwd !== '0421!') {
+if (pwd !== '0421') {
   var attempt = prompt('Password:');
-  if (attempt !== '0421!') {
+  if (attempt !== '0421') {
     document.body.innerHTML = '';
     throw new Error('Unauthorized');
   }
