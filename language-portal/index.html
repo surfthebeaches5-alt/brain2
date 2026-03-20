@@ -535,6 +535,13 @@ function switchTab(tab) {
 }
 
 function selectSkill(lang, skill, btn) {
+  if (activeSkill[lang] === skill) {
+    activeSkill[lang] = null;
+    btn.classList.remove('es-sel', 'pt-sel');
+    document.getElementById(lang+'-resource-panel').style.display = 'none';
+    document.getElementById(lang+'-log-row').style.display = 'none';
+    return;
+  }
   activeSkill[lang] = skill;
   activeResource[lang] = '—';
   document.querySelectorAll('#page-'+lang+' .skill-btn').forEach(function(b){b.classList.remove('es-sel','pt-sel');});
