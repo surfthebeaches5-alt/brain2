@@ -74,7 +74,7 @@ body{background:#f0e8e4;font-family:'Jost',sans-serif;color:var(--ink);}
 .rp-link-name{font-size:0.8rem;font-weight:500;}
 .rp-link-sub{font-size:0.67rem;color:var(--muted);margin-top:1px;}
 
-.log-row{display:flex;align-items:center;gap:10px;margin-top:14px;padding-top:14px;border-top:1px solid var(--rule);}
+.log-row{display:flex;align-items:center;gap:10px;margin-top:14px;padding-top:14px;border-top:1px solid var(--rule);flex-wrap:wrap;}
 .log-label{font-size:0.72rem;color:var(--muted);}
 .log-btns{display:flex;gap:6px;flex-wrap:wrap;}
 .log-btn{padding:5px 12px;border-radius:16px;border:1.5px solid var(--rule);background:var(--cream);font-family:'Jost',sans-serif;font-size:0.7rem;font-weight:500;cursor:pointer;transition:all .15s;}
@@ -105,14 +105,6 @@ body{background:#f0e8e4;font-family:'Jost',sans-serif;color:var(--ink);}
 .anki-deck{background:var(--warm);border-radius:8px;padding:10px 12px;margin-bottom:8px;position:relative;}
 .anki-deck:last-child{margin-bottom:0;}
 .anki-deck-name{font-size:0.76rem;font-weight:500;margin-bottom:6px;padding-right:40px;}
-.anki-stats-row{display:flex;gap:12px;}
-.anki-stat{text-align:center;}
-.anki-stat-num{font-family:'Cormorant Garamond',serif;font-size:1rem;font-weight:600;display:block;}
-.anki-stat-num.nc{color:#4a70c0;}.anki-stat-num.dc{color:#c04040;}.anki-stat-num.rc{color:#40904a;}
-.anki-stat-label{font-size:0.58rem;letter-spacing:1px;text-transform:uppercase;color:var(--muted);}
-.anki-edit-row{display:flex;gap:6px;margin-top:6px;flex-wrap:wrap;}
-.anki-field{display:flex;align-items:center;gap:4px;}
-.anki-field-label{font-size:0.6rem;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;}
 .anki-field-input{width:46px;border:1.5px solid var(--rule);border-radius:6px;padding:2px 5px;font-size:0.72rem;font-family:'Jost',sans-serif;color:var(--ink);text-align:center;background:var(--cream);outline:none;}
 .anki-field-input:focus{border-color:var(--mauve);}
 .anki-del{position:absolute;top:8px;right:8px;background:transparent;border:none;font-size:0.6rem;color:var(--muted);cursor:pointer;padding:2px 5px;border-radius:5px;}
@@ -130,7 +122,6 @@ body{background:#f0e8e4;font-family:'Jost',sans-serif;color:var(--ink);}
 .add-cls-btn{display:inline-flex;align-items:center;gap:6px;padding:7px 16px;border:1.5px solid var(--mauve);border-radius:20px;font-size:0.72rem;font-weight:600;color:var(--mauve);background:transparent;cursor:pointer;font-family:'Jost',sans-serif;transition:all .15s;}
 .add-cls-btn:hover{background:var(--blush);border-color:var(--rose);color:var(--ink);}
 
-/* SESSION LOG TAB */
 .log-summary-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:20px;}
 .log-summary-card{border-radius:12px;padding:16px 20px;}
 .log-summary-card.es{background:linear-gradient(135deg,#fce8e0,#f5d0c0);border:1px solid var(--es1);}
@@ -169,7 +160,6 @@ body{background:#f0e8e4;font-family:'Jost',sans-serif;color:var(--ink);}
 .log-del-btn:hover{background:#fce4ec;color:#a0304a;}
 .log-empty{font-size:0.76rem;color:var(--muted);font-style:italic;padding:16px 0;}
 
-/* MODAL */
 .modal-overlay{display:none;position:fixed;inset:0;background:rgba(58,42,46,.35);z-index:200;align-items:center;justify-content:center;}
 .modal-overlay.open{display:flex;}
 .modal{background:var(--cream);border-radius:16px;border:1px solid var(--rule);padding:28px 32px;width:90%;max-width:500px;max-height:90vh;overflow-y:auto;}
@@ -244,7 +234,6 @@ body{background:#f0e8e4;font-family:'Jost',sans-serif;color:var(--ink);}
   <button class="lang-tab" id="tab-log" onclick="switchTab('log')">📋 Session Log</button>
 </div>
 
-<!-- HUB -->
 <div class="hub">
 
   <!-- ══ SPANISH ══ -->
@@ -279,6 +268,8 @@ body{background:#f0e8e4;font-family:'Jost',sans-serif;color:var(--ink);}
       <div class="log-row" id="es-log-row" style="display:none;">
         <span class="log-label">Log time:</span>
         <div class="log-btns">
+          <button class="log-btn" onclick="logTime('es',5,event)">5 min</button>
+          <button class="log-btn" onclick="logTime('es',10,event)">10 min</button>
           <button class="log-btn" onclick="logTime('es',15,event)">15 min</button>
           <button class="log-btn" onclick="logTime('es',30,event)">30 min</button>
           <button class="log-btn" onclick="logTime('es',45,event)">45 min</button>
@@ -299,7 +290,7 @@ body{background:#f0e8e4;font-family:'Jost',sans-serif;color:var(--ink);}
         </div>
       </div>
       <div style="display:flex;flex-direction:column;gap:10px;">
-        <a href="https://www.languagetransfer.org/courses#complete-spanish" target="_blank" class="tool-link"><span>🎙️</span>Language Transfer Spanish<span style="margin-left:auto;color:var(--muted);font-size:0.7rem;">↗</span></a>
+        <a href="https://www.languagetransfer.org/courses#complete-spanish" target="_blank" class="tool-link"><span>🎙️</span>Language Transfer — Complete Spanish<span style="margin-left:auto;color:var(--muted);font-size:0.7rem;">↗</span></a>
         <a href="https://www.spanishdict.com/" target="_blank" class="tool-link"><span>📖</span>SpanishDict<span style="margin-left:auto;color:var(--muted);font-size:0.7rem;">↗</span></a>
         <a href="https://www.languagereactor.com/" target="_blank" class="tool-link"><span>🎬</span>Language Reactor<span style="margin-left:auto;color:var(--muted);font-size:0.7rem;">↗</span></a>
       </div>
@@ -341,6 +332,8 @@ body{background:#f0e8e4;font-family:'Jost',sans-serif;color:var(--ink);}
       <div class="log-row" id="pt-log-row" style="display:none;">
         <span class="log-label">Log time:</span>
         <div class="log-btns">
+          <button class="log-btn" onclick="logTime('pt',5,event)">5 min</button>
+          <button class="log-btn" onclick="logTime('pt',10,event)">10 min</button>
           <button class="log-btn" onclick="logTime('pt',15,event)">15 min</button>
           <button class="log-btn" onclick="logTime('pt',30,event)">30 min</button>
           <button class="log-btn" onclick="logTime('pt',45,event)">45 min</button>
@@ -373,7 +366,7 @@ body{background:#f0e8e4;font-family:'Jost',sans-serif;color:var(--ink);}
       <div style="display:flex;flex-direction:column;gap:10px;">
         <a href="https://www.dicio.com.br/" target="_blank" class="tool-link"><span>📖</span>Dicio — BR Dictionary<span style="margin-left:auto;color:var(--muted);font-size:0.7rem;">↗</span></a>
         <a href="https://www.conjugacao.com.br/" target="_blank" class="tool-link"><span>📖</span>Conjugação de Verbos<span style="margin-left:auto;color:var(--muted);font-size:0.7rem;">↗</span></a>
-        <a href="https://brazilianpodclass-learn-portuguese.teachable.com/" target="_blank" class="tool-link"><span>🎙️</span>BrazilianPodClass<span style="margin-left:auto;color:var(--muted);font-size:0.7rem;">↗</span></a>
+        <a href="https://www.youtube.com/channel/UCBAb_DK4GYZqZR9MFA7y2Xg" target="_blank" class="tool-link"><span>🎨</span>Galinha Pintadinha<span style="margin-left:auto;color:var(--muted);font-size:0.7rem;">↗</span></a>
       </div>
     </div>
 
@@ -408,7 +401,7 @@ body{background:#f0e8e4;font-family:'Jost',sans-serif;color:var(--ink);}
     </div>
   </div>
 
-</div><!-- end hub -->
+</div>
 
 <script>
 var SK = 'langPortal5';
@@ -433,59 +426,104 @@ var activeFilter = 'all';
 var activeSkill = {es:null, pt:null};
 var activeResource = {es:'—', pt:'—'};
 
+// ── SPANISH SKILLS ──
+// Phase 3 (C1 Reactivation). Resources from the Refold Spanish database — zero duplicates across all 5 skills.
 var ES_SKILLS = {
-  listening:{title:'Listening & Immersion',desc:'Freeflow listening is your most important activity at Phase 3. Immerse yourself in natural speech without pausing or looking things up.',links:[
-    {icon:'📺',name:'Dreaming Spanish',sub:'Comprehensible input · All levels · Endless episodes',url:'https://www.youtube.com/@DreamingSpanish/videos'},
-    {icon:'🎙️',name:'Radio Ambulante',sub:'Podcast · Journalism · Neutral Latin American Spanish',url:'https://radioambulante.org/en/'},
-    {icon:'🎙️',name:'News in Slow Spanish',sub:'Podcast · Learner-paced news · Spain dialect',url:'https://www.newsinslowspanish.com/'},
-    {icon:'🎙️',name:'Entiende tu Mente',sub:'Podcast · Psychology & mental health · Spain',url:'https://entiendetumente.info/archivo-podcasts/'}
-  ]},
-  speaking:{title:'Speaking & Shadowing',desc:'Shadow native speakers, monologue about your day, or do crosstalk with a native. Focus on fluidity — don\'t stress about perfection.',links:[
-    {icon:'📺',name:'Easy Spanish',sub:'Street interviews · Great for shadowing · Hard subtitles',url:'https://www.youtube.com/channel/UCAL4AMMMXKxHDu3FqZV6CbQ'},
-    {icon:'💬',name:'HelloTalk',sub:'Find native speakers for crosstalk & voice exchange',url:'https://www.hellotalk.com/'},
-    {icon:'💬',name:'Tandem',sub:'Language exchange partner app · Text & voice',url:'https://www.tandem.net/'},
-    {icon:'✍️',name:'Journaly',sub:'Write in Spanish · Get corrections from native speakers',url:'https://journaly.com/'}
-  ]},
-  reading:{title:'Freeflow Reading',desc:'Read without stopping to look up words. Use Language Reactor for dual-subtitle reading on Netflix or YouTube.',links:[
-    {icon:'🎬',name:'La Casa de las Flores · Netflix',sub:'Series · Comedy/Drama · Mexico · Beginner-friendly',url:'https://www.netflix.com/title/80160935'},
-    {icon:'🎬',name:'Aquí No Hay Quien Viva',sub:'Sitcom · Spain · ★★★★ · Great for casual reading',url:'https://anhqv.es/capitulos/'},
-    {icon:'🎬',name:'Language Reactor',sub:'Dual subtitles on Netflix & YouTube · Sentence mining',url:'https://www.languagereactor.com/'},
-    {icon:'📺',name:'Curiosamente',sub:'YouTube · Animated education · Intermediate · Subtitles',url:'https://www.youtube.com/@curiosamente'}
-  ]},
-  writing:{title:'Writing Practice',desc:'Write freely first — journal, react to a video, tell a story. Then review with AI or a tutor. Output practice activates everything you\'ve absorbed.',links:[
-    {icon:'✍️',name:'Journaly',sub:'Journal in Spanish · Native corrections · Free',url:'https://journaly.com/'},
-    {icon:'💬',name:'HelloTalk',sub:'Text native speakers · Casual writing in context',url:'https://www.hellotalk.com/'},
-    {icon:'📖',name:'Lawless Spanish',sub:'Grammar & idioms by level · Great reference while writing',url:'https://progress.lawlessspanish.com/revision'}
-  ]},
-  grammar:{title:'Grammar Brush-Up',desc:'At C1 you don\'t need heavy grammar study — look up patterns you notice in the wild and reactivate what\'s rusty.',links:[
-    {icon:'🎙️',name:'Language Transfer Spanish',sub:'Free audio course · Builds grammatical intuition fast',url:'https://www.languagetransfer.org/free-courses-1#complete-spanish'},
-    {icon:'📖',name:'SpanishDict',sub:'Best Spanish dictionary + grammar explanations',url:'https://www.spanishdict.com/'},
-    {icon:'📖',name:'Lawless Spanish',sub:'Grammar reference organized by level and topic',url:'https://progress.lawlessspanish.com/revision'}
-  ]}
+  listening:{
+    title:'Listening & Immersion',
+    desc:'Phase 3 is about volume — hours of native content daily, not studying. Podcasts and YouTube channels with large back-catalogues let you binge without running out. Don\'t pause, don\'t look things up. Let your ear recalibrate to native speed.',
+    links:[
+      {icon:'🎙️',name:'Radio Ambulante',sub:'Podcast · NPR-style Latin American journalism · Neutral dialect · Intermediate · Huge archive of story-driven episodes',url:'https://radioambulante.org/en/'},
+      {icon:'📺',name:'Curiosamente',sub:'YouTube · Animated science & curiosities · Intermediate · Yes subs · Mexico · Wide topic variety — easy to binge',url:'https://www.youtube.com/@curiosamente'},
+      {icon:'📺',name:'Alex Tienda',sub:'YouTube · Long-form travel documentaries · Intermediate · Mexico · Immersive storytelling across many countries',url:'https://www.youtube.com/@AlexTienda/videos'},
+      {icon:'🎙️',name:'Slobotzky',sub:'Podcast/YouTube · Most popular Spanish podcast · Advanced · Two Mexicans talking freely · Dense natural conversation',url:'https://www.youtube.com/@Slobotzky/videos'}
+    ]
+  },
+  speaking:{
+    title:'Speaking & Shadowing',
+    desc:'Pick a video, listen to a sentence, pause, repeat it out loud — exact rhythm, exact intonation. Then keep going. Street interview content is ideal because the speech is unscripted and varied. Aim for 15–20 mins of shadowing per session before any free speaking.',
+    links:[
+      {icon:'📺',name:'Islas Vlogs',sub:'YouTube · Street interviews · Intermediate · Hard subtitles · Mexico · Unscripted natural speech — the best shadowing material',url:'https://www.youtube.com/@IslasVlogs/videos'},
+      {icon:'🎤',name:'Franco Escamilla',sub:'YouTube · Stand-up comedy · Intermediate · Mexico · Shadow the rhythm and timing of natural Mexican humor',url:'https://www.youtube.com/channel/UCUjrDJokSX8JavRwy5iUOkA'},
+      {icon:'📺',name:'Werevertumorro',sub:'YouTube · Comprehensible input + comedy · Intermediate · Yes subs · Mexico · Casual everyday register — perfect for conversation reactivation',url:'https://www.youtube.com/@werevertumorro'},
+      {icon:'🎙️',name:'En Cortinas con Luisito y Berth',sub:'Podcast/YouTube · Friends chatting + interviews · Intermediate · Mexico · Real conversational rhythm and interruption patterns',url:'https://www.youtube.com/@encortinasconluisitoyberth1987/videos'}
+    ]
+  },
+  reading:{
+    title:'Reading & Subtitles',
+    desc:'Read native content without stopping. For video, have subtitles on but resist looking up every word — let context fill the gaps. Video essays and documentary-style channels are ideal because the text is dense and well-edited.',
+    links:[
+      {icon:'📺',name:'Un Mundo Inmenso',sub:'YouTube · Geography documentaries · Intermediate · Yes subs · Argentina · Incredibly high quality — rich written vocabulary',url:'https://www.youtube.com/@UnMundoInmenso/videos'},
+      {icon:'📺',name:'En Pocas Palabras',sub:'YouTube · Animated science education · Intermediate · Yes subs · Neutral · Kurzgesagt in Spanish — great for reading dense informational text',url:'https://www.youtube.com/@kurzgesagt_es/videos'},
+      {icon:'📺',name:'Woshingo',sub:'YouTube · Video essays on media & companies · Intermediate · Mexico · Complex ideas in polished written narration',url:'https://www.youtube.com/@Woshingo'},
+      {icon:'🎬',name:'¿Quién mató a Sara?',sub:'Netflix · Mystery drama · Intermediate · Yes subs · Mexico · Gripping story keeps you reading — great mid-level series',url:'https://www.netflix.com/title/81166747'}
+    ]
+  },
+  writing:{
+    title:'Writing & Output',
+    desc:'Write before you feel ready — that\'s the point. Pick a topic from something you just watched, write a reaction, argue a point, retell the story. Then check your patterns. Writing surfaces exactly which structures you\'ve absorbed vs. which are still passive.',
+    links:[
+      {icon:'✍️',name:'Journaly',sub:'Web · Write in Spanish daily · Native speaker corrections · Free · The best dedicated Spanish writing practice tool',url:'https://journaly.com/'},
+      {icon:'📺',name:'Preguntas Incómodas',sub:'YouTube · Video essays on social & anthropology topics · Intermediate · Venezuela · Watch, then write your opinion in Spanish — forces complex output',url:'https://www.youtube.com/@PreguntasIncomodas5'},
+      {icon:'📖',name:'Lawless Spanish',sub:'Web · Grammar reference by level and topic · Check patterns while you write — don\'t guess',url:'https://progress.lawlessspanish.com/revision'},
+      {icon:'📖',name:'RAE — Real Academia Española',sub:'Web · Authoritative Spanish dictionary · Settle any word choice, usage, or spelling question instantly',url:'https://dle.rae.es/'}
+    ]
+  },
+  grammar:{
+    title:'Grammar Brush-Up',
+    desc:'At C1 you don\'t need a course — you need to notice patterns you\'ve been ignoring and fill in specific gaps. Language Transfer rebuilds grammatical intuition from first principles without drilling. Look things up as they come up in immersion, don\'t study ahead.',
+    links:[
+      {icon:'🎙️',name:'Language Transfer — Complete Spanish',sub:'Free audio course · 40 tracks · No memorization · Rebuilds grammatical intuition from first principles — fastest reactivation tool',url:'https://www.languagetransfer.org/courses#complete-spanish'},
+      {icon:'📖',name:'SpanishDict',sub:'Web · Best Spanish dictionary + grammar explanations · Look up any conjugation, usage, or rule instantly',url:'https://www.spanishdict.com/'},
+      {icon:'📺',name:'Mr. Salas',sub:'YouTube · Language learning + personal development · Intermediate · Mexico · Meta content about language that sharpens how you approach your own gaps',url:'https://www.youtube.com/@MrSalas/videos'},
+      {icon:'📺',name:'Maxi Fontán',sub:'YouTube · Teaching + comedy + language · Intermediate · Argentina · Grammar explained with humor — also exposes you to Rioplatense patterns',url:'https://www.youtube.com/@maxifontan/videos'}
+    ]
+  }
 };
 
+// ── PORTUGUESE BR SKILLS ──
+// Phase 1 (A1 Foundation). Resources from the Refold PT BR database — zero duplicates across categories.
 var PT_SKILLS = {
-  phonology:{title:'Phonology & Pronunciation',desc:'Phase 1 starts with connecting written letters to sounds. Do your Anki IPA and Pronunciation decks, then listen and mimic native speech.',links:[
-    {icon:'📺',name:'Teach Yourself Portuguese',sub:'YouTube · Comprehensible input · Super Beginner · BR',url:'https://www.youtube.com/@TeachYourselfPortuguese'},
-    {icon:'📺',name:'Immerse in Portuguese',sub:'YouTube · Comprehensible input · Super Beginner · BR',url:'https://www.youtube.com/@ImmerseInPortuguese'},
-    {icon:'📺',name:'Mundo Bita',sub:'YouTube · Songs for kids · Excellent for phonology · BR',url:'https://youtube.com/@MundoBita?feature=shared'}
-  ]},
-  vocab:{title:'Vocabulary — Anki Study',desc:'Work through your Anki decks daily. The goal is building enough vocabulary to start comprehending simple input.',links:[
-    {icon:'🃏',name:'AnkiWeb — Open Your Decks',sub:'Phase 1 decks: IPA · Pronunciation · Dictionary of PT',url:'https://ankiweb.net/'},
-    {icon:'📺',name:'Portuguese with Eli',sub:'YouTube · Vocabulary in context · BR · Hard subtitles',url:'https://youtube.com/@portuguesewitheli'},
-    {icon:'📺',name:'Bárbara From Brazil',sub:'YouTube · Comprehensible input for vocab building · BR',url:'https://www.youtube.com/@B%C3%A1rbaraFromBrazilbfb'}
-  ]},
-  input:{title:'Comprehensible Input',desc:'Find content where visual context helps you understand even without knowing all the words. Let your brain absorb the patterns.',links:[
-    {icon:'📺',name:'Olga do Brasil',sub:'YouTube · Travel & life · Comprehensible input · BR',url:'https://youtube.com/@olgadobrasil'},
-    {icon:'📺',name:'Smile and Learn Português',sub:'YouTube · Kids content · Perfect comprehensible input · BR',url:'https://www.youtube.com/channel/UCYKeu41LiJOIoyEkStWqCLw'},
-    {icon:'📺',name:'Easy Portuguese',sub:'Street interviews · Hard subtitles · BR & varied',url:'https://www.youtube.com/@EasyPortugueseVideos'},
-    {icon:'🎙️',name:'BrazilianPodClass',sub:'Podcast · Learner · Beginner · BR',url:'https://brazilianpodclass-learn-portuguese.teachable.com/'}
-  ]},
-  grammar:{title:'Basic Grammar',desc:'Read about grammar principles enough to understand what you\'re hearing. Don\'t drill — just enough to recognize patterns during immersion.',links:[
-    {icon:'📺',name:'Português com Marcia Macedo',sub:'YouTube · Teaching · Beginner · BR',url:'https://www.youtube.com/c/Portugu%C3%AAscomMarciaMacedoBR'},
-    {icon:'📖',name:'Conjugação de Verbos',sub:'Verb conjugation reference · BR Portuguese',url:'https://www.conjugacao.com.br/'},
-    {icon:'📖',name:'Dicio — BR Dictionary',sub:'Monolingual dictionary · BR Portuguese · With example sentences',url:'https://www.dicio.com.br/'}
-  ]}
+  phonology:{
+    title:'Phonology & Pronunciation',
+    desc:'Phase 1 starts with sounds before meaning. BR Portuguese has nasal vowels, vowel reduction, and rhythms that don\'t exist in English or Spanish. Listen and mimic — don\'t worry about understanding everything yet. Pair with your Anki IPA and Pronunciation decks.',
+    links:[
+      {icon:'🎵',name:'Mundo Bita',sub:'YouTube · Songs for kids · Super Beginner · BR · Melodic & repetitive — perfect for ear training',url:'https://youtube.com/@MundoBita?feature=shared'},
+      {icon:'📺',name:'Teach Yourself Portuguese',sub:'YouTube · Comprehensible input · Super Beginner · BR · Very slow clear speech, yes-subs',url:'https://www.youtube.com/@TeachYourselfPortuguese'},
+      {icon:'📺',name:'Immerse in Portuguese',sub:'YouTube · Comprehensible input · Super Beginner · BR · Sound-first immersion approach',url:'https://www.youtube.com/@ImmerseInPortuguese'},
+      {icon:'🎙️',name:'Tá Falado',sub:'Podcast · Learner · Beginner · BR · Built specifically around BR pronunciation contrasts — free from UT Austin',url:'https://www.coerll.utexas.edu/brazilpod/tafalado/'}
+    ]
+  },
+  vocab:{
+    title:'Vocabulary Building',
+    desc:'Your Anki decks (see the section above) are your core vocab engine. These channels reinforce words in natural context — hearing a word in a sentence you understand is what makes it stick. Subtitles help you map sound to spelling.',
+    links:[
+      {icon:'📺',name:'Portuguese with Eli',sub:'YouTube · Comprehensible input + teaching · Beginner · BR · Hard subtitles — great for word-to-sound mapping',url:'https://youtube.com/@portuguesewitheli'},
+      {icon:'📺',name:'Bárbara From Brazil',sub:'YouTube · Comprehensible input · Beginner · BR · Yes subs · Short episodes — low cognitive load',url:'https://www.youtube.com/@B%C3%A1rbaraFromBrazilbfb'},
+      {icon:'📺',name:'Novos Clássicos',sub:'YouTube · Teaching + tier lists · Beginner · BR · Vocabulary discovery through ranking format',url:'https://www.youtube.com/@novosclassicos/videos'},
+      {icon:'🎙️',name:'Read Brazilian Portuguese Every Day',sub:'Podcast · Learner · Beginner · BR · Spotify · Daily exposure to vocabulary in real sentences',url:'https://open.spotify.com/show/30svIUO9itfpOTDgkyH4zx'}
+    ]
+  },
+  input:{
+    title:'Comprehensible Input',
+    desc:'The goal here is hours of exposure where visual and audio context carry the meaning — your brain absorbs grammar and vocab passively even when you can\'t consciously translate. Kids\' content and vlog channels are perfect at A1 because the topics are predictable.',
+    links:[
+      {icon:'📺',name:'Smile and Learn — Português',sub:'YouTube · Animated comprehensible input · Beginner · BR · Huge episode library',url:'https://www.youtube.com/channel/UCYKeu41LiJOIoyEkStWqCLw'},
+      {icon:'📺',name:'Olga do Brasil',sub:'YouTube · Travel & life vlog · Beginner · BR · Yes subs · Visual context makes every episode followable',url:'https://youtube.com/@olgadobrasil?si=pTrcnjL-OT8cA46K'},
+      {icon:'📺',name:'Juliana Selem',sub:'YouTube Playlist · Vlog · Beginner · BR · Yes subs · Natural everyday Brazilian life — easy to follow',url:'https://youtube.com/playlist?list=PLNUhp8Sjr4iop2zNBZX7SaQHfF3gDG09O&si=3wWuB8RavzS-2S15'},
+      {icon:'📺',name:'Turma da Mônica',sub:'YouTube · Cartoons · Beginner · BR · Iconic Brazilian series — familiar story formats keep it accessible',url:'https://www.youtube.com/channel/UCV4XcEqBswMCryorV_gNENw'}
+    ]
+  },
+  grammar:{
+    title:'Basic Grammar',
+    desc:'At A1 read about a pattern just enough to recognize it — then let input do the rest. Don\'t drill conjugation tables. BR Portuguese grammar is very consistent once you see the underlying logic.',
+    links:[
+      {icon:'📺',name:'Português com Marcia Macedo',sub:'YouTube · Teaching · Beginner · BR · Yes subs · Native teacher explaining grammar in Portuguese',url:'https://www.youtube.com/c/Portugu%C3%AAscomMarciaMacedoBR'},
+      {icon:'📺',name:'Portuguese with Thai',sub:'YouTube · Teaching + commentary · Beginner · BR · Yes subs · Explains the why behind grammar rules',url:'https://www.youtube.com/@PortugueseWithThai'},
+      {icon:'📺',name:'Easy Portuguese',sub:'YouTube · Street interviews · Beginner · Hard subtitles · Hear grammar operating at natural speed in real life',url:'https://www.youtube.com/@EasyPortugueseVideos'},
+      {icon:'📖',name:'Conjugação de Verbos',sub:'Web · Free · Complete BR verb conjugation reference — look up any verb instantly while listening',url:'https://www.conjugacao.com.br/'}
+    ]
+  }
 };
 
 function switchTab(tab) {
@@ -578,7 +616,6 @@ function renderLog() {
     if (e.lang==='pt') hasPt=true;
   });
 
-  // Summary cards
   ['es','pt'].forEach(function(lang){
     var h = S.hours[lang]||0;
     var total = PHASE_HOURS[lang];
@@ -589,7 +626,6 @@ function renderLog() {
     document.getElementById('log-'+lang+'-bar').style.width = pct+'%';
   });
 
-  // Filters
   var sortedMonths = Object.keys(months).sort().reverse();
   var sortedYears = Object.keys(years).sort().reverse();
   var fHtml = '<button class="lf-btn'+(activeFilter==='all'?' active':'')+'" onclick="setFilter(\'all\',this)">All</button>';
@@ -605,7 +641,6 @@ function renderLog() {
   }
   document.getElementById('log-filters').innerHTML = fHtml;
 
-  // Filter entries
   var filtered = S.log.filter(function(e){
     if (activeFilter==='all') return true;
     if (activeFilter==='lang-es') return e.lang==='es';
@@ -658,7 +693,6 @@ function deleteLog(id) {
   renderLog();
 }
 
-// ANKI
 function saveAnkiDeck() {
   var name = document.getElementById('ai-name').value.trim();
   if (!name) return;
@@ -706,7 +740,6 @@ function renderAnki() {
   });
 }
 
-// CLASSES
 function openClassModal(lang) {
   document.getElementById('ci-lang').value = lang||'pt';
   document.getElementById('cls-modal').classList.add('open');
