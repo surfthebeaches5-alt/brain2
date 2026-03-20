@@ -41,9 +41,10 @@ body{background:#f0e8e4;font-family:'Jost',sans-serif;color:var(--ink);}
 /* MAIN LAYOUT */
 .main-layout{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:20px;align-items:start;}
 
-/* CC ROWS — tighter */
-.cc-row{display:flex;align-items:center;gap:10px;padding:7px 0;border-bottom:1px solid var(--rule);}
+/* CC ROWS */
+.cc-row{display:flex;align-items:center;gap:8px;padding:7px 0;border-bottom:1px solid var(--rule);transition:opacity .2s;}
 .cc-row:last-child{border-bottom:none;}
+.cc-row.is-inactive{opacity:0.5;}
 .cc-dot{width:9px;height:9px;border-radius:50%;flex-shrink:0;}
 .cc-info{flex:1;min-width:0;}
 .cc-name{font-size:0.79rem;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
@@ -52,13 +53,18 @@ body{background:#f0e8e4;font-family:'Jost',sans-serif;color:var(--ink);}
 .urgent{background:#fce4ec;color:#a0304a;}
 .soon{background:#fff8e1;color:#8a5a10;}
 .ok{background:#e8f5e9;color:#2a6a30;}
+.paid-badge{background:#e8f5e9;color:#2a6a30;font-size:0.6rem;font-weight:600;letter-spacing:.4px;text-transform:uppercase;padding:2px 8px;border-radius:10px;white-space:nowrap;flex-shrink:0;}
 
-.cc-actions{display:flex;align-items:center;gap:6px;flex-shrink:0;}
-.portal-btn{display:inline-flex;align-items:center;padding:3px 10px;border:1.5px solid var(--rule);border-radius:12px;font-size:0.65rem;font-weight:500;color:var(--muted);text-decoration:none;transition:all .15s;font-family:'Jost',sans-serif;white-space:nowrap;}
+.cc-actions{display:flex;align-items:center;gap:5px;flex-shrink:0;}
+.portal-btn{display:inline-flex;align-items:center;padding:3px 9px;border:1.5px solid var(--rule);border-radius:12px;font-size:0.62rem;font-weight:500;color:var(--muted);text-decoration:none;transition:all .15s;font-family:'Jost',sans-serif;white-space:nowrap;}
 .portal-btn:hover{border-color:var(--mauve);color:var(--ink);}
-.toggle-btn{padding:3px 10px;border-radius:12px;font-size:0.65rem;font-weight:600;cursor:pointer;border:1.5px solid;transition:all .15s;font-family:'Jost',sans-serif;white-space:nowrap;}
+.toggle-btn{padding:3px 9px;border-radius:12px;font-size:0.62rem;font-weight:600;cursor:pointer;border:1.5px solid;transition:all .15s;font-family:'Jost',sans-serif;white-space:nowrap;}
 .toggle-active{background:#e8f5e9;color:#2a6a30;border-color:#b8cfb0;}
 .toggle-inactive{background:var(--warm);color:var(--muted);border-color:var(--rule);}
+/* Paid toggle */
+.paid-btn{padding:3px 9px;border-radius:12px;font-size:0.62rem;font-weight:600;cursor:pointer;border:1.5px solid;transition:all .15s;font-family:'Jost',sans-serif;white-space:nowrap;}
+.paid-yes{background:#e3f0ff;color:#1a5a9a;border-color:#a8c8f0;}
+.paid-no{background:var(--warm);color:var(--muted);border-color:var(--rule);}
 
 /* RIGHT COLUMN STACK */
 .right-stack{display:flex;flex-direction:column;gap:14px;}
@@ -90,13 +96,9 @@ body{background:#f0e8e4;font-family:'Jost',sans-serif;color:var(--ink);}
 
 <div class="hub">
 
-  <!-- BANNER -->
   <div class="upcoming-banner" id="banner"></div>
 
-  <!-- MAIN LAYOUT -->
   <div class="main-layout">
-
-    <!-- LEFT: CREDIT CARDS -->
     <div>
       <div class="sec-title">Credit Cards</div>
       <div class="card card-accent">
@@ -106,27 +108,22 @@ body{background:#f0e8e4;font-family:'Jost',sans-serif;color:var(--ink);}
       </div>
     </div>
 
-    <!-- RIGHT: BANKS + INVESTMENTS -->
     <div class="right-stack">
-
       <div>
         <div class="sec-title">Bank Accounts</div>
         <div class="card card-accent-sage">
           <div id="bank-list"></div>
         </div>
       </div>
-
       <div>
         <div class="sec-title">Investments & Retirement</div>
         <div class="card card-accent-lav">
           <div id="invest-list"></div>
         </div>
       </div>
-
     </div>
   </div>
 
-  <!-- TOOLS FULL WIDTH -->
   <div class="sec-title">Financial Tools</div>
   <div class="card card-accent-mauve">
     <div class="tools-grid" id="tools-list"></div>
@@ -135,140 +132,219 @@ body{background:#f0e8e4;font-family:'Jost',sans-serif;color:var(--ink);}
 </div>
 
 <script>
-const CARDS = [
-  {name:'Chase Sapphire Preferred', day:22, month:3, url:'https://secure.chase.com/web/auth/dashboard#/dashboard/overview', color:'#f2c4ce', active:true},
-  {name:'Marriott Bonvoy',          day:12, month:4, url:'https://secure.chase.com/web/auth/dashboard#/dashboard/overview', color:'#f7d9b0', active:true},
-  {name:'Venture X',                day:28, month:3, url:'https://myaccounts.capitalone.com/#/accountSummary',              color:'#d4b8e0', active:true},
-  {name:'Bilt Blue Card',           day:5,  month:4, url:'https://www.bilt.com',                                           color:'#b8d4f0', active:true},
-  {name:'Citi AAdvantage Platinum', day:1,  month:4, url:'https://www.citi.com/',                                          color:'#b8cfb0', active:true},
-  {name:'AAdvantage Aviator',       day:18, month:3, url:'https://www.aviatormastercard.com/servicing/home',               color:'#e0cec8', active:false},
-  {name:'Discover',                 day:24, month:3, url:'https://card.discover.com/web/achome/homepage',                  color:'#c8c8d8', active:false},
+// day = day-of-month the payment is due (no hardcoded month — auto-rolls every month)
+var CARDS = [
+  {name:'Chase Sapphire Preferred', day:22, url:'https://secure.chase.com/web/auth/dashboard#/dashboard/overview', color:'#f2c4ce', active:true},
+  {name:'Marriott Bonvoy',          day:12, url:'https://secure.chase.com/web/auth/dashboard#/dashboard/overview', color:'#f7d9b0', active:true},
+  {name:'Venture X',                day:28, url:'https://myaccounts.capitalone.com/#/accountSummary',              color:'#d4b8e0', active:true},
+  {name:'Bilt Blue Card',           day:5,  url:'https://www.bilt.com',                                           color:'#b8d4f0', active:true},
+  {name:'Citi AAdvantage Platinum', day:1,  url:'https://www.citi.com/',                                          color:'#b8cfb0', active:true},
+  {name:'AAdvantage Aviator',       day:18, url:'https://www.aviatormastercard.com/servicing/home',               color:'#e0cec8', active:false},
+  {name:'Discover',                 day:24, url:'https://card.discover.com/web/achome/homepage',                  color:'#c8c8d8', active:false},
 ];
 
-const BANKS = [
+var BANKS = [
   {name:'SchoolsFirst FCU', url:'https://online.schoolsfirstfcu.org/gateway/schoolsfirstfcu/login#/'},
   {name:'SoFi',             url:'https://login.sofi.com/'},
 ];
 
-const INVESTMENTS = [
+var INVESTMENTS = [
   {name:'Fidelity', sub:'401k & Roth IRA', url:'https://digital.fidelity.com/ftgw/digital/portfolio/summary?poe=wiUser'},
 ];
 
-const TOOLS = [
-  {name:'Origin',                              url:'https://app.useorigin.com/', primary:true},
+var TOOLS = [
+  {name:'Origin',                                 url:'https://app.useorigin.com/', primary:true},
   {name:'2026 Financial Allocations Spreadsheet', url:'https://docs.google.com/spreadsheets/d/12XIOUZYGcwYSgt7mX99h6DRS3w5KgfllyZZ8VLRUIN8/edit?usp=sharing', primary:true},
-  {name:'Venmo',                               url:'https://venmo.com/'},
-  {name:'PayPal',                              url:'https://paypal.com/signin'},
+  {name:'Venmo',                                  url:'https://venmo.com/'},
+  {name:'PayPal',                                 url:'https://paypal.com/signin'},
 ];
 
-const activeState = {};
-CARDS.forEach((c,i) => activeState[i] = c.active);
+var MONTH_NAMES = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+var DAY_NAMES   = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+var MONTH_FULL  = ['January','February','March','April','May','June','July','August','September','October','November','December'];
 
-const MONTH_NAMES = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
-const DAY_NAMES   = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
-const MONTH_FULL  = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+// State: active, paid — persisted in localStorage
+var state = {};
+CARDS.forEach(function(c, i) {
+  state[i] = {active: c.active, paid: false};
+});
 
-function daysUntil(day, month) {
-  const now = new Date(); now.setHours(0,0,0,0);
-  const yr = now.getFullYear();
-  let due = new Date(yr, month-1, day);
-  if (due < now) due = new Date(yr+1, month-1, day);
-  return Math.ceil((due - now)/(1000*60*60*24));
+function loadState() {
+  var raw = localStorage.getItem('finTrackerState2');
+  if (!raw) return;
+  try {
+    var saved = JSON.parse(raw);
+    Object.keys(saved).forEach(function(k) {
+      if (state[k] !== undefined) {
+        state[k].active = saved[k].active !== undefined ? saved[k].active : state[k].active;
+        state[k].paid   = saved[k].paid   !== undefined ? saved[k].paid   : false;
+      }
+    });
+  } catch(e) {}
+}
+
+function saveState() {
+  localStorage.setItem('finTrackerState2', JSON.stringify(state));
+}
+
+// Returns days until next occurrence of this day-of-month, rolling monthly (not yearly)
+function daysUntil(day) {
+  var now = new Date(); now.setHours(0,0,0,0);
+  var yr  = now.getFullYear();
+  var mo  = now.getMonth(); // 0-indexed
+
+  // Try this month first
+  var due = new Date(yr, mo, day);
+  if (due < now) {
+    // Already passed this month → roll to next month
+    due = new Date(yr, mo + 1, day);
+  }
+  return Math.ceil((due - now) / (1000 * 60 * 60 * 24));
+}
+
+// Returns the actual due date as a string like "Apr 5"
+function dueDateStr(day) {
+  var now = new Date(); now.setHours(0,0,0,0);
+  var yr  = now.getFullYear();
+  var mo  = now.getMonth();
+  var due = new Date(yr, mo, day);
+  if (due < now) due = new Date(yr, mo + 1, day);
+  return MONTH_NAMES[due.getMonth()] + ' ' + due.getDate();
 }
 
 function urgency(d) {
-  if (d<=7)  return {cls:'urgent', label:d===0?'today!':d+'d'};
-  if (d<=14) return {cls:'soon',   label:d+'d'};
-  return             {cls:'ok',    label:d+'d'};
+  if (d <= 7)  return {cls:'urgent', label: d === 0 ? 'today!' : d + 'd'};
+  if (d <= 14) return {cls:'soon',   label: d + 'd'};
+  return              {cls:'ok',     label: d + 'd'};
+}
+
+function getSortedCards() {
+  // Build array with index + computed days
+  var indexed = CARDS.map(function(c, i) {
+    return {card:c, i:i, d:daysUntil(c.day), active:state[i].active};
+  });
+
+  // Sort: active cards first sorted by days asc, inactive cards at bottom sorted by days asc
+  indexed.sort(function(a, b) {
+    if (a.active && !b.active) return -1;
+    if (!a.active && b.active) return 1;
+    return a.d - b.d;
+  });
+
+  return indexed;
 }
 
 function renderCards() {
-  const list = document.getElementById('cc-list'); list.innerHTML='';
-  CARDS.forEach((c,i) => {
-    const isActive = activeState[i];
-    const d = daysUntil(c.day, c.month);
-    const u = urgency(d);
-    const row = document.createElement('div'); row.className='cc-row';
-    row.innerHTML=`
-      <div class="cc-dot" style="background:${c.color}"></div>
-      <div class="cc-info">
-        <div class="cc-name">${c.name}</div>
-        <div class="cc-due">Due ${MONTH_NAMES[c.month-1]} ${c.day}</div>
-      </div>
-      ${isActive ? `<span class="cc-urgency ${u.cls}">${u.label}</span>` : ''}
-      <div class="cc-actions">
-        <a href="${c.url}" target="_blank" class="portal-btn">Portal ↗</a>
-        <button class="toggle-btn ${isActive?'toggle-active':'toggle-inactive'}" onclick="toggleCard(${i})">
-          ${isActive?'Active':'Inactive'}
-        </button>
-      </div>`;
+  var list = document.getElementById('cc-list');
+  list.innerHTML = '';
+  var sorted = getSortedCards();
+
+  sorted.forEach(function(item) {
+    var c   = item.card;
+    var i   = item.i;
+    var d   = item.d;
+    var u   = urgency(d);
+    var isActive = state[i].active;
+    var isPaid   = state[i].paid;
+
+    var row = document.createElement('div');
+    row.className = 'cc-row' + (isActive ? '' : ' is-inactive');
+
+    var urgencyHtml = '';
+    if (isActive) {
+      urgencyHtml = isPaid
+        ? '<span class="paid-badge">✓ Paid</span>'
+        : '<span class="cc-urgency ' + u.cls + '">' + u.label + '</span>';
+    }
+
+    row.innerHTML =
+      '<div class="cc-dot" style="background:' + c.color + '"></div>' +
+      '<div class="cc-info">' +
+        '<div class="cc-name">' + c.name + '</div>' +
+        '<div class="cc-due">Due ' + dueDateStr(c.day) + '</div>' +
+      '</div>' +
+      urgencyHtml +
+      '<div class="cc-actions">' +
+        '<a href="' + c.url + '" target="_blank" class="portal-btn">Portal ↗</a>' +
+        '<button class="paid-btn ' + (isPaid ? 'paid-yes' : 'paid-no') + '" onclick="togglePaid(' + i + ')">' +
+          (isPaid ? 'Paid' : 'Unpaid') +
+        '</button>' +
+        '<button class="toggle-btn ' + (isActive ? 'toggle-active' : 'toggle-inactive') + '" onclick="toggleActive(' + i + ')">' +
+          (isActive ? 'Active' : 'Inactive') +
+        '</button>' +
+      '</div>';
+
     list.appendChild(row);
   });
 }
 
-function toggleCard(i) {
-  activeState[i]=!activeState[i];
+function toggleActive(i) {
+  state[i].active = !state[i].active;
+  saveState(); renderCards(); renderBanner();
+}
+
+function togglePaid(i) {
+  state[i].paid = !state[i].paid;
   saveState(); renderCards(); renderBanner();
 }
 
 function renderBanner() {
-  const banner = document.getElementById('banner');
-  const active = CARDS.map((c,i)=>({...c,i})).filter(c=>activeState[c.i]);
-  active.sort((a,b)=>daysUntil(a.day,a.month)-daysUntil(b.day,b.month));
-  const top = active.slice(0,3);
-  if (!top.length){banner.style.display='none';return;}
-  banner.style.display='flex';
-  banner.innerHTML=`<div style="font-size:0.62rem;letter-spacing:2px;text-transform:uppercase;color:var(--muted);white-space:nowrap;align-self:center;">Next up ✦</div>`+
-    top.map((c,idx)=>{
-      const d=daysUntil(c.day,c.month);
-      return `${idx>0?'<div class="banner-divider"></div>':''}
-      <div class="banner-item">
-        <div class="banner-label">Due in ${d} day${d!==1?'s':''}</div>
-        <div class="banner-card-name">${c.name}</div>
-        <div class="banner-days">${MONTH_NAMES[c.month-1]} ${c.day} · <a href="${c.url}" target="_blank" style="color:var(--mauve);text-decoration:none;font-size:0.68rem;">Pay now ↗</a></div>
-      </div>`;
+  var banner = document.getElementById('banner');
+  // Only show active + unpaid cards in banner
+  var sorted = getSortedCards().filter(function(item) {
+    return state[item.i].active && !state[item.i].paid;
+  });
+  var top = sorted.slice(0, 3);
+
+  if (!top.length) { banner.style.display = 'none'; return; }
+  banner.style.display = 'flex';
+
+  banner.innerHTML = '<div style="font-size:0.62rem;letter-spacing:2px;text-transform:uppercase;color:var(--muted);white-space:nowrap;align-self:center;">Next up ✦</div>' +
+    top.map(function(item, idx) {
+      var c = item.card;
+      var d = item.d;
+      return (idx > 0 ? '<div class="banner-divider"></div>' : '') +
+        '<div class="banner-item">' +
+          '<div class="banner-label">Due in ' + d + ' day' + (d !== 1 ? 's' : '') + '</div>' +
+          '<div class="banner-card-name">' + c.name + '</div>' +
+          '<div class="banner-days">' + dueDateStr(c.day) + ' · <a href="' + c.url + '" target="_blank" style="color:var(--mauve);text-decoration:none;font-size:0.68rem;">Pay now ↗</a></div>' +
+        '</div>';
     }).join('');
 }
 
 function renderLinkList(id, items) {
-  const el=document.getElementById(id); el.innerHTML='';
-  items.forEach(item=>{
-    const row=document.createElement('div'); row.className='link-row';
-    row.innerHTML=`
-      <div>
-        <div class="link-label">${item.name}</div>
-        ${item.sub?`<div style="font-size:0.68rem;color:var(--muted);margin-top:1px;">${item.sub}</div>`:''}
-      </div>
-      <a href="${item.url}" target="_blank" class="link-btn ${item.primary?'primary':''}">Open ↗</a>`;
+  var el = document.getElementById(id); el.innerHTML = '';
+  items.forEach(function(item) {
+    var row = document.createElement('div'); row.className = 'link-row';
+    row.innerHTML =
+      '<div>' +
+        '<div class="link-label">' + item.name + '</div>' +
+        (item.sub ? '<div style="font-size:0.68rem;color:var(--muted);margin-top:1px;">' + item.sub + '</div>' : '') +
+      '</div>' +
+      '<a href="' + item.url + '" target="_blank" class="link-btn ' + (item.primary ? 'primary' : '') + '">Open ↗</a>';
     el.appendChild(row);
   });
 }
 
 function renderTools() {
-  const el=document.getElementById('tools-list'); el.innerHTML='';
-  TOOLS.forEach(t=>{
-    const item=document.createElement('div'); item.className='tool-item';
-    item.innerHTML=`<span class="tool-name">${t.name}</span>
-      <a href="${t.url}" target="_blank" class="link-btn ${t.primary?'primary':''}">Open ↗</a>`;
+  var el = document.getElementById('tools-list'); el.innerHTML = '';
+  TOOLS.forEach(function(t) {
+    var item = document.createElement('div'); item.className = 'tool-item';
+    item.innerHTML =
+      '<span class="tool-name">' + t.name + '</span>' +
+      '<a href="' + t.url + '" target="_blank" class="link-btn ' + (t.primary ? 'primary' : '') + '">Open ↗</a>';
     el.appendChild(item);
   });
 }
 
-function saveState(){localStorage.setItem('financeActive',JSON.stringify(activeState));}
-function loadState(){
-  const raw=localStorage.getItem('financeActive');
-  if(!raw)return;
-  Object.assign(activeState,JSON.parse(raw));
-}
-
-const now=new Date();
-document.getElementById('today-date').textContent=DAY_NAMES[now.getDay()]+', '+MONTH_FULL[now.getMonth()]+' '+now.getDate()+', '+now.getFullYear();
+var now = new Date();
+document.getElementById('today-date').textContent = DAY_NAMES[now.getDay()] + ', ' + MONTH_FULL[now.getMonth()] + ' ' + now.getDate() + ', ' + now.getFullYear();
 
 loadState();
 renderBanner();
 renderCards();
-renderLinkList('bank-list',BANKS);
-renderLinkList('invest-list',INVESTMENTS);
+renderLinkList('bank-list', BANKS);
+renderLinkList('invest-list', INVESTMENTS);
 renderTools();
 </script>
 </body>
