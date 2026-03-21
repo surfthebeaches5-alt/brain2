@@ -13,27 +13,22 @@
 *{box-sizing:border-box;margin:0;padding:0;}
 body{background:#f0e8e4;font-family:'Jost',sans-serif;color:var(--ink);min-height:100vh;}
 
-/* TOPBAR */
 .topbar{background:var(--cream);border-bottom:1px solid var(--rule);padding:14px 32px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;}
 .topbar-title{font-family:'Cormorant Garamond',serif;font-size:1.6rem;font-weight:300;letter-spacing:2px;}
 .topbar-title em{font-style:italic;color:var(--mauve);}
 .topbar-date{font-size:0.68rem;letter-spacing:2px;text-transform:uppercase;color:var(--muted);}
 .greeting{font-size:0.78rem;color:var(--muted);font-style:italic;}
 
-/* HUB */
 .hub{max-width:1100px;margin:0 auto;padding:28px 24px 60px;}
 
-/* SECTION HEADERS */
 .sec-title{font-family:'Cormorant Garamond',serif;font-size:1rem;font-weight:600;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin-bottom:14px;display:flex;align-items:center;gap:10px;}
 .sec-title:after{content:'';flex:1;height:1px;background:var(--rule);}
 
-/* GRIDS */
 .grid-2{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
 .grid-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px;}
 .grid-4{display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:14px;}
 .hero-row{display:grid;grid-template-columns:2fr 1fr;gap:14px;margin-bottom:28px;}
 
-/* CARDS */
 .card{background:var(--cream);border:1px solid var(--rule);border-radius:14px;padding:20px 22px;transition:transform .15s,box-shadow .15s;}
 .card:hover{transform:translateY(-2px);box-shadow:0 6px 20px rgba(180,130,140,.13);}
 .card-accent-blush{border-top:3px solid var(--blush);}
@@ -45,24 +40,20 @@ body{background:#f0e8e4;font-family:'Jost',sans-serif;color:var(--ink);min-heigh
 .card-title{font-family:'Cormorant Garamond',serif;font-size:1.05rem;font-weight:600;color:var(--ink);margin-bottom:6px;}
 .card-sub{font-size:0.74rem;color:var(--muted);line-height:1.5;}
 
-/* HERO CARD */
 .hero-card{background:linear-gradient(135deg,#fce8ef,#f0e0f0);border:1px solid var(--blush);border-radius:14px;padding:24px 26px;}
 .hero-title{font-family:'Cormorant Garamond',serif;font-size:1.5rem;font-weight:300;font-style:italic;color:var(--ink);margin-bottom:6px;}
 .hero-sub{font-size:0.74rem;color:var(--muted);line-height:1.6;margin-bottom:16px;}
 
-/* LAUNCH BUTTONS */
 .launch-btn{display:inline-flex;align-items:center;gap:5px;padding:8px 18px;background:var(--mauve);color:white;border:none;border-radius:20px;font-family:'Jost',sans-serif;font-size:0.76rem;font-weight:600;cursor:pointer;text-decoration:none;transition:background .15s;}
 .launch-btn:hover{background:var(--rose);}
 .launch-btn.ghost{background:var(--cream);color:var(--ink);border:1.5px solid var(--rule);}
 .launch-btn.ghost:hover{border-color:var(--rose);background:var(--warm);}
 
-/* QUICK LINKS */
 .quick-links{display:flex;flex-direction:column;gap:8px;}
 .quick-link{display:flex;align-items:center;gap:10px;padding:10px 14px;background:var(--warm);border:1px solid var(--rule);border-radius:10px;text-decoration:none;color:var(--ink);font-size:0.78rem;font-weight:500;transition:all .15s;}
 .quick-link:hover{border-color:var(--rose);background:var(--cream);}
 .quick-link-arrow{margin-left:auto;color:var(--muted);font-size:0.7rem;}
 
-/* DUE DATE ROW */
 .due-row{display:flex;align-items:center;gap:10px;padding:7px 0;border-bottom:1px solid var(--rule);font-size:0.78rem;}
 .due-row:last-child{border-bottom:none;}
 .due-dot{width:9px;height:9px;border-radius:50%;flex-shrink:0;}
@@ -73,7 +64,18 @@ body{background:#f0e8e4;font-family:'Jost',sans-serif;color:var(--ink);min-heigh
 .soon{background:#fff8e1;color:#8a5a10;}
 .ok{background:#e8f5e9;color:#2a6a30;}
 
-/* PROG BAR */
+/* UPCOMING EVENTS LIST — same style as due dates */
+.upcoming-row{display:flex;align-items:center;gap:10px;padding:7px 0;border-bottom:1px solid var(--rule);font-size:0.78rem;}
+.upcoming-row:last-child{border-bottom:none;}
+.upcoming-dot{width:9px;height:9px;border-radius:50%;flex-shrink:0;}
+.upcoming-name{flex:1;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;padding-right:6px;}
+.upcoming-date{font-size:0.68rem;color:var(--muted);flex-shrink:0;}
+.upcoming-pill{font-size:0.6rem;font-weight:600;letter-spacing:.4px;text-transform:uppercase;padding:2px 8px;border-radius:10px;white-space:nowrap;flex-shrink:0;}
+.today-pill{background:#fce4ec;color:#a0304a;}
+.tomorrow-pill{background:#fff8e1;color:#8a5a10;}
+.soon-pill{background:#e8f5e9;color:#2a6a30;}
+.upcoming-empty{font-size:0.74rem;color:var(--muted);font-style:italic;padding:8px 0;}
+
 .prog-wrap{margin:8px 0 4px;}
 .prog-label{display:flex;justify-content:space-between;font-size:0.67rem;color:var(--muted);margin-bottom:4px;}
 .prog-bar{height:5px;background:var(--rule);border-radius:3px;overflow:hidden;}
@@ -82,24 +84,20 @@ body{background:#f0e8e4;font-family:'Jost',sans-serif;color:var(--ink);min-heigh
 .prog-fill.sage{background:linear-gradient(90deg,#b8cfb0,#7aaa70);}
 .prog-fill.lav{background:linear-gradient(90deg,var(--lavender),#a880c8);}
 
-/* GOAL ROW */
 .goal-row{display:flex;align-items:center;gap:10px;padding:6px 0;border-bottom:1px solid var(--rule);font-size:0.78rem;}
 .goal-row:last-child{border-bottom:none;}
 .goal-check{width:16px;height:16px;border-radius:50%;border:1.5px solid var(--rule);flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:9px;}
 .goal-check.done{background:var(--sage);border-color:var(--sage);color:white;}
 
-/* PILL */
 .pill{display:inline-block;padding:2px 9px;border-radius:12px;font-size:0.6rem;font-weight:600;letter-spacing:.5px;text-transform:uppercase;}
 .pill-sage{background:#e8f5e4;color:#3a6a30;}
 .pill-muted{background:var(--warm);color:var(--muted);}
 .pill-amber{background:#fdf3e0;color:#8a5a10;}
 
-/* LANG CHIP */
 .lang-chip{display:flex;align-items:center;gap:8px;padding:8px 10px;background:var(--warm);border-radius:8px;margin-bottom:8px;font-size:0.78rem;}
 .lang-name{font-weight:500;font-size:0.78rem;}
 .lang-sub{font-size:0.67rem;color:var(--muted);}
 
-/* COURSE ROW */
 .course-row{display:flex;align-items:center;justify-content:space-between;padding:7px 0;border-bottom:1px solid var(--rule);font-size:0.78rem;}
 .course-row:last-child{border-bottom:none;}
 .course-name{font-weight:500;flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;padding-right:10px;}
@@ -134,6 +132,7 @@ hr.divider{border:none;border-top:1px solid var(--rule);margin:14px 0;}
         <a href="finances/" class="quick-link">💳 Financial Tracker<span class="quick-link-arrow">↗</span></a>
         <a href="language-portal/" class="quick-link">🌍 Language Portal<span class="quick-link-arrow">↗</span></a>
         <a href="professional-dev/" class="quick-link">📊 Professional Dev<span class="quick-link-arrow">↗</span></a>
+        <a href="calendar/" class="quick-link">🗓️ Calendar<span class="quick-link-arrow">↗</span></a>
       </div>
     </div>
   </div>
@@ -166,18 +165,20 @@ hr.divider{border:none;border-top:1px solid var(--rule);margin:14px 0;}
       </div>
       <div class="card-sub" style="margin-top:6px;" id="year-remaining">— days remaining</div>
     </div>
+
+    <!-- NEXT UP — reads from calendar localStorage -->
     <div class="card card-accent-rose">
-      <div class="card-label">Next Up</div>
-      <div class="card-title">Coming Soon</div>
-      <div class="card-sub" style="margin-top:6px;">Add your upcoming events in your Weekly Audit calendar.</div>
-      <a href="weekly-audit/" class="launch-btn ghost" style="margin-top:12px;font-size:0.7rem;padding:5px 12px;">Go to Calendar →</a>
+      <div class="card-label">Next Up · 3 Days</div>
+      <div class="card-title">Upcoming</div>
+      <div id="upcoming-list" style="margin-top:6px;"></div>
+      <hr class="divider">
+      <a href="calendar/" class="launch-btn ghost" style="font-size:0.7rem;padding:5px 12px;">Open Calendar →</a>
     </div>
   </div>
 
   <!-- FINANCES + LANGUAGES -->
   <div class="grid-2" style="margin-bottom:28px;">
 
-    <!-- FINANCES -->
     <div>
       <div class="sec-title">Finances</div>
       <div class="card card-accent-blush">
@@ -193,7 +194,6 @@ hr.divider{border:none;border-top:1px solid var(--rule);margin:14px 0;}
       </div>
     </div>
 
-    <!-- LANGUAGES -->
     <div>
       <div class="sec-title">Languages</div>
       <div class="card card-accent-mauve">
@@ -225,7 +225,6 @@ hr.divider{border:none;border-top:1px solid var(--rule);margin:14px 0;}
   <!-- PROFESSIONAL DEV + PERSONAL DEV -->
   <div class="grid-2" style="margin-bottom:28px;">
 
-    <!-- PROFESSIONAL DEV -->
     <div>
       <div class="sec-title">Professional Development</div>
       <div class="card card-accent-sage">
@@ -243,7 +242,6 @@ hr.divider{border:none;border-top:1px solid var(--rule);margin:14px 0;}
       </div>
     </div>
 
-    <!-- PERSONAL DEV -->
     <div>
       <div class="sec-title">Personal Development</div>
       <div class="card card-accent-lav">
@@ -262,7 +260,7 @@ hr.divider{border:none;border-top:1px solid var(--rule);margin:14px 0;}
 
   <!-- TOOLS ROW -->
   <div class="sec-title">Quick Access</div>
-  <div class="grid-4">
+  <div class="grid-4" style="margin-bottom:14px;">
     <a href="weekly-audit/" class="card card-accent-blush" style="text-decoration:none;display:block;">
       <div style="font-size:1.6rem;margin-bottom:8px;">📋</div>
       <div class="card-label">Tool</div>
@@ -288,6 +286,14 @@ hr.divider{border:none;border-top:1px solid var(--rule);margin:14px 0;}
       <div class="card-sub">Coursera programs, course progress, skills tracker</div>
     </a>
   </div>
+  <div class="grid-4">
+    <a href="calendar/" class="card card-accent-rose" style="text-decoration:none;display:block;">
+      <div style="font-size:1.6rem;margin-bottom:8px;">🗓️</div>
+      <div class="card-label">Tool</div>
+      <div class="card-title">Calendar</div>
+      <div class="card-sub">Monthly & weekly planner, color-coded categories</div>
+    </a>
+  </div>
 
 </div>
 
@@ -301,8 +307,8 @@ if (pwd !== '0421') {
   }
   localStorage.setItem('brain2auth', attempt);
 }
-  
-var DAYS = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+
+var DAYS   = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
 var MONTHS = ['January','February','March','April','May','June','July','August','September','October','November','December'];
 var MONTHS_SHORT = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
 
@@ -329,7 +335,86 @@ document.getElementById('year-pct').textContent = yearPct + '%';
 document.getElementById('year-bar').style.width = yearPct + '%';
 document.getElementById('year-remaining').textContent = remaining + ' days remaining in ' + now.getFullYear();
 
-// Credit card due dates
+// ── UPCOMING EVENTS from calendar localStorage ──
+var CAT_COLORS = {
+  work:     '#f2c4ce',
+  social:   '#b8d4f0',
+  travel:   '#b8cfb0',
+  learning: '#f0dea0',
+  tasks:    '#d4b8e0',
+  health:   '#a8d8d0',
+  selfcare: '#f4b8d4',
+  personal: '#f7d9b0'
+};
+
+function dateKey(d) {
+  var y = d.getFullYear();
+  var m = String(d.getMonth()+1).padStart(2,'0');
+  var day = String(d.getDate()).padStart(2,'0');
+  return y + '-' + m + '-' + day;
+}
+
+function formatTime(t) {
+  if (!t) return '';
+  var p = t.split(':'); var hr = parseInt(p[0]), mn = p[1];
+  var ampm = hr >= 12 ? 'pm' : 'am'; hr = hr % 12 || 12;
+  return hr + (mn !== '00' ? ':' + mn : '') + ampm;
+}
+
+function renderUpcoming() {
+  var container = document.getElementById('upcoming-list');
+  var raw = localStorage.getItem('lifeCalendar1');
+  if (!raw) { container.innerHTML = '<div class="upcoming-empty">No upcoming events. Add some in your Calendar!</div>'; return; }
+
+  var calData;
+  try { calData = JSON.parse(raw); } catch(e) { container.innerHTML = '<div class="upcoming-empty">No events found.</div>'; return; }
+  var allEvents = calData.events || [];
+
+  // Build keys for today, tomorrow, day after
+  var today = new Date(); today.setHours(0,0,0,0);
+  var days = [];
+  for (var i = 0; i <= 2; i++) {
+    var d = new Date(today); d.setDate(today.getDate() + i);
+    days.push(dateKey(d));
+  }
+
+  // Filter events within next 3 days, not done, sorted by date then time
+  var upcoming = allEvents.filter(function(e) {
+    return days.indexOf(e.date) !== -1 && !e.done;
+  }).sort(function(a, b) {
+    if (a.date !== b.date) return a.date.localeCompare(b.date);
+    return (a.time || '').localeCompare(b.time || '');
+  });
+
+  if (!upcoming.length) {
+    container.innerHTML = '<div class="upcoming-empty">Nothing in the next 3 days — enjoy the calm!</div>';
+    return;
+  }
+
+  container.innerHTML = '';
+  var todayKey = days[0], tomorrowKey = days[1];
+
+  upcoming.forEach(function(ev) {
+    var color = CAT_COLORS[ev.cat] || '#e0cec8';
+    var row = document.createElement('div'); row.className = 'upcoming-row';
+
+    var pillLabel, pillClass;
+    if (ev.date === todayKey)    { pillLabel = 'Today';    pillClass = 'today-pill'; }
+    else if (ev.date === tomorrowKey) { pillLabel = 'Tomorrow'; pillClass = 'tomorrow-pill'; }
+    else                          { pillLabel = MONTHS_SHORT[parseInt(ev.date.split('-')[1])-1] + ' ' + parseInt(ev.date.split('-')[2]); pillClass = 'soon-pill'; }
+
+    row.innerHTML =
+      '<div class="upcoming-dot" style="background:' + color + '"></div>' +
+      '<span class="upcoming-name">' + ev.title + (ev.time ? ' · ' + formatTime(ev.time) : '') + '</span>' +
+      '<span class="upcoming-pill ' + pillClass + '">' + pillLabel + '</span>';
+
+    container.appendChild(row);
+  });
+}
+
+renderUpcoming();
+
+// ── CREDIT CARD DUE DATES ──
 var CARDS = [
   {name:'Chase Sapphire Preferred', day:22, color:'#f2c4ce'},
   {name:'Venture X',                day:28, color:'#d4b8e0'},
