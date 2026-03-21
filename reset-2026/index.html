@@ -1,0 +1,612 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>2026 Reset</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Jost:wght@300;400;500;600&display=swap');
+:root{
+  --blush:#f2c4ce;--rose:#e8a0b0;--mauve:#c9a0b4;--lavender:#d4b8e0;
+  --sage:#b8cfb0;--cream:#fdf6f0;--warm:#f7ece4;--ink:#3a2a2e;--muted:#9a8088;--rule:#e0cec8;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{background:#f0e8e4;font-family:'Jost',sans-serif;color:var(--ink);min-height:100vh;}
+
+/* ── TOPBAR ── */
+.topbar{background:var(--cream);border-bottom:1px solid var(--rule);padding:14px 32px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:200;}
+.topbar-title{font-family:'Cormorant Garamond',serif;font-size:1.6rem;font-weight:300;letter-spacing:2px;}
+.topbar-title em{font-style:italic;color:var(--mauve);}
+.topbar-right{display:flex;align-items:center;gap:10px;}
+.back-btn{display:inline-flex;align-items:center;gap:6px;padding:6px 14px;border:1.5px solid var(--rule);border-radius:20px;font-size:0.72rem;color:var(--muted);cursor:pointer;background:transparent;font-family:'Jost',sans-serif;text-decoration:none;transition:all .15s;}
+.back-btn:hover{border-color:var(--rose);color:var(--ink);}
+.topbar-date{font-size:0.68rem;letter-spacing:2px;text-transform:uppercase;color:var(--muted);}
+.pdf-btn{padding:7px 16px;border:none;border-radius:20px;background:var(--rose);color:white;font-family:'Jost',sans-serif;font-size:0.73rem;font-weight:600;cursor:pointer;transition:all .15s;}
+.pdf-btn:hover{background:var(--mauve);}
+
+/* ── TOOLBAR ── */
+#toolbar{max-width:900px;margin:0 auto;padding:16px 24px 0;display:flex;gap:8px;flex-wrap:wrap;}
+.tab-btn{padding:7px 15px;border:1.5px solid var(--mauve);background:var(--cream);color:var(--ink);font-family:'Jost',sans-serif;font-size:0.7rem;font-weight:500;cursor:pointer;border-radius:20px;letter-spacing:.5px;transition:all .15s;}
+.tab-btn:hover{background:var(--blush);border-color:var(--rose);}
+.tab-btn.active{background:var(--mauve);color:white;border-color:var(--mauve);}
+
+/* ── PAPER ── */
+.hub-wrap{max-width:900px;margin:0 auto;padding:0 0 80px;}
+#paper{margin:14px 24px 0;background:var(--cream);box-shadow:0 4px 30px rgba(180,130,140,.14);border-radius:4px;padding:40px 52px 60px;}
+
+/* ── COVER ── */
+.cover{text-align:center;padding:40px 0 32px;border-bottom:1px solid var(--rule);margin-bottom:40px;}
+.cover-year{font-size:0.62rem;letter-spacing:5px;text-transform:uppercase;color:var(--muted);margin-bottom:16px;}
+.cover-title{font-family:'Cormorant Garamond',serif;font-size:4rem;font-weight:300;letter-spacing:3px;line-height:1;color:var(--ink);}
+.cover-title em{font-style:italic;color:var(--mauve);}
+.cover-sub{font-size:0.72rem;letter-spacing:3px;text-transform:uppercase;color:var(--muted);margin-top:12px;}
+.cover-ornament{font-size:1rem;letter-spacing:10px;color:var(--blush);margin-top:20px;}
+
+/* ── PAGES ── */
+.page{display:none;}.page.active{display:block;}
+
+/* ── CHAPTER HEADER ── */
+.chapter-header{margin-bottom:32px;}
+.chapter-eyebrow{font-size:0.6rem;letter-spacing:4px;text-transform:uppercase;color:var(--muted);margin-bottom:6px;}
+.chapter-title{font-family:'Cormorant Garamond',serif;font-size:2rem;font-weight:300;font-style:italic;color:var(--ink);line-height:1.2;}
+.chapter-title em{color:var(--mauve);font-style:italic;}
+.chapter-desc{font-size:0.76rem;color:var(--muted);line-height:1.7;margin-top:10px;max-width:580px;}
+
+/* ── SECTION ── */
+.section{margin-bottom:36px;}
+.section-num{display:inline-flex;align-items:center;gap:10px;margin-bottom:14px;}
+.section-num-badge{background:var(--blush);color:var(--ink);font-size:0.7rem;font-weight:600;padding:3px 10px;border-radius:12px;letter-spacing:.5px;}
+.section-title{font-family:'Cormorant Garamond',serif;font-size:1.1rem;font-weight:600;}
+
+/* ── WRITE FIELDS ── */
+.field-label{font-size:0.62rem;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin-bottom:6px;display:block;font-weight:600;}
+.write{background:var(--warm);border:1px solid var(--rule);border-radius:8px;padding:12px 14px;min-height:90px;font-family:'Jost',sans-serif;font-size:0.8rem;line-height:1.8;color:var(--ink);outline:none;width:100%;transition:border-color .15s,box-shadow .15s;}
+.write:focus{border-color:var(--blush);box-shadow:0 0 0 3px rgba(242,196,206,.2);}
+.write[contenteditable]:empty:before{content:attr(data-ph);color:#c8aab0;font-style:italic;}
+.write.short{min-height:55px;}
+.write.tall{min-height:140px;}
+.write.letter{min-height:180px;font-family:'Cormorant Garamond',serif;font-size:1rem;font-style:italic;line-height:1.9;}
+
+/* ── MANIFESTO CARD ── */
+.manifesto-card{background:linear-gradient(135deg,#fce8ef,#f0e0f0);border:1px solid var(--blush);border-radius:14px;padding:28px 32px;margin-bottom:20px;}
+.manifesto-intro{font-family:'Cormorant Garamond',serif;font-size:1rem;font-style:italic;color:var(--mauve);margin-bottom:14px;}
+
+/* ── GRID FIELDS ── */
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:18px;}
+.three-col{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px;}
+.col-card{background:var(--warm);border:1px solid var(--rule);border-radius:10px;padding:16px 18px;}
+.col-card-title{font-family:'Cormorant Garamond',serif;font-size:0.95rem;font-weight:600;margin-bottom:4px;}
+.col-card-sub{font-size:0.67rem;color:var(--muted);font-style:italic;margin-bottom:10px;}
+
+/* ── AUDIT GRID ── */
+.audit-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+.audit-item{background:var(--warm);border:1px solid var(--rule);border-radius:8px;padding:12px 14px;}
+.audit-area{font-size:0.62rem;font-weight:600;text-transform:uppercase;letter-spacing:1px;color:var(--mauve);margin-bottom:6px;}
+
+/* ── FUTURE SELF SENTENCES ── */
+.future-row{display:flex;gap:12px;align-items:flex-start;margin-bottom:12px;}
+.future-prompt{font-size:0.68rem;font-weight:600;text-transform:uppercase;letter-spacing:.5px;color:var(--muted);min-width:110px;padding-top:4px;flex-shrink:0;}
+.future-write{flex:1;outline:none;border-bottom:1px dashed var(--rule);min-height:24px;font-size:0.82rem;font-family:'Jost',sans-serif;color:var(--ink);padding-bottom:3px;line-height:1.5;}
+.future-write[contenteditable]:empty:before{content:attr(data-ph);color:#c8aab0;font-style:italic;}
+.future-write:focus{border-bottom-color:var(--mauve);}
+
+/* ── REBRAND LIFESTYLE ── */
+.rebrand-row{display:grid;grid-template-columns:1fr 1fr;gap:0;margin-bottom:12px;border:1px solid var(--rule);border-radius:10px;overflow:hidden;}
+.rebrand-old{background:#fce8ef;padding:14px 16px;border-right:1px solid var(--rule);}
+.rebrand-new{background:#e8f5e8;padding:14px 16px;}
+.rebrand-label{font-size:0.6rem;font-weight:600;text-transform:uppercase;letter-spacing:1.5px;color:var(--muted);margin-bottom:6px;}
+.rebrand-write{outline:none;font-size:0.78rem;font-family:'Jost',sans-serif;color:var(--ink);min-height:20px;width:100%;}
+.rebrand-write[contenteditable]:empty:before{content:attr(data-ph);color:#c8aab0;font-style:italic;}
+
+/* ── WIN LIST ── */
+.win-list{display:flex;flex-direction:column;gap:6px;}
+.win-row{display:flex;align-items:flex-start;gap:10px;}
+.win-bullet{color:var(--rose);font-size:1rem;flex-shrink:0;padding-top:2px;}
+.win-text{outline:none;border-bottom:1px dashed var(--rule);min-height:22px;font-size:0.8rem;font-family:'Jost',sans-serif;color:var(--ink);padding-bottom:2px;flex:1;}
+.win-text[contenteditable]:empty:before{content:attr(data-ph);color:#c8aab0;font-style:italic;}
+.win-text:focus{border-bottom-color:var(--mauve);}
+.win-del{background:none;border:none;color:#ddd;cursor:pointer;font-size:0.65rem;padding:2px 4px;flex-shrink:0;}
+.win-del:hover{color:#a0304a;}
+.add-win-btn{font-size:0.7rem;color:var(--mauve);background:transparent;border:none;cursor:pointer;font-family:'Jost',sans-serif;padding:4px 0;margin-top:4px;}
+.add-win-btn:hover{text-decoration:underline;}
+
+/* ── HR ── */
+hr.rule{border:none;border-top:1px solid var(--rule);margin:28px 0;}
+.ornament{text-align:center;color:var(--blush);font-size:1rem;letter-spacing:10px;margin-top:36px;}
+
+/* ── MISSION STATEMENT BOX ── */
+.mission-box{border:2px solid var(--mauve);border-radius:14px;padding:28px 32px;text-align:center;margin:20px 0;}
+.mission-label{font-size:0.6rem;letter-spacing:4px;text-transform:uppercase;color:var(--mauve);margin-bottom:12px;display:block;}
+.mission-write{font-family:'Cormorant Garamond',serif;font-size:1.3rem;font-style:italic;color:var(--ink);outline:none;min-height:50px;display:block;text-align:center;line-height:1.6;width:100%;}
+.mission-write[contenteditable]:empty:before{content:"My mission is to...";color:#c8aab0;}
+
+/* ── AESTHETIC BOARD ── */
+.aesthetic-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;}
+.aesthetic-item{background:var(--warm);border:1px solid var(--rule);border-radius:10px;padding:14px 16px;}
+.aesthetic-label{font-size:0.62rem;font-weight:600;text-transform:uppercase;letter-spacing:1px;color:var(--muted);margin-bottom:6px;}
+
+@media print{
+  .topbar,#toolbar,.pdf-btn{display:none!important;}
+  body{background:white!important;}
+  #paper{box-shadow:none!important;border-radius:0!important;padding:20px 28px!important;margin:0!important;}
+  .page{display:block!important;page-break-before:auto;}
+}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="topbar-title">2026 <em>Reset</em></div>
+  <div class="topbar-right">
+    <a href="../" class="back-btn">← Brain 2.0</a>
+    <span class="topbar-date" id="today-date"></span>
+    <button class="pdf-btn" onclick="savePDF()">⬇ Save PDF</button>
+  </div>
+</div>
+
+<div class="hub-wrap">
+  <div id="toolbar">
+    <button class="tab-btn active" onclick="goTab(0,this)">Cover</button>
+    <button class="tab-btn" onclick="goTab(1,this)">1. Small Wins</button>
+    <button class="tab-btn" onclick="goTab(2,this)">2. Your Story</button>
+    <button class="tab-btn" onclick="goTab(3,this)">3. Identity Audit</button>
+    <button class="tab-btn" onclick="goTab(4,this)">4. New Narrative</button>
+    <button class="tab-btn" onclick="goTab(5,this)">5. Personal Culture</button>
+    <button class="tab-btn" onclick="goTab(6,this)">6. Value Proposition</button>
+    <button class="tab-btn" onclick="goTab(7,this)">7. Future Self</button>
+    <button class="tab-btn" onclick="goTab(8,this)">8. Market Exit</button>
+    <button class="tab-btn" onclick="goTab(9,this)">9. Lifestyle Rebrand</button>
+    <button class="tab-btn" onclick="goTab(10,this)">10. Aesthetic</button>
+  </div>
+
+  <div id="paper">
+
+    <!-- COVER -->
+    <div class="page active" id="p0">
+      <div class="cover">
+        <div class="cover-year">2026</div>
+        <h1 class="cover-title">The <em>Reset</em></h1>
+        <div class="cover-sub">Identity · Narrative · Standards · Vision</div>
+        <div class="cover-ornament">✦ ✿ ✦</div>
+      </div>
+      <div style="max-width:560px;margin:0 auto;text-align:center;">
+        <p style="font-family:'Cormorant Garamond',serif;font-size:1.05rem;font-style:italic;color:var(--muted);line-height:1.8;margin-bottom:28px;">"When a business rebrands, they leave behind what no longer fits their new vision. That is exactly what you need to do — because if you stick with all of the old, how are you ever going to step into the new?"</p>
+        <div style="display:flex;flex-direction:column;gap:10px;text-align:left;background:var(--warm);border:1px solid var(--rule);border-radius:12px;padding:20px 24px;">
+          <div style="font-size:0.62rem;letter-spacing:3px;text-transform:uppercase;color:var(--muted);margin-bottom:4px;">This document belongs to</div>
+          <div class="write short" contenteditable data-save-id="cover_name" data-ph="Your name..."></div>
+          <div style="font-size:0.62rem;letter-spacing:3px;text-transform:uppercase;color:var(--muted);margin-top:8px;">Written on</div>
+          <div class="write short" contenteditable data-save-id="cover_date" data-ph="Today's date..."></div>
+          <div style="font-size:0.62rem;letter-spacing:3px;text-transform:uppercase;color:var(--muted);margin-top:8px;">My intention for this year</div>
+          <div class="write" contenteditable data-save-id="cover_intention" data-ph="In one sentence, what does this year mean to you?"></div>
+        </div>
+      </div>
+      <div class="ornament">✦ ✿ ✦</div>
+    </div>
+
+    <!-- 1. SMALL WINS -->
+    <div class="page" id="p1">
+      <div class="chapter-header">
+        <div class="chapter-eyebrow">Chapter 1 · The Foundation</div>
+        <div class="chapter-title">Who <em>you already are</em></div>
+        <div class="chapter-desc">Before you reimagine yourself, you need to see yourself clearly. List every small win you've earned in your life — not the highlights reel, the real evidence. The moments where you showed up, tried, survived, or surprised yourself.</div>
+      </div>
+
+      <div class="section">
+        <div class="section-num"><span class="section-num-badge">1.</span><span class="section-title">Every Small Win</span></div>
+        <p style="font-size:0.72rem;color:var(--muted);font-style:italic;margin-bottom:14px;">Add as many as you can. Big, small, trivial, profound. They all count.</p>
+        <div class="win-list" id="wins-list"></div>
+        <button class="add-win-btn" onclick="addWin()">＋ Add a win</button>
+      </div>
+
+      <div class="ornament">✦ ✿ ✦</div>
+    </div>
+
+    <!-- 2. YOUR STORY -->
+    <div class="page" id="p2">
+      <div class="chapter-header">
+        <div class="chapter-eyebrow">Chapter 1 · The Foundation</div>
+        <div class="chapter-title">Your <em>story</em></div>
+        <div class="chapter-desc">Figure out what is actually good about your story. This isn't toxic positivity — it's an honest inventory of who you are as a person.</div>
+      </div>
+
+      <div class="section">
+        <div class="section-num"><span class="section-num-badge">2.</span><span class="section-title">The Good Parts of Your Story</span></div>
+        <div class="three-col" style="margin-bottom:18px;">
+          <div class="col-card" style="border-top:3px solid var(--blush);">
+            <div class="col-card-title">Your Intentions</div>
+            <div class="col-card-sub">What drives you? What do you genuinely care about?</div>
+            <div class="write" contenteditable data-save-id="story_intentions" data-ph="At your core, you are motivated by..."></div>
+          </div>
+          <div class="col-card" style="border-top:3px solid var(--lavender);">
+            <div class="col-card-title">Your Morals & Values</div>
+            <div class="col-card-sub">What do you actually stand for?</div>
+            <div class="write" contenteditable data-save-id="story_values" data-ph="The principles you live by and won't compromise on..."></div>
+          </div>
+          <div class="col-card" style="border-top:3px solid var(--sage);">
+            <div class="col-card-title">Your Character</div>
+            <div class="col-card-sub">Who are you at your best?</div>
+            <div class="write" contenteditable data-save-id="story_character" data-ph="The qualities people see when you're most yourself..."></div>
+          </div>
+        </div>
+
+        <span class="field-label">Your Dreams</span>
+        <div class="write tall" contenteditable data-save-id="story_dreams" data-ph="What do you actually want? Not what you think you should want — what do you dream about when no one is watching?"></div>
+      </div>
+
+      <div class="section">
+        <div class="section-num"><span class="section-num-badge">3.</span><span class="section-title">Dress Like the Person You Want to Be</span></div>
+        <p style="font-size:0.72rem;color:var(--muted);font-style:italic;margin-bottom:14px;">Who does this person look like? How do they carry themselves? What do they wear, smell like, how do they walk into a room?</p>
+        <div class="write tall" contenteditable data-save-id="story_dress" data-ph="She walks in and you know immediately she is someone. She wears... she carries herself like... the energy she brings is..."></div>
+      </div>
+
+      <div class="ornament">✦ ✿ ✦</div>
+    </div>
+
+    <!-- 3. IDENTITY AUDIT -->
+    <div class="page" id="p3">
+      <div class="chapter-header">
+        <div class="chapter-eyebrow">Chapter 2 · Character Creation</div>
+        <div class="chapter-title">The <em>Identity Audit</em></div>
+        <div class="chapter-desc">Be ruthlessly honest here. The goal isn't to tear yourself down — it's to identify what you're still performing vs. what you're actually becoming.</div>
+      </div>
+
+      <div class="section">
+        <div class="section-num"><span class="section-num-badge">1.</span><span class="section-title">Rebrand Your Identity</span></div>
+        <div class="two-col" style="margin-bottom:14px;">
+          <div>
+            <span class="field-label">What part of my identity feels outdated?</span>
+            <div class="write" contenteditable data-save-id="audit_outdated" data-ph="The version of you that no longer fits..."></div>
+          </div>
+          <div>
+            <span class="field-label">What no longer aligns with my future self?</span>
+            <div class="write" contenteditable data-save-id="audit_misaligned" data-ph="Beliefs, habits, ways of showing up that are holding you back..."></div>
+          </div>
+        </div>
+        <div class="two-col">
+          <div>
+            <span class="field-label">Where have I outgrown my current behavior, people & environments?</span>
+            <div class="write" contenteditable data-save-id="audit_outgrown" data-ph="Rooms, relationships, patterns you've quietly outgrown..."></div>
+          </div>
+          <div>
+            <span class="field-label">What identity am I still performing that I don't believe in?</span>
+            <div class="write" contenteditable data-save-id="audit_performing" data-ph="The role you play for others that isn't actually you anymore..."></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="ornament">✦ ✿ ✦</div>
+    </div>
+
+    <!-- 4. NEW NARRATIVE -->
+    <div class="page" id="p4">
+      <div class="chapter-header">
+        <div class="chapter-eyebrow">Chapter 2 · Character Creation</div>
+        <div class="chapter-title">The New <em>Narrative</em></div>
+        <div class="chapter-desc">Rewrite who you are on your own terms. Not who your family thinks you are, not who your past made you — who you are choosing to become.</div>
+      </div>
+
+      <div class="section">
+        <div class="section-num"><span class="section-num-badge">2.</span><span class="section-title">Structural Rebrand</span></div>
+        <div class="three-col" style="margin-bottom:20px;">
+          <div class="col-card" style="border-top:3px solid var(--rose);">
+            <div class="col-card-title">Known For</div>
+            <div class="col-card-sub">What do you want to be known for?</div>
+            <div class="write" contenteditable data-save-id="narr_known" data-ph="People know me as someone who..."></div>
+          </div>
+          <div class="col-card" style="border-top:3px solid var(--mauve);">
+            <div class="col-card-title">Attract</div>
+            <div class="col-card-sub">What do you want to attract?</div>
+            <div class="write" contenteditable data-save-id="narr_attract" data-ph="The opportunities, people and energy I draw in..."></div>
+          </div>
+          <div class="col-card" style="border-top:3px solid var(--sage);">
+            <div class="col-card-title">Recognized For</div>
+            <div class="col-card-sub">What do you want to be recognized for?</div>
+            <div class="write" contenteditable data-save-id="narr_recognized" data-ph="When I walk into a room, people notice..."></div>
+          </div>
+        </div>
+
+        <div class="mission-box">
+          <span class="mission-label">Mission Statement</span>
+          <div class="mission-write" contenteditable data-save-id="narr_mission" ></div>
+        </div>
+
+        <span class="field-label">New Standards — Behaviors I am no longer accepting or tolerating</span>
+        <div class="write tall" contenteditable data-save-id="narr_standards" data-ph="From myself: I will no longer accept...&#10;From others: I will no longer tolerate...&#10;In environments: I refuse to stay in spaces that..."></div>
+      </div>
+
+      <div class="ornament">✦ ✿ ✦</div>
+    </div>
+
+    <!-- 5. PERSONAL CULTURE -->
+    <div class="page" id="p5">
+      <div class="chapter-header">
+        <div class="chapter-eyebrow">Chapter 2 · Character Creation</div>
+        <div class="chapter-title">Your Personal <em>Culture</em></div>
+        <div class="chapter-desc">Like company culture, your personal culture is the invisible set of rules you live by — whether you chose them or they were handed to you. Time to audit them.</div>
+      </div>
+
+      <div class="section">
+        <div class="section-num"><span class="section-num-badge">3.</span><span class="section-title">The Rules You've Been Living By</span></div>
+        <p style="font-size:0.72rem;color:var(--muted);font-style:italic;margin-bottom:14px;">Write them all down — even the ones you're embarrassed by. These are the internal rules running in the background of your life.</p>
+        <div class="write tall" contenteditable data-save-id="culture_oldrules" data-ph="Don't be too loud. Don't take up too much space. Play it safe. Don't disappoint anyone. Be agreeable even when you're not. Shrink yourself so others feel comfortable..."></div>
+      </div>
+
+      <div class="section">
+        <div class="section-num"><span class="section-num-badge">→</span><span class="section-title">The New Rules</span></div>
+        <p style="font-size:0.72rem;color:var(--muted);font-style:italic;margin-bottom:14px;">Now rewrite them. These are the rules the new version of you lives by.</p>
+        <div class="write tall" contenteditable data-save-id="culture_newrules" data-ph="I take up space unapologetically. I speak my mind even when my voice shakes. I choose people who choose me. I rest without guilt. I say no when I mean no..."></div>
+      </div>
+
+      <div class="ornament">✦ ✿ ✦</div>
+    </div>
+
+    <!-- 6. VALUE PROPOSITION -->
+    <div class="page" id="p6">
+      <div class="chapter-header">
+        <div class="chapter-eyebrow">Chapter 2 · Character Creation</div>
+        <div class="chapter-title">Your Value <em>Proposition</em></div>
+        <div class="chapter-desc">Once you realize what value you bring, you'll stop underselling yourself and overgiving yourself. This exercise forces you to see what you actually contribute — in every area of your life.</div>
+      </div>
+
+      <div class="section">
+        <div class="section-num"><span class="section-num-badge">4.</span><span class="section-title">The Value Audit</span></div>
+        <div class="audit-grid">
+          <div class="audit-item">
+            <div class="audit-area">💼 At Work</div>
+            <div class="write short" contenteditable data-save-id="val_work" data-ph="What do you bring to your team and company?"></div>
+          </div>
+          <div class="audit-item">
+            <div class="audit-area">💕 In Romance</div>
+            <div class="write short" contenteditable data-save-id="val_romance" data-ph="What do you bring to a relationship?"></div>
+          </div>
+          <div class="audit-item">
+            <div class="audit-area">👥 In Friendships</div>
+            <div class="write short" contenteditable data-save-id="val_friends" data-ph="What do you bring to your friendships?"></div>
+          </div>
+          <div class="audit-item">
+            <div class="audit-area">🌱 To Yourself</div>
+            <div class="write short" contenteditable data-save-id="val_self" data-ph="What do you bring to your own future, inner child, and goals?"></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="ornament">✦ ✿ ✦</div>
+    </div>
+
+    <!-- 7. FUTURE SELF -->
+    <div class="page" id="p7">
+      <div class="chapter-header">
+        <div class="chapter-eyebrow">Chapter 2 · Character Creation</div>
+        <div class="chapter-title">Talk Like Your <em>Future Self</em></div>
+        <div class="chapter-desc">Write 5 sentences from the perspective of the woman you are becoming. Present tense. No hedging. No "I'm trying to" — just "I am."</div>
+      </div>
+
+      <div class="section">
+        <div class="section-num"><span class="section-num-badge">5.</span><span class="section-title">5 Future Self Statements</span></div>
+        <div class="manifesto-card">
+          <div class="manifesto-intro">I am becoming someone who...</div>
+          <div class="future-row"><span class="future-prompt">Who I am</span><div class="future-write" contenteditable data-save-id="future_who" data-ph="I am a woman who..."></div></div>
+          <div class="future-row"><span class="future-prompt">How I show up</span><div class="future-write" contenteditable data-save-id="future_showup" data-ph="I show up to every room as..."></div></div>
+          <div class="future-row"><span class="future-prompt">What I require</span><div class="future-write" contenteditable data-save-id="future_require" data-ph="I require..."></div></div>
+          <div class="future-row"><span class="future-prompt">My standards</span><div class="future-write" contenteditable data-save-id="future_standards" data-ph="My standards are..."></div></div>
+          <div class="future-row"><span class="future-prompt">What I won't accept</span><div class="future-write" contenteditable data-save-id="future_wontaccept" data-ph="I will no longer accept..."></div></div>
+        </div>
+      </div>
+
+      <div class="ornament">✦ ✿ ✦</div>
+    </div>
+
+    <!-- 8. MARKET EXIT -->
+    <div class="page" id="p8">
+      <div class="chapter-header">
+        <div class="chapter-eyebrow">Chapter 2 · Character Creation</div>
+        <div class="chapter-title">The <em>Market Exit</em></div>
+        <div class="chapter-desc">When a business rebrands, they leave behind customers, markets, or collaborations that don't fit their new vision. You need to do the same. Identify what you're leaving behind.</div>
+      </div>
+
+      <div class="section">
+        <div class="section-num"><span class="section-num-badge">6.</span><span class="section-title">What Is No Longer Serving the New You</span></div>
+        <div class="three-col" style="margin-bottom:18px;">
+          <div class="col-card" style="border-top:3px solid var(--blush);">
+            <div class="col-card-title">Ways of Working</div>
+            <div class="col-card-sub">Habits, work styles, routines that need to go</div>
+            <div class="write" contenteditable data-save-id="exit_work" data-ph="e.g. Overcommitting, people-pleasing at work, shrinking in meetings..."></div>
+          </div>
+          <div class="col-card" style="border-top:3px solid var(--lavender);">
+            <div class="col-card-title">Relationships & Spaces</div>
+            <div class="col-card-sub">People, groups, environments to exit</div>
+            <div class="write" contenteditable data-save-id="exit_people" data-ph="e.g. One-sided friendships, draining environments, toxic group chats..."></div>
+          </div>
+          <div class="col-card" style="border-top:3px solid var(--sage);">
+            <div class="col-card-title">Patterns & Apps</div>
+            <div class="col-card-sub">Digital habits, mental patterns, apps to delete</div>
+            <div class="write" contenteditable data-save-id="exit_patterns" data-ph="e.g. Doom scrolling, comparison spirals, apps that drain your energy..."></div>
+          </div>
+        </div>
+
+        <span class="field-label">Conversations & Topics I'm Exiting</span>
+        <div class="write" contenteditable data-save-id="exit_convos" data-ph="Conversations, narratives, and mental loops I'm done engaging with..."></div>
+      </div>
+
+      <div class="ornament">✦ ✿ ✦</div>
+    </div>
+
+    <!-- 9. LIFESTYLE REBRAND -->
+    <div class="page" id="p9">
+      <div class="chapter-header">
+        <div class="chapter-eyebrow">Chapter 2 · Character Creation</div>
+        <div class="chapter-title">The Lifestyle <em>Rebrand</em></div>
+        <div class="chapter-desc">Businesses don't just sell products — they sell a feeling and an experience. Your rebrand is changing the emotion and experience of your daily life. Map out your routine and create the elevated version of each moment.</div>
+      </div>
+
+      <div class="section">
+        <div class="section-num"><span class="section-num-badge">7.</span><span class="section-title">Before → After Lifestyle Map</span></div>
+        <p style="font-size:0.72rem;color:var(--muted);font-style:italic;margin-bottom:14px;">For each moment in your day, write the old version and the elevated new version.</p>
+
+        <div class="rebrand-row">
+          <div class="rebrand-old"><div class="rebrand-label">🌅 Morning — Before</div><div class="rebrand-write" contenteditable data-save-id="rebrand_morn_before" data-ph="Wake up at last second, rush, overwhelmed..."></div></div>
+          <div class="rebrand-new"><div class="rebrand-label">✨ Morning — Rebrand</div><div class="rebrand-write" contenteditable data-save-id="rebrand_morn_after" data-ph="Wake up an hour early, make the bed, romanticizing life playlist..."></div></div>
+        </div>
+        <div class="rebrand-row">
+          <div class="rebrand-old"><div class="rebrand-label">☀️ Commute / Getting Ready — Before</div><div class="rebrand-write" contenteditable data-save-id="rebrand_commute_before" data-ph="Rushing, hair half done, stressed..."></div></div>
+          <div class="rebrand-new"><div class="rebrand-label">✨ Commute / Getting Ready — Rebrand</div><div class="rebrand-write" contenteditable data-save-id="rebrand_commute_after" data-ph="Strutting, main character energy, a song that makes you feel like her..."></div></div>
+        </div>
+        <div class="rebrand-row">
+          <div class="rebrand-old"><div class="rebrand-label">🌇 Evening — Before</div><div class="rebrand-write" contenteditable data-save-id="rebrand_eve_before" data-ph="Scroll until asleep, no wind-down routine..."></div></div>
+          <div class="rebrand-new"><div class="rebrand-label">✨ Evening — Rebrand</div><div class="rebrand-write" contenteditable data-save-id="rebrand_eve_after" data-ph="A ritual that belongs to you — skincare, reading, reflection..."></div></div>
+        </div>
+        <div class="rebrand-row">
+          <div class="rebrand-old"><div class="rebrand-label">👥 Social Life — Before</div><div class="rebrand-write" contenteditable data-save-id="rebrand_social_before" data-ph="Saying yes to everything, feeling drained after..."></div></div>
+          <div class="rebrand-new"><div class="rebrand-label">✨ Social Life — Rebrand</div><div class="rebrand-write" contenteditable data-save-id="rebrand_social_after" data-ph="Intentional, energizing, chosen with care..."></div></div>
+        </div>
+      </div>
+
+      <div class="ornament">✦ ✿ ✦</div>
+    </div>
+
+    <!-- 10. AESTHETIC -->
+    <div class="page" id="p10">
+      <div class="chapter-header">
+        <div class="chapter-eyebrow">Chapter 2 · Character Creation</div>
+        <div class="chapter-title">The Visual <em>Rebrand</em></div>
+        <div class="chapter-desc">You need at least one tiny physical change to make you feel like "Oh yeah, I'm her now." Create your visual rebrand — the sensory details of the new version of you.</div>
+      </div>
+
+      <div class="section">
+        <div class="section-num"><span class="section-num-badge">8.</span><span class="section-title">Your Aesthetic Identity</span></div>
+        <div class="aesthetic-grid" style="margin-bottom:20px;">
+          <div class="aesthetic-item">
+            <div class="aesthetic-label">💇 Hair</div>
+            <div class="write short" contenteditable data-save-id="aes_hair" data-ph="Cut, color, style, texture..."></div>
+          </div>
+          <div class="aesthetic-item">
+            <div class="aesthetic-label">💄 Makeup & Beauty</div>
+            <div class="write short" contenteditable data-save-id="aes_makeup" data-ph="A lipstick, a finish, a look that says her..."></div>
+          </div>
+          <div class="aesthetic-item">
+            <div class="aesthetic-label">✨ Fragrance Routine</div>
+            <div class="write short" contenteditable data-save-id="aes_fragrance" data-ph="The scent she wears, the ritual of applying it..."></div>
+          </div>
+          <div class="aesthetic-item">
+            <div class="aesthetic-label">👗 Style & Wardrobe</div>
+            <div class="write short" contenteditable data-save-id="aes_style" data-ph="How does she dress? What does her wardrobe feel like?"></div>
+          </div>
+          <div class="aesthetic-item">
+            <div class="aesthetic-label">💍 Jewelry & Accessories</div>
+            <div class="write short" contenteditable data-save-id="aes_jewelry" data-ph="The daily stack that makes her feel like that girl..."></div>
+          </div>
+          <div class="aesthetic-item">
+            <div class="aesthetic-label">🏠 Her Space</div>
+            <div class="write short" contenteditable data-save-id="aes_space" data-ph="How does her home feel? Smell? Look?"></div>
+          </div>
+        </div>
+
+        <span class="field-label">The One Physical Change That Makes It Real</span>
+        <div class="manifesto-card">
+          <div class="manifesto-intro">The one thing I'm doing first to make this feel real:</div>
+          <div class="write short" style="background:rgba(255,255,255,0.5);" contenteditable data-save-id="aes_firstchange" data-ph="Be specific. Not 'I'll dress better' — but 'I'm getting that haircut on April 5th' or 'I'm buying that red lip on Monday'..."></div>
+        </div>
+
+        <hr class="rule">
+
+        <span class="field-label">My 2026 Manifesto — In My Own Words</span>
+        <p style="font-size:0.72rem;color:var(--muted);font-style:italic;margin-bottom:12px;">Bring it all together. Who are you in 2026? Write it like a letter to yourself that you'll read every month.</p>
+        <div class="write letter" contenteditable data-save-id="manifesto_final" data-ph="In 2026, I am the woman who... I no longer... I choose... I show up... I am done with... I deserve..."></div>
+      </div>
+
+      <div class="ornament">✦ ✿ ✦</div>
+    </div>
+
+  </div><!-- end paper -->
+</div><!-- end hub-wrap -->
+
+<script>
+var SK = 'reset2026v1';
+var activeTab = 0;
+var DAYS_FULL   = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+var MONTHS_FULL = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+
+var now = new Date();
+document.getElementById('today-date').textContent = DAYS_FULL[now.getDay()] + ', ' + MONTHS_FULL[now.getMonth()] + ' ' + now.getDate() + ', ' + now.getFullYear();
+
+// ── WINS LIST ──
+function getWins() {
+  var raw = localStorage.getItem(SK + '_wins');
+  try { return raw ? JSON.parse(raw) : []; } catch(e) { return []; }
+}
+function saveWins(wins) { localStorage.setItem(SK + '_wins', JSON.stringify(wins)); }
+
+function renderWins() {
+  var container = document.getElementById('wins-list'); container.innerHTML = '';
+  var wins = getWins();
+  wins.forEach(function(w, i) {
+    var row = document.createElement('div'); row.className = 'win-row';
+    var bullet = document.createElement('span'); bullet.className = 'win-bullet'; bullet.textContent = '✦';
+    var text = document.createElement('div'); text.className = 'win-text'; text.contentEditable = 'true';
+    text.setAttribute('data-ph', 'A win, big or small...'); text.textContent = w;
+    text.oninput = (function(idx){ return function(){ var ws = getWins(); ws[idx] = this.textContent; saveWins(ws); }; })(i);
+    var del = document.createElement('button'); del.className = 'win-del'; del.textContent = '✕';
+    del.onclick = (function(idx){ return function(){ var ws = getWins(); ws.splice(idx,1); saveWins(ws); renderWins(); }; })(i);
+    row.appendChild(bullet); row.appendChild(text); row.appendChild(del);
+    container.appendChild(row);
+  });
+}
+
+function addWin() {
+  var wins = getWins(); wins.push(''); saveWins(wins); renderWins();
+  // focus the new field
+  var rows = document.querySelectorAll('.win-text');
+  if (rows.length) rows[rows.length-1].focus();
+}
+
+// ── SAVE / LOAD ──
+function saveData() {
+  var d = {};
+  document.querySelectorAll('[contenteditable][data-save-id]').forEach(function(el) {
+    d[el.dataset.saveId] = el.innerHTML;
+  });
+  localStorage.setItem(SK, JSON.stringify(d));
+}
+
+function restoreData() {
+  var raw = localStorage.getItem(SK);
+  if (!raw) return;
+  var d = {};
+  try { d = JSON.parse(raw); } catch(e) { return; }
+  document.querySelectorAll('[contenteditable][data-save-id]').forEach(function(el) {
+    if (d[el.dataset.saveId] !== undefined) el.innerHTML = d[el.dataset.saveId];
+  });
+}
+
+// ── TABS ──
+function goTab(n, btn) {
+  document.querySelectorAll('.page').forEach(function(p){ p.classList.remove('active'); });
+  document.getElementById('p' + n).classList.add('active');
+  document.querySelectorAll('.tab-btn').forEach(function(b){ b.classList.remove('active'); });
+  btn.classList.add('active');
+  activeTab = n;
+  saveData();
+}
+
+// ── PDF ──
+function savePDF() {
+  for (var i = 0; i <= 10; i++) {
+    var p = document.getElementById('p' + i);
+    if (p) p.style.cssText = 'display:block!important;' + (i > 0 ? 'page-break-before:always!important;' : '');
+  }
+  setTimeout(function() {
+    window.print();
+    for (var i = 0; i <= 10; i++) {
+      var p = document.getElementById('p' + i);
+      if (p) p.style.cssText = i === activeTab ? 'display:block;' : 'display:none;';
+    }
+  }, 300);
+}
+
+// ── INIT ──
+renderWins();
+restoreData();
+document.getElementById('paper').addEventListener('input', saveData);
+</script>
+</body>
+</html>
