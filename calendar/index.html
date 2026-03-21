@@ -1,0 +1,578 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Calendar</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Jost:wght@300;400;500;600&display=swap');
+:root{
+  --blush:#f2c4ce;--rose:#e8a0b0;--mauve:#c9a0b4;--lavender:#d4b8e0;
+  --sage:#b8cfb0;--cream:#fdf6f0;--warm:#f7ece4;--ink:#3a2a2e;--muted:#9a8088;--rule:#e0cec8;
+  /* Category colors */
+  --c-work:#f2c4ce;        --c-work-text:#7a1a2e;    --c-work-border:#e8a0b0;
+  --c-social:#b8d4f0;      --c-social-text:#1a3a6a;  --c-social-border:#80acd8;
+  --c-travel:#b8cfb0;      --c-travel-text:#1a4a2a;  --c-travel-border:#80a870;
+  --c-learning:#f0dea0;    --c-learning-text:#5a3a00; --c-learning-border:#d0b840;
+  --c-tasks:#d4b8e0;       --c-tasks-text:#4a1a6a;   --c-tasks-border:#b090c8;
+  --c-health:#a8d8d0;      --c-health-text:#1a4a44;  --c-health-border:#60a8a0;
+  --c-selfcare:#f4b8d4;    --c-selfcare-text:#6a1040; --c-selfcare-border:#d880a8;
+  --c-personal:#f7d9b0;    --c-personal-text:#6a3a00; --c-personal-border:#d8a060;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{background:#f0e8e4;font-family:'Jost',sans-serif;color:var(--ink);min-height:100vh;}
+
+/* ── TOPBAR ── */
+.topbar{background:var(--cream);border-bottom:1px solid var(--rule);padding:14px 32px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:200;}
+.topbar-title{font-family:'Cormorant Garamond',serif;font-size:1.6rem;font-weight:300;letter-spacing:2px;}
+.topbar-title em{font-style:italic;color:var(--mauve);}
+.topbar-right{display:flex;align-items:center;gap:10px;}
+.back-btn{display:inline-flex;align-items:center;gap:6px;padding:6px 14px;border:1.5px solid var(--rule);border-radius:20px;font-size:0.72rem;color:var(--muted);cursor:pointer;background:transparent;font-family:'Jost',sans-serif;text-decoration:none;transition:all .15s;}
+.back-btn:hover{border-color:var(--rose);color:var(--ink);}
+.topbar-date{font-size:0.68rem;letter-spacing:2px;text-transform:uppercase;color:var(--muted);}
+
+/* ── CONTROLS BAR ── */
+.controls{max-width:1200px;margin:0 auto;padding:16px 24px 0;display:flex;align-items:center;gap:12px;flex-wrap:wrap;}
+.view-toggle{display:flex;border:1.5px solid var(--rule);border-radius:20px;overflow:hidden;background:var(--cream);}
+.view-btn{padding:6px 18px;font-family:'Jost',sans-serif;font-size:0.73rem;font-weight:500;cursor:pointer;border:none;background:transparent;color:var(--muted);transition:all .15s;}
+.view-btn.active{background:var(--mauve);color:white;}
+.nav-group{display:flex;align-items:center;gap:6px;}
+.nav-btn{width:30px;height:30px;border:1.5px solid var(--rule);border-radius:50%;background:var(--cream);cursor:pointer;font-size:0.8rem;color:var(--muted);display:flex;align-items:center;justify-content:center;transition:all .15s;}
+.nav-btn:hover{border-color:var(--rose);color:var(--ink);}
+.nav-label{font-family:'Cormorant Garamond',serif;font-size:1.2rem;font-weight:400;letter-spacing:1px;min-width:200px;text-align:center;}
+.today-btn{padding:6px 14px;border:1.5px solid var(--rule);border-radius:20px;font-family:'Jost',sans-serif;font-size:0.7rem;font-weight:500;cursor:pointer;background:var(--cream);color:var(--muted);transition:all .15s;}
+.today-btn:hover{border-color:var(--mauve);color:var(--ink);}
+.add-event-btn{padding:7px 18px;border:none;border-radius:20px;background:var(--mauve);color:white;font-family:'Jost',sans-serif;font-size:0.73rem;font-weight:600;cursor:pointer;transition:all .15s;margin-left:auto;}
+.add-event-btn:hover{background:var(--rose);}
+
+/* ── LEGEND ── */
+.legend{max-width:1200px;margin:0 auto;padding:10px 24px 0;display:flex;gap:8px;flex-wrap:wrap;}
+.leg-chip{display:flex;align-items:center;gap:5px;padding:3px 10px;border-radius:12px;font-size:0.65rem;font-weight:600;cursor:pointer;border:1.5px solid transparent;transition:all .15s;user-select:none;opacity:0.65;}
+.leg-chip.active{opacity:1;border-color:var(--ink);}
+.leg-dot{width:8px;height:8px;border-radius:50%;}
+
+/* ── MAIN AREA ── */
+.main{max-width:1200px;margin:0 auto;padding:16px 24px 0;}
+
+/* ── MONTHLY VIEW ── */
+.month-grid{background:var(--cream);border:1px solid var(--rule);border-radius:16px;overflow:hidden;}
+.month-header-row{display:grid;grid-template-columns:repeat(7,1fr);border-bottom:2px solid var(--rule);}
+.month-dow{padding:10px 0;text-align:center;font-size:0.62rem;letter-spacing:2px;text-transform:uppercase;color:var(--muted);font-weight:600;}
+.month-body{display:grid;grid-template-columns:repeat(7,1fr);}
+.month-cell{min-height:120px;border-right:1px solid var(--rule);border-bottom:1px solid var(--rule);padding:6px;display:flex;flex-direction:column;cursor:pointer;transition:background .1s;}
+.month-cell:hover{background:var(--warm);}
+.month-cell:nth-child(7n){border-right:none;}
+.month-cell.other-month{background:#faf4f0;opacity:0.6;}
+.month-cell.today .day-num{background:var(--mauve);color:white;border-radius:50%;width:24px;height:24px;display:flex;align-items:center;justify-content:center;}
+.day-num{font-family:'Cormorant Garamond',serif;font-size:0.95rem;font-weight:600;color:var(--muted);margin-bottom:4px;width:24px;height:24px;display:flex;align-items:center;justify-content:center;}
+.month-events{display:flex;flex-direction:column;gap:2px;flex:1;}
+.month-event-chip{border-radius:5px;padding:2px 6px;font-size:0.62rem;font-weight:500;line-height:1.4;display:flex;align-items:center;gap:4px;cursor:pointer;transition:opacity .15s;}
+.month-event-chip:hover{opacity:0.8;}
+.month-event-chip.done{opacity:0.45;text-decoration:line-through;}
+.chip-check{width:11px;height:11px;border-radius:50%;border:1.5px solid currentColor;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:7px;}
+.chip-check.checked{background:currentColor;}
+.chip-check.checked:after{content:'✓';color:white;}
+.more-chip{font-size:0.6rem;color:var(--muted);padding:1px 4px;}
+
+/* ── WEEKLY VIEW ── */
+.week-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:10px;}
+.week-col{background:var(--cream);border:1px solid var(--rule);border-radius:12px;overflow:hidden;display:flex;flex-direction:column;}
+.week-col.today-col{border-color:var(--mauve);border-width:2px;}
+.week-col-header{padding:10px 12px 8px;border-bottom:1px solid var(--rule);text-align:center;}
+.week-dow{font-size:0.62rem;letter-spacing:2px;text-transform:uppercase;color:var(--muted);font-weight:600;}
+.week-day-num{font-family:'Cormorant Garamond',serif;font-size:1.6rem;font-weight:300;line-height:1;margin-top:2px;}
+.week-col.today-col .week-day-num{color:var(--mauve);font-weight:600;}
+.week-events{flex:1;padding:8px;display:flex;flex-direction:column;gap:5px;min-height:200px;}
+.week-event{border-radius:8px;padding:6px 8px;display:flex;align-items:flex-start;gap:6px;cursor:pointer;transition:opacity .15s;position:relative;}
+.week-event:hover{opacity:0.85;}
+.week-event.done{opacity:0.4;}
+.week-event.done .ev-title{text-decoration:line-through;}
+.ev-check{width:14px;height:14px;border-radius:50%;border:1.5px solid currentColor;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:8px;margin-top:1px;cursor:pointer;}
+.ev-check.checked{background:currentColor;}
+.ev-check.checked:after{content:'✓';color:white;}
+.ev-body{flex:1;min-width:0;}
+.ev-title{font-size:0.74rem;font-weight:500;line-height:1.3;}
+.ev-time{font-size:0.62rem;opacity:0.75;margin-top:1px;}
+.ev-del{position:absolute;top:4px;right:5px;background:transparent;border:none;font-size:0.6rem;color:currentColor;cursor:pointer;opacity:0;padding:1px 3px;border-radius:4px;}
+.week-event:hover .ev-del{opacity:0.5;}
+.ev-del:hover{opacity:1!important;}
+.week-add-btn{width:100%;border:none;background:transparent;padding:6px;font-size:0.7rem;cursor:pointer;color:var(--muted);border-top:1px dashed var(--rule);transition:all .15s;}
+.week-add-btn:hover{background:var(--warm);color:var(--ink);}
+
+/* ── FOOTER ── */
+.footer{max-width:1200px;margin:0 auto;padding:24px 24px 60px;text-align:center;}
+.clear-btn{padding:9px 24px;border:1.5px solid var(--rule);background:var(--warm);color:var(--muted);font-family:'Jost',sans-serif;font-size:0.74rem;font-weight:500;cursor:pointer;border-radius:20px;transition:all .15s;}
+.clear-btn:hover{border-color:var(--rose);color:var(--ink);}
+.footer-hint{font-size:0.68rem;color:var(--muted);font-style:italic;margin-bottom:10px;}
+
+/* ── MODAL ── */
+.modal-overlay{display:none;position:fixed;inset:0;background:rgba(58,42,46,.35);z-index:300;align-items:center;justify-content:center;}
+.modal-overlay.open{display:flex;}
+.modal{background:var(--cream);border-radius:18px;border:1px solid var(--rule);padding:28px 32px;width:90%;max-width:480px;box-shadow:0 20px 60px rgba(58,42,46,.15);}
+.modal-title{font-family:'Cormorant Garamond',serif;font-size:1.4rem;font-weight:600;margin-bottom:20px;}
+.f-field{margin-bottom:13px;}
+.f-label{font-size:0.62rem;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin-bottom:5px;display:block;}
+.f-input{width:100%;border:1.5px solid var(--rule);border-radius:10px;padding:9px 12px;font-size:0.82rem;font-family:'Jost',sans-serif;color:var(--ink);background:var(--warm);outline:none;transition:border .15s;}
+.f-input:focus{border-color:var(--mauve);}
+.f-row{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+.cat-picker{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;}
+.cat-pick-btn{padding:6px 4px;border-radius:10px;border:1.5px solid transparent;cursor:pointer;font-family:'Jost',sans-serif;font-size:0.62rem;font-weight:600;text-align:center;transition:all .15s;}
+.cat-pick-btn.selected{border-color:var(--ink);transform:scale(1.04);}
+.m-actions{display:flex;gap:10px;justify-content:flex-end;margin-top:18px;}
+.m-btn{padding:8px 20px;border-radius:20px;font-family:'Jost',sans-serif;font-size:0.78rem;font-weight:600;cursor:pointer;border:1.5px solid;transition:all .15s;}
+.m-cancel{background:var(--warm);border-color:var(--rule);color:var(--muted);}
+.m-save{background:var(--mauve);border-color:var(--mauve);color:white;}
+.m-save:hover{background:var(--rose);}
+.m-delete{background:#fce4ec;border-color:#f2c4ce;color:#a0304a;}
+.m-delete:hover{background:#f2c4ce;}
+</style>
+</head>
+<body>
+
+<!-- ADD/EDIT MODAL -->
+<div class="modal-overlay" id="modal">
+  <div class="modal">
+    <div class="modal-title" id="modal-title">Add Event</div>
+    <div class="f-field">
+      <label class="f-label">Event Title</label>
+      <input class="f-input" id="ev-title" type="text" placeholder="What's happening?">
+    </div>
+    <div class="f-row">
+      <div class="f-field">
+        <label class="f-label">Date</label>
+        <input class="f-input" id="ev-date" type="date">
+      </div>
+      <div class="f-field">
+        <label class="f-label">Time (optional)</label>
+        <input class="f-input" id="ev-time" type="time">
+      </div>
+    </div>
+    <div class="f-field">
+      <label class="f-label">Category</label>
+      <div class="cat-picker" id="cat-picker"></div>
+    </div>
+    <div class="f-field">
+      <label class="f-label">Note (optional)</label>
+      <input class="f-input" id="ev-note" type="text" placeholder="Any extra details...">
+    </div>
+    <div class="m-actions">
+      <button class="m-btn m-cancel" onclick="closeModal()">Cancel</button>
+      <button class="m-btn m-delete" id="modal-delete-btn" style="display:none;" onclick="deleteEventFromModal()">Delete</button>
+      <button class="m-btn m-save" onclick="saveEvent()">Save ✦</button>
+    </div>
+  </div>
+</div>
+
+<!-- TOPBAR -->
+<div class="topbar">
+  <div class="topbar-title">Life <em>Calendar</em></div>
+  <div class="topbar-right">
+    <a href="../" class="back-btn">← Brain 2.0</a>
+    <span class="topbar-date" id="today-date"></span>
+  </div>
+</div>
+
+<!-- CONTROLS -->
+<div class="controls">
+  <div class="view-toggle">
+    <button class="view-btn active" id="btn-month" onclick="setView('month')">Monthly</button>
+    <button class="view-btn" id="btn-week" onclick="setView('week')">Weekly</button>
+  </div>
+  <div class="nav-group">
+    <button class="nav-btn" onclick="navigate(-1)">‹</button>
+    <div class="nav-label" id="nav-label"></div>
+    <button class="nav-btn" onclick="navigate(1)">›</button>
+  </div>
+  <button class="today-btn" onclick="goToday()">Today</button>
+  <button class="add-event-btn" onclick="openAddModal()">＋ Add Event</button>
+</div>
+
+<!-- LEGEND -->
+<div class="legend" id="legend"></div>
+
+<!-- MAIN -->
+<div class="main" id="main"></div>
+
+<!-- FOOTER -->
+<div class="footer">
+  <div class="footer-hint">Your calendar is saved automatically and persists through refresh.</div>
+  <button class="clear-btn" onclick="clearAll()">↺ Clear All Events</button>
+</div>
+
+<script>
+var SK = 'lifeCalendar1';
+
+var CATS = [
+  {id:'work',     label:'Work',      bg:'#f2c4ce', text:'#7a1a2e', border:'#e8a0b0'},
+  {id:'social',   label:'Social',    bg:'#b8d4f0', text:'#1a3a6a', border:'#80acd8'},
+  {id:'travel',   label:'Travel',    bg:'#b8cfb0', text:'#1a4a2a', border:'#80a870'},
+  {id:'learning', label:'Learning',  bg:'#f0dea0', text:'#5a3a00', border:'#d0b840'},
+  {id:'tasks',    label:'Tasks',     bg:'#d4b8e0', text:'#4a1a6a', border:'#b090c8'},
+  {id:'health',   label:'Health',    bg:'#a8d8d0', text:'#1a4a44', border:'#60a8a0'},
+  {id:'selfcare', label:'Self-Care', bg:'#f4b8d4', text:'#6a1040', border:'#d880a8'},
+  {id:'personal', label:'Personal',  bg:'#f7d9b0', text:'#6a3a00', border:'#d8a060'},
+];
+
+function getCat(id) { return CATS.find(function(c){return c.id===id;}) || CATS[0]; }
+
+var TODAY = new Date(); TODAY.setHours(0,0,0,0);
+var currentView = 'month';
+var currentDate = new Date(TODAY); // anchor: first day of displayed month or week
+var events = []; // {id, title, date (YYYY-MM-DD), time, cat, note, done}
+var activeCategories = {}; // all active by default
+CATS.forEach(function(c){ activeCategories[c.id] = true; });
+var editingId = null;
+var pendingDate = null;
+
+// ── STORAGE ──
+function save() { localStorage.setItem(SK, JSON.stringify({events:events, view:currentView})); }
+function load() {
+  var raw = localStorage.getItem(SK);
+  if (!raw) return;
+  try {
+    var d = JSON.parse(raw);
+    events = d.events || [];
+    currentView = d.view || 'month';
+  } catch(e) {}
+}
+
+// ── DATE HELPERS ──
+var DAYS_SHORT = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+var DAYS_FULL  = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+var MONTHS_FULL = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+var MONTHS_SHORT = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+
+function dateKey(d) {
+  var y=d.getFullYear(), m=String(d.getMonth()+1).padStart(2,'0'), day=String(d.getDate()).padStart(2,'0');
+  return y+'-'+m+'-'+day;
+}
+function parseDate(s) { var p=s.split('-'); return new Date(parseInt(p[0]),parseInt(p[1])-1,parseInt(p[2])); }
+function isToday(d) { return dateKey(d)===dateKey(TODAY); }
+function isSameMonth(d1,d2) { return d1.getFullYear()===d2.getFullYear() && d1.getMonth()===d2.getMonth(); }
+
+function getWeekStart(d) {
+  var day = d.getDay(); // 0=Sun
+  var diff = day === 0 ? -6 : 1 - day; // Monday-based
+  var start = new Date(d);
+  start.setDate(d.getDate() + diff);
+  return start;
+}
+
+function eventsForDate(dateStr) {
+  return events.filter(function(e) {
+    return e.date === dateStr && activeCategories[e.cat];
+  }).sort(function(a,b){ return (a.time||'').localeCompare(b.time||''); });
+}
+
+// ── LEGEND ──
+function renderLegend() {
+  var el = document.getElementById('legend'); el.innerHTML='';
+  CATS.forEach(function(c) {
+    var chip = document.createElement('div');
+    chip.className = 'leg-chip' + (activeCategories[c.id] ? ' active' : '');
+    chip.style.background = c.bg;
+    chip.style.color = c.text;
+    chip.innerHTML = '<div class="leg-dot" style="background:'+c.border+'"></div>' + c.label;
+    chip.onclick = function() {
+      activeCategories[c.id] = !activeCategories[c.id];
+      renderLegend(); render();
+    };
+    el.appendChild(chip);
+  });
+}
+
+// ── NAV LABEL ──
+function updateNavLabel() {
+  var label = document.getElementById('nav-label');
+  if (currentView === 'month') {
+    label.textContent = MONTHS_FULL[currentDate.getMonth()] + ' ' + currentDate.getFullYear();
+  } else {
+    var ws = getWeekStart(currentDate);
+    var we = new Date(ws); we.setDate(ws.getDate()+6);
+    if (ws.getMonth() === we.getMonth()) {
+      label.textContent = MONTHS_SHORT[ws.getMonth()] + ' ' + ws.getDate() + '–' + we.getDate() + ', ' + ws.getFullYear();
+    } else {
+      label.textContent = MONTHS_SHORT[ws.getMonth()]+' '+ws.getDate()+' – '+MONTHS_SHORT[we.getMonth()]+' '+we.getDate();
+    }
+  }
+}
+
+// ── NAVIGATE ──
+function navigate(dir) {
+  if (currentView === 'month') {
+    currentDate = new Date(currentDate.getFullYear(), currentDate.getMonth()+dir, 1);
+  } else {
+    currentDate.setDate(currentDate.getDate() + dir*7);
+  }
+  render();
+}
+
+function goToday() {
+  currentDate = new Date(TODAY);
+  render();
+}
+
+function setView(v) {
+  currentView = v;
+  document.getElementById('btn-month').classList.toggle('active', v==='month');
+  document.getElementById('btn-week').classList.toggle('active', v==='week');
+  save(); render();
+}
+
+// ── RENDER ──
+function render() {
+  updateNavLabel();
+  if (currentView === 'month') renderMonth();
+  else renderWeek();
+}
+
+function renderMonth() {
+  var main = document.getElementById('main'); main.innerHTML='';
+  var grid = document.createElement('div'); grid.className='month-grid';
+
+  // Header row
+  var hrow = document.createElement('div'); hrow.className='month-header-row';
+  // Monday-first: Mon Tue Wed Thu Fri Sat Sun
+  var dowOrder = ['Mon','Tue','Wed','Thu','Fri','Sat','Sun'];
+  dowOrder.forEach(function(d) {
+    var h = document.createElement('div'); h.className='month-dow'; h.textContent=d; hrow.appendChild(h);
+  });
+  grid.appendChild(hrow);
+
+  var body = document.createElement('div'); body.className='month-body';
+
+  var y = currentDate.getFullYear(), m = currentDate.getMonth();
+  var firstDay = new Date(y, m, 1);
+  var lastDay  = new Date(y, m+1, 0);
+
+  // Monday=0...Sunday=6
+  var startDow = firstDay.getDay() === 0 ? 6 : firstDay.getDay()-1;
+  var totalCells = Math.ceil((startDow + lastDay.getDate()) / 7) * 7;
+
+  for (var i=0; i<totalCells; i++) {
+    var cellDate = new Date(y, m, 1 - startDow + i);
+    var isOther = !isSameMonth(cellDate, firstDay);
+    var dStr = dateKey(cellDate);
+    var dayEvs = eventsForDate(dStr);
+
+    var cell = document.createElement('div');
+    cell.className = 'month-cell' + (isOther?' other-month':'') + (isToday(cellDate)?' today':'');
+    cell.onclick = (function(ds){ return function(e){ if(e.target===this||e.target.classList.contains('month-events')||e.target.classList.contains('day-num')||e.target.classList.contains('more-chip')) openAddModal(ds); }; })(dStr);
+
+    var num = document.createElement('div'); num.className='day-num'; num.textContent=cellDate.getDate();
+    cell.appendChild(num);
+
+    var evsWrap = document.createElement('div'); evsWrap.className='month-events';
+    var maxShow = 3;
+    var shown = dayEvs.slice(0, maxShow);
+    var extra = dayEvs.length - maxShow;
+
+    shown.forEach(function(ev) {
+      var cat = getCat(ev.cat);
+      var chip = document.createElement('div');
+      chip.className = 'month-event-chip' + (ev.done?' done':'');
+      chip.style.background = cat.bg; chip.style.color = cat.text;
+      var checkEl = document.createElement('div');
+      checkEl.className = 'chip-check' + (ev.done?' checked':'');
+      checkEl.onclick = function(e){ e.stopPropagation(); toggleDone(ev.id); };
+      var titleEl = document.createElement('span');
+      titleEl.textContent = (ev.time ? formatTime(ev.time)+' ' : '') + ev.title;
+      titleEl.onclick = function(e){ e.stopPropagation(); openEditModal(ev.id); };
+      chip.appendChild(checkEl); chip.appendChild(titleEl);
+      evsWrap.appendChild(chip);
+    });
+
+    if (extra > 0) {
+      var more = document.createElement('div'); more.className='more-chip';
+      more.textContent = '+'+extra+' more';
+      more.onclick = function(e){ e.stopPropagation(); openAddModal(dStr); };
+      evsWrap.appendChild(more);
+    }
+
+    cell.appendChild(evsWrap);
+    body.appendChild(cell);
+  }
+
+  grid.appendChild(body);
+  main.appendChild(grid);
+}
+
+function renderWeek() {
+  var main = document.getElementById('main'); main.innerHTML='';
+  var grid = document.createElement('div'); grid.className='week-grid';
+  var ws = getWeekStart(currentDate);
+
+  for (var i=0; i<7; i++) {
+    var d = new Date(ws); d.setDate(ws.getDate()+i);
+    var dStr = dateKey(d);
+    var dayEvs = eventsForDate(dStr);
+    var isT = isToday(d);
+
+    var col = document.createElement('div');
+    col.className = 'week-col' + (isT?' today-col':'');
+
+    var hdr = document.createElement('div'); hdr.className='week-col-header';
+    var dow = document.createElement('div'); dow.className='week-dow';
+    // Mon-based labels
+    var dowLabels = ['Mon','Tue','Wed','Thu','Fri','Sat','Sun'];
+    dow.textContent = dowLabels[i];
+    var dnum = document.createElement('div'); dnum.className='week-day-num';
+    dnum.textContent = d.getDate();
+    hdr.appendChild(dow); hdr.appendChild(dnum);
+    col.appendChild(hdr);
+
+    var evsWrap = document.createElement('div'); evsWrap.className='week-events';
+
+    dayEvs.forEach(function(ev) {
+      var cat = getCat(ev.cat);
+      var evEl = document.createElement('div');
+      evEl.className = 'week-event' + (ev.done?' done':'');
+      evEl.style.background = cat.bg; evEl.style.color = cat.text;
+
+      var checkEl = document.createElement('div');
+      checkEl.className = 'ev-check' + (ev.done?' checked':'');
+      checkEl.onclick = function(e){ e.stopPropagation(); toggleDone(ev.id); };
+
+      var body = document.createElement('div'); body.className='ev-body';
+      var title = document.createElement('div'); title.className='ev-title'; title.textContent=ev.title;
+      body.appendChild(title);
+      if (ev.time) { var time=document.createElement('div'); time.className='ev-time'; time.textContent=formatTime(ev.time); body.appendChild(time); }
+      if (ev.note) { var note=document.createElement('div'); note.className='ev-time'; note.textContent=ev.note; body.appendChild(note); }
+
+      var delBtn = document.createElement('button'); delBtn.className='ev-del'; delBtn.textContent='✕';
+      delBtn.onclick = function(e){ e.stopPropagation(); deleteEvent(ev.id); };
+
+      evEl.appendChild(checkEl); evEl.appendChild(body); evEl.appendChild(delBtn);
+      evEl.onclick = function(e){ if(e.target!==checkEl && !e.target.classList.contains('ev-del')) openEditModal(ev.id); };
+      evsWrap.appendChild(evEl);
+    });
+
+    col.appendChild(evsWrap);
+
+    var addBtn = document.createElement('button'); addBtn.className='week-add-btn';
+    addBtn.textContent='+ add';
+    addBtn.onclick = (function(ds){ return function(){ openAddModal(ds); }; })(dStr);
+    col.appendChild(addBtn);
+
+    grid.appendChild(col);
+  }
+
+  main.appendChild(grid);
+}
+
+// ── FORMAT TIME ──
+function formatTime(t) {
+  if (!t) return '';
+  var p = t.split(':'); var h=parseInt(p[0]), m=p[1];
+  var ampm = h>=12?'pm':'am'; h=h%12||12;
+  return h+(m!=='00'?':'+m:'')+ampm;
+}
+
+// ── MODAL ──
+function buildCatPicker(selected) {
+  var picker = document.getElementById('cat-picker'); picker.innerHTML='';
+  CATS.forEach(function(c) {
+    var btn = document.createElement('button');
+    btn.className = 'cat-pick-btn' + (c.id===selected?' selected':'');
+    btn.style.background=c.bg; btn.style.color=c.text; btn.style.borderColor=(c.id===selected?c.text:c.bg);
+    btn.textContent=c.label;
+    btn.onclick=function(e){ e.preventDefault(); document.querySelectorAll('.cat-pick-btn').forEach(function(b){b.classList.remove('selected');b.style.borderColor=b.style.background;}); btn.classList.add('selected'); btn.style.borderColor=c.text; };
+    btn.dataset.cat=c.id;
+    picker.appendChild(btn);
+  });
+}
+
+function getSelectedCat() {
+  var sel = document.querySelector('.cat-pick-btn.selected');
+  return sel ? sel.dataset.cat : 'tasks';
+}
+
+function openAddModal(dateStr) {
+  editingId = null; pendingDate = dateStr||null;
+  document.getElementById('modal-title').textContent='Add Event';
+  document.getElementById('ev-title').value='';
+  document.getElementById('ev-date').value = dateStr || dateKey(TODAY);
+  document.getElementById('ev-time').value='';
+  document.getElementById('ev-note').value='';
+  document.getElementById('modal-delete-btn').style.display='none';
+  buildCatPicker('tasks');
+  document.getElementById('modal').classList.add('open');
+  setTimeout(function(){ document.getElementById('ev-title').focus(); }, 100);
+}
+
+function openEditModal(id) {
+  var ev = events.find(function(e){return e.id===id;}); if(!ev) return;
+  editingId = id;
+  document.getElementById('modal-title').textContent='Edit Event';
+  document.getElementById('ev-title').value=ev.title;
+  document.getElementById('ev-date').value=ev.date;
+  document.getElementById('ev-time').value=ev.time||'';
+  document.getElementById('ev-note').value=ev.note||'';
+  document.getElementById('modal-delete-btn').style.display='inline-flex';
+  buildCatPicker(ev.cat);
+  document.getElementById('modal').classList.add('open');
+}
+
+function closeModal() {
+  document.getElementById('modal').classList.remove('open');
+  editingId=null;
+}
+
+function saveEvent() {
+  var title=document.getElementById('ev-title').value.trim();
+  if (!title) { document.getElementById('ev-title').focus(); return; }
+  var date=document.getElementById('ev-date').value;
+  if (!date) { document.getElementById('ev-date').focus(); return; }
+  var time=document.getElementById('ev-time').value;
+  var note=document.getElementById('ev-note').value.trim();
+  var cat=getSelectedCat();
+
+  if (editingId) {
+    var idx=events.findIndex(function(e){return e.id===editingId;});
+    if (idx>=0) { events[idx].title=title; events[idx].date=date; events[idx].time=time; events[idx].note=note; events[idx].cat=cat; }
+  } else {
+    events.push({id:'ev_'+Date.now(), title:title, date:date, time:time, cat:cat, note:note, done:false});
+  }
+  save(); closeModal(); render();
+}
+
+function deleteEventFromModal() {
+  if (!editingId) return;
+  if (!confirm('Delete this event?')) return;
+  deleteEvent(editingId); closeModal();
+}
+
+function deleteEvent(id) {
+  events=events.filter(function(e){return e.id!==id;}); save(); render();
+}
+
+function toggleDone(id) {
+  var ev=events.find(function(e){return e.id===id;}); if(!ev) return;
+  ev.done=!ev.done; save(); render();
+}
+
+function clearAll() {
+  if (!confirm('Clear all events? This cannot be undone.')) return;
+  events=[]; save(); render();
+}
+
+// Close modal on overlay click
+document.getElementById('modal').addEventListener('click', function(e){ if(e.target===this) closeModal(); });
+
+// Keyboard
+document.addEventListener('keydown', function(e){ if(e.key==='Escape') closeModal(); });
+document.getElementById('ev-title').addEventListener('keydown', function(e){ if(e.key==='Enter') saveEvent(); });
+
+// ── INIT ──
+var now = new Date();
+var DAYS_F=['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+var MONTHS_F=['January','February','March','April','May','June','July','August','September','October','November','December'];
+document.getElementById('today-date').textContent=DAYS_F[now.getDay()]+', '+MONTHS_F[now.getMonth()]+' '+now.getDate()+', '+now.getFullYear();
+
+load();
+if (currentView==='week') { setView('week'); } else { setView('month'); }
+renderLegend();
+render();
+</script>
+</body>
+</html>
