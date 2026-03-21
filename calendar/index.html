@@ -59,7 +59,7 @@ body{background:#f0e8e4;font-family:'Jost',sans-serif;color:var(--ink);min-heigh
 .month-header-row{display:grid;grid-template-columns:repeat(7,1fr);border-bottom:2px solid var(--rule);}
 .month-dow{padding:10px 0;text-align:center;font-size:0.62rem;letter-spacing:2px;text-transform:uppercase;color:var(--muted);font-weight:600;}
 .month-body{display:grid;grid-template-columns:repeat(7,1fr);}
-.month-cell{min-height:120px;border-right:1px solid var(--rule);border-bottom:1px solid var(--rule);padding:6px;display:flex;flex-direction:column;cursor:pointer;transition:background .1s;}
+.month-cell{min-height:90px;border-right:1px solid var(--rule);border-bottom:1px solid var(--rule);padding:6px;display:flex;flex-direction:column;cursor:pointer;transition:background .1s;}
 .month-cell:hover{background:var(--warm);}
 .month-cell:nth-child(7n){border-right:none;}
 .month-cell.other-month{background:#faf4f0;opacity:0.6;}
@@ -193,11 +193,7 @@ body{background:#f0e8e4;font-family:'Jost',sans-serif;color:var(--ink);min-heigh
 <!-- MAIN -->
 <div class="main" id="main"></div>
 
-<!-- FOOTER -->
-<div class="footer">
-  <div class="footer-hint">Your calendar is saved automatically and persists through refresh.</div>
-  <button class="clear-btn" onclick="clearAll()">↺ Clear All Events</button>
-</div>
+
 
 <script>
 var SK = 'lifeCalendar1';
@@ -363,9 +359,7 @@ function renderMonth() {
     cell.appendChild(num);
 
     var evsWrap = document.createElement('div'); evsWrap.className='month-events';
-    var maxShow = 3;
-    var shown = dayEvs.slice(0, maxShow);
-    var extra = dayEvs.length - maxShow;
+    var shown = dayEvs;
 
     shown.forEach(function(ev) {
       var cat = getCat(ev.cat);
@@ -377,17 +371,19 @@ function renderMonth() {
       checkEl.onclick = function(e){ e.stopPropagation(); toggleDone(ev.id); };
       var titleEl = document.createElement('span');
       titleEl.textContent = (ev.time ? formatTime(ev.time)+' ' : '') + ev.title;
+      titleEl.style.flex = '1';
       titleEl.onclick = function(e){ e.stopPropagation(); openEditModal(ev.id); };
-      chip.appendChild(checkEl); chip.appendChild(titleEl);
+      var delEl = document.createElement('span');
+      delEl.textContent = '✕';
+      delEl.style.cssText = 'margin-left:4px;opacity:0;font-size:0.6rem;cursor:pointer;flex-shrink:0;';
+      delEl.onclick = (function(eid){ return function(e){ e.stopPropagation(); deleteEvent(eid); }; })(ev.id);
+      chip.addEventListener('mouseenter', function(){ delEl.style.opacity='0.6'; });
+      chip.addEventListener('mouseleave', function(){ delEl.style.opacity='0'; });
+      chip.style.display = 'flex';
+      chip.style.alignItems = 'center';
+      chip.appendChild(checkEl); chip.appendChild(titleEl); chip.appendChild(delEl);
       evsWrap.appendChild(chip);
     });
-
-    if (extra > 0) {
-      var more = document.createElement('div'); more.className='more-chip';
-      more.textContent = '+'+extra+' more';
-      more.onclick = function(e){ e.stopPropagation(); openAddModal(dStr); };
-      evsWrap.appendChild(more);
-    }
 
     cell.appendChild(evsWrap);
     body.appendChild(cell);
