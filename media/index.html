@@ -1,0 +1,752 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Media Tracker</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,400&family=Jost:wght@300;400;500;600&display=swap');
+:root{
+  --blush:#f2c4ce;--rose:#e8a0b0;--mauve:#c9a0b4;--lavender:#d4b8e0;
+  --sage:#b8cfb0;--cream:#fdf6f0;--warm:#f7ece4;--ink:#3a2a2e;--muted:#9a8088;--rule:#e0cec8;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{background:#f0e8e4;font-family:'Jost',sans-serif;color:var(--ink);min-height:100vh;}
+
+.topbar{background:var(--cream);border-bottom:1px solid var(--rule);padding:14px 32px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:200;}
+.topbar-title{font-family:'Cormorant Garamond',serif;font-size:1.6rem;font-weight:300;letter-spacing:2px;}
+.topbar-title em{font-style:italic;color:var(--mauve);}
+.topbar-right{display:flex;align-items:center;gap:10px;}
+.back-btn{display:inline-flex;align-items:center;gap:6px;padding:6px 14px;border:1.5px solid var(--rule);border-radius:20px;font-size:0.72rem;color:var(--muted);cursor:pointer;background:transparent;font-family:'Jost',sans-serif;text-decoration:none;transition:all .15s;}
+.back-btn:hover{border-color:var(--rose);color:var(--ink);}
+.topbar-date{font-size:0.68rem;letter-spacing:2px;text-transform:uppercase;color:var(--muted);}
+
+.section-tabs{background:var(--cream);border-bottom:2px solid var(--rule);position:sticky;top:57px;z-index:100;display:flex;overflow-x:auto;}
+.section-tab{padding:13px 24px;font-family:'Jost',sans-serif;font-size:0.76rem;font-weight:500;cursor:pointer;border:none;background:transparent;color:var(--muted);border-bottom:3px solid transparent;margin-bottom:-2px;transition:all .15s;white-space:nowrap;}
+.section-tab.active{color:var(--ink);border-bottom-color:var(--mauve);}
+
+.hub{max-width:1200px;margin:0 auto;padding:22px 24px 60px;}
+
+/* Stats */
+.stats-bar{display:flex;gap:14px;flex-wrap:wrap;margin-bottom:16px;padding:12px 18px;background:var(--cream);border:1px solid var(--rule);border-radius:12px;align-items:center;}
+.stat{text-align:center;}
+.stat-num{font-family:'Cormorant Garamond',serif;font-size:1.5rem;font-weight:600;color:var(--ink);line-height:1;}
+.stat-label{font-size:0.58rem;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin-top:2px;}
+.stat-divider{width:1px;height:36px;background:var(--rule);flex-shrink:0;}
+.year-badges{display:flex;gap:8px;flex-wrap:wrap;margin-left:auto;}
+.year-badge{padding:5px 14px;border-radius:12px;font-size:0.65rem;font-weight:600;background:linear-gradient(135deg,#fce8ef,#f0e0f0);border:1.5px solid var(--blush);color:var(--ink);}
+.year-badge span{color:var(--mauve);font-family:'Cormorant Garamond',serif;font-size:1rem;font-weight:600;}
+
+/* Controls */
+.controls-wrap{margin-bottom:18px;}
+.filter-group{display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin-bottom:8px;}
+.filter-group-label{font-size:0.6rem;letter-spacing:2px;text-transform:uppercase;color:var(--muted);font-weight:600;min-width:60px;}
+.filter-btn{padding:4px 12px;border:1.5px solid var(--rule);border-radius:14px;background:var(--cream);font-family:'Jost',sans-serif;font-size:0.68rem;font-weight:500;cursor:pointer;color:var(--muted);transition:all .15s;white-space:nowrap;}
+.filter-btn:hover{border-color:var(--mauve);color:var(--ink);}
+.filter-btn.active{background:var(--mauve);border-color:var(--mauve);color:white;}
+.controls-row2{display:flex;align-items:center;gap:8px;margin-top:8px;}
+.search-input{padding:6px 14px;border:1.5px solid var(--rule);border-radius:16px;font-family:'Jost',sans-serif;font-size:0.72rem;color:var(--ink);background:var(--cream);outline:none;transition:border .15s;min-width:180px;}
+.search-input:focus{border-color:var(--mauve);}
+.add-btn{margin-left:auto;padding:7px 18px;border:none;border-radius:20px;background:var(--mauve);color:white;font-family:'Jost',sans-serif;font-size:0.73rem;font-weight:600;cursor:pointer;transition:all .15s;}
+.add-btn:hover{background:var(--rose);}
+
+/* Grid */
+.media-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(195px,1fr));gap:16px;}
+.media-card{background:var(--cream);border:1px solid var(--rule);border-radius:14px;overflow:hidden;display:flex;flex-direction:column;transition:transform .15s,box-shadow .15s;}
+.media-card:hover{transform:translateY(-3px);box-shadow:0 8px 24px rgba(180,130,140,.14);}
+.media-card.done{opacity:0.72;}
+
+.card-cover{width:100%;height:220px;display:flex;align-items:center;justify-content:center;background:var(--warm);flex-shrink:0;overflow:hidden;}
+.card-cover img{width:100%;height:100%;object-fit:cover;}
+.card-cover-placeholder{font-size:3rem;}
+
+.card-body{padding:12px 14px;flex:1;display:flex;flex-direction:column;gap:3px;}
+.card-category{font-size:0.58rem;letter-spacing:2px;text-transform:uppercase;color:var(--muted);font-weight:600;}
+.card-title{font-family:'Cormorant Garamond',serif;font-size:1rem;font-weight:600;line-height:1.3;}
+.card-creator{font-size:0.7rem;color:var(--muted);}
+.card-stars{display:flex;gap:2px;margin-top:3px;}
+.card-star{font-size:0.9rem;cursor:pointer;color:#e0cec8;transition:color .1s;}
+.card-star.filled{color:var(--rose);}
+.card-status{display:inline-block;font-size:0.6rem;font-weight:600;letter-spacing:1px;text-transform:uppercase;padding:2px 9px;border-radius:10px;margin-top:3px;width:fit-content;}
+.status-want{background:#fff8e1;color:#8a5a10;}
+.status-progress{background:#e3f0ff;color:#1a5a9a;}
+.status-done{background:#e8f5e9;color:#2a6a30;}
+.status-subscribed{background:#f3e5f5;color:#6a1a8a;}
+.status-active{background:#e3f0ff;color:#1a5a9a;}
+.status-archived{background:var(--warm);color:var(--muted);}
+.card-date{font-size:0.65rem;color:var(--mauve);font-weight:500;margin-top:2px;}
+.card-note{font-size:0.7rem;color:var(--muted);line-height:1.5;font-style:italic;flex:1;margin-top:3px;}
+
+/* Progress bar (music/screen) */
+.card-progress{margin-top:6px;}
+.card-progress-bar{height:5px;background:var(--rule);border-radius:3px;overflow:hidden;margin-bottom:3px;}
+.card-progress-fill{height:100%;border-radius:3px;background:linear-gradient(90deg,var(--blush),var(--mauve));transition:width .3s;}
+.card-progress-label{font-size:0.65rem;color:var(--muted);}
+.card-progress-controls{display:flex;align-items:center;gap:5px;margin-top:4px;}
+.prog-btn{width:20px;height:20px;border-radius:50%;border:1.5px solid var(--rule);background:var(--cream);font-size:0.7rem;cursor:pointer;display:flex;align-items:center;justify-content:center;color:var(--muted);transition:all .15s;}
+.prog-btn:hover{border-color:var(--mauve);color:var(--ink);}
+.prog-count{font-family:'Cormorant Garamond',serif;font-size:0.95rem;font-weight:600;color:var(--ink);min-width:30px;text-align:center;}
+
+/* Screen episode info */
+.card-episode{font-size:0.68rem;font-weight:600;color:var(--mauve);margin-top:3px;}
+.card-ep-sub{font-size:0.62rem;color:var(--muted);}
+
+/* Podcast episode */
+.card-ep-count{font-size:0.68rem;color:var(--muted);margin-top:2px;}
+
+.card-actions{display:flex;gap:5px;padding:8px 12px;border-top:1px solid var(--rule);flex-wrap:wrap;}
+.card-action-btn{padding:4px 9px;border:1.5px solid var(--rule);border-radius:10px;font-family:'Jost',sans-serif;font-size:0.62rem;cursor:pointer;background:transparent;color:var(--muted);transition:all .15s;text-decoration:none;display:inline-flex;align-items:center;}
+.card-action-btn:hover{border-color:var(--mauve);color:var(--ink);}
+.card-del-btn{padding:4px 7px;border:none;background:transparent;font-size:0.65rem;color:#ccc;cursor:pointer;margin-left:auto;transition:color .15s;}
+.card-del-btn:hover{color:#a0304a;}
+
+/* Modal */
+.modal-overlay{display:none;position:fixed;inset:0;background:rgba(58,42,46,.35);z-index:300;align-items:center;justify-content:center;}
+.modal-overlay.open{display:flex;}
+.modal{background:var(--cream);border-radius:18px;border:1px solid var(--rule);padding:28px 32px;width:90%;max-width:540px;max-height:90vh;overflow-y:auto;box-shadow:0 20px 60px rgba(58,42,46,.15);}
+.modal-title{font-family:'Cormorant Garamond',serif;font-size:1.4rem;font-weight:600;margin-bottom:20px;}
+.f-field{margin-bottom:12px;}
+.f-label{font-size:0.62rem;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin-bottom:5px;display:block;}
+.f-input{width:100%;border:1.5px solid var(--rule);border-radius:10px;padding:9px 12px;font-size:0.82rem;font-family:'Jost',sans-serif;color:var(--ink);background:var(--warm);outline:none;transition:border .15s;}
+.f-input:focus{border-color:var(--mauve);}
+.f-row{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+.f-row3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;}
+.f-textarea{resize:vertical;min-height:60px;}
+.f-section-label{font-size:0.62rem;letter-spacing:2px;text-transform:uppercase;color:var(--muted);font-weight:600;padding:8px 0 4px;border-top:1px solid var(--rule);margin-top:4px;display:block;}
+.m-actions{display:flex;gap:10px;justify-content:flex-end;margin-top:18px;}
+.m-btn{padding:8px 20px;border-radius:20px;font-family:'Jost',sans-serif;font-size:0.78rem;font-weight:600;cursor:pointer;border:1.5px solid;transition:all .15s;}
+.m-cancel{background:var(--warm);border-color:var(--rule);color:var(--muted);}
+.m-save{background:var(--mauve);border-color:var(--mauve);color:white;}
+.m-save:hover{background:var(--rose);}
+.m-delete{background:#fce4ec;border-color:#f2c4ce;color:#a0304a;}
+
+.empty-state{text-align:center;padding:60px 20px;color:var(--muted);grid-column:1/-1;}
+.empty-state-icon{font-size:3rem;margin-bottom:12px;}
+.empty-state-text{font-family:'Cormorant Garamond',serif;font-size:1.2rem;font-style:italic;margin-bottom:6px;}
+.empty-state-sub{font-size:0.74rem;}
+
+/* Song modal */
+.song-list{display:flex;flex-direction:column;gap:6px;margin-bottom:14px;}
+.song-row{display:flex;align-items:center;gap:8px;padding:8px 10px;background:var(--warm);border-radius:8px;border:1px solid var(--rule);}
+.song-num{font-size:0.65rem;color:var(--muted);font-weight:600;min-width:18px;text-align:right;flex-shrink:0;}
+.song-name{flex:1;font-size:0.8rem;font-family:'Jost',sans-serif;color:var(--ink);border:none;background:transparent;outline:none;}
+.song-name::placeholder{color:#c8aab0;font-style:italic;}
+.song-stars{display:flex;gap:2px;flex-shrink:0;}
+.song-star{font-size:0.85rem;cursor:pointer;color:#e0cec8;transition:color .1s;}
+.song-star.filled{color:var(--rose);}
+.song-del{background:none;border:none;font-size:0.62rem;color:#ccc;cursor:pointer;padding:2px 4px;flex-shrink:0;}
+.song-del:hover{color:#a0304a;}
+.add-song-btn{font-size:0.72rem;color:var(--mauve);background:transparent;border:1.5px solid var(--rule);border-radius:14px;cursor:pointer;padding:5px 14px;font-family:'Jost',sans-serif;transition:all .15s;}
+.add-song-btn:hover{border-color:var(--mauve);background:var(--warm);}
+.song-modal-album{font-family:'Cormorant Garamond',serif;font-size:1rem;font-style:italic;color:var(--muted);margin-bottom:16px;}
+</style>
+</head>
+<body>
+
+<div class="modal-overlay" id="modal">
+  <div class="modal">
+    <div class="modal-title" id="modal-title">Add Item</div>
+    <div class="f-field"><label class="f-label">Title</label><input class="f-input" id="m-title" type="text" placeholder="Title..."></div>
+    <div class="f-row">
+      <div class="f-field"><label class="f-label">Creator / Author / Artist</label><input class="f-input" id="m-creator" type="text" placeholder="Author, host, director..."></div>
+      <div class="f-field"><label class="f-label">Category</label><select class="f-input" id="m-category"></select></div>
+    </div>
+    <div class="f-row">
+      <div class="f-field"><label class="f-label">Status</label><select class="f-input" id="m-status"></select></div>
+      <div class="f-field"><label class="f-label">Rating (1–5 ★)</label><select class="f-input" id="m-rating"><option value="0">Not rated</option><option value="1">★</option><option value="2">★★</option><option value="3">★★★</option><option value="4">★★★★</option><option value="5">★★★★★</option></select></div>
+    </div>
+
+    <!-- Books: date completed -->
+    <div class="f-field" id="date-field-wrap" style="display:none;">
+      <label class="f-label">Date Completed</label>
+      <input class="f-input" id="m-date" type="date">
+    </div>
+
+    <!-- Podcasts: episode tracking -->
+    <div id="podcast-fields-wrap" style="display:none;">
+      <span class="f-section-label">Episode Tracking</span>
+      <div class="f-row">
+        <div class="f-field"><label class="f-label">Current Episode #</label><input class="f-input" id="m-ep-current" type="number" min="0" placeholder="e.g. 47"></div>
+        <div class="f-field"><label class="f-label">Total Episodes (optional)</label><input class="f-input" id="m-ep-total" type="number" min="0" placeholder="e.g. 200"></div>
+      </div>
+    </div>
+
+    <!-- Music: track progress -->
+    <div id="music-fields-wrap" style="display:none;">
+      <span class="f-section-label">Album Track Progress</span>
+      <div class="f-row">
+        <div class="f-field"><label class="f-label">Tracks Listened</label><input class="f-input" id="m-tracks-done" type="number" min="0" placeholder="e.g. 7"></div>
+        <div class="f-field"><label class="f-label">Total Tracks on Album</label><input class="f-input" id="m-tracks-total" type="number" min="0" placeholder="e.g. 12"></div>
+      </div>
+    </div>
+
+    <!-- Screen: season/episode -->
+    <div id="screen-fields-wrap" style="display:none;">
+      <span class="f-section-label">Season / Episode Progress</span>
+      <div class="f-row3">
+        <div class="f-field"><label class="f-label">Current Season</label><input class="f-input" id="m-season" type="number" min="1" placeholder="e.g. 2"></div>
+        <div class="f-field"><label class="f-label">Current Episode</label><input class="f-input" id="m-episode" type="number" min="1" placeholder="e.g. 4"></div>
+        <div class="f-field"><label class="f-label">Total Seasons</label><input class="f-input" id="m-seasons-total" type="number" min="1" placeholder="e.g. 5"></div>
+      </div>
+      <div class="f-field" id="screen-date-wrap">
+        <label class="f-label">Date Watched (if done)</label>
+        <input class="f-input" id="m-screen-date" type="date">
+      </div>
+    </div>
+
+    <div class="f-field"><label class="f-label">Cover Image URL (optional)</label><input class="f-input" id="m-cover" type="text" placeholder="Paste any image URL..."></div>
+    <div class="f-field"><label class="f-label">Link (optional)</label><input class="f-input" id="m-link" type="text" placeholder="Goodreads, Spotify, Netflix..."></div>
+    <div class="f-field"><label class="f-label">Note (optional)</label><textarea class="f-input f-textarea" id="m-note" placeholder="Your thoughts..."></textarea></div>
+    <div class="m-actions">
+      <button class="m-btn m-cancel" onclick="closeModal()">Cancel</button>
+      <button class="m-btn m-delete" id="m-delete-btn" style="display:none;" onclick="deleteFromModal()">Delete</button>
+      <button class="m-btn m-save" onclick="saveItem()">Save ✦</button>
+    </div>
+  </div>
+</div>
+
+<!-- SONG MODAL -->
+<div class="modal-overlay" id="song-modal">
+  <div class="modal">
+    <div class="modal-title">Songs</div>
+    <div class="song-modal-album" id="song-modal-album"></div>
+    <div class="song-list" id="song-list"></div>
+    <button class="add-song-btn" onclick="addSong()">＋ Add Song</button>
+    <div class="m-actions" style="margin-top:16px;">
+      <button class="m-btn m-cancel" onclick="closeSongModal()">Done</button>
+    </div>
+  </div>
+</div>
+
+<div class="topbar">
+  <div class="topbar-title">Media <em>Tracker</em></div>
+  <div class="topbar-right">
+    <a href="../" class="back-btn">← Brain 2.0</a>
+    <span class="topbar-date" id="today-date"></span>
+  </div>
+</div>
+
+<div class="section-tabs">
+  <button class="section-tab active" id="stab-books"    onclick="setSection('books')">📚 Books</button>
+  <button class="section-tab"        id="stab-podcasts" onclick="setSection('podcasts')">🎙️ Podcasts</button>
+  <button class="section-tab"        id="stab-articles" onclick="setSection('articles')">📰 Articles</button>
+  <button class="section-tab"        id="stab-music"    onclick="setSection('music')">🎵 Albums</button>
+  <button class="section-tab"        id="stab-screen"   onclick="setSection('screen')">🎬 Screen</button>
+</div>
+
+<div class="hub">
+  <div class="stats-bar"    id="stats-bar"></div>
+  <div class="controls-wrap" id="controls-wrap"></div>
+  <div class="media-grid"   id="media-grid"></div>
+</div>
+
+<script>
+var SK='mediaTracker3';
+var MONTHS_SHORT=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+
+var SECTIONS={
+  books:{
+    label:'Books',icon:'📚',placeholder:'📖',
+    statuses:[
+      {val:'want',  label:'Want to Read',  cls:'status-want'},
+      {val:'progress',label:'Reading',     cls:'status-progress'},
+      {val:'done',  label:'Read',          cls:'status-done'},
+    ],
+    // Two groups for filter display
+    categoryGroups:[
+      {label:'Fiction',cats:['Fiction','Fantasy','Sci-Fi','Dystopian','Thriller','Romance','Young Adult','Classic']},
+      {label:'Nonfiction',cats:['Nonfiction','History','Psychology','Philosophy','Politics','Science','Biography','Self-Help','Essays','Other']},
+    ],
+    showDate:true, showPodcast:false, showMusic:false, showScreen:false,
+    emptyText:'Your reading list is empty.',
+  },
+  podcasts:{
+    label:'Podcasts',icon:'🎙️',placeholder:'🎙️',
+    statuses:[
+      {val:'queue',    label:'In Queue',  cls:'status-want'},
+      {val:'following',label:'Following', cls:'status-progress'},
+      {val:'archived', label:'Archived',  cls:'status-archived'},
+    ],
+    categoryGroups:[
+      {label:'Genre',cats:['Philosophy','Personal Development','Journalism','History','Politics','True Crime','Culture','Comedy','Education','Science','Other']},
+    ],
+    showDate:false, showPodcast:true, showMusic:false, showScreen:false,
+    emptyText:'No podcasts added yet.',
+  },
+  articles:{
+    label:'Articles & Essays',icon:'📰',placeholder:'📝',
+    statuses:[
+      {val:'want',    label:'Want to Read',cls:'status-want'},
+      {val:'progress',label:'Reading',    cls:'status-progress'},
+      {val:'done',    label:'Read',       cls:'status-done'},
+    ],
+    categoryGroups:[
+      {label:'Type',cats:['Article','Essay','Newsletter','Opinion','Research','Interview','Other']},
+    ],
+    showDate:false, showPodcast:false, showMusic:false, showScreen:false,
+    emptyText:'No articles or essays added yet.',
+  },
+  music:{
+    label:'Albums',icon:'🎵',placeholder:'🎵',
+    statuses:[
+      {val:'want',    label:'Want to Listen',cls:'status-want'},
+      {val:'progress',label:'Listening',    cls:'status-progress'},
+      {val:'done',    label:'Fully Listened',cls:'status-done'},
+    ],
+    categoryGroups:[
+      {label:'Format',cats:['Album','EP','Mixtape','Live Album','Compilation','Other']},
+    ],
+    showDate:false, showPodcast:false, showMusic:true, showScreen:false,
+    emptyText:'No albums added yet. Add an album to start critically listening.',
+  },
+  screen:{
+    label:'Screen',icon:'🎬',placeholder:'🎬',
+    statuses:[
+      {val:'want',    label:'Want to Watch',cls:'status-want'},
+      {val:'progress',label:'Watching',    cls:'status-progress'},
+      {val:'done',    label:'Watched',     cls:'status-done'},
+    ],
+    categoryGroups:[
+      {label:'Type',cats:['Movie','TV Show','Documentary','Mini-Series','Anime','Short Film','Other']},
+    ],
+    showDate:true, showPodcast:false, showMusic:false, showScreen:true,
+    emptyText:'No screen content added yet.',
+  },
+};
+
+// All categories flat per section
+function allCats(sec){
+  var out=[];
+  SECTIONS[sec].categoryGroups.forEach(function(g){g.cats.forEach(function(c){out.push(c);});});
+  return out;
+}
+
+var DEFAULT_DATA={
+  books:[
+    {id:'b1',title:'The Art of Seduction',creator:'Robert Greene',category:'Psychology',status:'want',rating:0,cover:'',link:'',note:'Relationships',date:''},
+    {id:'b2',title:'The Courage to Be Disliked',creator:'Ichiro Kishimi & Fumitake Koga',category:'Philosophy',status:'want',rating:0,cover:'',link:'',note:'',date:''},
+    {id:'b3',title:'Radical Acceptance',creator:'Tara Brach',category:'Self-Help',status:'want',rating:0,cover:'',link:'',note:'',date:''},
+    {id:'b4',title:'The Confidence Code',creator:'Katty Kay & Claire Shipman',category:'Nonfiction',status:'want',rating:0,cover:'',link:'',note:'Women\'s empowerment',date:''},
+    {id:'b5',title:'Breaking the Habit of Being Yourself',creator:'Joe Dispenza',category:'Self-Help',status:'want',rating:0,cover:'',link:'',note:'',date:''},
+    {id:'b6',title:'The Art of Gathering',creator:'Priya Parker',category:'Nonfiction',status:'want',rating:0,cover:'',link:'',note:'How we connect',date:''},
+    {id:'b7',title:'Smart but Scattered',creator:'Peg Dawson & Richard Guare',category:'Psychology',status:'want',rating:0,cover:'',link:'',note:'',date:''},
+    {id:'b8',title:'Chip War',creator:'Chris Miller',category:'Nonfiction',status:'want',rating:0,cover:'',link:'',note:'Technology & geopolitics',date:''},
+    {id:'b9',title:'Becoming Abolitionists',creator:'Derecka Purnell',category:'Politics',status:'want',rating:0,cover:'',link:'',note:'',date:''},
+    {id:'b10',title:'How to Stand Up to a Dictator',creator:'Maria Ressa',category:'Politics',status:'want',rating:0,cover:'',link:'',note:'',date:''},
+    {id:'b11',title:'Medical Apartheid',creator:'Harriet A. Washington',category:'History',status:'want',rating:0,cover:'',link:'',note:'',date:''},
+    {id:'b12',title:'The Song of Achilles',creator:'Madeline Miller',category:'Fiction',status:'want',rating:0,cover:'',link:'',note:'',date:''},
+    {id:'b13',title:'Circe',creator:'Madeline Miller',category:'Fantasy',status:'want',rating:0,cover:'',link:'',note:'Mythology',date:''},
+    {id:'b14',title:'Funny Story',creator:'Emily Henry',category:'Romance',status:'want',rating:0,cover:'',link:'',note:'',date:''},
+    {id:'b15',title:'Beloved',creator:'Toni Morrison',category:'Classic',status:'want',rating:0,cover:'',link:'',note:'',date:''},
+    {id:'b16',title:'The Count of Monte Cristo',creator:'Alexandre Dumas',category:'Classic',status:'want',rating:0,cover:'',link:'',note:'',date:''},
+    {id:'b17',title:'The Age of Innocence',creator:'Edith Wharton',category:'Classic',status:'want',rating:0,cover:'',link:'',note:'',date:''},
+    {id:'b18',title:'The House of Mirth',creator:'Edith Wharton',category:'Classic',status:'want',rating:0,cover:'',link:'',note:'',date:''},
+    {id:'b19',title:'Death in Her Hands',creator:'Ottessa Moshfegh',category:'Thriller',status:'want',rating:0,cover:'',link:'',note:'',date:''},
+    {id:'b20',title:'Carceral Capitalism',creator:'Jackie Wang',category:'Politics',status:'want',rating:0,cover:'',link:'',note:'',date:''},
+    {id:'b21',title:'The Lies My Teacher Told Me',creator:'James Loewen',category:'History',status:'want',rating:0,cover:'',link:'',note:'',date:''},
+    {id:'b22',title:'Hold Me Tight',creator:'Sue Johnson',category:'Self-Help',status:'want',rating:0,cover:'',link:'',note:'Relationships',date:''},
+    {id:'b23',title:'The Last Story of Mina Lee',creator:'Nancy Jooyoun Kim',category:'Fiction',status:'want',rating:0,cover:'',link:'',note:'',date:''},
+    {id:'b24',title:'Soju Club',creator:'Jinsung Park',category:'Fiction',status:'want',rating:0,cover:'',link:'',note:'',date:''},
+  ],
+  podcasts:[
+    {id:'p1',title:'The Daily Stoic',creator:'Ryan Holiday',category:'Philosophy',status:'queue',rating:0,cover:'',link:'',note:'',epCurrent:0,epTotal:0},
+    {id:'p2',title:'Philosophize This',creator:'Stephen West',category:'Philosophy',status:'queue',rating:0,cover:'',link:'',note:'',epCurrent:0,epTotal:0},
+    {id:'p3',title:'Mel Robbins Podcast',creator:'Mel Robbins',category:'Personal Development',status:'queue',rating:0,cover:'',link:'',note:'',epCurrent:0,epTotal:0},
+  ],
+  articles:[
+    {id:'a1',title:'Being single isn\'t sad, it\'s fucking...',creator:'Pepper Maria W.',category:'Essay',status:'want',rating:0,cover:'',link:'https://peppermariaw.substack.com/p/being-single-isnt-sad-its-fucking',note:''},
+    {id:'a2',title:'Why I don\'t use dating apps',creator:'Pepper Maria W.',category:'Article',status:'want',rating:0,cover:'',link:'https://peppermariaw.substack.com/p/why-i-dont-use-datingapps-and-thi',note:''},
+    {id:'a3',title:'i wish you were as curious as me',creator:'Girl on the Internet',category:'Essay',status:'want',rating:0,cover:'',link:'',note:''},
+    {id:'a4',title:'The hands that never rest',creator:'Fracture Notes',category:'Essay',status:'want',rating:0,cover:'',link:'',note:''},
+    {id:'a5',title:'i hope i linger',creator:'To Be Honest',category:'Essay',status:'want',rating:0,cover:'',link:'',note:''},
+    {id:'a6',title:'The epidemic of constant communication',creator:'Good Riddance',category:'Essay',status:'want',rating:0,cover:'',link:'',note:''},
+    {id:'a7',title:'to the people who overanalyze everything',creator:'Chemical Hearts',category:'Essay',status:'want',rating:0,cover:'',link:'',note:''},
+    {id:'a8',title:'Why I Refuse to Live Only for Myself',creator:'Ghufrane Daymi',category:'Essay',status:'want',rating:0,cover:'',link:'',note:''},
+    {id:'a9',title:'An existential guide to making friends',creator:'The Shadowed Archive',category:'Article',status:'want',rating:0,cover:'',link:'',note:''},
+    {id:'a10',title:'Gatekept',creator:'',category:'Newsletter',status:'want',rating:0,cover:'',link:'',note:'Fashion analysis and news'},
+  ],
+  music:[
+    {id:'m1',title:'In-between',creator:'Lily Moore',category:'EP',status:'want',rating:0,cover:'',link:'',note:'New discovery',tracksDone:0,tracksTotal:0},
+  ],
+  screen:[
+    {id:'s1',title:'Heart of Dixie',creator:'',category:'TV Show',status:'want',rating:0,cover:'',link:'',note:'Amazon Prime',season:1,episode:1,seasonsTotal:4,date:''},
+    {id:'s2',title:'The Buccaneers',creator:'',category:'TV Show',status:'want',rating:0,cover:'',link:'',note:'Apple TV',season:1,episode:1,seasonsTotal:0,date:''},
+    {id:'s3',title:'The Haunting of Hill House',creator:'Mike Flanagan',category:'TV Show',status:'want',rating:0,cover:'',link:'',note:'Netflix',season:1,episode:1,seasonsTotal:2,date:''},
+    {id:'s4',title:'Twin Peaks',creator:'David Lynch',category:'TV Show',status:'want',rating:0,cover:'',link:'',note:'',season:1,episode:1,seasonsTotal:3,date:''},
+    {id:'s5',title:'Dawson\'s Creek',creator:'',category:'TV Show',status:'want',rating:0,cover:'',link:'',note:'Netflix',season:1,episode:1,seasonsTotal:6,date:''},
+    {id:'s6',title:'Club de Cuervos',creator:'',category:'TV Show',status:'want',rating:0,cover:'',link:'https://netflix.com/title/80030346',note:'Netflix — Mexico',season:1,episode:1,seasonsTotal:4,date:''},
+    {id:'s7',title:'¿Quién mató a Sara?',creator:'',category:'TV Show',status:'want',rating:0,cover:'',link:'https://www.netflix.com/title/81166747',note:'Netflix — Mexico',season:1,episode:1,seasonsTotal:3,date:''},
+    {id:'s8',title:'Control Z',creator:'',category:'TV Show',status:'want',rating:0,cover:'',link:'',note:'Netflix — Mexico',season:1,episode:1,seasonsTotal:3,date:''},
+    {id:'s9',title:'LOVE ME LOVE ME',creator:'',category:'TV Show',status:'want',rating:0,cover:'',link:'',note:'',season:1,episode:1,seasonsTotal:0,date:''},
+    {id:'s10',title:'We Were Liars',creator:'',category:'TV Show',status:'want',rating:0,cover:'',link:'',note:'',season:1,episode:1,seasonsTotal:0,date:''},
+    {id:'s11',title:'Over the Garden Wall',creator:'',category:'TV Show',status:'want',rating:0,cover:'',link:'',note:'Amazon — animated, whimsical',season:1,episode:1,seasonsTotal:1,date:''},
+    {id:'s12',title:'Luis Miguel: La Serie',creator:'',category:'TV Show',status:'want',rating:0,cover:'',link:'https://www.netflix.com/title/80191236',note:'Netflix — Mexico',season:1,episode:1,seasonsTotal:3,date:''},
+    {id:'s13',title:'Motorheads',creator:'',category:'TV Show',status:'want',rating:0,cover:'',link:'',note:'',season:1,episode:1,seasonsTotal:0,date:''},
+    {id:'s14',title:'The Runarounds',creator:'',category:'TV Show',status:'want',rating:0,cover:'',link:'',note:'',season:1,episode:1,seasonsTotal:0,date:''},
+  ]
+};
+
+var currentSection='books',currentStatus='all',currentCat='all',searchQuery='',editingId=null;
+var data={books:[],podcasts:[],articles:[],music:[],screen:[]};
+
+function save(){localStorage.setItem(SK,JSON.stringify(data));}
+function load(){
+  var raw=localStorage.getItem(SK);
+  if(raw){try{data=JSON.parse(raw);}catch(e){}}
+  else{data=JSON.parse(JSON.stringify(DEFAULT_DATA));save();}
+  Object.keys(SECTIONS).forEach(function(s){if(!data[s])data[s]=[];});
+}
+
+function todayStr(){var n=new Date();return n.getFullYear()+'-'+String(n.getMonth()+1).padStart(2,'0')+'-'+String(n.getDate()).padStart(2,'0');}
+
+function setSection(sec){
+  currentSection=sec;currentStatus='all';currentCat='all';searchQuery='';
+  document.querySelectorAll('.section-tab').forEach(function(t){t.classList.remove('active');});
+  document.getElementById('stab-'+sec).classList.add('active');
+  render();
+}
+
+function getFiltered(){
+  var items=data[currentSection]||[];
+  if(currentStatus!=='all') items=items.filter(function(i){return i.status===currentStatus;});
+  if(currentCat!=='all')    items=items.filter(function(i){return i.category===currentCat;});
+  if(searchQuery){var q=searchQuery.toLowerCase();items=items.filter(function(i){return(i.title||'').toLowerCase().includes(q)||(i.creator||'').toLowerCase().includes(q)||(i.note||'').toLowerCase().includes(q);});}
+  return items;
+}
+
+function getYearCounts(sec){
+  var counts={};
+  (data[sec]||[]).forEach(function(i){
+    var d=i.date||(sec==='screen'?i.date:'');
+    if(i.status==='done'&&d){var yr=d.split('-')[0];counts[yr]=(counts[yr]||0)+1;}
+  });
+  return counts;
+}
+
+function renderStats(){
+  var all=data[currentSection]||[];
+  var sec=SECTIONS[currentSection];
+  var html='<div class="stat"><div class="stat-num">'+all.length+'</div><div class="stat-label">Total</div></div>';
+  sec.statuses.forEach(function(s){
+    var cnt=all.filter(function(i){return i.status===s.val;}).length;
+    html+='<div class="stat-divider"></div><div class="stat"><div class="stat-num">'+cnt+'</div><div class="stat-label">'+s.label+'</div></div>';
+  });
+  // Year breakdown for books & screen
+  if(sec.showDate){
+    var counts=getYearCounts(currentSection);
+    var yrs=Object.keys(counts).sort().reverse();
+    if(yrs.length){
+      html+='<div class="stat-divider"></div><div class="year-badges">';
+      yrs.forEach(function(yr){html+='<div class="year-badge">'+yr+' <span>'+counts[yr]+'</span></div>';});
+      html+='</div>';
+    }
+  }
+  document.getElementById('stats-bar').innerHTML=html;
+}
+
+function renderControls(){
+  var sec=SECTIONS[currentSection];
+  var wrap=document.getElementById('controls-wrap');wrap.innerHTML='';
+
+  // Status filter row
+  var sRow=document.createElement('div');sRow.className='filter-group';
+  var sLabel=document.createElement('span');sLabel.className='filter-group-label';sLabel.textContent='Status';
+  sRow.appendChild(sLabel);
+  var allBtn=document.createElement('button');allBtn.className='filter-btn'+(currentStatus==='all'?' active':'');allBtn.textContent='All';
+  allBtn.onclick=function(){setFilter('status','all');};sRow.appendChild(allBtn);
+  sec.statuses.forEach(function(s){
+    var b=document.createElement('button');b.className='filter-btn'+(currentStatus===s.val?' active':'');b.textContent=s.label;
+    b.onclick=(function(v){return function(){setFilter('status',v);};})(s.val);sRow.appendChild(b);
+  });
+  wrap.appendChild(sRow);
+
+  // Category filter row(s)
+  sec.categoryGroups.forEach(function(grp){
+    var gRow=document.createElement('div');gRow.className='filter-group';
+    var gLabel=document.createElement('span');gLabel.className='filter-group-label';gLabel.textContent=grp.label;
+    gRow.appendChild(gLabel);
+    var aBtn=document.createElement('button');aBtn.className='filter-btn'+(currentCat==='all'?' active':'');aBtn.textContent='All';
+    aBtn.onclick=function(){setFilter('cat','all');};gRow.appendChild(aBtn);
+    grp.cats.forEach(function(c){
+      var b=document.createElement('button');b.className='filter-btn'+(currentCat===c?' active':'');b.textContent=c;
+      b.onclick=(function(cv){return function(){setFilter('cat',cv);};})(c);gRow.appendChild(b);
+    });
+    wrap.appendChild(gRow);
+  });
+
+  // Search + add row
+  var row2=document.createElement('div');row2.className='controls-row2';
+  var searchEl=document.createElement('input');searchEl.className='search-input';searchEl.type='text';searchEl.placeholder='Search...';searchEl.value=searchQuery;
+  searchEl.oninput=function(){searchQuery=this.value;render();};row2.appendChild(searchEl);
+  var addBtn=document.createElement('button');addBtn.className='add-btn';addBtn.textContent='＋ Add';addBtn.onclick=openAddModal;row2.appendChild(addBtn);
+  wrap.appendChild(row2);
+}
+
+function setFilter(type,val){if(type==='status')currentStatus=val;else currentCat=val;render();}
+
+function renderGrid(){
+  var grid=document.getElementById('media-grid');grid.innerHTML='';
+  var items=getFiltered();var sec=SECTIONS[currentSection];
+  if(!items.length){grid.innerHTML='<div class="empty-state"><div class="empty-state-icon">'+sec.icon+'</div><div class="empty-state-text">'+sec.emptyText+'</div><div class="empty-state-sub">Click "+ Add" to get started.</div></div>';return;}
+
+  var statusMap={};sec.statuses.forEach(function(s){statusMap[s.val]=s;});
+
+  items.forEach(function(item){
+    var card=document.createElement('div');card.className='media-card'+(item.status==='done'?' done':'');
+
+    // Cover
+    var coverDiv=document.createElement('div');coverDiv.className='card-cover';
+    if(item.cover){var img=document.createElement('img');img.src=item.cover;img.alt=item.title;img.onerror=function(){coverDiv.innerHTML='<div class="card-cover-placeholder">'+sec.placeholder+'</div>';};coverDiv.appendChild(img);}
+    else{coverDiv.innerHTML='<div class="card-cover-placeholder">'+sec.placeholder+'</div>';}
+    card.appendChild(coverDiv);
+
+    // Body
+    var body=document.createElement('div');body.className='card-body';
+    body.innerHTML='<div class="card-category">'+item.category+'</div><div class="card-title">'+item.title+'</div>'+(item.creator?'<div class="card-creator">'+item.creator+'</div>':'');
+
+    // Stars
+    var starsDiv=document.createElement('div');starsDiv.className='card-stars';
+    for(var s=1;s<=5;s++){var star=document.createElement('span');star.className='card-star'+(s<=item.rating?' filled':'');star.textContent='★';star.onclick=(function(id,sv){return function(e){e.stopPropagation();rateItem(id,sv);};})(item.id,s);starsDiv.appendChild(star);}
+    body.appendChild(starsDiv);
+
+    var si=statusMap[item.status]||{label:item.status,cls:'status-want'};
+    var statusSpan=document.createElement('span');statusSpan.className='card-status '+si.cls;statusSpan.textContent=si.label;body.appendChild(statusSpan);
+
+    // Section-specific extras
+    if(currentSection==='books'&&item.status==='done'&&item.date){
+      var dateDiv=document.createElement('div');dateDiv.className='card-date';
+      var d=new Date(item.date+'T00:00:00');dateDiv.textContent='✓ '+MONTHS_SHORT[d.getMonth()]+' '+d.getDate()+', '+d.getFullYear();body.appendChild(dateDiv);
+    }
+    if(currentSection==='podcasts'){
+      if(item.epCurrent){var epDiv=document.createElement('div');epDiv.className='card-ep-count';epDiv.textContent='Episode '+item.epCurrent+(item.epTotal?' / '+item.epTotal:'');body.appendChild(epDiv);}
+    }
+    if(currentSection==='music'&&item.tracksTotal>0){
+      var pct=Math.min(100,Math.round((item.tracksDone||0)/item.tracksTotal*100));
+      var progWrap=document.createElement('div');progWrap.className='card-progress';
+      progWrap.innerHTML='<div class="card-progress-bar"><div class="card-progress-fill" style="width:'+pct+'%"></div></div><div class="card-progress-label">'+(item.tracksDone||0)+' / '+item.tracksTotal+' tracks ('+pct+'%)</div>';
+      var controls=document.createElement('div');controls.className='card-progress-controls';
+      var minusBtn=document.createElement('button');minusBtn.className='prog-btn';minusBtn.textContent='−';
+      minusBtn.onclick=(function(id){return function(e){e.stopPropagation();adjustTracks(id,-1);};})(item.id);
+      var count=document.createElement('span');count.className='prog-count';count.textContent=(item.tracksDone||0);
+      var plusBtn=document.createElement('button');plusBtn.className='prog-btn';plusBtn.textContent='+';
+      plusBtn.onclick=(function(id){return function(e){e.stopPropagation();adjustTracks(id,1);};})(item.id);
+      controls.appendChild(minusBtn);controls.appendChild(count);controls.appendChild(plusBtn);
+      progWrap.appendChild(controls);body.appendChild(progWrap);
+    }
+    if(currentSection==='screen'){
+      var epInfo='';
+      if(item.season||item.episode){
+        epInfo='S'+((item.season||1))+' E'+((item.episode||1));
+        if(item.seasonsTotal) epInfo+=' · '+item.seasonsTotal+' season'+(item.seasonsTotal!==1?'s':'');
+      }
+      if(epInfo&&item.status!=='done'){var epDiv=document.createElement('div');epDiv.className='card-episode';epDiv.textContent=epInfo;body.appendChild(epDiv);}
+      if(item.status==='done'&&item.date){var dateDiv=document.createElement('div');dateDiv.className='card-date';var d=new Date(item.date+'T00:00:00');dateDiv.textContent='✓ '+MONTHS_SHORT[d.getMonth()]+' '+d.getDate()+', '+d.getFullYear();body.appendChild(dateDiv);}
+    }
+
+    if(item.note){var note=document.createElement('div');note.className='card-note';note.textContent=item.note;body.appendChild(note);}
+    card.appendChild(body);
+
+    // Actions
+    var actions=document.createElement('div');actions.className='card-actions';
+    var editBtn=document.createElement('button');editBtn.className='card-action-btn';editBtn.textContent='Edit';editBtn.onclick=(function(id){return function(){openEditModal(id);};})(item.id);actions.appendChild(editBtn);
+    if(item.link){var lk=document.createElement('a');lk.className='card-action-btn';lk.textContent='Open ↗';lk.href=item.link;lk.target='_blank';lk.style.textDecoration='none';actions.appendChild(lk);}
+    // cycle status
+    var si2=statusMap[item.status];var statuses=sec.statuses;
+    var curIdx=statuses.findIndex(function(s){return s.val===item.status;});
+    var nextIdx=(curIdx+1)%statuses.length;var nextS=statuses[nextIdx];
+    var cycleBtn=document.createElement('button');cycleBtn.className='card-action-btn';cycleBtn.textContent='→ '+nextS.label.split(' ').pop();
+    cycleBtn.onclick=(function(id,ns){return function(){cycleStatus(id,ns);};})(item.id,nextS.val);actions.appendChild(cycleBtn);
+    var delBtn=document.createElement('button');delBtn.className='card-del-btn';delBtn.textContent='✕';delBtn.onclick=(function(id){return function(){if(confirm('Remove?'))deleteItem(id);};})(item.id);actions.appendChild(delBtn);
+    // Songs button for music
+    if(currentSection==='music'){
+      var songsBtn=document.createElement('button');songsBtn.className='card-action-btn';
+      var sc=(item.songs&&item.songs.length)?item.songs.length+' song'+(item.songs.length!==1?'s':''):'Songs';
+      songsBtn.textContent='🎵 '+sc;
+      songsBtn.onclick=(function(id){return function(e){e.stopPropagation();openSongModal(id);};})(item.id);
+      actions.insertBefore(songsBtn,delBtn);
+    }
+    card.appendChild(actions);grid.appendChild(card);
+  });
+}
+
+function rateItem(id,rating){var item=findItem(id);if(!item)return;item.rating=item.rating===rating?0:rating;save();renderGrid();}
+function adjustTracks(id,delta){var item=findItem(id);if(!item)return;item.tracksDone=Math.max(0,Math.min(item.tracksTotal||99,(item.tracksDone||0)+delta));if(item.tracksDone===item.tracksTotal&&item.tracksTotal>0)item.status='done';save();render();}
+function cycleStatus(id,ns){
+  var item=findItem(id);if(!item)return;
+  item.status=ns;
+  // auto-set date when marking done
+  if(ns==='done'){
+    if(currentSection==='books'&&!item.date) item.date=todayStr();
+    if(currentSection==='screen'&&!item.date) item.date=todayStr();
+  }
+  save();render();
+}
+function deleteItem(id){data[currentSection]=data[currentSection].filter(function(i){return i.id!==id;});save();render();}
+function findItem(id){return(data[currentSection]||[]).find(function(i){return i.id===id;});}
+
+// Modal helpers
+function showModalFields(sec){
+  document.getElementById('date-field-wrap').style.display=     sec==='books'?'block':'none';
+  document.getElementById('podcast-fields-wrap').style.display= sec==='podcasts'?'block':'none';
+  document.getElementById('music-fields-wrap').style.display=   sec==='music'?'block':'none';
+  document.getElementById('screen-fields-wrap').style.display=  sec==='screen'?'block':'none';
+}
+function buildStatusOptions(sec,selected){
+  var sel=document.getElementById('m-status');sel.innerHTML='';
+  SECTIONS[sec].statuses.forEach(function(s){var opt=document.createElement('option');opt.value=s.val;opt.textContent=s.label;if(s.val===selected)opt.selected=true;sel.appendChild(opt);});
+}
+function buildCategoryOptions(sec,selected){
+  var sel=document.getElementById('m-category');sel.innerHTML='';
+  allCats(sec).forEach(function(c){var opt=document.createElement('option');opt.value=c;opt.textContent=c;if(c===selected)opt.selected=true;sel.appendChild(opt);});
+}
+function clearModalFields(){
+  ['m-title','m-creator','m-cover','m-link'].forEach(function(id){document.getElementById(id).value='';});
+  document.getElementById('m-note').value='';
+  document.getElementById('m-rating').value='0';
+  document.getElementById('m-date').value='';
+  document.getElementById('m-ep-current').value='';document.getElementById('m-ep-total').value='';
+  document.getElementById('m-tracks-done').value='';document.getElementById('m-tracks-total').value='';
+  document.getElementById('m-season').value='';document.getElementById('m-episode').value='';document.getElementById('m-seasons-total').value='';
+  document.getElementById('m-screen-date').value='';
+}
+function openAddModal(){
+  editingId=null;
+  document.getElementById('modal-title').textContent='Add to '+SECTIONS[currentSection].label;
+  clearModalFields();
+  document.getElementById('m-delete-btn').style.display='none';
+  buildStatusOptions(currentSection,'want');
+  buildCategoryOptions(currentSection,'');
+  showModalFields(currentSection);
+  document.getElementById('modal').classList.add('open');
+  setTimeout(function(){document.getElementById('m-title').focus();},100);
+}
+function openEditModal(id){
+  var item=findItem(id);if(!item)return;editingId=id;
+  document.getElementById('modal-title').textContent='Edit Item';
+  document.getElementById('m-title').value=item.title;
+  document.getElementById('m-creator').value=item.creator||'';
+  document.getElementById('m-cover').value=item.cover||'';
+  document.getElementById('m-link').value=item.link||'';
+  document.getElementById('m-note').value=item.note||'';
+  document.getElementById('m-rating').value=item.rating||0;
+  document.getElementById('m-date').value=item.date||'';
+  document.getElementById('m-ep-current').value=item.epCurrent||'';
+  document.getElementById('m-ep-total').value=item.epTotal||'';
+  document.getElementById('m-tracks-done').value=item.tracksDone||'';
+  document.getElementById('m-tracks-total').value=item.tracksTotal||'';
+  document.getElementById('m-season').value=item.season||'';
+  document.getElementById('m-episode').value=item.episode||'';
+  document.getElementById('m-seasons-total').value=item.seasonsTotal||'';
+  document.getElementById('m-screen-date').value=item.date||'';
+  document.getElementById('m-delete-btn').style.display='inline-flex';
+  buildStatusOptions(currentSection,item.status);
+  buildCategoryOptions(currentSection,item.category);
+  showModalFields(currentSection);
+  document.getElementById('modal').classList.add('open');
+}
+function closeModal(){document.getElementById('modal').classList.remove('open');editingId=null;}
+function saveItem(){
+  var title=document.getElementById('m-title').value.trim();if(!title){document.getElementById('m-title').focus();return;}
+  var status=document.getElementById('m-status').value;
+  var dateVal=currentSection==='screen'?document.getElementById('m-screen-date').value:document.getElementById('m-date').value;
+  // auto today if done and no date
+  if((currentSection==='books'||currentSection==='screen')&&status==='done'&&!dateVal) dateVal=todayStr();
+  var item={
+    id:editingId||'i_'+Date.now(),
+    title:title,
+    creator:document.getElementById('m-creator').value.trim(),
+    category:document.getElementById('m-category').value,
+    status:status,
+    rating:parseInt(document.getElementById('m-rating').value)||0,
+    cover:document.getElementById('m-cover').value.trim(),
+    link:document.getElementById('m-link').value.trim(),
+    note:document.getElementById('m-note').value.trim(),
+    date:dateVal,
+    epCurrent:parseInt(document.getElementById('m-ep-current').value)||0,
+    epTotal:parseInt(document.getElementById('m-ep-total').value)||0,
+    tracksDone:parseInt(document.getElementById('m-tracks-done').value)||0,
+    tracksTotal:parseInt(document.getElementById('m-tracks-total').value)||0,
+    season:parseInt(document.getElementById('m-season').value)||1,
+    episode:parseInt(document.getElementById('m-episode').value)||1,
+    seasonsTotal:parseInt(document.getElementById('m-seasons-total').value)||0,
+  };
+  if(editingId){var idx=data[currentSection].findIndex(function(i){return i.id===editingId;});if(idx>=0)data[currentSection][idx]=item;}
+  else data[currentSection].push(item);
+  save();closeModal();render();
+}
+function deleteFromModal(){if(!editingId)return;if(!confirm('Delete this item?'))return;deleteItem(editingId);closeModal();}
+document.getElementById('modal').addEventListener('click',function(e){if(e.target===this)closeModal();});
+document.addEventListener('keydown',function(e){if(e.key==='Escape')closeModal();});
+
+// ── SONG MODAL ──
+var currentAlbumId = null;
+
+function openSongModal(id) {
+  currentAlbumId = id;
+  var item = findItem(id); if (!item) return;
+  if (!item.songs) item.songs = [];
+  document.getElementById('song-modal-album').textContent = item.title + (item.creator ? ' · ' + item.creator : '');
+  renderSongList();
+  document.getElementById('song-modal').classList.add('open');
+}
+
+function closeSongModal() {
+  document.getElementById('song-modal').classList.remove('open');
+  currentAlbumId = null;
+  save(); render();
+}
+
+function renderSongList() {
+  var item = findItem(currentAlbumId); if (!item) return;
+  if (!item.songs) item.songs = [];
+  var list = document.getElementById('song-list'); list.innerHTML = '';
+  item.songs.forEach(function(song, si) {
+    var row = document.createElement('div'); row.className = 'song-row';
+    var num = document.createElement('span'); num.className = 'song-num'; num.textContent = (si+1)+'.';
+    var nameInput = document.createElement('input'); nameInput.className = 'song-name'; nameInput.type = 'text';
+    nameInput.placeholder = 'Song title...'; nameInput.value = song.name || '';
+    nameInput.oninput = (function(idx){ return function(){ var it=findItem(currentAlbumId); if(it&&it.songs[idx]!==undefined) it.songs[idx].name=this.value; }; })(si);
+    // Stars
+    var starsDiv = document.createElement('div'); starsDiv.className = 'song-stars';
+    for (var s=1; s<=5; s++) {
+      var star = document.createElement('span'); star.className = 'song-star' + (s <= (song.rating||0) ? ' filled' : '');
+      star.textContent = '★';
+      star.onclick = (function(idx, sv){ return function(){
+        var it = findItem(currentAlbumId); if (!it||!it.songs[idx]) return;
+        it.songs[idx].rating = it.songs[idx].rating===sv ? 0 : sv;
+        save(); renderSongList();
+      }; })(si, s);
+      starsDiv.appendChild(star);
+    }
+    var del = document.createElement('button'); del.className = 'song-del'; del.textContent = '✕';
+    del.onclick = (function(idx){ return function(){
+      var it = findItem(currentAlbumId); if (!it) return;
+      it.songs.splice(idx, 1); save(); renderSongList();
+    }; })(si);
+    row.appendChild(num); row.appendChild(nameInput); row.appendChild(starsDiv); row.appendChild(del);
+    list.appendChild(row);
+  });
+}
+
+function addSong() {
+  var item = findItem(currentAlbumId); if (!item) return;
+  if (!item.songs) item.songs = [];
+  item.songs.push({name:'', rating:0});
+  save(); renderSongList();
+  // focus new input
+  var inputs = document.querySelectorAll('.song-name');
+  if (inputs.length) inputs[inputs.length-1].focus();
+}
+
+document.getElementById('song-modal').addEventListener('click', function(e){ if(e.target===this) closeSongModal(); });
+
+function render(){renderStats();renderControls();renderGrid();}
+
+var now=new Date();
+var DAYS=['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+var MONTHS=['January','February','March','April','May','June','July','August','September','October','November','December'];
+document.getElementById('today-date').textContent=DAYS[now.getDay()]+', '+MONTHS[now.getMonth()]+' '+now.getDate()+', '+now.getFullYear();
+load();render();
+</script>
+</body>
+</html>
