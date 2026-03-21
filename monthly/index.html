@@ -1,0 +1,933 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Monthly Planner</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Jost:wght@300;400;500;600&display=swap');
+:root{
+  --blush:#f2c4ce;--rose:#e8a0b0;--mauve:#c9a0b4;--lavender:#d4b8e0;
+  --sage:#b8cfb0;--cream:#fdf6f0;--warm:#f7ece4;--ink:#3a2a2e;--muted:#9a8088;--rule:#e0cec8;
+  --sand:#ede0d4;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{background:#f0e8e4;font-family:'Jost',sans-serif;color:var(--ink);min-height:100vh;}
+
+/* ── TOPBAR ── */
+.topbar{background:var(--cream);border-bottom:1px solid var(--rule);padding:14px 32px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:200;}
+.topbar-title{font-family:'Cormorant Garamond',serif;font-size:1.6rem;font-weight:300;letter-spacing:2px;}
+.topbar-title em{font-style:italic;color:var(--mauve);}
+.topbar-right{display:flex;align-items:center;gap:10px;}
+.back-btn{display:inline-flex;align-items:center;gap:6px;padding:6px 14px;border:1.5px solid var(--rule);border-radius:20px;font-size:0.72rem;color:var(--muted);cursor:pointer;background:transparent;font-family:'Jost',sans-serif;text-decoration:none;transition:all .15s;}
+.back-btn:hover{border-color:var(--rose);color:var(--ink);}
+.topbar-date{font-size:0.68rem;letter-spacing:2px;text-transform:uppercase;color:var(--muted);}
+.pdf-btn{padding:7px 16px;border:none;border-radius:20px;background:var(--rose);color:white;font-family:'Jost',sans-serif;font-size:0.73rem;font-weight:600;cursor:pointer;transition:all .15s;}
+.pdf-btn:hover{background:var(--mauve);}
+
+/* ── MONTH SELECTOR ── */
+.month-nav{max-width:900px;margin:0 auto;padding:20px 24px 0;display:flex;align-items:center;gap:14px;flex-wrap:wrap;}
+.month-nav-btn{width:32px;height:32px;border:1.5px solid var(--rule);border-radius:50%;background:var(--cream);cursor:pointer;font-size:0.85rem;color:var(--muted);display:flex;align-items:center;justify-content:center;transition:all .15s;}
+.month-nav-btn:hover{border-color:var(--rose);color:var(--ink);}
+.month-label{font-family:'Cormorant Garamond',serif;font-size:1.8rem;font-weight:300;letter-spacing:2px;font-style:italic;color:var(--ink);min-width:220px;}
+.month-label span{color:var(--mauve);}
+
+/* ── ANNUAL TRACKER ── */
+.tracker-wrap{max-width:900px;margin:0 auto;padding:16px 24px 0;}
+.tracker-grid{display:grid;grid-template-columns:repeat(6,1fr);gap:6px;background:var(--cream);border:1px solid var(--rule);border-radius:14px;padding:16px;}
+.tracker-month{border-radius:8px;padding:8px 10px;cursor:pointer;transition:all .15s;border:1.5px solid transparent;}
+.tracker-month:hover{background:var(--warm);border-color:var(--rule);}
+.tracker-month.active{background:linear-gradient(135deg,#fce8ef,#f0e0f0);border-color:var(--blush);}
+.tracker-month.has-data{border-color:var(--sage);}
+.tm-name{font-size:0.65rem;letter-spacing:2px;text-transform:uppercase;color:var(--muted);font-weight:600;}
+.tm-theme{font-family:'Cormorant Garamond',serif;font-size:0.8rem;font-style:italic;color:var(--ink);margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.tm-focus{font-size:0.6rem;color:var(--muted);margin-top:1px;}
+.tm-rating{font-size:0.68rem;color:var(--rose);font-weight:600;}
+
+/* ── MAIN PAPER ── */
+.hub-wrap{max-width:900px;margin:0 auto;padding:0 0 80px;}
+#toolbar{padding:14px 24px 0;display:flex;gap:8px;flex-wrap:wrap;}
+.tab-btn{padding:7px 15px;border:1.5px solid var(--mauve);background:var(--cream);color:var(--ink);font-family:'Jost',sans-serif;font-size:0.7rem;font-weight:500;cursor:pointer;border-radius:20px;letter-spacing:.5px;transition:all .15s;}
+.tab-btn:hover{background:var(--blush);border-color:var(--rose);}
+.tab-btn.active{background:var(--mauve);color:white;border-color:var(--mauve);}
+
+#paper{margin:14px 24px 0;background:var(--cream);box-shadow:0 4px 30px rgba(180,130,140,.14);border-radius:4px;padding:40px 48px 52px;}
+
+/* ── PAPER HEADER ── */
+.paper-header{text-align:center;margin-bottom:32px;padding-bottom:22px;border-bottom:1px solid var(--rule);}
+.paper-title{font-family:'Cormorant Garamond',serif;font-size:2.6rem;font-weight:300;letter-spacing:2px;line-height:1.1;}
+.paper-title em{font-style:italic;color:var(--mauve);}
+.paper-sub{font-size:0.68rem;letter-spacing:3px;text-transform:uppercase;color:var(--muted);margin-top:8px;}
+
+/* ── SECTIONS ── */
+.page{display:none;}.page.active{display:block;}
+.sec-head{display:flex;align-items:center;gap:12px;margin-bottom:18px;}
+.sec-num{min-width:28px;height:28px;border-radius:14px;padding:0 8px;background:var(--blush);color:var(--ink);font-family:'Jost',sans-serif;font-size:0.78rem;font-weight:600;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.sec-title{font-family:'Cormorant Garamond',serif;font-size:1.25rem;font-weight:400;letter-spacing:.5px;}
+.sec-sub{font-size:0.7rem;color:var(--muted);margin-left:auto;font-style:italic;}
+hr.rule{border:none;border-top:1px solid var(--rule);margin:26px 0;}
+
+/* ── WRITE FIELDS ── */
+.write{background:var(--warm);border:1px solid var(--rule);border-radius:8px;padding:12px 14px;min-height:80px;font-family:'Jost',sans-serif;font-size:0.8rem;line-height:1.75;color:var(--ink);outline:none;transition:border-color .15s,box-shadow .15s;width:100%;}
+.write:focus{border-color:var(--blush);box-shadow:0 0 0 3px rgba(242,196,206,.2);}
+.write[contenteditable]:empty:before{content:attr(data-ph);color:#c8aab0;font-style:italic;}
+.write.short{min-height:50px;}
+.write.tall{min-height:120px;}
+.field-label{font-size:0.62rem;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin-bottom:5px;display:block;font-weight:600;}
+
+/* ── INLINE FIELDS ── */
+.inline-field{border:none;border-bottom:1px dashed var(--rule);background:transparent;font-family:'Jost',sans-serif;font-size:0.82rem;color:var(--ink);outline:none;padding:2px 6px;min-width:80px;}
+.inline-field:focus{border-bottom-color:var(--mauve);}
+.inline-field.wide{min-width:180px;}
+
+/* ── RATING ── */
+.rating-wrap{display:flex;align-items:center;gap:8px;margin-bottom:16px;}
+.rating-label{font-size:0.78rem;font-weight:500;}
+.rating-stars{display:flex;gap:4px;}
+.star{font-size:1.1rem;cursor:pointer;color:#ddd;transition:color .1s;}
+.star.filled{color:var(--rose);}
+
+/* ── LIFE WHEEL GRID ── */
+.wheel-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+.wheel-row{display:flex;align-items:center;gap:10px;padding:8px 12px;background:var(--warm);border-radius:8px;border:1px solid var(--rule);}
+.wheel-swatch{width:10px;height:10px;border-radius:50%;flex-shrink:0;}
+.wheel-label{flex:1;font-size:0.78rem;font-weight:500;}
+.wheel-score{border:none;background:transparent;font-family:'Cormorant Garamond',serif;font-size:1rem;font-weight:600;color:var(--mauve);width:40px;text-align:center;outline:none;border-bottom:1px dashed var(--rule);}
+
+/* ── TWO COL ── */
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:20px;}
+.col-card{background:var(--warm);border:1px solid var(--rule);border-radius:10px;padding:18px 20px;}
+.col-card-title{font-family:'Cormorant Garamond',serif;font-size:0.95rem;font-weight:600;margin-bottom:4px;}
+.col-card-sub{font-size:0.68rem;color:var(--muted);font-style:italic;margin-bottom:10px;}
+
+/* ── GOAL CARDS ── */
+.goal-card{padding:18px 20px;border:1px solid var(--rule);background:var(--warm);margin-bottom:14px;border-radius:10px;}
+.goal-pill{display:inline-block;background:var(--blush);color:var(--ink);font-size:0.62rem;letter-spacing:2px;text-transform:uppercase;padding:3px 12px;border-radius:12px;margin-bottom:12px;}
+.goal-grid{display:grid;grid-template-columns:90px 1fr;gap:8px 12px;align-items:start;}
+.goal-key{font-size:0.64rem;font-weight:600;text-transform:uppercase;letter-spacing:.5px;color:var(--muted);padding-top:3px;}
+.goal-val{outline:none;border-bottom:1px dashed var(--rule);min-height:22px;font-size:0.8rem;font-family:'Jost',sans-serif;color:var(--ink);padding-bottom:2px;}
+.goal-val[contenteditable]:empty:before{content:attr(data-ph);color:#c8aab0;font-style:italic;}
+
+/* ── WEEK BREAKDOWN ── */
+.week-block{background:var(--warm);border:1px solid var(--rule);border-radius:10px;padding:16px 18px;margin-bottom:12px;}
+.week-block-header{display:flex;align-items:center;gap:10px;margin-bottom:12px;}
+.week-num-badge{background:var(--mauve);color:white;font-size:0.62rem;letter-spacing:2px;text-transform:uppercase;padding:3px 10px;border-radius:12px;font-weight:600;}
+.week-focus-input{border:none;border-bottom:1px dashed var(--rule);background:transparent;font-family:'Cormorant Garamond',serif;font-size:1rem;font-style:italic;color:var(--ink);outline:none;flex:1;padding-bottom:2px;}
+.week-actions{display:flex;flex-direction:column;gap:6px;}
+.week-action-row{display:flex;align-items:center;gap:8px;}
+.check-box{width:15px;height:15px;border-radius:4px;border:1.5px solid var(--rule);flex-shrink:0;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .15s;}
+.check-box.checked{background:var(--sage);border-color:var(--sage);}
+.check-box.checked:after{content:'✓';color:white;font-size:9px;}
+.action-text{outline:none;font-size:0.78rem;font-family:'Jost',sans-serif;color:var(--ink);flex:1;border-bottom:1px dashed transparent;padding-bottom:1px;}
+.action-text:focus{border-bottom-color:var(--rule);}
+.action-text[contenteditable]:empty:before{content:'Add an action...';color:#c8aab0;font-style:italic;}
+.add-action-btn{font-size:0.68rem;color:var(--mauve);background:transparent;border:none;cursor:pointer;padding:2px 0;font-family:'Jost',sans-serif;text-align:left;}
+.add-action-btn:hover{text-decoration:underline;}
+
+/* ── HABIT SECTION ── */
+.habit-group{margin-bottom:20px;}
+.habit-group-title{font-size:0.62rem;letter-spacing:2px;text-transform:uppercase;color:var(--muted);font-weight:600;margin-bottom:8px;padding-bottom:4px;border-bottom:1px solid var(--rule);}
+.habit-rows{display:flex;flex-direction:column;gap:5px;}
+.habit-row{display:flex;align-items:center;gap:8px;padding:6px 10px;background:var(--warm);border-radius:6px;}
+.habit-category{font-size:0.62rem;color:var(--mauve);font-weight:600;text-transform:uppercase;letter-spacing:.5px;min-width:80px;}
+.habit-input{border:none;background:transparent;font-family:'Jost',sans-serif;font-size:0.78rem;color:var(--ink);outline:none;flex:1;}
+.habit-input[contenteditable]:empty:before{content:attr(data-ph);color:#c8aab0;font-style:italic;}
+
+/* ── OBSTACLE SECTION ── */
+.obstacle-row{display:flex;gap:12px;margin-bottom:8px;align-items:flex-start;}
+.obstacle-num{width:22px;height:22px;border-radius:50%;background:var(--blush);color:var(--ink);font-size:0.72rem;font-weight:600;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:2px;}
+
+/* ── REWARD SECTION ── */
+.reward-row{display:flex;align-items:center;gap:10px;padding:8px 12px;background:var(--warm);border-radius:8px;margin-bottom:8px;border:1px solid var(--rule);}
+.reward-week-badge{font-size:0.6rem;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted);font-weight:600;white-space:nowrap;min-width:50px;}
+.reward-arrow{color:var(--mauve);font-size:0.7rem;}
+.reward-input{border:none;background:transparent;font-family:'Jost',sans-serif;font-size:0.78rem;color:var(--ink);outline:none;flex:1;}
+.reward-input[contenteditable]:empty:before{content:attr(data-ph);color:#c8aab0;font-style:italic;}
+
+/* ── MIDMONTH ── */
+.midmonth-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+.midmonth-card{background:linear-gradient(135deg,#fce8ef,#f0e0f0);border:1px solid var(--blush);border-radius:10px;padding:16px 18px;}
+.midmonth-label{font-size:0.62rem;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin-bottom:6px;font-weight:600;}
+.on-track-row{display:flex;gap:8px;margin-bottom:10px;}
+.on-track-btn{padding:5px 14px;border-radius:16px;border:1.5px solid var(--rule);background:var(--cream);font-family:'Jost',sans-serif;font-size:0.7rem;cursor:pointer;transition:all .15s;color:var(--muted);}
+.on-track-btn.active-yes{background:#e8f5e9;border-color:#b8cfb0;color:#2a6a30;font-weight:600;}
+.on-track-btn.active-no{background:#fce4ec;border-color:#f2c4ce;color:#a0304a;font-weight:600;}
+.on-track-btn.active-partial{background:#fff8e1;border-color:#e8cc90;color:#8a5a10;font-weight:600;}
+
+/* ── AFFIRMATIONS ── */
+.affirmation-row{display:flex;align-items:flex-start;gap:10px;margin-bottom:10px;}
+.affirmation-num{font-family:'Cormorant Garamond',serif;font-size:1.2rem;color:var(--mauve);font-style:italic;flex-shrink:0;width:20px;}
+
+/* ── ORNAMENT ── */
+.ornament{text-align:center;color:var(--blush);font-size:1rem;letter-spacing:10px;margin-top:32px;}
+
+/* ── FOCUS AREA SELECT ── */
+.focus-select{border:1.5px solid var(--rule);border-radius:8px;padding:8px 12px;font-family:'Jost',sans-serif;font-size:0.8rem;color:var(--ink);background:var(--warm);outline:none;width:100%;cursor:pointer;}
+.focus-select:focus{border-color:var(--mauve);}
+
+/* ── TIME BLOCKS ── */
+.time-day-row{display:flex;align-items:baseline;gap:12px;padding:7px 0;border-bottom:1px solid var(--rule);}
+.time-day-row:last-child{border-bottom:none;}
+.time-day-label{font-size:0.68rem;font-weight:600;text-transform:uppercase;letter-spacing:1px;color:var(--muted);min-width:80px;}
+
+/* ── BUDGET ── */
+.budget-row{display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid var(--rule);}
+.budget-row:last-child{border-bottom:none;}
+.budget-cat{font-size:0.72rem;font-weight:600;text-transform:uppercase;letter-spacing:.5px;color:var(--muted);min-width:120px;}
+.budget-input{border:none;border-bottom:1px dashed var(--rule);background:transparent;font-family:'Cormorant Garamond',serif;font-size:1rem;font-weight:600;color:var(--ink);outline:none;width:100px;text-align:right;}
+
+@media print{
+  .topbar,#toolbar,.month-nav,.tracker-wrap,.pdf-btn{display:none!important;}
+  body{background:white!important;}
+  #paper{box-shadow:none!important;border-radius:0!important;padding:20px 28px!important;margin:0!important;}
+  .page{display:block!important;}
+}
+</style>
+</head>
+<body>
+
+<!-- TOPBAR -->
+<div class="topbar">
+  <div class="topbar-title">Monthly <em>Planner</em></div>
+  <div class="topbar-right">
+    <a href="../" class="back-btn">← Brain 2.0</a>
+    <span class="topbar-date" id="today-date"></span>
+    <button class="pdf-btn" onclick="savePDF()">⬇ Save PDF</button>
+  </div>
+</div>
+
+<!-- MONTH NAV -->
+<div class="month-nav">
+  <button class="month-nav-btn" onclick="changeMonth(-1)">‹</button>
+  <div class="month-label" id="month-label">March <span>2026</span></div>
+  <button class="month-nav-btn" onclick="changeMonth(1)">›</button>
+</div>
+
+
+
+<!-- TABS + PAPER -->
+<div class="hub-wrap">
+  <div id="toolbar">
+    <button class="tab-btn active" onclick="goTab(0,this)">1. Review</button>
+    <button class="tab-btn" onclick="goTab(1,this)">2. Focus</button>
+    <button class="tab-btn" onclick="goTab(2,this)">3. Goals</button>
+    <button class="tab-btn" onclick="goTab(3,this)">4. Weekly Breakdown</button>
+    <button class="tab-btn" onclick="goTab(4,this)">5. Habit Stack</button>
+    <button class="tab-btn" onclick="goTab(5,this)">6. Resources</button>
+    <button class="tab-btn" onclick="goTab(6,this)">7. Time Blocking</button>
+    <button class="tab-btn" onclick="goTab(7,this)">8. Obstacles</button>
+    <button class="tab-btn" onclick="goTab(8,this)">9. Baseline</button>
+    <button class="tab-btn" onclick="goTab(9,this)">10. Rewards</button>
+    <button class="tab-btn" onclick="goTab(10,this)">11. Affirmations</button>
+    <button class="tab-btn" onclick="goTab(11,this)">✦ Mid-Month</button>
+  </div>
+
+  <div id="paper">
+    <div class="paper-header">
+      <h1 class="paper-title">Monthly <em>Life Planner</em></h1>
+      <div class="paper-sub" id="paper-sub">March 2026</div>
+    </div>
+
+    <!-- PART 1: REVIEW -->
+    <div class="page active" id="p0">
+      <div class="sec-head"><div class="sec-num">1.</div><div class="sec-title">Monthly Review</div><div class="sec-sub">Look back before you leap forward</div></div>
+
+      <div class="rating-wrap">
+        <span class="rating-label">Overall Month Rating:</span>
+        <div class="rating-stars" id="overall-rating"></div>
+        <span style="font-size:0.72rem;color:var(--muted);">/10</span>
+      </div>
+
+      <span class="field-label">Monthly Highlight — Best thing that happened</span>
+      <div class="write short" contenteditable data-save-id="review_highlight" data-ph="The single best thing about this month..."></div>
+
+      <hr class="rule">
+
+      <div class="two-col" style="margin-bottom:18px;">
+        <div class="col-card" style="border-top:3px solid var(--sage);">
+          <div class="col-card-title">🏆 Top 3 Wins</div>
+          <div class="col-card-sub">What you're proud of</div>
+          <div class="write" contenteditable data-save-id="review_wins" data-ph="1. &#10;2. &#10;3. "></div>
+        </div>
+        <div class="col-card" style="border-top:3px solid var(--blush);">
+          <div class="col-card-title">🌱 What Didn't Work</div>
+          <div class="col-card-sub">Learn from it, don't shame it</div>
+          <div class="write" contenteditable data-save-id="review_notwork" data-ph="1. &#10;2. "></div>
+        </div>
+      </div>
+
+      <span class="field-label">What did I learn about myself?</span>
+      <div class="write short" contenteditable data-save-id="review_learned" data-ph="An honest insight about yourself this month..."></div>
+
+      <hr class="rule">
+
+      <div class="sec-head" style="margin-top:4px;"><div class="sec-title" style="font-size:1rem;">Life Wheel — Monthly Average</div></div>
+      <p style="font-size:0.72rem;color:var(--muted);font-style:italic;margin-bottom:14px;">Rate your average satisfaction this month in each area (1–10)</p>
+      <div class="wheel-grid" id="wheel-grid"></div>
+
+      <hr class="rule">
+      <span class="field-label">Which area is calling for attention?</span>
+      <div class="write short" contenteditable data-save-id="review_attention" data-ph="Based on your ratings, where do you want to focus..."></div>
+
+      <div class="ornament">✦ ✿ ✦</div>
+    </div>
+
+    <!-- PART 2: FOCUS -->
+    <div class="page" id="p1">
+      <div class="sec-head"><div class="sec-num">2.</div><div class="sec-title">Next Month Focus</div><div class="sec-sub">One word. One direction.</div></div>
+
+      <div style="background:linear-gradient(135deg,#fce8ef,#f0e0f0);border:1px solid var(--blush);border-radius:12px;padding:20px 24px;margin-bottom:22px;">
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;">
+          <div>
+            <span class="field-label">Monthly Theme</span>
+            <div class="write short" contenteditable data-save-id="focus_theme" data-ph="One word or short phrase that captures this month's energy..."></div>
+          </div>
+          <div>
+            <span class="field-label">Primary Focus Area</span>
+            <select class="focus-select" id="focus_area" onchange="saveData()">
+              <option value="">Choose one area...</option>
+              <option>Career</option><option>Finances</option><option>Fitness</option>
+              <option>Learning</option><option>Social Life</option><option>Dating</option>
+              <option>Creative Expression</option><option>Cultural Expansion</option><option>Self-Care</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <span class="field-label">Why this area right now?</span>
+      <div class="write" contenteditable data-save-id="focus_why" data-ph="What's pulling you toward this focus? Why does it matter right now?"></div>
+
+      <hr class="rule">
+
+      <span class="field-label">Secondary Mini-Focus (optional)</span>
+      <div class="write short" contenteditable data-save-id="focus_secondary" data-ph="Something small you can maintain alongside your primary focus..."></div>
+
+      <div class="ornament">✦ ✿ ✦</div>
+    </div>
+
+    <!-- PART 3: GOALS -->
+    <div class="page" id="p2">
+      <div class="sec-head"><div class="sec-num">3.</div><div class="sec-title">Goal Setting</div><div class="sec-sub">Specific, honest, achievable</div></div>
+
+      <div class="two-col" style="margin-bottom:22px;">
+        <div>
+          <span class="field-label">Where am I NOW in my focus area?</span>
+          <div class="write" contenteditable data-save-id="goals_current" data-ph="Current state — be honest with yourself..."></div>
+        </div>
+        <div>
+          <span class="field-label">Where do I want to be by END of month?</span>
+          <div class="write" contenteditable data-save-id="goals_desired" data-ph="Desired state — be specific..."></div>
+        </div>
+      </div>
+
+      <div class="goal-card">
+        <div class="goal-pill">Goal 1</div>
+        <div class="goal-grid">
+          <span class="goal-key">What</span><div class="goal-val" contenteditable data-save-id="g1_what" data-ph="What will you do?"></div>
+          <span class="goal-key">Success looks like</span><div class="goal-val" contenteditable data-save-id="g1_success" data-ph="How will you know you achieved it?"></div>
+          <span class="goal-key">Deadline</span><div class="goal-val" contenteditable data-save-id="g1_deadline" data-ph="By when?"></div>
+        </div>
+      </div>
+      <div class="goal-card">
+        <div class="goal-pill">Goal 2</div>
+        <div class="goal-grid">
+          <span class="goal-key">What</span><div class="goal-val" contenteditable data-save-id="g2_what" data-ph="What will you do?"></div>
+          <span class="goal-key">Success looks like</span><div class="goal-val" contenteditable data-save-id="g2_success" data-ph="How will you know you achieved it?"></div>
+          <span class="goal-key">Deadline</span><div class="goal-val" contenteditable data-save-id="g2_deadline" data-ph="By when?"></div>
+        </div>
+      </div>
+      <div class="goal-card">
+        <div class="goal-pill">Goal 3</div>
+        <div class="goal-grid">
+          <span class="goal-key">What</span><div class="goal-val" contenteditable data-save-id="g3_what" data-ph="What will you do?"></div>
+          <span class="goal-key">Success looks like</span><div class="goal-val" contenteditable data-save-id="g3_success" data-ph="How will you know you achieved it?"></div>
+          <span class="goal-key">Deadline</span><div class="goal-val" contenteditable data-save-id="g3_deadline" data-ph="By when?"></div>
+        </div>
+      </div>
+
+      <div class="ornament">✦ ✿ ✦</div>
+    </div>
+
+    <!-- PART 4: WEEKLY BREAKDOWN -->
+    <div class="page" id="p3">
+      <div class="sec-head"><div class="sec-num">4.</div><div class="sec-title">Weekly Breakdown</div><div class="sec-sub">Break the month into moveable pieces</div></div>
+      <div id="week-blocks"></div>
+      <div class="ornament">✦ ✿ ✦</div>
+    </div>
+
+    <!-- PART 5: HABIT STACK -->
+    <div class="page" id="p4">
+      <div class="sec-head"><div class="sec-num">5.</div><div class="sec-title">Habit Stacking</div><div class="sec-sub">Tied to this month's focus</div></div>
+
+      <div class="habit-group">
+        <div class="habit-group-title">Daily Goals</div>
+        <div class="habit-rows">
+          <div class="habit-row"><span class="habit-category">Physical Win</span><div class="habit-input" contenteditable data-save-id="habit_physical" data-ph="e.g. Morning workout, 8k steps, 3L water..."></div></div>
+          <div class="habit-row"><span class="habit-category">Mental Win</span><div class="habit-input" contenteditable data-save-id="habit_mental" data-ph="e.g. 20 min reading, journaling, no phone first hour..."></div></div>
+          <div class="habit-row"><span class="habit-category">Spiritual Win</span><div class="habit-input" contenteditable data-save-id="habit_spiritual" data-ph="e.g. Meditation, gratitude list, intentional quiet time..."></div></div>
+        </div>
+      </div>
+
+      <div class="habit-group">
+        <div class="habit-group-title">Weekly Goals</div>
+        <div class="habit-rows">
+          <div class="habit-row"><span class="habit-category">Social Win</span><div class="habit-input" contenteditable data-save-id="habit_social" data-ph="e.g. Reach out to a friend, attend one event..."></div></div>
+          <div class="habit-row"><span class="habit-category">Fear Zone Win</span><div class="habit-input" contenteditable data-save-id="habit_fear" data-ph="e.g. One thing that scares you or pushes a boundary..."></div></div>
+          <div class="habit-row"><span class="habit-category">Hobby Win</span><div class="habit-input" contenteditable data-save-id="habit_hobby" data-ph="e.g. 1 hour on a creative project or new skill..."></div></div>
+          <div class="habit-row"><span class="habit-category">Self-Love Win</span><div class="habit-input" contenteditable data-save-id="habit_selflove" data-ph="e.g. A treat, rest without guilt, something just for you..."></div></div>
+          <div class="habit-row"><span class="habit-category">Home Clean Win</span><div class="habit-input" contenteditable data-save-id="habit_home" data-ph="e.g. One area of your space, laundry, meal prep..."></div></div>
+        </div>
+      </div>
+
+      <div class="ornament">✦ ✿ ✦</div>
+    </div>
+
+    <!-- PART 6: RESOURCES -->
+    <div class="page" id="p5">
+      <div class="sec-head"><div class="sec-num">6.</div><div class="sec-title">Resource Allocation</div><div class="sec-sub">What do you need to make this month happen?</div></div>
+
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;margin-bottom:20px;">
+        <div class="col-card">
+          <div class="col-card-title">🛒 Buy</div>
+          <div class="col-card-sub">Products, equipment, subscriptions</div>
+          <div class="write" contenteditable data-save-id="res_buy" data-ph="What do you need to purchase for this month's focus?"></div>
+        </div>
+        <div class="col-card">
+          <div class="col-card-title">📖 Read / Watch / Listen</div>
+          <div class="col-card-sub">Books, podcasts, courses</div>
+          <div class="write" contenteditable data-save-id="res_consume" data-ph="Content that supports your focus this month..."></div>
+        </div>
+        <div class="col-card">
+          <div class="col-card-title">📅 Schedule / Book</div>
+          <div class="col-card-sub">Classes, appointments, events</div>
+          <div class="write" contenteditable data-save-id="res_schedule" data-ph="What needs to be booked or blocked in advance?"></div>
+        </div>
+      </div>
+
+      <div style="display:flex;align-items:center;gap:14px;padding:14px 18px;background:var(--warm);border-radius:10px;border:1px solid var(--rule);">
+        <span class="field-label" style="margin:0;">Monthly Budget for Focus Area:</span>
+        <span style="font-family:'Cormorant Garamond',serif;font-size:1.1rem;color:var(--muted);">$</span>
+        <input class="budget-input" type="text" id="res_budget" placeholder="0" oninput="saveData()">
+      </div>
+
+      <div class="ornament">✦ ✿ ✦</div>
+    </div>
+
+    <!-- PART 7: TIME BLOCKING -->
+    <div class="page" id="p6">
+      <div class="sec-head"><div class="sec-num">7.</div><div class="sec-title">Time Blocking</div><div class="sec-sub">When will you actually do this?</div></div>
+
+      <div class="two-col" style="margin-bottom:20px;">
+        <div style="padding:14px 18px;background:var(--warm);border-radius:10px;border:1px solid var(--rule);">
+          <span class="field-label">Primary focus hours/week</span>
+          <input class="inline-field wide" type="text" id="time_primary_hrs" placeholder="e.g. 6 hours" oninput="saveData()">
+        </div>
+        <div style="padding:14px 18px;background:var(--warm);border-radius:10px;border:1px solid var(--rule);">
+          <span class="field-label">Secondary mini-focus hours/week</span>
+          <input class="inline-field wide" type="text" id="time_secondary_hrs" placeholder="e.g. 2 hours" oninput="saveData()">
+        </div>
+      </div>
+
+      <span class="field-label">Specific time blocks per day</span>
+      <div style="background:var(--warm);border:1px solid var(--rule);border-radius:10px;padding:16px 18px;">
+        <div class="time-day-row"><span class="time-day-label">Monday</span><div class="write short" style="min-height:36px;" contenteditable data-save-id="time_mon" data-ph="e.g. 7–8pm workout, 9–9:30pm reading"></div></div>
+        <div class="time-day-row"><span class="time-day-label">Tuesday</span><div class="write short" style="min-height:36px;" contenteditable data-save-id="time_tue" data-ph="e.g. Lunch break 30 min, evening journaling"></div></div>
+        <div class="time-day-row"><span class="time-day-label">Wednesday</span><div class="write short" style="min-height:36px;" contenteditable data-save-id="time_wed" data-ph=""></div></div>
+        <div class="time-day-row"><span class="time-day-label">Thursday</span><div class="write short" style="min-height:36px;" contenteditable data-save-id="time_thu" data-ph=""></div></div>
+        <div class="time-day-row"><span class="time-day-label">Friday</span><div class="write short" style="min-height:36px;" contenteditable data-save-id="time_fri" data-ph=""></div></div>
+        <div class="time-day-row"><span class="time-day-label">Saturday</span><div class="write short" style="min-height:36px;" contenteditable data-save-id="time_sat" data-ph="e.g. Morning 2 hours deep focus"></div></div>
+        <div class="time-day-row"><span class="time-day-label">Sunday</span><div class="write short" style="min-height:36px;" contenteditable data-save-id="time_sun" data-ph="e.g. Weekly audit + monthly review"></div></div>
+      </div>
+
+      <div class="ornament">✦ ✿ ✦</div>
+    </div>
+
+    <!-- PART 8: OBSTACLES -->
+    <div class="page" id="p7">
+      <div class="sec-head"><div class="sec-num">8.</div><div class="sec-title">Obstacle Planning</div><div class="sec-sub">Plan for the hard days before they arrive</div></div>
+
+      <span class="field-label">What might derail me this month?</span>
+      <div style="margin-bottom:16px;">
+        <div class="obstacle-row"><div class="obstacle-num">1</div><div class="write short" style="flex:1;" contenteditable data-save-id="obs1" data-ph="e.g. Busy work week, social events, low energy..."></div></div>
+        <div class="obstacle-row"><div class="obstacle-num">2</div><div class="write short" style="flex:1;" contenteditable data-save-id="obs2" data-ph="e.g. Perfectionism, comparing to others..."></div></div>
+        <div class="obstacle-row"><div class="obstacle-num">3</div><div class="write short" style="flex:1;" contenteditable data-save-id="obs3" data-ph="e.g. Skipping rest, overcommitting..."></div></div>
+      </div>
+
+      <hr class="rule">
+
+      <span class="field-label">Prevention strategies</span>
+      <div class="write" contenteditable data-save-id="obs_prevent" data-ph="What will you do in advance to prevent these derailments?"></div>
+
+      <span class="field-label" style="margin-top:16px;display:block;">If I start to slip, I will...</span>
+      <div class="write short" contenteditable data-save-id="obs_slip" data-ph="Your comeback plan — specific and self-compassionate..."></div>
+
+      <hr class="rule">
+
+      <div style="background:linear-gradient(135deg,#fce8ef,#f0e0f0);border:1px solid var(--blush);border-radius:12px;padding:18px 22px;">
+        <div class="field-label">ADHD Considerations</div>
+        <div class="habit-group" style="margin-bottom:10px;">
+          <div class="habit-rows">
+            <div class="habit-row"><span class="habit-category">Novelty</span><div class="habit-input" contenteditable data-save-id="adhd_novelty" data-ph="How will I keep this interesting and avoid boredom?"></div></div>
+            <div class="habit-row"><span class="habit-category">Accountability</span><div class="habit-input" contenteditable data-save-id="adhd_accountability" data-ph="Who or what keeps me on track?"></div></div>
+            <div class="habit-row"><span class="habit-category">Visual Reminder</span><div class="habit-input" contenteditable data-save-id="adhd_visual" data-ph="Where will I put a reminder I'll actually see?"></div></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="ornament">✦ ✿ ✦</div>
+    </div>
+
+    <!-- PART 9: BASELINE -->
+    <div class="page" id="p8">
+      <div class="sec-head"><div class="sec-num">9.</div><div class="sec-title">Baseline Maintenance</div><div class="sec-sub">The non-negotiables that never change</div></div>
+      <p style="font-size:0.73rem;color:var(--muted);font-style:italic;margin-bottom:18px;">These continue every month regardless of focus. Write yours below and check them off.</p>
+
+      <div class="habit-group">
+        <div class="habit-group-title">Daily Non-Negotiables</div>
+        <div id="daily-nonneg"></div>
+        <button class="add-action-btn" onclick="addNonNeg('daily')">＋ Add daily habit</button>
+      </div>
+
+      <div class="habit-group">
+        <div class="habit-group-title">Weekly Non-Negotiables</div>
+        <div id="weekly-nonneg"></div>
+        <button class="add-action-btn" onclick="addNonNeg('weekly')">＋ Add weekly habit</button>
+      </div>
+
+      <div class="habit-group">
+        <div class="habit-group-title">Monthly Non-Negotiables</div>
+        <div id="monthly-nonneg"></div>
+        <button class="add-action-btn" onclick="addNonNeg('monthly')">＋ Add monthly habit</button>
+      </div>
+
+      <div class="ornament">✦ ✿ ✦</div>
+    </div>
+
+    <!-- PART 10: REWARDS -->
+    <div class="page" id="p9">
+      <div class="sec-head"><div class="sec-num">10.</div><div class="sec-title">Celebration & Rewards</div><div class="sec-sub">Because you deserve to celebrate progress</div></div>
+
+      <span class="field-label">Weekly Mini-Rewards</span>
+      <div style="margin-bottom:20px;">
+        <div class="reward-row">
+          <span class="reward-week-badge">Week 1</span>
+          <div class="reward-input" contenteditable data-save-id="rew_w1_milestone" data-ph="Milestone..."></div>
+          <span class="reward-arrow">→</span>
+          <div class="reward-input" contenteditable data-save-id="rew_w1_reward" data-ph="Reward..."></div>
+        </div>
+        <div class="reward-row">
+          <span class="reward-week-badge">Week 2</span>
+          <div class="reward-input" contenteditable data-save-id="rew_w2_milestone" data-ph="Milestone..."></div>
+          <span class="reward-arrow">→</span>
+          <div class="reward-input" contenteditable data-save-id="rew_w2_reward" data-ph="Reward..."></div>
+        </div>
+        <div class="reward-row">
+          <span class="reward-week-badge">Week 3</span>
+          <div class="reward-input" contenteditable data-save-id="rew_w3_milestone" data-ph="Milestone..."></div>
+          <span class="reward-arrow">→</span>
+          <div class="reward-input" contenteditable data-save-id="rew_w3_reward" data-ph="Reward..."></div>
+        </div>
+        <div class="reward-row">
+          <span class="reward-week-badge">Week 4</span>
+          <div class="reward-input" contenteditable data-save-id="rew_w4_milestone" data-ph="Milestone..."></div>
+          <span class="reward-arrow">→</span>
+          <div class="reward-input" contenteditable data-save-id="rew_w4_reward" data-ph="Reward..."></div>
+        </div>
+      </div>
+
+      <span class="field-label">End of Month Celebration</span>
+      <div class="write" contenteditable data-save-id="rew_monthly" data-ph="If I achieve my monthly goals, I will treat myself to..."></div>
+
+      <div class="ornament">✦ ✿ ✦</div>
+    </div>
+
+    <!-- PART 11: AFFIRMATIONS -->
+    <div class="page" id="p10">
+      <div class="sec-head"><div class="sec-num">11.</div><div class="sec-title">Monthly Affirmation</div><div class="sec-sub">This month, I am...</div></div>
+      <p style="font-size:0.73rem;color:var(--muted);font-style:italic;margin-bottom:20px;">Write 1–3 affirmations specific to this month's focus. Write them as if they are already true.</p>
+
+      <div style="background:linear-gradient(135deg,#fce8ef,#f0e0f0);border:1px solid var(--blush);border-radius:14px;padding:28px 32px;">
+        <div class="affirmation-row">
+          <span class="affirmation-num">1.</span>
+          <div class="write short" style="flex:1;background:rgba(255,255,255,0.5);" contenteditable data-save-id="affirm1" data-ph="I am..."></div>
+        </div>
+        <div class="affirmation-row">
+          <span class="affirmation-num">2.</span>
+          <div class="write short" style="flex:1;background:rgba(255,255,255,0.5);" contenteditable data-save-id="affirm2" data-ph="I am..."></div>
+        </div>
+        <div class="affirmation-row">
+          <span class="affirmation-num">3.</span>
+          <div class="write short" style="flex:1;background:rgba(255,255,255,0.5);" contenteditable data-save-id="affirm3" data-ph="I am..."></div>
+        </div>
+      </div>
+
+      <div class="ornament">✦ ✿ ✦</div>
+    </div>
+
+    <!-- MID-MONTH CHECK-IN -->
+    <div class="page" id="p11">
+      <div class="sec-head"><div class="sec-num">✦</div><div class="sec-title">Mid-Month Check-In</div><div class="sec-sub">Day 15 pulse check</div></div>
+      <p style="font-size:0.73rem;color:var(--muted);font-style:italic;margin-bottom:20px;">A quick honest check-in halfway through. No judgment — just data.</p>
+
+      <div class="midmonth-grid" style="margin-bottom:20px;">
+        <div class="midmonth-card">
+          <div class="midmonth-label">Am I on track?</div>
+          <div class="on-track-row">
+            <button class="on-track-btn" id="track-yes" onclick="setTrack('yes')">✓ Yes</button>
+            <button class="on-track-btn" id="track-partial" onclick="setTrack('partial')">~ Partially</button>
+            <button class="on-track-btn" id="track-no" onclick="setTrack('no')">✗ No</button>
+          </div>
+        </div>
+        <div class="midmonth-card">
+          <div class="midmonth-label">Energy Level</div>
+          <div class="rating-stars" id="energy-rating"></div>
+          <span style="font-size:0.68rem;color:var(--muted);">/10</span>
+        </div>
+      </div>
+
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;">
+        <div>
+          <span class="field-label">What's working?</span>
+          <div class="write" contenteditable data-save-id="mid_working" data-ph="What momentum do you have?"></div>
+        </div>
+        <div>
+          <span class="field-label">What needs adjustment?</span>
+          <div class="write" contenteditable data-save-id="mid_adjust" data-ph="What would you change about your approach?"></div>
+        </div>
+      </div>
+
+      <span class="field-label" style="margin-top:16px;display:block;">Do I need to pivot? If so, how?</span>
+      <div class="write short" contenteditable data-save-id="mid_pivot" data-ph="Be honest — is the goal still right, or does something need to shift?"></div>
+
+      <div class="ornament">✦ ✿ ✦</div>
+    </div>
+
+  </div><!-- end paper -->
+</div><!-- end hub-wrap -->
+
+<script>
+var MONTHS_FULL = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+var DAYS_FULL   = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+var SK = 'monthlyPlanner1';
+
+var CATS = [
+  {label:'Career',            color:'#f2c4ce'},
+  {label:'Finances',          color:'#f7d9b0'},
+  {label:'Health & Fitness',  color:'#b8cfb0'},
+  {label:'Social Life',       color:'#b8d4f0'},
+  {label:'Romance / Dating',  color:'#d4b8e0'},
+  {label:'Learning & Growth', color:'#f0dea0'},
+  {label:'Creative Expression',color:'#f4b8d4'},
+  {label:'Self-Care',         color:'#a8d8d0'},
+];
+
+var now = new Date();
+var currentMonth = now.getMonth();
+var currentYear  = now.getFullYear();
+var activeTab    = 0;
+var onTrackState = '';
+
+// ── DATE ──
+document.getElementById('today-date').textContent = DAYS_FULL[now.getDay()] + ', ' + MONTHS_FULL[now.getMonth()] + ' ' + now.getDate() + ', ' + now.getFullYear();
+
+// ── STORAGE KEY per month ──
+function monthKey() { return SK + '_' + currentYear + '_' + currentMonth; }
+
+// ── RATING BUILDER ──
+function buildRating(containerId, saveId, max) {
+  var el = document.getElementById(containerId);
+  if (!el) return;
+  el.innerHTML = '';
+  var val = parseInt(loadField(saveId)) || 0;
+  for (var i = 1; i <= max; i++) {
+    var s = document.createElement('span');
+    s.className = 'star' + (i <= val ? ' filled' : '');
+    s.textContent = '★';
+    s.dataset.val = i;
+    s.onclick = (function(v, sid, cid, mx) {
+      return function() { saveField(sid, v); buildRating(cid, sid, mx); };
+    })(i, saveId, containerId, max);
+    el.appendChild(s);
+  }
+}
+
+// ── WHEEL GRID ──
+function buildWheelGrid() {
+  var el = document.getElementById('wheel-grid'); el.innerHTML = '';
+  CATS.forEach(function(c) {
+    var row = document.createElement('div'); row.className = 'wheel-row';
+    var sid = 'wheel_' + c.label.replace(/[^a-z]/gi,'').toLowerCase();
+    var val = loadField(sid) || '';
+    row.innerHTML =
+      '<div class="wheel-swatch" style="background:' + c.color + '"></div>' +
+      '<span class="wheel-label">' + c.label + '</span>' +
+      '<input class="wheel-score" type="number" min="0" max="10" placeholder="—" value="' + val + '" data-save-id="' + sid + '" oninput="saveData()">';
+    el.appendChild(row);
+  });
+}
+
+// ── WEEK BLOCKS ──
+function buildWeekBlocks() {
+  var el = document.getElementById('week-blocks'); el.innerHTML = '';
+  var weeks = ['Week 1 (Days 1–7)','Week 2 (Days 8–14)','Week 3 (Days 15–21)','Week 4 (Days 22–End)'];
+  weeks.forEach(function(wk, wi) {
+    var block = document.createElement('div'); block.className = 'week-block';
+    var focusSid = 'wk' + wi + '_focus';
+    var focusVal = loadField(focusSid) || '';
+    block.innerHTML =
+      '<div class="week-block-header">' +
+        '<span class="week-num-badge">' + wk + '</span>' +
+        '<input class="week-focus-input" placeholder="Focus theme..." value="' + focusVal + '" data-save-id="' + focusSid + '" oninput="saveData()">' +
+      '</div>' +
+      '<div class="week-actions" id="wk-actions-' + wi + '"></div>' +
+      '<button class="add-action-btn" onclick="addWeekAction(' + wi + ')">＋ Add key action</button>';
+    el.appendChild(block);
+    renderWeekActions(wi);
+  });
+}
+
+function getWeekActions(wi) {
+  var raw = loadField('wk' + wi + '_actions');
+  try { return raw ? JSON.parse(raw) : []; } catch(e) { return []; }
+}
+
+function saveWeekActions(wi, actions) {
+  saveField('wk' + wi + '_actions', JSON.stringify(actions));
+}
+
+function renderWeekActions(wi) {
+  var container = document.getElementById('wk-actions-' + wi);
+  if (!container) return;
+  container.innerHTML = '';
+  var actions = getWeekActions(wi);
+  if (!actions.length) actions = [{text:'', checked:false}, {text:'', checked:false}, {text:'', checked:false}];
+  actions.forEach(function(a, ai) {
+    var row = document.createElement('div'); row.className = 'week-action-row';
+    var check = document.createElement('div');
+    check.className = 'check-box' + (a.checked ? ' checked' : '');
+    check.onclick = (function(wii, aii) {
+      return function() {
+        var acts = getWeekActions(wii); acts[aii].checked = !acts[aii].checked;
+        saveWeekActions(wii, acts); renderWeekActions(wii);
+      };
+    })(wi, ai);
+    var text = document.createElement('div');
+    text.className = 'action-text'; text.contentEditable = 'true';
+    text.setAttribute('data-ph', 'Key action...');
+    text.textContent = a.text;
+    text.oninput = (function(wii, aii) {
+      return function() {
+        var acts = getWeekActions(wii); acts[aii].text = this.textContent; saveWeekActions(wii, acts);
+      };
+    })(wi, ai);
+    row.appendChild(check); row.appendChild(text);
+    container.appendChild(row);
+  });
+}
+
+function addWeekAction(wi) {
+  var actions = getWeekActions(wi);
+  actions.push({text:'', checked:false});
+  saveWeekActions(wi, actions); renderWeekActions(wi);
+}
+
+// ── NON-NEGOTIABLES ──
+function getNonNegs(type) {
+  var raw = loadField('nonneg_' + type);
+  try { return raw ? JSON.parse(raw) : []; } catch(e) { return []; }
+}
+function saveNonNegs(type, items) { saveField('nonneg_' + type, JSON.stringify(items)); }
+
+function renderNonNegs(type) {
+  var container = document.getElementById(type + '-nonneg');
+  if (!container) return;
+  container.innerHTML = '';
+  var items = getNonNegs(type);
+  items.forEach(function(item, idx) {
+    var row = document.createElement('div'); row.className = 'week-action-row';
+    row.style.marginBottom = '6px';
+    var check = document.createElement('div');
+    check.className = 'check-box' + (item.checked ? ' checked' : '');
+    check.onclick = (function(t, i) {
+      return function() {
+        var its = getNonNegs(t); its[i].checked = !its[i].checked;
+        saveNonNegs(t, its); renderNonNegs(t);
+      };
+    })(type, idx);
+    var text = document.createElement('div');
+    text.className = 'action-text'; text.contentEditable = 'true';
+    text.setAttribute('data-ph', 'Add a non-negotiable...');
+    text.textContent = item.text;
+    text.oninput = (function(t, i) {
+      return function() {
+        var its = getNonNegs(t); its[i].text = this.textContent; saveNonNegs(t, its);
+      };
+    })(type, idx);
+    var del = document.createElement('button');
+    del.textContent = '✕';
+    del.style.cssText = 'background:none;border:none;color:var(--muted);cursor:pointer;font-size:0.65rem;padding:2px 5px;border-radius:4px;flex-shrink:0;';
+    del.onmouseover = function(){ this.style.color='#a0304a'; };
+    del.onmouseout  = function(){ this.style.color='var(--muted)'; };
+    del.onclick = (function(t, i) {
+      return function() {
+        var its = getNonNegs(t); its.splice(i, 1);
+        saveNonNegs(t, its); renderNonNegs(t);
+      };
+    })(type, idx);
+    row.appendChild(check); row.appendChild(text); row.appendChild(del);
+    container.appendChild(row);
+  });
+}
+
+function addNonNeg(type) {
+  var items = getNonNegs(type);
+  items.push({text:'', checked:false});
+  saveNonNegs(type, items); renderNonNegs(type);
+}
+
+// ── MID-MONTH TRACK ──
+function setTrack(val) {
+  onTrackState = val;
+  saveField('mid_ontrack', val);
+  ['yes','partial','no'].forEach(function(v) {
+    var btn = document.getElementById('track-' + v);
+    btn.className = 'on-track-btn' + (v === val ? ' active-' + v : '');
+  });
+}
+
+// ── ANNUAL TRACKER ──
+
+// ── SAVE / LOAD ──
+function loadField(sid) {
+  var raw = localStorage.getItem(monthKey());
+  if (!raw) return '';
+  try { var d = JSON.parse(raw); return d[sid] || ''; } catch(e) { return ''; }
+}
+
+function saveField(sid, val) {
+  var raw = localStorage.getItem(monthKey());
+  var d = {};
+  try { if (raw) d = JSON.parse(raw); } catch(e) {}
+  d[sid] = val;
+  localStorage.setItem(monthKey(), JSON.stringify(d));
+  
+}
+
+function saveData() {
+  var raw = localStorage.getItem(monthKey());
+  var d = {};
+  try { if (raw) d = JSON.parse(raw); } catch(e) {}
+
+  document.querySelectorAll('[contenteditable][data-save-id]').forEach(function(el) {
+    d[el.dataset.saveId] = el.innerHTML;
+  });
+  document.querySelectorAll('input[data-save-id]').forEach(function(el) {
+    d[el.dataset.saveId] = el.value;
+  });
+  // focus area select
+  var fa = document.getElementById('focus_area');
+  if (fa) d['focus_area_val'] = fa.value;
+  // budget
+  var bu = document.getElementById('res_budget');
+  if (bu) d['res_budget'] = bu.value;
+  // time hrs
+  var tp = document.getElementById('time_primary_hrs');
+  if (tp) d['time_primary_hrs'] = tp.value;
+  var ts = document.getElementById('time_secondary_hrs');
+  if (ts) d['time_secondary_hrs'] = ts.value;
+  // wheel scores
+  document.querySelectorAll('.wheel-score').forEach(function(el) {
+    if (el.dataset.saveId) d[el.dataset.saveId] = el.value;
+  });
+  // mid-month on-track
+  d['mid_ontrack'] = onTrackState;
+
+  localStorage.setItem(monthKey(), JSON.stringify(d));
+  
+}
+
+function restoreData() {
+  var raw = localStorage.getItem(monthKey());
+  if (!raw) return;
+  var d = {};
+  try { d = JSON.parse(raw); } catch(e) { return; }
+
+  document.querySelectorAll('[contenteditable][data-save-id]').forEach(function(el) {
+    if (d[el.dataset.saveId] !== undefined) el.innerHTML = d[el.dataset.saveId];
+  });
+  document.querySelectorAll('input[data-save-id]').forEach(function(el) {
+    if (d[el.dataset.saveId] !== undefined) el.value = d[el.dataset.saveId];
+  });
+  var fa = document.getElementById('focus_area');
+  if (fa && d['focus_area_val']) fa.value = d['focus_area_val'];
+  var bu = document.getElementById('res_budget');
+  if (bu && d['res_budget']) bu.value = d['res_budget'];
+  var tp = document.getElementById('time_primary_hrs');
+  if (tp && d['time_primary_hrs']) tp.value = d['time_primary_hrs'];
+  var ts = document.getElementById('time_secondary_hrs');
+  if (ts && d['time_secondary_hrs']) ts.value = d['time_secondary_hrs'];
+  document.querySelectorAll('.wheel-score').forEach(function(el) {
+    if (el.dataset.saveId && d[el.dataset.saveId] !== undefined) el.value = d[el.dataset.saveId];
+  });
+  if (d['mid_ontrack']) setTrack(d['mid_ontrack']);
+}
+
+// ── SWITCH MONTH ──
+function switchMonth() {
+  document.getElementById('month-label').innerHTML = MONTHS_FULL[currentMonth] + ' <span>' + currentYear + '</span>';
+  document.getElementById('paper-sub').textContent = MONTHS_FULL[currentMonth] + ' ' + currentYear;
+  buildWheelGrid();
+  buildWeekBlocks();
+  renderNonNegs('daily'); renderNonNegs('weekly'); renderNonNegs('monthly');
+  buildRating('overall-rating', 'overall_rating', 10);
+  buildRating('energy-rating', 'mid_energy', 10);
+  restoreData();
+  
+  goTabIndex(0);
+}
+
+function changeMonth(dir) {
+  currentMonth += dir;
+  if (currentMonth < 0)  { currentMonth = 11; currentYear--; }
+  if (currentMonth > 11) { currentMonth = 0;  currentYear++; }
+  switchMonth();
+}
+
+// ── TABS ──
+function goTab(n, btn) {
+  document.querySelectorAll('.page').forEach(function(p){ p.classList.remove('active'); });
+  document.getElementById('p' + n).classList.add('active');
+  document.querySelectorAll('.tab-btn').forEach(function(b){ b.classList.remove('active'); });
+  btn.classList.add('active');
+  activeTab = n;
+  saveData();
+}
+
+function goTabIndex(n) {
+  document.querySelectorAll('.page').forEach(function(p){ p.classList.remove('active'); });
+  document.getElementById('p' + n).classList.add('active');
+  document.querySelectorAll('.tab-btn').forEach(function(b, i){ b.classList.toggle('active', i === n); });
+  activeTab = n;
+}
+
+// ── PDF ──
+function savePDF() {
+  for (var i = 0; i <= 11; i++) {
+    var p = document.getElementById('p' + i);
+    if (p) p.style.cssText = 'display:block!important;' + (i > 0 ? 'page-break-before:always!important;' : '');
+  }
+  setTimeout(function() {
+    window.print();
+    for (var i = 0; i <= 11; i++) {
+      var p = document.getElementById('p' + i);
+      if (p) p.style.cssText = i === activeTab ? 'display:block;' : 'display:none;';
+    }
+  }, 300);
+}
+
+// ── INIT ──
+switchMonth();
+document.getElementById('paper').addEventListener('input', saveData);
+</script>
+</body>
+</html>
