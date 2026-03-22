@@ -1,0 +1,530 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DC Passport</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css"/>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,400&family=Jost:wght@300;400;500;600&display=swap');
+:root{
+  --blush:#f2c4ce;--rose:#e8a0b0;--mauve:#c9a0b4;--lavender:#d4b8e0;
+  --sage:#b8cfb0;--cream:#fdf6f0;--warm:#f7ece4;--ink:#3a2a2e;--muted:#9a8088;--rule:#e0cec8;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+html,body{height:100%;font-family:'Jost',sans-serif;color:var(--ink);background:#f0e8e4;}
+
+.topbar{background:var(--cream);border-bottom:1px solid var(--rule);padding:12px 24px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:500;}
+.topbar-title{font-family:'Cormorant Garamond',serif;font-size:1.5rem;font-weight:300;letter-spacing:2px;}
+.topbar-title em{font-style:italic;color:var(--mauve);}
+.topbar-right{display:flex;align-items:center;gap:10px;}
+.back-btn{display:inline-flex;align-items:center;gap:5px;padding:5px 13px;border:1.5px solid var(--rule);border-radius:20px;font-size:0.7rem;color:var(--muted);cursor:pointer;background:transparent;font-family:'Jost',sans-serif;text-decoration:none;transition:all .15s;}
+.back-btn:hover{border-color:var(--rose);color:var(--ink);}
+.topbar-date{font-size:0.66rem;letter-spacing:2px;text-transform:uppercase;color:var(--muted);}
+.add-btn{padding:6px 16px;border:none;border-radius:20px;background:var(--mauve);color:white;font-family:'Jost',sans-serif;font-size:0.72rem;font-weight:600;cursor:pointer;transition:all .15s;}
+.add-btn:hover{background:var(--rose);}
+
+/* ── LAYOUT ── */
+.layout{display:flex;height:calc(100vh - 57px);}
+
+/* ── SIDEBAR ── */
+.sidebar{width:340px;flex-shrink:0;background:var(--cream);border-right:1px solid var(--rule);display:flex;flex-direction:column;overflow:hidden;}
+.sidebar-controls{padding:10px 14px;border-bottom:1px solid var(--rule);display:flex;flex-direction:column;gap:8px;}
+.filter-section{display:flex;flex-direction:column;gap:5px;}
+.filter-row-label{font-size:0.56rem;letter-spacing:2px;text-transform:uppercase;color:var(--muted);font-weight:600;}
+.filter-row{display:flex;gap:5px;flex-wrap:wrap;}
+.filter-btn{padding:3px 10px;border:1.5px solid var(--rule);border-radius:12px;background:var(--cream);font-family:'Jost',sans-serif;font-size:0.65rem;font-weight:500;cursor:pointer;color:var(--muted);transition:all .15s;white-space:nowrap;}
+.filter-btn:hover{border-color:var(--mauve);color:var(--ink);}
+.filter-btn.active{background:var(--mauve);border-color:var(--mauve);color:white;}
+.search-input{width:100%;padding:6px 12px;border:1.5px solid var(--rule);border-radius:10px;font-family:'Jost',sans-serif;font-size:0.74rem;color:var(--ink);background:var(--warm);outline:none;}
+.search-input:focus{border-color:var(--mauve);}
+
+.sidebar-stats{padding:10px 14px;border-bottom:1px solid var(--rule);display:flex;gap:14px;}
+.sb-stat{text-align:center;}
+.sb-stat-num{font-family:'Cormorant Garamond',serif;font-size:1.3rem;font-weight:600;line-height:1;}
+.sb-stat-label{font-size:0.56rem;letter-spacing:2px;text-transform:uppercase;color:var(--muted);}
+
+.sidebar-list{flex:1;overflow-y:auto;padding:8px;}
+.spot-card{background:var(--warm);border:1px solid var(--rule);border-radius:10px;padding:10px 12px;margin-bottom:6px;cursor:pointer;transition:all .15s;position:relative;}
+.spot-card:hover{border-color:var(--mauve);background:var(--cream);}
+.spot-card.visited{border-left:3px solid var(--sage);}
+.spot-card.focused{border-color:var(--mauve);background:var(--cream);box-shadow:0 2px 12px rgba(180,130,140,.15);}
+.spot-card-top{display:flex;align-items:flex-start;gap:8px;}
+.spot-cat-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;margin-top:4px;}
+.spot-name{font-size:0.8rem;font-weight:600;flex:1;line-height:1.3;}
+.spot-cat-label{font-size:0.6rem;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted);margin-top:2px;}
+.spot-stars{display:flex;gap:1px;margin-top:4px;}
+.spot-star{font-size:0.75rem;color:#e0cec8;cursor:pointer;transition:color .1s;}
+.spot-star.filled{color:var(--rose);}
+.spot-visited-badge{font-size:0.58rem;font-weight:600;letter-spacing:1px;text-transform:uppercase;padding:2px 7px;border-radius:8px;background:#e8f5e9;color:#2a6a30;}
+.spot-unvisited-badge{font-size:0.58rem;font-weight:600;letter-spacing:1px;text-transform:uppercase;padding:2px 7px;border-radius:8px;background:var(--warm);color:var(--muted);border:1px solid var(--rule);}
+.spot-note{font-size:0.68rem;color:var(--muted);font-style:italic;margin-top:4px;line-height:1.4;}
+.spot-actions{display:flex;gap:5px;margin-top:7px;align-items:center;}
+.spot-action-btn{padding:3px 9px;border:1.5px solid var(--rule);border-radius:9px;font-family:'Jost',sans-serif;font-size:0.6rem;cursor:pointer;background:transparent;color:var(--muted);transition:all .15s;}
+.spot-action-btn:hover{border-color:var(--mauve);color:var(--ink);}
+.spot-action-btn.visited-btn.active{background:#e8f5e9;border-color:#b8cfb0;color:#2a6a30;}
+.spot-del-btn{margin-left:auto;padding:3px 6px;border:none;background:transparent;font-size:0.62rem;color:#ccc;cursor:pointer;transition:color .15s;}
+.spot-del-btn:hover{color:#a0304a;}
+
+/* ── MAP ── */
+#map{flex:1;}
+
+/* ── LEAFLET CUSTOM MARKER ── */
+.custom-marker{width:36px;height:36px;border-radius:50% 50% 50% 0;transform:rotate(-45deg);background:white;border:3px solid #ccc;box-shadow:0 3px 10px rgba(0,0,0,.35);display:flex;align-items:center;justify-content:center;}
+.custom-marker.unvisited{opacity:0.82;}
+.marker-emoji{transform:rotate(45deg);font-size:15px;line-height:1;}
+
+/* ── MODAL ── */
+.modal-overlay{display:none;position:fixed;inset:0;background:rgba(58,42,46,.35);z-index:600;align-items:center;justify-content:center;}
+.modal-overlay.open{display:flex;}
+.modal{background:var(--cream);border-radius:18px;border:1px solid var(--rule);padding:28px 32px;width:90%;max-width:480px;max-height:90vh;overflow-y:auto;box-shadow:0 20px 60px rgba(58,42,46,.15);}
+.modal-title{font-family:'Cormorant Garamond',serif;font-size:1.4rem;font-weight:600;margin-bottom:18px;}
+.f-field{margin-bottom:12px;}
+.f-label{font-size:0.62rem;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin-bottom:5px;display:block;}
+.f-input{width:100%;border:1.5px solid var(--rule);border-radius:10px;padding:9px 12px;font-size:0.82rem;font-family:'Jost',sans-serif;color:var(--ink);background:var(--warm);outline:none;transition:border .15s;}
+.f-input:focus{border-color:var(--mauve);}
+.f-row{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+.f-hint{font-size:0.62rem;color:var(--muted);font-style:italic;margin-top:3px;}
+.m-actions{display:flex;gap:10px;justify-content:flex-end;margin-top:18px;}
+.m-btn{padding:8px 20px;border-radius:20px;font-family:'Jost',sans-serif;font-size:0.78rem;font-weight:600;cursor:pointer;border:1.5px solid;transition:all .15s;}
+.m-cancel{background:var(--warm);border-color:var(--rule);color:var(--muted);}
+.m-save{background:var(--mauve);border-color:var(--mauve);color:white;}
+.m-save:hover{background:var(--rose);}
+.m-delete{background:#fce4ec;border-color:#f2c4ce;color:#a0304a;}
+
+/* Leaflet popup override */
+.leaflet-popup-content-wrapper{border-radius:12px;border:1px solid var(--rule);box-shadow:0 4px 20px rgba(0,0,0,.12);}
+.leaflet-popup-content{margin:12px 16px;font-family:'Jost',sans-serif;font-size:0.8rem;color:var(--ink);}
+.popup-name{font-family:'Cormorant Garamond',serif;font-size:1rem;font-weight:600;margin-bottom:2px;}
+.popup-cat{font-size:0.6rem;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin-bottom:6px;}
+.popup-note{font-size:0.72rem;color:var(--muted);font-style:italic;margin-bottom:8px;}
+.popup-btn{padding:4px 12px;border:1.5px solid var(--rule);border-radius:10px;font-family:'Jost',sans-serif;font-size:0.65rem;cursor:pointer;background:transparent;color:var(--muted);margin-right:5px;transition:all .15s;}
+.popup-btn:hover{border-color:var(--mauve);color:var(--ink);}
+.popup-btn.visited{background:#e8f5e9;border-color:#b8cfb0;color:#2a6a30;}
+</style>
+</head>
+<body>
+
+<!-- ADD/EDIT MODAL -->
+<div class="modal-overlay" id="modal">
+  <div class="modal">
+    <div class="modal-title" id="modal-title">Add a Spot</div>
+    <div class="f-field">
+      <label class="f-label">Name</label>
+      <input class="f-input" id="m-name" type="text" placeholder="e.g. Folger Library">
+    </div>
+    <div class="f-row">
+      <div class="f-field">
+        <label class="f-label">Category</label>
+        <select class="f-input" id="m-category">
+          <option value="Museum">🏛️ Museum & Culture</option>
+          <option value="Restaurant">🍽️ Restaurant</option>
+          <option value="Bar">🍷 Bar</option>
+          <option value="Cafe">☕ Café</option>
+          <option value="Nature">🌿 Nature</option>
+          <option value="Experience">✨ Experience</option>
+          <option value="Shop">🛍️ Shop</option>
+          <option value="Other">📍 Other</option>
+        </select>
+      </div>
+      <div class="f-field">
+        <label class="f-label">Area</label>
+        <select class="f-input" id="m-city">
+          <option value="DC">Washington, DC</option>
+          <option value="MD">Maryland</option>
+          <option value="VA">Virginia</option>
+        </select>
+      </div>
+    </div>
+    <div class="f-row">
+      <div class="f-field">
+        <label class="f-label">Latitude</label>
+        <input class="f-input" id="m-lat" type="number" step="0.0001" placeholder="38.9072">
+        <div class="f-hint">Google Maps → right-click → copy coords</div>
+      </div>
+      <div class="f-field">
+        <label class="f-label">Longitude</label>
+        <input class="f-input" id="m-lng" type="number" step="0.0001" placeholder="-77.0369">
+      </div>
+    </div>
+    <div class="f-field">
+      <label class="f-label">Note (optional)</label>
+      <input class="f-input" id="m-note" type="text" placeholder="Happy hour times, must-orders, why you want to go...">
+    </div>
+    <div class="f-field">
+      <label class="f-label">Link (optional)</label>
+      <input class="f-input" id="m-link" type="text" placeholder="Website, Google Maps, Instagram...">
+    </div>
+    <div class="m-actions">
+      <button class="m-btn m-cancel" onclick="closeModal()">Cancel</button>
+      <button class="m-btn m-delete" id="m-delete-btn" style="display:none;" onclick="deleteFromModal()">Delete</button>
+      <button class="m-btn m-save" onclick="saveSpot()">Save ✦</button>
+    </div>
+  </div>
+</div>
+
+<!-- TOPBAR -->
+<div class="topbar">
+  <div class="topbar-title">DC <em>Passport</em></div>
+  <div class="topbar-right">
+    <a href="../" class="back-btn">← Brain 2.0</a>
+    <span class="topbar-date" id="today-date"></span>
+    <button class="add-btn" onclick="openAddModal()">＋ Add Spot</button>
+  </div>
+</div>
+
+<!-- LAYOUT -->
+<div class="layout">
+  <div class="sidebar">
+    <div class="sidebar-controls">
+      <div class="filter-section">
+        <div class="filter-row-label">Area</div>
+        <div class="filter-row" id="filter-area"></div>
+      </div>
+      <div class="filter-section">
+        <div class="filter-row-label">Status</div>
+        <div class="filter-row" id="filter-status"></div>
+      </div>
+      <div class="filter-section">
+        <div class="filter-row-label">Category</div>
+        <div class="filter-row" id="filter-cat"></div>
+      </div>
+      <input class="search-input" id="search-input" type="text" placeholder="Search spots..." oninput="setSearch(this.value)">
+    </div>
+    <div class="sidebar-stats" id="sidebar-stats"></div>
+    <div class="sidebar-list" id="sidebar-list"></div>
+  </div>
+  <div id="map"></div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
+<script>
+var SK = 'dcPassport1';
+
+var CATEGORIES = [
+  {val:'Museum',     label:'Museum & Culture', emoji:'🏛️', color:'#b07aa0'},
+  {val:'Restaurant', label:'Restaurant',       emoji:'🍽️', color:'#d4687a'},
+  {val:'Bar',        label:'Bar',              emoji:'🍷', color:'#8a7ec0'},
+  {val:'Cafe',       label:'Café',             emoji:'☕', color:'#c89040'},
+  {val:'Nature',     label:'Nature',           emoji:'🌿', color:'#6aaa78'},
+  {val:'Experience', label:'Experience',       emoji:'✨', color:'#e0906a'},
+  {val:'Shop',       label:'Shop',             emoji:'🛍️', color:'#5aaab0'},
+  {val:'Other',      label:'Other',            emoji:'📍', color:'#8a9090'},
+];
+
+var DEFAULT_SPOTS = [
+  // DC Museums & Culture
+  {id:'d1', name:'Folger Library',                category:'Museum',     city:'DC', lat:38.8894, lng:-77.0040, note:'Stunning library & Shakespeare collection', link:'https://www.folger.edu/', visited:false, rating:0},
+  {id:'d2', name:'Spy Museum',                    category:'Museum',     city:'DC', lat:38.8994, lng:-77.0214, note:'Interactive spy experiences', link:'https://www.spymuseum.org/', visited:false, rating:0},
+  {id:'d3', name:'National Building Museum',      category:'Museum',     city:'DC', lat:38.8969, lng:-77.0215, note:'Architecture & design', link:'', visited:false, rating:0},
+  {id:'d4', name:'The Gogo Museum',               category:'Museum',     city:'DC', lat:38.9072, lng:-77.0320, note:'', link:'', visited:false, rating:0},
+  {id:'d5', name:'Planet Word DC',                category:'Museum',     city:'DC', lat:38.8997, lng:-77.0290, note:'Language & words museum', link:'', visited:false, rating:0},
+  {id:'d6', name:'AMA Museum',                    category:'Museum',     city:'DC', lat:38.8960, lng:-77.0270, note:'', link:'', visited:false, rating:0},
+  {id:'d7', name:'Hillwood Museum',               category:'Museum',     city:'DC', lat:38.9398, lng:-77.0607, note:'', link:'', visited:false, rating:0},
+  {id:'d8', name:'Historic Congressional Cemetery', category:'Experience', city:'DC', lat:38.8800, lng:-76.9856, note:'Beautiful historic grounds', link:'', visited:false, rating:0},
+  {id:'d9', name:'Advance the Dream',             category:'Experience', city:'DC', lat:38.9072, lng:-77.0369, note:'', link:'', visited:false, rating:0},
+  // DC Restaurants
+  {id:'d10',name:'Tabard Inn',                    category:'Restaurant', city:'DC', lat:38.9074, lng:-77.0443, note:'Cozy neighborhood classic', link:'', visited:false, rating:0},
+  {id:'d11',name:'Casamara',                      category:'Restaurant', city:'DC', lat:38.9100, lng:-77.0420, note:'', link:'', visited:false, rating:0},
+  {id:'d12',name:'Maison Bar à Vins',             category:'Bar',        city:'DC', lat:38.9090, lng:-77.0430, note:'Wine bar', link:'', visited:false, rating:0},
+  {id:'d13',name:'L\'Avant Garde',               category:'Restaurant', city:'DC', lat:38.9080, lng:-77.0400, note:'', link:'', visited:false, rating:0},
+  {id:'d14',name:'Reynolds',                      category:'Restaurant', city:'DC', lat:38.9070, lng:-77.0390, note:'', link:'', visited:false, rating:0},
+  {id:'d15',name:'Amelie',                        category:'Bar',        city:'DC', lat:38.9065, lng:-77.0450, note:'French wine bar', link:'', visited:false, rating:0},
+  {id:'d16',name:'Floriana',                      category:'Restaurant', city:'DC', lat:38.9130, lng:-77.0460, note:'', link:'', visited:false, rating:0},
+  {id:'d17',name:'Maydan',                        category:'Restaurant', city:'DC', lat:38.9145, lng:-77.0315, note:'Middle Eastern — splurge worthy', link:'', visited:false, rating:0},
+  {id:'d18',name:'Little Black Bird',             category:'Bar',        city:'DC', lat:38.9110, lng:-77.0350, note:'', link:'', visited:false, rating:0},
+  {id:'d19',name:'Occidental',                    category:'Restaurant', city:'DC', lat:38.8972, lng:-77.0353, note:'', link:'', visited:false, rating:0},
+  {id:'d20',name:'Press Club',                    category:'Bar',        city:'DC', lat:38.9060, lng:-77.0310, note:'', link:'', visited:false, rating:0},
+  {id:'d21',name:'Siam House',                    category:'Restaurant', city:'DC', lat:38.9200, lng:-77.0480, note:'Thai', link:'', visited:false, rating:0},
+  {id:'d22',name:'All Souls',                     category:'Bar',        city:'DC', lat:38.9220, lng:-77.0410, note:'', link:'', visited:false, rating:0},
+  // DC Happy Hour spots
+  {id:'d23',name:'Doi Moi',                       category:'Restaurant', city:'DC', lat:38.9145, lng:-77.0320, note:'Bold Vietnamese · HH Weekdays 5–7pm · ½ off drinks, $5 daiquiris', link:'', visited:false, rating:0},
+  {id:'d24',name:"Rumi's Kitchen",                category:'Restaurant', city:'DC', lat:38.9030, lng:-77.0220, note:'Persian · HH Weekdays 4–6pm · $10 cocktails', link:'', visited:false, rating:0},
+  {id:'d25',name:'Tokyo Pearl',                   category:'Restaurant', city:'DC', lat:38.9118, lng:-77.0437, note:'Sushi · HH Tue–Sun 4–10pm · $8 happy hour', link:'', visited:false, rating:0},
+  {id:'d26',name:'Bar Chinois',                   category:'Bar',        city:'DC', lat:38.9030, lng:-77.0218, note:'Chinese cuisine & French cocktails · HH Daily 5–7pm · ½ priced cocktails + $1 dumplings', link:'', visited:false, rating:0},
+  // DC Takeout
+  {id:'d27',name:'Dumplings & Beyond',            category:'Restaurant',    city:'DC', lat:38.9005, lng:-77.0222, note:'', link:'', visited:false, rating:0},
+  {id:'d28',name:'Pho 75',                        category:'Restaurant',    city:'DC', lat:38.8958, lng:-77.0144, note:'', link:'', visited:false, rating:0},
+  {id:'d29',name:'Corso Italian',                 category:'Restaurant',    city:'DC', lat:38.9080, lng:-77.0350, note:'$8 spritzes', link:'', visited:false, rating:0},
+  {id:'d30',name:'Zaytinya',                      category:'Restaurant', city:'DC', lat:38.8997, lng:-77.0215, note:'$6 pides, $9 glasses', link:'', visited:false, rating:0},
+  {id:'d31',name:'Inca Social',                   category:'Bar',        city:'DC', lat:38.9100, lng:-77.0400, note:'Ladies margs', link:'', visited:false, rating:0},
+  {id:'d32',name:'Momoyama',                      category:'Restaurant',    city:'DC', lat:38.9050, lng:-77.0380, note:'Mom & pop Asian restaurant', link:'', visited:false, rating:0},
+  {id:'d33',name:'Lapis',                         category:'Restaurant',    city:'DC', lat:38.9110, lng:-77.0420, note:'Afghan', link:'', visited:false, rating:0},
+  {id:'d34',name:'Chez Billy Sud',                category:'Restaurant', city:'DC', lat:38.9030, lng:-77.0560, note:'French', link:'', visited:false, rating:0},
+  // Savannah spots removed — DC/DMV only
+];
+
+var spots = [];
+var markers = {};
+var currentCat = 'all';
+var currentCity = 'DC';
+var currentVisited = 'all';
+var searchQuery = '';
+var editingId = null;
+var focusedId = null;
+var map;
+
+function getCat(val){ return CATEGORIES.find(function(c){return c.val===val;})||CATEGORIES[CATEGORIES.length-1]; }
+
+// ── STORAGE ──
+function save(){ localStorage.setItem(SK, JSON.stringify(spots)); }
+function load(){
+  var raw = localStorage.getItem(SK);
+  if(raw){ try{ spots=JSON.parse(raw); }catch(e){} }
+  else{ spots=JSON.parse(JSON.stringify(DEFAULT_SPOTS)); save(); }
+}
+
+// ── MAP INIT ──
+function initMap(){
+  map = L.map('map').setView([38.9072,-77.0369], 13);
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{
+    attribution:'© OpenStreetMap contributors',
+    maxZoom:19,
+  }).addTo(map);
+  // Click on map to add
+  map.on('click', function(e){
+    document.getElementById('m-lat').value = e.latlng.lat.toFixed(5);
+    document.getElementById('m-lng').value = e.latlng.lng.toFixed(5);
+    openAddModal();
+  });
+}
+
+function getCityCenter(city){
+  var centers={DC:[38.9072,-77.0369],MD:[38.9784,-76.8922],VA:[38.8462,-77.3064]};
+  return centers[city]||[38.9072,-77.0369];
+}
+
+// ── MARKERS ──
+function createIcon(cat, visited){
+  var color = cat.color;
+  var html = '<div class="custom-marker '+(visited?'visited':'unvisited')+'" style="background:white;border-color:'+color+';box-shadow:0 3px 10px rgba(0,0,0,.35);">'+
+    '<span class="marker-emoji">'+cat.emoji+'</span></div>';
+  return L.divIcon({html:html, className:'', iconSize:[36,36], iconAnchor:[18,36], popupAnchor:[0,-38]});
+}
+
+function renderMarkers(){
+  // Clear old markers
+  Object.values(markers).forEach(function(m){ map.removeLayer(m); });
+  markers={};
+  var filtered = getFiltered();
+  filtered.forEach(function(spot){
+    if(!spot.lat||!spot.lng) return;
+    var cat = getCat(spot.category);
+    var icon = createIcon(cat, spot.visited);
+    var m = L.marker([spot.lat, spot.lng], {icon:icon}).addTo(map);
+    var popupContent =
+      '<div class="popup-name">'+spot.name+'</div>'+
+      '<div class="popup-cat">'+cat.emoji+' '+cat.label+'</div>'+
+      (spot.note?'<div class="popup-note">'+spot.note+'</div>':'')+
+      '<button class="popup-btn '+(spot.visited?'visited':'')+'" onclick="toggleVisited(\''+spot.id+'\')">'+
+        (spot.visited?'✓ Visited':'Mark Visited')+'</button>'+
+      '<button class="popup-btn" onclick="openEditModal(\''+spot.id+'\')">Edit</button>'+
+      (spot.link?'<a href="'+spot.link+'" target="_blank" style="text-decoration:none;"><button class="popup-btn">Link ↗</button></a>':'');
+    m.bindPopup(popupContent);
+    m.on('click', function(){ setFocus(spot.id); });
+    markers[spot.id] = m;
+  });
+}
+
+// ── FILTER ──
+function getFiltered(){
+  var f = spots.filter(function(s){
+    if(currentCity!=='all' && s.city!==currentCity) return false;
+    if(currentCat!=='all' && s.category!==currentCat) return false;
+    if(currentVisited==='visited' && !s.visited) return false;
+    if(currentVisited==='unvisited' && s.visited) return false;
+    if(searchQuery){ var q=searchQuery.toLowerCase(); return (s.name||'').toLowerCase().includes(q)||(s.note||'').toLowerCase().includes(q); }
+    return true;
+  });
+  return f;
+}
+
+// ── SIDEBAR ──
+function renderSidebar(){
+  // Stats
+  var allCity = spots.filter(function(s){return currentCity==='all'||s.city===currentCity;});
+  var visited = allCity.filter(function(s){return s.visited;}).length;
+  document.getElementById('sidebar-stats').innerHTML =
+    '<div class="sb-stat"><div class="sb-stat-num">'+allCity.length+'</div><div class="sb-stat-label">Total</div></div>'+
+    '<div class="sb-stat"><div class="sb-stat-num">'+visited+'</div><div class="sb-stat-label">Visited</div></div>'+
+    '<div class="sb-stat"><div class="sb-stat-num">'+(allCity.length-visited)+'</div><div class="sb-stat-label">To Go</div></div>';
+
+  // Area row
+  var areaHtml = '<button class="filter-btn'+(currentCity==='all'?' active':'')+'" onclick="setCity(\'all\')">All</button>';
+  areaHtml += '<button class="filter-btn'+(currentCity==='DC'?' active':'')+'" onclick="setCity(\'DC\')">🏛️ DC</button>';
+  areaHtml += '<button class="filter-btn'+(currentCity==='MD'?' active':'')+'" onclick="setCity(\'MD\')">Maryland</button>';
+  areaHtml += '<button class="filter-btn'+(currentCity==='VA'?' active':'')+'" onclick="setCity(\'VA\')">Virginia</button>';
+  document.getElementById('filter-area').innerHTML = areaHtml;
+
+  // Status row
+  var statusHtml = '<button class="filter-btn'+(currentVisited==='all'?' active':'')+'" onclick="setVisited(\'all\')">All</button>';
+  statusHtml += '<button class="filter-btn'+(currentVisited==='visited'?' active':'')+'" onclick="setVisited(\'visited\')">✓ Visited</button>';
+  statusHtml += '<button class="filter-btn'+(currentVisited==='unvisited'?' active':'')+'" onclick="setVisited(\'unvisited\')">To Go</button>';
+  document.getElementById('filter-status').innerHTML = statusHtml;
+
+  // Category row
+  var catHtml = '<button class="filter-btn'+(currentCat==='all'?' active':'')+'" onclick="setCat(\'all\')">All</button>';
+  CATEGORIES.forEach(function(c){
+    var hasSome = spots.some(function(s){return s.category===c.val;});
+    if(hasSome) catHtml+='<button class="filter-btn'+(currentCat===c.val?' active':'')+'" onclick="setCat(\''+c.val+'\')">'+c.emoji+' '+c.label+'</button>';
+  });
+  document.getElementById('filter-cat').innerHTML = catHtml;
+
+  // List
+  var list = document.getElementById('sidebar-list'); list.innerHTML='';
+  var filtered = getFiltered();
+  if(!filtered.length){
+    list.innerHTML='<div style="text-align:center;padding:30px 20px;color:var(--muted);font-style:italic;font-size:0.8rem;">No spots match your filters.</div>';
+    return;
+  }
+  // Sort: unvisited first, then by name
+  filtered.sort(function(a,b){
+    if(a.visited!==b.visited) return a.visited?1:-1;
+    return a.name.localeCompare(b.name);
+  });
+  filtered.forEach(function(spot){
+    var cat = getCat(spot.category);
+    var card = document.createElement('div');
+    card.className='spot-card'+(spot.visited?' visited':'')+(spot.id===focusedId?' focused':'');
+    card.id='card-'+spot.id;
+    var starsHtml='';
+    for(var s=1;s<=5;s++) starsHtml+='<span class="spot-star'+(s<=spot.rating?' filled':'')+'" onclick="rateSpot(\''+spot.id+'\','+s+',event)">★</span>';
+    card.innerHTML=
+      '<div class="spot-card-top">'+
+        '<div class="spot-cat-dot" style="background:'+cat.color+'"></div>'+
+        '<div style="flex:1">'+
+          '<div class="spot-name">'+spot.name+'</div>'+
+          '<div class="spot-cat-label">'+cat.emoji+' '+cat.label+(spot.city&&spot.city!=='DC'?' · '+spot.city:'')+'</div>'+
+        '</div>'+
+        '<span class="'+(spot.visited?'spot-visited-badge':'spot-unvisited-badge')+'">'+
+          (spot.visited?'✓ Visited':'To Go')+'</span>'+
+      '</div>'+
+      '<div class="spot-stars">'+starsHtml+'</div>'+
+      (spot.note?'<div class="spot-note">'+spot.note+'</div>':'')+
+      '<div class="spot-actions">'+
+        '<button class="spot-action-btn visited-btn'+(spot.visited?' active':'')+'" onclick="toggleVisited(\''+spot.id+'\')">'+
+          (spot.visited?'✓ Visited':'Mark Visited')+'</button>'+
+        '<button class="spot-action-btn" onclick="openEditModal(\''+spot.id+'\')">Edit</button>'+
+        (spot.link?'<a href="'+spot.link+'" target="_blank" style="text-decoration:none;"><button class="spot-action-btn">Link ↗</button></a>':'')+
+        '<button class="spot-del-btn" onclick="deleteSpot(\''+spot.id+'\')">✕</button>'+
+      '</div>';
+    card.onclick = function(e){
+      if(e.target.tagName==='BUTTON'||e.target.tagName==='A'||e.target.tagName==='SPAN') return;
+      flyTo(spot.id);
+    };
+    list.appendChild(card);
+  });
+}
+
+function setCity(c){ currentCity=c; render(); var ctr=getCityCenter(c==='all'?'DC':c); map.flyTo(ctr,13); }
+function setCat(c){ currentCat=c; render(); }
+function setVisited(v){ currentVisited=v; render(); }
+function setSearch(v){ searchQuery=v; render(); }
+
+function setFocus(id){
+  focusedId=id;
+  renderSidebar();
+  var card=document.getElementById('card-'+id);
+  if(card) card.scrollIntoView({behavior:'smooth',block:'nearest'});
+}
+
+function flyTo(id){
+  var spot=spots.find(function(s){return s.id===id;}); if(!spot||!spot.lat) return;
+  map.flyTo([spot.lat,spot.lng],16,{duration:0.8});
+  if(markers[id]) setTimeout(function(){markers[id].openPopup();},800);
+  setFocus(id);
+}
+
+function toggleVisited(id){
+  var spot=spots.find(function(s){return s.id===id;}); if(!spot) return;
+  spot.visited=!spot.visited; save(); render();
+}
+
+function rateSpot(id, rating, e){
+  e.stopPropagation();
+  var spot=spots.find(function(s){return s.id===id;}); if(!spot) return;
+  spot.rating=spot.rating===rating?0:rating; save(); renderSidebar();
+}
+
+function deleteSpot(id){
+  if(!confirm('Remove this spot?')) return;
+  spots=spots.filter(function(s){return s.id!==id;});
+  save(); render();
+}
+
+// ── MODAL ──
+function openAddModal(){
+  editingId=null;
+  document.getElementById('modal-title').textContent='Add a Spot';
+  document.getElementById('m-name').value='';
+  document.getElementById('m-category').value='Restaurant';
+  document.getElementById('m-city').value='DC';
+  document.getElementById('m-note').value='';
+  document.getElementById('m-link').value='';
+  // lat/lng may already be set from map click
+  document.getElementById('m-delete-btn').style.display='none';
+  document.getElementById('modal').classList.add('open');
+  setTimeout(function(){document.getElementById('m-name').focus();},100);
+}
+
+function openEditModal(id){
+  var spot=spots.find(function(s){return s.id===id;}); if(!spot) return;
+  editingId=id;
+  document.getElementById('modal-title').textContent='Edit Spot';
+  document.getElementById('m-name').value=spot.name;
+  document.getElementById('m-category').value=spot.category;
+  document.getElementById('m-city').value=spot.city||'DC';
+  document.getElementById('m-lat').value=spot.lat||'';
+  document.getElementById('m-lng').value=spot.lng||'';
+  document.getElementById('m-note').value=spot.note||'';
+  document.getElementById('m-link').value=spot.link||'';
+  document.getElementById('m-delete-btn').style.display='inline-flex';
+  document.getElementById('modal').classList.add('open');
+}
+
+function closeModal(){ document.getElementById('modal').classList.remove('open'); editingId=null; }
+
+function saveSpot(){
+  var name=document.getElementById('m-name').value.trim();
+  if(!name){document.getElementById('m-name').focus();return;}
+  var spot={
+    id:editingId||'s_'+Date.now(),
+    name:name,
+    category:document.getElementById('m-category').value,
+    city:document.getElementById('m-city').value,
+    lat:parseFloat(document.getElementById('m-lat').value)||null,
+    lng:parseFloat(document.getElementById('m-lng').value)||null,
+    note:document.getElementById('m-note').value.trim(),
+    link:document.getElementById('m-link').value.trim(),
+    visited:editingId?(spots.find(function(s){return s.id===editingId;})||{}).visited||false:false,
+    rating:editingId?(spots.find(function(s){return s.id===editingId;})||{}).rating||0:0,
+  };
+  if(editingId){var idx=spots.findIndex(function(s){return s.id===editingId;});if(idx>=0)spots[idx]=spot;}
+  else spots.push(spot);
+  save();closeModal();render();
+  if(spot.lat&&spot.lng) flyTo(spot.id);
+}
+
+function deleteFromModal(){
+  if(!editingId)return;if(!confirm('Delete this spot?'))return;
+  deleteSpot(editingId);closeModal();
+}
+
+document.getElementById('modal').addEventListener('click',function(e){if(e.target===this)closeModal();});
+document.addEventListener('keydown',function(e){if(e.key==='Escape')closeModal();});
+
+// ── RENDER ──
+function render(){ renderMarkers(); renderSidebar(); }
+
+// ── INIT ──
+var now=new Date();
+var DAYS=['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+var MONTHS=['January','February','March','April','May','June','July','August','September','October','November','December'];
+document.getElementById('today-date').textContent=DAYS[now.getDay()]+', '+MONTHS[now.getMonth()]+' '+now.getDate()+', '+now.getFullYear();
+
+load();
+initMap();
+render();
+</script>
+</body>
+</html>
