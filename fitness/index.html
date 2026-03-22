@@ -114,7 +114,7 @@ body{background:#f0e8e4;font-family:'Jost',sans-serif;color:var(--ink);min-heigh
 .water-glass.filled{background:#d4ebff;border-color:#5aaab0;}
 .water-label{font-size:0.68rem;color:var(--muted);margin-top:6px;}
 
-/* VIBRATION PLATE */
+/* WALKING PAD */
 .vibe-card{background:var(--cream);border:1px solid var(--rule);border-radius:14px;padding:16px 18px;}
 .vibe-sessions{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px;}
 .vibe-session{padding:10px 12px;border-radius:10px;border:1.5px solid var(--rule);background:var(--warm);cursor:pointer;text-align:center;transition:all .15s;}
@@ -300,15 +300,15 @@ var MONTHS     = ['January','February','March','April','May','June','July','Augu
 var WORKOUTS = {
   0: {label:'Rest & Prep',    focus:'No workout — light walking, meal prep, self-care', rest:true},
   1: {label:'Lower Body Sculpt', focus:'Legs & Glutes — lift and tighten', exercises:[
-    {name:'Vibration Squats',   detail:'3 × 15 reps · 5lb weights at shoulders'},
+    {name:'Squats',             detail:'3 × 15 reps · 5lb weights at shoulders'},
     {name:'Static Lunges',      detail:'3 × 12 reps/leg · 5lb weights'},
     {name:'Sumo Pulses',        detail:'3 × 20 pulses · both 5lb weights'},
     {name:'Donkey Kicks',       detail:'3 × 25 reps/leg · 1lb ankle weights'},
-    {name:'Cooldown',           detail:'5 min on vibration plate, legs extended'},
+    {name:'Cooldown',           detail:'5 min stretching, legs extended'},
   ]},
   2: {label:'Waist Snatching', focus:'Cardio & core tightening', exercises:[
     {name:'Infinity Hoop',      detail:'30 min continuous'},
-    {name:'Vibration Planks',   detail:'3 × 45 sec · forearms on plate'},
+    {name:'Planks',             detail:'3 × 45 sec · forearms on floor'},
     {name:'Dead Bugs',          detail:'3 × 15 reps · 1lb wrist + ankle weights'},
   ]},
   3: {label:'Upper Body Sculpt', focus:'Toned shoulders & arms, no bat wings', exercises:[
@@ -320,13 +320,13 @@ var WORKOUTS = {
   ]},
   4: {label:'Active Recovery',  focus:'Cortisol management & NEAT — no weights today', exercises:[
     {name:'10,000 Steps',       detail:'Walk your neighborhood or get off metro early'},
-    {name:'Evening Vibe Plate', detail:'10 min · lymphatic drainage, reduce puffiness'},
+    {name:'Evening Walking Pad',detail:'30 min · low intensity, let your muscles repair'},
   ]},
   5: {label:'Full Body Glow',   focus:'Full body metabolic conditioning', exercises:[
     {name:'Thrusters',          detail:'3 × 15 reps · 5lb weights, squat + press overhead'},
     {name:'Weighted Step-Ups',  detail:'3 × 12/leg · sturdy chair or step, 5lb weights'},
     {name:'Standing Side Bends',detail:'3 × 20/side · 5lb weight, crunch oblique'},
-    {name:'Glute Bridges',      detail:'3 × 20 reps · 1lb ankle weights, feet on vibe plate'},
+    {name:'Glute Bridges',      detail:'3 × 20 reps · 1lb ankle weights'},
   ]},
   6: {label:'Sweat Session',    focus:'Maximum calorie burn', exercises:[
     {name:'Infinity Hoop',      detail:'20 min · wear 1lb wrist + ankle weights'},
@@ -609,7 +609,7 @@ function renderDailyCards() {
   var liters = (glasses*0.25).toFixed(2).replace('.00','').replace(/\.?0+$/,'');
   document.getElementById('water-label').textContent = liters+'L / 3L  ('+glasses+' glasses)';
 
-  // Vibe plate
+  // Walking pad
   var vibe = dayData.vibe || {};
   document.getElementById('vibe-am').className = 'vibe-session'+(vibe.am?' done':'');
   document.getElementById('vibe-pm').className = 'vibe-session'+(vibe.pm?' done':'');
