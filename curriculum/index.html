@@ -1,0 +1,795 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Personal Curriculum</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=Jost:wght@300;400;500;600&display=swap');
+:root{
+  --blush:#f2c4ce;--rose:#e8a0b0;--mauve:#c9a0b4;--lavender:#d4b8e0;
+  --sage:#b8cfb0;--cream:#fdf6f0;--warm:#f7ece4;--ink:#3a2a2e;--muted:#9a8088;--rule:#e0cec8;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{background:#f0e8e4;font-family:'Jost',sans-serif;color:var(--ink);min-height:100vh;}
+
+/* TOPBAR */
+.topbar{background:var(--cream);border-bottom:1px solid var(--rule);padding:14px 32px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:200;}
+.topbar-title{font-family:'Cormorant Garamond',serif;font-size:1.6rem;font-weight:300;letter-spacing:2px;}
+.topbar-title em{font-style:italic;color:var(--mauve);}
+.topbar-right{display:flex;align-items:center;gap:10px;}
+.back-btn{display:inline-flex;align-items:center;gap:6px;padding:6px 14px;border:1.5px solid var(--rule);border-radius:20px;font-size:0.72rem;color:var(--muted);cursor:pointer;background:transparent;font-family:'Jost',sans-serif;text-decoration:none;transition:all .15s;}
+.back-btn:hover{border-color:var(--rose);color:var(--ink);}
+.topbar-date{font-size:0.68rem;letter-spacing:2px;text-transform:uppercase;color:var(--muted);}
+.pdf-btn{padding:7px 16px;border:none;border-radius:20px;background:var(--rose);color:white;font-family:'Jost',sans-serif;font-size:0.73rem;font-weight:600;cursor:pointer;transition:all .15s;}
+.pdf-btn:hover{background:var(--mauve);}
+
+/* ── VIEWS ── */
+.view{display:none;}
+.view.active{display:block;}
+
+/* ── ANNUAL OVERVIEW ── */
+.annual-wrap{max-width:960px;margin:0 auto;padding:24px 24px 60px;}
+.annual-header{text-align:center;margin-bottom:32px;}
+.annual-title{font-family:'Cormorant Garamond',serif;font-size:3rem;font-weight:300;letter-spacing:2px;font-style:italic;color:var(--ink);}
+.annual-title span{color:var(--mauve);}
+.annual-sub{font-size:0.68rem;letter-spacing:3px;text-transform:uppercase;color:var(--muted);margin-top:8px;}
+
+.annual-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;}
+.module-tile{background:var(--cream);border:1px solid var(--rule);border-radius:14px;padding:18px 20px;cursor:pointer;transition:all .2s;position:relative;overflow:hidden;}
+.module-tile:hover{transform:translateY(-3px);box-shadow:0 8px 24px rgba(180,130,140,.14);border-color:var(--mauve);}
+.module-tile.has-topic{border-left:4px solid var(--mauve);}
+.module-tile.completed{border-left:4px solid var(--sage);}
+.mt-month{font-size:0.6rem;letter-spacing:3px;text-transform:uppercase;color:var(--muted);font-weight:600;margin-bottom:6px;}
+.mt-topic{font-family:'Cormorant Garamond',serif;font-size:1rem;font-weight:600;line-height:1.3;margin-bottom:4px;min-height:40px;}
+.mt-topic.empty{color:var(--muted);font-style:italic;font-weight:300;}
+.mt-type{font-size:0.62rem;letter-spacing:1.5px;text-transform:uppercase;color:var(--mauve);font-weight:600;}
+.mt-progress{margin-top:10px;}
+.mt-prog-bar{height:4px;background:var(--rule);border-radius:2px;overflow:hidden;}
+.mt-prog-fill{height:100%;border-radius:2px;background:linear-gradient(90deg,var(--blush),var(--mauve));}
+.mt-prog-label{font-size:0.58rem;color:var(--muted);margin-top:3px;}
+.mt-add{font-size:0.68rem;color:var(--mauve);margin-top:8px;font-weight:500;}
+
+/* Type color dots */
+.type-dot{display:inline-block;width:7px;height:7px;border-radius:50%;margin-right:4px;}
+
+/* ── MODULE VIEW ── */
+.module-wrap{max-width:900px;margin:0 auto;padding:0 24px 60px;}
+
+/* Module nav */
+.module-nav{display:flex;align-items:center;gap:12px;padding:16px 0 20px;border-bottom:1px solid var(--rule);margin-bottom:24px;}
+.mnav-back{display:inline-flex;align-items:center;gap:5px;padding:6px 14px;border:1.5px solid var(--rule);border-radius:20px;font-size:0.72rem;color:var(--muted);cursor:pointer;background:transparent;font-family:'Jost',sans-serif;transition:all .15s;}
+.mnav-back:hover{border-color:var(--rose);color:var(--ink);}
+.mnav-month{font-family:'Cormorant Garamond',serif;font-size:1.1rem;font-style:italic;color:var(--muted);}
+.mnav-title{font-family:'Cormorant Garamond',serif;font-size:1.6rem;font-weight:600;flex:1;}
+
+/* Week tabs */
+.week-tabs{display:flex;gap:6px;margin-bottom:22px;flex-wrap:wrap;}
+.wtab{padding:7px 18px;border:1.5px solid var(--rule);border-radius:20px;font-family:'Jost',sans-serif;font-size:0.72rem;font-weight:500;cursor:pointer;background:var(--cream);color:var(--muted);transition:all .15s;}
+.wtab:hover{border-color:var(--mauve);color:var(--ink);}
+.wtab.active{background:var(--mauve);border-color:var(--mauve);color:white;}
+.wtab.done{background:#e8f5e9;border-color:#b8cfb0;color:#2a6a30;}
+
+/* Week page */
+.wpage{display:none;}
+.wpage.active{display:block;}
+
+/* Setup page */
+.setup-grid{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-bottom:22px;}
+.f-block{display:flex;flex-direction:column;gap:5px;}
+.f-label{font-size:0.62rem;letter-spacing:2px;text-transform:uppercase;color:var(--muted);font-weight:600;}
+.write{background:var(--warm);border:1px solid var(--rule);border-radius:8px;padding:10px 13px;font-family:'Jost',sans-serif;font-size:0.8rem;line-height:1.75;color:var(--ink);outline:none;width:100%;transition:border-color .15s;}
+.write:focus{border-color:var(--blush);box-shadow:0 0 0 3px rgba(242,196,206,.2);}
+.write[contenteditable]:empty:before{content:attr(data-ph);color:#c8aab0;font-style:italic;}
+.write.tall{min-height:100px;}
+.write.short{min-height:50px;}
+.select-field{width:100%;border:1px solid var(--rule);border-radius:8px;padding:9px 12px;font-family:'Jost',sans-serif;font-size:0.8rem;color:var(--ink);background:var(--warm);outline:none;}
+.select-field:focus{border-color:var(--mauve);}
+
+/* Resource rows */
+.resource-block{background:var(--warm);border:1px solid var(--rule);border-radius:10px;padding:14px 16px;margin-bottom:10px;}
+.resource-title{font-size:0.62rem;letter-spacing:2px;text-transform:uppercase;color:var(--muted);font-weight:600;margin-bottom:8px;}
+.resource-grid{display:grid;grid-template-columns:1fr 120px;gap:8px 12px;align-items:start;}
+.resource-label{font-size:0.68rem;font-weight:600;color:var(--muted);padding-top:10px;}
+
+/* Week content */
+.week-section{margin-bottom:24px;}
+.ws-header{display:flex;align-items:center;gap:10px;margin-bottom:14px;}
+.ws-badge{background:var(--blush);color:var(--ink);font-size:0.65rem;font-weight:600;padding:3px 10px;border-radius:12px;letter-spacing:.5px;}
+.ws-title{font-family:'Cormorant Garamond',serif;font-size:1.1rem;font-weight:600;}
+.ws-sub{font-size:0.7rem;color:var(--muted);font-style:italic;margin-bottom:12px;}
+
+/* Checklist */
+.check-list{display:flex;flex-direction:column;gap:6px;margin-bottom:12px;}
+.check-row{display:flex;align-items:flex-start;gap:10px;padding:8px 12px;background:var(--warm);border-radius:8px;border:1px solid var(--rule);}
+.check-box{width:16px;height:16px;border-radius:4px;border:1.5px solid var(--rule);flex-shrink:0;cursor:pointer;display:flex;align-items:center;justify-content:center;margin-top:1px;transition:all .15s;}
+.check-box.checked{background:var(--sage);border-color:var(--sage);}
+.check-box.checked:after{content:'✓';color:white;font-size:9px;font-weight:700;}
+.check-label{font-size:0.78rem;flex:1;line-height:1.5;}
+
+/* Capstone options */
+.capstone-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px;}
+.capstone-opt{padding:12px 14px;border:1.5px solid var(--rule);border-radius:10px;background:var(--warm);cursor:pointer;transition:all .15s;}
+.capstone-opt:hover{border-color:var(--mauve);}
+.capstone-opt.selected{background:linear-gradient(135deg,#fce8ef,#f0e0f0);border-color:var(--blush);}
+.capstone-opt-label{font-size:0.62rem;font-weight:600;letter-spacing:1px;text-transform:uppercase;color:var(--muted);margin-bottom:3px;}
+.capstone-opt-desc{font-size:0.72rem;color:var(--ink);line-height:1.4;}
+
+hr.rule{border:none;border-top:1px solid var(--rule);margin:20px 0;}
+.ornament{text-align:center;color:var(--blush);font-size:0.9rem;letter-spacing:10px;margin-top:24px;}
+
+/* Completion checklist */
+.completion-card{background:linear-gradient(135deg,#fce8ef,#f0e0f0);border:1px solid var(--blush);border-radius:14px;padding:20px 24px;margin-bottom:20px;}
+.completion-title{font-family:'Cormorant Garamond',serif;font-size:1.1rem;font-weight:600;margin-bottom:12px;}
+
+/* Topic suggestion modal */
+.modal-overlay{display:none;position:fixed;inset:0;background:rgba(58,42,46,.35);z-index:300;align-items:center;justify-content:center;}
+.modal-overlay.open{display:flex;}
+.modal{background:var(--cream);border-radius:18px;border:1px solid var(--rule);padding:28px 32px;width:90%;max-width:580px;max-height:85vh;overflow-y:auto;box-shadow:0 20px 60px rgba(58,42,46,.15);}
+.modal-title{font-family:'Cormorant Garamond',serif;font-size:1.4rem;font-weight:600;margin-bottom:6px;}
+.modal-sub{font-size:0.72rem;color:var(--muted);margin-bottom:18px;}
+.topic-group{margin-bottom:16px;}
+.topic-group-label{font-size:0.6rem;letter-spacing:2px;text-transform:uppercase;color:var(--muted);font-weight:600;margin-bottom:6px;}
+.topic-chips{display:flex;gap:6px;flex-wrap:wrap;}
+.topic-chip{padding:5px 12px;border:1.5px solid var(--rule);border-radius:16px;font-family:'Jost',sans-serif;font-size:0.7rem;cursor:pointer;background:var(--warm);color:var(--ink);transition:all .15s;}
+.topic-chip:hover{border-color:var(--mauve);background:var(--cream);}
+.m-actions{display:flex;gap:10px;justify-content:flex-end;margin-top:18px;}
+.m-btn{padding:8px 20px;border-radius:20px;font-family:'Jost',sans-serif;font-size:0.78rem;font-weight:600;cursor:pointer;border:1.5px solid;transition:all .15s;}
+.m-cancel{background:var(--warm);border-color:var(--rule);color:var(--muted);}
+.m-save{background:var(--mauve);border-color:var(--mauve);color:white;}
+.m-save:hover{background:var(--rose);}
+
+/* Resource entries */
+.res-entry{display:grid;grid-template-columns:130px 1fr 1fr auto;gap:8px;align-items:center;padding:10px 12px;background:var(--warm);border:1px solid var(--rule);border-radius:10px;margin-bottom:7px;}
+.res-type-select{border:1.5px solid var(--rule);border-radius:8px;padding:6px 10px;font-family:'Jost',sans-serif;font-size:0.74rem;color:var(--ink);background:var(--cream);outline:none;}
+.res-type-select:focus{border-color:var(--mauve);}
+.res-input{border:none;border-bottom:1px dashed var(--rule);background:transparent;font-family:'Jost',sans-serif;font-size:0.76rem;color:var(--ink);outline:none;padding:4px 2px;width:100%;}
+.res-input::placeholder{color:#c8aab0;font-style:italic;}
+.res-input:focus{border-bottom-color:var(--mauve);}
+.res-link-input{border:none;border-bottom:1px dashed var(--rule);background:transparent;font-family:'Jost',sans-serif;font-size:0.74rem;color:var(--mauve);outline:none;padding:4px 2px;width:100%;}
+.res-link-input::placeholder{color:#c8aab0;font-style:italic;}
+.res-link-input:focus{border-bottom-color:var(--mauve);}
+.res-del{background:none;border:none;color:#ccc;cursor:pointer;font-size:0.65rem;padding:4px 6px;border-radius:6px;transition:color .15s;}
+.res-del:hover{color:#a0304a;}
+.res-open-btn{font-size:0.65rem;color:var(--mauve);text-decoration:none;padding:3px 6px;border:1.5px solid var(--rule);border-radius:8px;white-space:nowrap;transition:all .15s;}
+.res-open-btn:hover{border-color:var(--mauve);}
+
+@media print{
+  .topbar,.module-nav,.week-tabs,.pdf-btn,.mnav-back{display:none!important;}
+  body{background:white!important;}
+  .module-wrap{padding:20px!important;}
+  .wpage{display:block!important;}
+}
+</style>
+</head>
+<body>
+
+<!-- TOPIC PICKER MODAL -->
+<div class="modal-overlay" id="topic-modal">
+  <div class="modal">
+    <div class="modal-title">Choose a Topic</div>
+    <div class="modal-sub">Pick from your idea list or type your own above.</div>
+    <div id="topic-groups"></div>
+    <div class="m-actions">
+      <button class="m-btn m-cancel" onclick="closeTopicModal()">Cancel</button>
+    </div>
+  </div>
+</div>
+
+<!-- TOPBAR -->
+<div class="topbar">
+  <div class="topbar-title">Personal <em>Curriculum</em></div>
+  <div class="topbar-right">
+    <a href="../" class="back-btn">← Brain 2.0</a>
+    <span class="topbar-date" id="today-date"></span>
+  </div>
+</div>
+
+<!-- ANNUAL VIEW -->
+<div class="view active" id="view-annual">
+  <div class="annual-wrap">
+    <div class="annual-header">
+      <div class="annual-title">2026 <span>Curriculum</span></div>
+      <div class="annual-sub">12 Modules · One per Month · ~2–3 Hours / Week</div>
+    </div>
+    <div class="annual-grid" id="annual-grid"></div>
+  </div>
+</div>
+
+<!-- MODULE VIEW -->
+<div class="view" id="view-module">
+  <div class="module-wrap">
+    <div class="module-nav">
+      <button class="mnav-back" onclick="goAnnual()">← All Modules</button>
+      <div class="mnav-month" id="mnav-month"></div>
+      <div class="mnav-cover-wrap" id="mnav-cover-wrap" style="display:none;">
+        <img id="mnav-cover-img" src="" alt="" style="width:40px;height:40px;object-fit:cover;border-radius:8px;border:1.5px solid var(--rule);">
+      </div>
+      <div class="mnav-title" id="mnav-title"></div>
+      <button class="pdf-btn" onclick="savePDF()">⬇ Save Module PDF</button>
+    </div>
+
+    <div class="week-tabs" id="week-tabs"></div>
+
+    <!-- SETUP -->
+    <div class="wpage active" id="wp-setup">
+      <div class="setup-grid">
+        <div class="f-block" style="grid-column:1/-1;display:grid;grid-template-columns:1fr 90px;gap:16px;align-items:start;">
+          <div style="display:flex;flex-direction:column;gap:8px;">
+            <label class="f-label">Module Title / Topic</label>
+            <div class="write short" contenteditable data-save-id="title" data-ph="What are you studying this month?"></div>
+            <button class="mnav-back" style="align-self:flex-start;" onclick="openTopicModal()">✦ Browse Topic Ideas</button>
+          </div>
+          <!-- Cover image -->
+          <div style="display:flex;flex-direction:column;align-items:center;gap:4px;padding-top:18px;">
+            <div id="cover-thumb-wrap" style="display:none;cursor:pointer;flex-direction:column;align-items:center;gap:3px;" onclick="showCoverInput()" title="Click to change image">
+              <img id="cover-preview-img" src="" alt="" style="width:72px;height:72px;object-fit:cover;border-radius:10px;border:1.5px solid var(--rule);">
+              <div style="font-size:0.58rem;color:var(--muted);text-align:center;letter-spacing:1px;">Change</div>
+            </div>
+            <div id="cover-placeholder" style="width:72px;height:72px;border:2px dashed var(--rule);border-radius:10px;display:flex;align-items:center;justify-content:center;cursor:pointer;background:var(--warm);" onclick="showCoverInput()">
+              <span style="font-size:1.3rem;">🖼️</span>
+            </div>
+            <input type="text" id="cover-url-input" data-save-id="cover_url" placeholder="Paste image URL..."
+              style="display:none;width:90px;font-size:0.65rem;padding:4px 7px;border:1.5px solid var(--mauve);border-radius:8px;font-family:'Jost',sans-serif;outline:none;background:var(--warm);"
+              oninput="updateCover(this.value)" onblur="hideCoverInput()">
+          </div>
+        </div>
+        <div class="f-block" style="grid-column:1/-1;">
+          <label class="f-label">Learning Objective — By the end of this module, I will be able to:</label>
+          <div class="write" contenteditable data-save-id="objective" data-ph="State your goal specifically and concretely..."></div>
+        </div>
+      </div>
+
+      <hr class="rule">
+
+      <div class="week-section">
+        <div class="ws-header"><span class="ws-badge">Resources</span><span class="ws-title">Core Resources</span></div>
+        <div class="ws-sub">Aim for 3–5 total — quality over quantity. Add each resource as a separate entry.</div>
+        <div id="resource-list"></div>
+        <button class="mnav-back" style="margin-top:8px;" onclick="addResource()">＋ Add Resource</button>
+      </div>
+
+      <div class="completion-card">
+        <div class="completion-title">Success Metrics — I'll know I've learned this when I can:</div>
+        <div class="check-list" id="success-checks"></div>
+        <button class="mnav-back" style="margin-top:6px;" onclick="addSuccessCheck()">＋ Add metric</button>
+      </div>
+
+      <div class="ornament">✦ ✿ ✦</div>
+    </div>
+
+    <!-- WEEK 1 -->
+    <div class="wpage" id="wp-w1">
+      <div class="week-section">
+        <div class="ws-header"><span class="ws-badge">Week 1</span><span class="ws-title">Foundation & Curiosity</span></div>
+        <div class="ws-sub">Introduction & Personal Connection · 2–3 hours total</div>
+        <label class="f-label">Mon / Tue — Initial Exploration (45–60 min)</label>
+        <div class="ws-sub" style="margin-bottom:8px;">What to consume first — choose your most engaging resource</div>
+        <div class="write short" contenteditable data-save-id="w1_consume1" data-ph="Resource you'll start with and why..."></div>
+      </div>
+      <div class="week-section">
+        <label class="f-label">Free Write Reflection (15 min)</label>
+        <div class="ws-sub" style="margin-bottom:8px;">"What surprised me? What confused me? What do I already think I know?"</div>
+        <div class="write tall" contenteditable data-save-id="w1_freewrite" data-ph="Brain dump — don't overthink, just write..."></div>
+      </div>
+      <hr class="rule">
+      <div class="week-section">
+        <label class="f-label">Wed / Thu — Deeper Dive (45–60 min)</label>
+        <div class="write short" contenteditable data-save-id="w1_consume2" data-ph="Article or book chapter for this session..."></div>
+      </div>
+      <div class="week-section">
+        <label class="f-label">Think & Connect — Reflection Questions</label>
+        <div class="write tall" contenteditable data-save-id="w1_reflect" data-ph="How does this relate to my own life?&#10;What assumption is being challenged?&#10;What story or example stuck with me?"></div>
+      </div>
+      <hr class="rule">
+      <div class="week-section">
+        <div class="ws-header"><span class="ws-badge">Weekend</span><span class="ws-title">Curiosity Map</span></div>
+        <div class="ws-sub">What I learned · Questions I now have · Topics to explore deeper · Real-world examples noticed</div>
+        <div class="write tall" contenteditable data-save-id="w1_curiositymap" data-ph="Draw or write your curiosity map here — center topic, branches of what you learned, questions that opened up, examples you noticed in real life..."></div>
+      </div>
+      <div class="week-section">
+        <div class="setup-grid">
+          <div class="f-block">
+            <label class="f-label">1 Quote / Idea to Remember</label>
+            <div class="write short" contenteditable data-save-id="w1_quote" data-ph=""></div>
+          </div>
+          <div class="f-block">
+            <label class="f-label">1 Question Carrying into Week 2</label>
+            <div class="write short" contenteditable data-save-id="w1_question" data-ph=""></div>
+          </div>
+        </div>
+      </div>
+      <div class="ornament">✦ ✿ ✦</div>
+    </div>
+
+    <!-- WEEK 2 -->
+    <div class="wpage" id="wp-w2">
+      <div class="week-section">
+        <div class="ws-header"><span class="ws-badge">Week 2</span><span class="ws-title">Depth & Critical Thinking</span></div>
+        <div class="ws-sub">Analysis & Multiple Perspectives · 2–3 hours total</div>
+        <label class="f-label">Mon / Tue — Core Concept Study (60 min)</label>
+        <div class="ws-sub" style="margin-bottom:8px;">Your most substantial resource. Take notes in your own words. Mark what you agree/disagree with.</div>
+        <div class="write" contenteditable data-save-id="w2_notes" data-ph="Notes in your own words — not just highlights. Mark sections you agree or disagree with. Note what supports or contradicts Week 1 learning..."></div>
+      </div>
+      <hr class="rule">
+      <div class="week-section">
+        <label class="f-label">Wed / Thu — Alternative Perspective (45 min)</label>
+        <div class="write short" contenteditable data-save-id="w2_alt_source" data-ph="A different viewpoint or approach to the topic..."></div>
+      </div>
+      <div class="week-section">
+        <label class="f-label">Compare & Contrast</label>
+        <div class="write tall" contenteditable data-save-id="w2_compare" data-ph="What do my two main sources agree on?&#10;Where do they diverge?&#10;Which perspective resonates more with me? Why?&#10;What might both be missing?"></div>
+      </div>
+      <hr class="rule">
+      <div class="week-section">
+        <div class="ws-header"><span class="ws-badge">Weekend</span><span class="ws-title">Real-World Application</span></div>
+        <div class="ws-sub">Choose one option</div>
+        <div class="capstone-grid" style="margin-bottom:12px;">
+          <div class="capstone-opt" id="w2opt-personal" onclick="selectW2Opt('personal')">
+            <div class="capstone-opt-label">Option A · Personal</div>
+            <div class="capstone-opt-desc">Find 3 examples from your week where this shows up in daily life</div>
+          </div>
+          <div class="capstone-opt" id="w2opt-current" onclick="selectW2Opt('current')">
+            <div class="capstone-opt-label">Option B · Current Events</div>
+            <div class="capstone-opt-desc">Find 1–2 recent news stories or trends that relate</div>
+          </div>
+          <div class="capstone-opt" id="w2opt-historical" onclick="selectW2Opt('historical')">
+            <div class="capstone-opt-label">Option C · Historical</div>
+            <div class="capstone-opt-desc">Research one historical moment — compare to current understanding</div>
+          </div>
+        </div>
+        <div class="write tall" contenteditable data-save-id="w2_application" data-ph="Write out your chosen option here..."></div>
+      </div>
+      <div class="ornament">✦ ✿ ✦</div>
+    </div>
+
+    <!-- WEEK 3 -->
+    <div class="wpage" id="wp-w3">
+      <div class="week-section">
+        <div class="ws-header"><span class="ws-badge">Week 3</span><span class="ws-title">Integration & Creative Exploration</span></div>
+        <div class="ws-sub">Making It Yours · 2–3 hours total</div>
+        <label class="f-label">Mon / Tue — Fill Knowledge Gaps (45 min)</label>
+        <div class="ws-sub" style="margin-bottom:8px;">Revisit your Week 1 Curiosity Map. Pick the 1–2 biggest open questions.</div>
+        <div class="write" contenteditable data-save-id="w3_gaps" data-ph="What questions do I still have?&#10;Resources I'll use to answer them:"></div>
+      </div>
+      <hr class="rule">
+      <div class="week-section">
+        <label class="f-label">Wed / Thu — The Connection Game (60 min)</label>
+        <div class="ws-sub" style="margin-bottom:8px;">"How does this topic intersect with something else I know or love?"</div>
+        <div class="write tall" contenteditable data-save-id="w3_connections" data-ph="Another subject I've studied:&#10;A book/movie/show I love:&#10;A personal hobby or interest:&#10;A current goal or challenge I have:"></div>
+      </div>
+      <hr class="rule">
+      <div class="week-section">
+        <div class="ws-header"><span class="ws-badge">Weekend</span><span class="ws-title">Teach It</span></div>
+        <div class="ws-sub">Explain this topic to someone else. Teaching forces you to organize and solidify your understanding.</div>
+        <label class="f-label">To a curious friend (conversational)</label>
+        <div class="write" contenteditable data-save-id="w3_teach_friend" data-ph="Explain it like you're texting a friend who asked about it..."></div>
+        <label class="f-label" style="margin-top:12px;display:block;">To a skeptic who thinks it's unimportant (persuasive)</label>
+        <div class="write" contenteditable data-save-id="w3_teach_skeptic" data-ph="Why should they care? Make the case..."></div>
+      </div>
+      <div class="ornament">✦ ✿ ✦</div>
+    </div>
+
+    <!-- WEEK 4 -->
+    <div class="wpage" id="wp-w4">
+      <div class="week-section">
+        <div class="ws-header"><span class="ws-badge">Week 4</span><span class="ws-title">Synthesis & Personal Philosophy</span></div>
+        <div class="ws-sub">What Do I Think? · 2–3 hours total</div>
+        <label class="f-label">Mon / Tue — Final Reflection (45 min)</label>
+        <div class="ws-sub" style="margin-bottom:8px;">"What would I have missed if I hadn't studied this topic?"</div>
+        <div class="write tall" contenteditable data-save-id="w4_final_reflect" data-ph="Be honest and specific — what did this open up for you?"></div>
+      </div>
+      <hr class="rule">
+      <div class="week-section">
+        <label class="f-label">Wed / Thu — My Philosophy on This Topic (60 min)</label>
+        <div class="write tall" contenteditable data-save-id="w4_philosophy" data-ph="1. What I believed before this module:&#10;&#10;2. What I learned that changed or deepened my thinking:&#10;&#10;3. What I now believe/understand:&#10;&#10;4. How this will influence my choices going forward:"></div>
+      </div>
+      <hr class="rule">
+      <div class="week-section">
+        <div class="ws-header"><span class="ws-badge">Capstone</span><span class="ws-title">Final Project</span></div>
+        <div class="ws-sub">Choose one — this is your intellectual artifact from this month.</div>
+        <div class="capstone-grid">
+          <div class="capstone-opt" id="cap-guide" onclick="selectCapstone('guide')">
+            <div class="capstone-opt-label">A · Resource Guide</div>
+            <div class="capstone-opt-desc">"If someone wants to learn this in 1 hour, read/watch these 3 things"</div>
+          </div>
+          <div class="capstone-opt" id="cap-essay" onclick="selectCapstone('essay')">
+            <div class="capstone-opt-label">B · Personal Essay</div>
+            <div class="capstone-opt-desc">500–750 words on how this topic intersects with your life or identity</div>
+          </div>
+          <div class="capstone-opt" id="cap-analysis" onclick="selectCapstone('analysis')">
+            <div class="capstone-opt-label">C · Comparative Analysis</div>
+            <div class="capstone-opt-desc">"3 Things Most People Get Wrong About [Topic]"</div>
+          </div>
+          <div class="capstone-opt" id="cap-plan" onclick="selectCapstone('plan')">
+            <div class="capstone-opt-label">D · Application Plan</div>
+            <div class="capstone-opt-desc">Specific, concrete ways you'll apply this learning</div>
+          </div>
+          <div class="capstone-opt" id="cap-visual" onclick="selectCapstone('visual')">
+            <div class="capstone-opt-label">E · Visual Synthesis</div>
+            <div class="capstone-opt-desc">Mind map, infographic, or visual summary of key concepts</div>
+          </div>
+        </div>
+        <div class="write tall" style="margin-top:12px;" contenteditable data-save-id="w4_capstone" data-ph="Write your capstone project here..."></div>
+      </div>
+      <hr class="rule">
+      <div class="completion-card">
+        <div class="completion-title">Post-Module Reflection</div>
+        <div class="setup-grid">
+          <div class="f-block">
+            <label class="f-label">What I Learned</label>
+            <div class="write" contenteditable data-save-id="w4_learned" data-ph=""></div>
+          </div>
+          <div class="f-block">
+            <label class="f-label">What Surprised Me</label>
+            <div class="write" contenteditable data-save-id="w4_surprised" data-ph=""></div>
+          </div>
+          <div class="f-block">
+            <label class="f-label">How This Connects to My Life</label>
+            <div class="write" contenteditable data-save-id="w4_connects" data-ph=""></div>
+          </div>
+          <div class="f-block">
+            <label class="f-label">Topics I Want to Study Next</label>
+            <div class="write" contenteditable data-save-id="w4_next" data-ph=""></div>
+          </div>
+        </div>
+      </div>
+      <div class="ornament">✦ ✿ ✦</div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+var SK = 'curriculum1';
+var MONTHS_FULL = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+var DAYS_FULL   = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+var activeModule = null; // 0–11
+
+var TYPE_COLORS = {
+  'Humanities':'#c9a0b4','Social Sciences':'#b8d4f0','Arts & Culture':'#f2c4ce',
+  'Science & Technology':'#b8cfb0','Personal Development':'#d4b8e0',
+  'History & Philosophy':'#f7d9b0','Literature':'#e8a0b0','Modern Life':'#a8d8d0',''  :'#e0cec8'
+};
+
+var TOPIC_IDEAS = [
+  {group:'Psychology & Behavior', topics:['The Psychology of First Impressions','Decision Fatigue & Choice Architecture','Parasocial Relationships in the Digital Age','The Science of Flow States & Focus','Why We Procrastinate: Neuroscience & Solutions','The Halo Effect — How Attractiveness Skews Perception']},
+  {group:'Culture & Society',     topics:['The Rise of Third Places: Community Design','Nostalgia Cycles: Why Gen Z Romanticizes the 2000s','The Creator Economy & Digital Labor','Cultural Rituals Around Food & Identity','The Language of Memes: Humor as Currency','The Quiet Luxury Trend: Status & Aesthetics']},
+  {group:'Literature & Arts',     topics:['Contemporary South Asian Feminist Literature','Romanticism & Gothicism in 19th Century Fiction','Existentialism & Modern Anguish','Indigenous American Literature & Oral Traditions','Surrealism & the Avant-Garde Movement','Silver Age of Russian Poetry']},
+  {group:'History & Philosophy',  topics:['The Romanov Dynasty: Rise & Fall','Art & Literature of the Islamic Golden Age','Queer & Feminist Theory Foundations','Myth & Global Folklore: Universal Themes','Stoicism & Its Modern Applications','Existentialism: Sartre, Camus, de Beauvoir']},
+  {group:'Modern Life & Technology', topics:['The Attention Economy: How Tech Hijacks Focus','AI as Creative Partner: Ethics & Possibilities','Gamification of Life: Points, Rewards, Motivation','Behavioral Economics: Irrational Choices','The Science of Fandoms','Subscription Culture & Digital Ownership']},
+];
+
+// ── COVER IMAGE ──
+function showCoverInput() {
+  var input = document.getElementById('cover-url-input');
+  input.style.display = 'block';
+  input.focus();
+  input.select();
+}
+function hideCoverInput() {
+  var input = document.getElementById('cover-url-input');
+  if (!input.value.trim()) input.style.display = 'none';
+  else setTimeout(function(){ input.style.display='none'; }, 200);
+}
+function updateCover(url) {
+  var thumb = document.getElementById('cover-thumb-wrap');
+  var placeholder = document.getElementById('cover-placeholder');
+  var img = document.getElementById('cover-preview-img');
+  var navWrap = document.getElementById('mnav-cover-wrap');
+  var navImg = document.getElementById('mnav-cover-img');
+  if (url && url.trim()) {
+    img.src = url.trim();
+    if (navImg) navImg.src = url.trim();
+    img.onload = function(){
+      thumb.style.display='flex'; thumb.style.flexDirection='column'; thumb.style.alignItems='center';
+      placeholder.style.display='none';
+      if (navWrap) navWrap.style.display='flex';
+    };
+    img.onerror = function(){
+      thumb.style.display='none'; placeholder.style.display='flex';
+      if (navWrap) navWrap.style.display='none';
+    };
+  } else {
+    thumb.style.display='none'; placeholder.style.display='flex';
+    if (navWrap) navWrap.style.display='none';
+  }
+  saveModule();
+}
+
+// ── RESOURCES ──
+var RES_TYPES = ['Book','Article','Video','Podcast','Essay','Documentary','Website','Course','Other'];
+
+function getResources() {
+  var entries = [];
+  document.querySelectorAll('#resource-list .res-entry').forEach(function(row){
+    entries.push({
+      type: row.querySelector('.res-type-select').value,
+      title: row.querySelector('.res-input').value,
+      link: row.querySelector('.res-link-input').value,
+    });
+  });
+  return entries;
+}
+
+function renderResources(resources) {
+  var list = document.getElementById('resource-list'); list.innerHTML='';
+  (resources||[]).forEach(function(r){ appendResourceRow(r); });
+}
+
+function appendResourceRow(r) {
+  var list = document.getElementById('resource-list');
+  var row = document.createElement('div'); row.className='res-entry';
+  // Type select
+  var typeOpts = RES_TYPES.map(function(t){ return '<option'+(t===(r&&r.type)?'  selected':'')+'>'+t+'</option>'; }).join('');
+  var typeSelect = document.createElement('select'); typeSelect.className='res-type-select';
+  typeSelect.innerHTML='<option value="">Type...</option>'+typeOpts;
+  if(r&&r.type) typeSelect.value=r.type;
+  typeSelect.onchange=saveModule;
+  // Title
+  var titleInput = document.createElement('input'); titleInput.className='res-input'; titleInput.type='text';
+  titleInput.placeholder='Title / Author...'; titleInput.value=(r&&r.title)||'';
+  titleInput.oninput=saveModule;
+  // Link
+  var linkInput = document.createElement('input'); linkInput.className='res-link-input'; linkInput.type='text';
+  linkInput.placeholder='Link (optional)...'; linkInput.value=(r&&r.link)||'';
+  linkInput.oninput=saveModule;
+  // Actions
+  var actWrap = document.createElement('div'); actWrap.style.cssText='display:flex;align-items:center;gap:5px;';
+  if (r&&r.link) {
+    var openBtn = document.createElement('a'); openBtn.className='res-open-btn';
+    openBtn.textContent='↗'; openBtn.href=r.link; openBtn.target='_blank'; openBtn.style.textDecoration='none';
+    actWrap.appendChild(openBtn);
+    linkInput.oninput = function(){ openBtn.href=this.value; saveModule(); };
+  } else {
+    var openBtn = document.createElement('a'); openBtn.className='res-open-btn';
+    openBtn.textContent='↗'; openBtn.href='#'; openBtn.target='_blank'; openBtn.style.textDecoration='none';
+    actWrap.appendChild(openBtn);
+    linkInput.oninput = function(){ openBtn.href=this.value||'#'; saveModule(); };
+  }
+  var del = document.createElement('button'); del.className='res-del'; del.textContent='✕';
+  del.onclick=function(){row.remove();saveModule();};
+  actWrap.appendChild(del);
+  row.appendChild(typeSelect); row.appendChild(titleInput); row.appendChild(linkInput); row.appendChild(actWrap);
+  list.appendChild(row);
+}
+
+function addResource() {
+  appendResourceRow({type:'',title:'',link:''});
+  document.querySelectorAll('.res-input')[document.querySelectorAll('.res-input').length-1].focus();
+  saveModule();
+}
+
+// ── SAVE MODULE (updated to include resources + cover) ──
+function moduleKey(i) { return SK+'_m'+i; }
+function saveModule() {
+  if (activeModule===null) return;
+  var d = {};
+  document.querySelectorAll('#view-module [data-save-id]').forEach(function(el){
+    if (el.tagName==='SELECT'||el.tagName==='INPUT') d[el.dataset.saveId]=el.value;
+    else d[el.dataset.saveId]=el.innerHTML;
+  });
+  d['_w2opt'] = (document.querySelector('[id^="w2opt-"].selected')||{id:''}).id.replace('w2opt-','');
+  d['_capstone'] = (document.querySelector('[id^="cap-"].selected')||{id:''}).id.replace('cap-','');
+  d['_successChecks'] = getSuccessChecks();
+  d['_weekDone'] = getWeekDone();
+  d['_resources'] = getResources();
+  localStorage.setItem(moduleKey(activeModule), JSON.stringify(d));
+  renderAnnualGrid();
+}
+
+function loadModule(i) {
+  var raw = localStorage.getItem(moduleKey(i));
+  if (!raw) return {};
+  try { return JSON.parse(raw); } catch(e) { return {}; }
+}
+
+// ── SUCCESS CHECKS ──
+function getSuccessChecks() {
+  var checks = [];
+  document.querySelectorAll('#success-checks .check-row').forEach(function(row){
+    checks.push({text:row.querySelector('.check-label').textContent, done:row.querySelector('.check-box').classList.contains('checked')});
+  });
+  return checks;
+}
+function renderSuccessChecks(checks) {
+  var container = document.getElementById('success-checks'); container.innerHTML='';
+  (checks||[]).forEach(function(c,i){
+    addCheckRow(container, c.text, c.done, i);
+  });
+}
+function addCheckRow(container, text, done, idx) {
+  var row = document.createElement('div'); row.className='check-row';
+  var box = document.createElement('div'); box.className='check-box'+(done?' checked':'');
+  box.onclick=function(){box.classList.toggle('checked');saveModule();};
+  var label = document.createElement('div'); label.className='check-label'; label.contentEditable='true'; label.textContent=text||'';
+  label.setAttribute('data-ph','Success metric...');
+  if(!text) label.style.fontStyle='italic';
+  label.oninput=function(){saveModule();};
+  var del = document.createElement('button');
+  del.textContent='✕'; del.style.cssText='background:none;border:none;color:#ccc;cursor:pointer;font-size:0.65rem;padding:0 4px;';
+  del.onmouseover=function(){this.style.color='#a0304a';};
+  del.onmouseout=function(){this.style.color='#ccc';};
+  del.onclick=function(){row.remove();saveModule();};
+  row.appendChild(box);row.appendChild(label);row.appendChild(del);
+  container.appendChild(row);
+}
+function addSuccessCheck(){
+  var container=document.getElementById('success-checks');
+  addCheckRow(container,'',false,container.children.length);
+  container.lastChild.querySelector('.check-label').focus();
+}
+
+// ── WEEK DONE STATE ──
+function getWeekDone(){
+  var d={};
+  ['setup','w1','w2','w3','w4'].forEach(function(w){
+    var el=document.getElementById('wtab-'+w);
+    if(el) d[w]=el.classList.contains('done');
+  });
+  return d;
+}
+function toggleWeekDone(w){
+  var el=document.getElementById('wtab-'+w);
+  if(!el)return;
+  el.classList.toggle('done');
+  saveModule();
+}
+
+// ── CAPSTONE / W2 OPT ──
+function selectCapstone(opt){
+  document.querySelectorAll('[id^="cap-"]').forEach(function(el){el.classList.remove('selected');});
+  document.getElementById('cap-'+opt).classList.add('selected');
+  saveModule();
+}
+function selectW2Opt(opt){
+  document.querySelectorAll('[id^="w2opt-"]').forEach(function(el){el.classList.remove('selected');});
+  document.getElementById('w2opt-'+opt).classList.add('selected');
+  saveModule();
+}
+
+// ── WEEK TABS ──
+function buildWeekTabs(){
+  var container=document.getElementById('week-tabs'); container.innerHTML='';
+  var tabs=[
+    {id:'setup',label:'Setup'},
+    {id:'w1',label:'Week 1 · Foundation'},
+    {id:'w2',label:'Week 2 · Critical Thinking'},
+    {id:'w3',label:'Week 3 · Integration'},
+    {id:'w4',label:'Week 4 · Synthesis'},
+  ];
+  var d=loadModule(activeModule);
+  var wd=d._weekDone||{};
+  tabs.forEach(function(t){
+    var btn=document.createElement('button');
+    btn.id='wtab-'+t.id;
+    btn.className='wtab'+(wd[t.id]?' done':'');
+    btn.textContent=(wd[t.id]?'✓ ':'')+t.label;
+    btn.onclick=(function(tid){return function(){switchWeekTab(tid);};})(t.id);
+    container.appendChild(btn);
+  });
+  // active first tab
+  document.querySelector('.wtab').classList.add('active');
+}
+function switchWeekTab(id){
+  document.querySelectorAll('.wtab').forEach(function(b){b.classList.remove('active');});
+  document.querySelectorAll('.wpage').forEach(function(p){p.classList.remove('active');});
+  document.getElementById('wtab-'+id).classList.add('active');
+  document.getElementById('wp-'+id).classList.add('active');
+  saveModule();
+}
+
+// ── OPEN MODULE ── 
+function openModule(i){
+  activeModule=i;
+  var d=loadModule(i);
+  document.getElementById('mnav-month').textContent=MONTHS_FULL[i]+' 2026';
+  // Populate all fields
+  document.querySelectorAll('#view-module [data-save-id]').forEach(function(el){
+    if(el.tagName==='SELECT'||el.tagName==='INPUT'){el.value=d[el.dataset.saveId]||'';}
+    else{el.innerHTML=d[el.dataset.saveId]||'';}
+  });
+  // cover image
+  var coverUrl=d.cover_url||'';
+  var coverInput=document.getElementById('cover-url-input');
+  if(coverInput) coverInput.value=coverUrl;
+  if(coverUrl) updateCover(coverUrl);
+  else{
+    document.getElementById('cover-thumb-wrap').style.display='none';
+    document.getElementById('cover-placeholder').style.display='flex';
+    document.getElementById('mnav-cover-wrap').style.display='none';
+  }
+  // title in nav
+  var titleEl=document.querySelector('#view-module [data-save-id="title"]');
+  document.getElementById('mnav-title').textContent=titleEl.textContent||MONTHS_FULL[i]+' Module';
+  // resources
+  renderResources(d._resources||[]);
+  // success checks
+  renderSuccessChecks(d._successChecks||[]);
+  // capstone + w2opt
+  if(d._capstone){document.querySelectorAll('[id^="cap-"]').forEach(function(el){el.classList.remove('selected');});var capEl=document.getElementById('cap-'+d._capstone);if(capEl)capEl.classList.add('selected');}
+  if(d._w2opt){document.querySelectorAll('[id^="w2opt-"]').forEach(function(el){el.classList.remove('selected');});var w2El=document.getElementById('w2opt-'+d._w2opt);if(w2El)w2El.classList.add('selected');}
+  buildWeekTabs();
+  document.getElementById('view-annual').classList.remove('active');
+  document.getElementById('view-module').classList.add('active');
+  document.getElementById('view-module').addEventListener('input',saveModule);
+}
+
+function goAnnual(){
+  saveModule();
+  document.getElementById('view-module').classList.remove('active');
+  document.getElementById('view-annual').classList.add('active');
+  activeModule=null;
+}
+
+// ── ANNUAL GRID ──
+function renderAnnualGrid(){
+  var grid=document.getElementById('annual-grid'); grid.innerHTML='';
+  MONTHS_FULL.forEach(function(m,i){
+    var d=loadModule(i);
+    var topic=d.title?(d.title.replace(/<[^>]+>/g,'').trim()):'';
+    var type=d.type||'';
+    var color=TYPE_COLORS[type]||'#e0cec8';
+    var wd=d._weekDone||{};
+    var weeksDone=['setup','w1','w2','w3','w4'].filter(function(w){return wd[w];}).length;
+    var pct=Math.round(weeksDone/5*100);
+    var isCompleted=weeksDone===5;
+    var tile=document.createElement('div');
+    tile.className='module-tile'+(topic?' has-topic':'')+(isCompleted?' completed':'');
+    tile.innerHTML=
+      '<div class="mt-month">'+m+'</div>'+
+      (d.cover_url?'<div style="margin-bottom:8px;"><img src="'+d.cover_url+'" alt="" style="width:100%;height:60px;object-fit:cover;border-radius:8px;border:1px solid var(--rule);" onerror="this.style.display=\'none\'"></div>':'')+
+      '<div class="mt-topic'+(topic?'':' empty')+'">'+
+        (topic||'Click to set topic')+'</div>'+
+      (type?'<div class="mt-type"><span class="type-dot" style="background:'+color+'"></span>'+type+'</div>':'')+
+      (topic?'<div class="mt-progress"><div class="mt-prog-bar"><div class="mt-prog-fill" style="width:'+pct+'%"></div></div><div class="mt-prog-label">'+weeksDone+'/5 sections</div></div>':
+        '<div class="mt-add">＋ Start this module →</div>');
+    tile.onclick=(function(idx){return function(){openModule(idx);};})(i);
+    grid.appendChild(tile);
+  });
+}
+
+// ── TOPIC MODAL ──
+var pickingForModal = false;
+function openTopicModal(){
+  var container=document.getElementById('topic-groups'); container.innerHTML='';
+  TOPIC_IDEAS.forEach(function(g){
+    var div=document.createElement('div'); div.className='topic-group';
+    div.innerHTML='<div class="topic-group-label">'+g.group+'</div><div class="topic-chips"></div>';
+    var chips=div.querySelector('.topic-chips');
+    g.topics.forEach(function(t){
+      var chip=document.createElement('div');chip.className='topic-chip';chip.textContent=t;
+      chip.onclick=function(){
+        var titleEl=document.querySelector('#wp-setup [data-save-id="title"]');
+        if(titleEl){titleEl.textContent=t;saveModule();renderAnnualGrid();}
+        var navTitle=document.getElementById('mnav-title');
+        if(navTitle)navTitle.textContent=t;
+        closeTopicModal();
+      };
+      chips.appendChild(chip);
+    });
+    container.appendChild(div);
+  });
+  document.getElementById('topic-modal').classList.add('open');
+}
+function closeTopicModal(){document.getElementById('topic-modal').classList.remove('open');}
+document.getElementById('topic-modal').addEventListener('click',function(e){if(e.target===this)closeTopicModal();});
+document.addEventListener('keydown',function(e){if(e.key==='Escape')closeTopicModal();});
+
+// ── PDF ──
+function savePDF(){
+  document.querySelectorAll('.wpage').forEach(function(p){p.style.cssText='display:block!important;';});
+  setTimeout(function(){
+    window.print();
+    document.querySelectorAll('.wpage').forEach(function(p){p.style.cssText='';});
+    document.querySelector('.wpage.active') && (document.querySelector('.wpage.active').style.display='block');
+  },300);
+}
+
+// ── INIT ──
+var now=new Date();
+document.getElementById('today-date').textContent=DAYS_FULL[now.getDay()]+', '+MONTHS_FULL[now.getMonth()]+' '+now.getDate()+', '+now.getFullYear();
+renderAnnualGrid();
+</script>
+</body>
+</html>
