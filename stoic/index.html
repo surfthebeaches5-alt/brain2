@@ -91,6 +91,10 @@ body{background:#f0e8e4;font-family:'Jost',sans-serif;color:var(--ink);min-heigh
 .entry-preview{font-size:0.7rem;color:var(--muted);font-style:italic;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
 .entry-del{background:none;border:none;font-size:0.62rem;color:#ccc;cursor:pointer;padding:2px 5px;transition:color .15s;flex-shrink:0;}
 .entry-del:hover{color:#a0304a;}
+.chip-edit-btn{padding:3px 9px;border:1.5px solid var(--rule);border-radius:9px;font-family:'Jost',sans-serif;font-size:0.62rem;cursor:pointer;background:transparent;color:var(--muted);transition:all .15s;flex-shrink:0;}
+.chip-edit-btn:hover{border-color:var(--mauve);color:var(--ink);}
+.complete-btn{padding:6px 16px;border:none;border-radius:14px;background:var(--sage);color:white;font-family:'Jost',sans-serif;font-size:0.72rem;font-weight:600;cursor:pointer;transition:all .15s;}
+.complete-btn:hover{background:#5a9e6e;}
 .empty-state{text-align:center;padding:28px 20px;color:var(--muted);background:var(--warm);border:1px dashed var(--rule);border-radius:12px;}
 .empty-icon{font-size:1.8rem;margin-bottom:6px;}
 .empty-text{font-family:'Cormorant Garamond',serif;font-size:0.95rem;font-style:italic;}
@@ -1158,7 +1162,7 @@ function renderExPage(mi,ei){
   var formWrap=document.createElement('div'); formWrap.id='entry-form-area'; page.appendChild(formWrap);
   c.appendChild(page);
 
-  // ── BUG FIX: always render form if there's an active entry ──
+  // Only render form if activeEntryId is set
   if(activeEntryId){
     var entryExists=entries.some(function(e){return e.id===activeEntryId;});
     if(entryExists){
@@ -1168,45 +1172,57 @@ function renderExPage(mi,ei){
       });
     } else {
       activeEntryId=null;
-      if(entries.length){ renderLatestEntry(mi,ei,entries); }
     }
-  } else if(entries.length){
-    renderLatestEntry(mi,ei,entries);
   }
 }
 
-function renderLatestEntry(mi,ei,entries){
-  activeEntryId=entries[entries.length-1].id;
-  renderEntryForm(mi,ei,activeEntryId);
-  document.querySelectorAll('.entry-chip').forEach(function(ch){
-    ch.classList.toggle('active-entry', ch.dataset.id===activeEntryId);
-  });
-}
 
 function buildChip(en,mi,ei){
   var exId=MODULES[mi].exercises[ei].id;
   var chip=document.createElement('div'); chip.className='entry-chip'; chip.dataset.id=en.id;
   var preview=getFirstText(en);
-  chip.innerHTML=
-    '<span class="entry-date">'+en.date+'</span>'+
-    '<span class="entry-preview">'+(preview||'(no content yet)')+'</span>';
+
+  var dateSpan=document.createElement('span'); dateSpan.className='entry-date'; dateSpan.textContent=en.date;
+  var prevSpan=document.createElement('span'); prevSpan.className='entry-preview'; prevSpan.textContent=(preview||'(no content yet)');
+
+  var editBtn=document.createElement('button'); editBtn.className='chip-edit-btn'; editBtn.textContent='Edit';
+  editBtn.onclick=function(e){
+    e.stopPropagation();
+    document.querySelectorAll('.entry-chip').forEach(function(c){c.classList.remove('active-entry');});
+    chip.classList.add('active-entry');
+    activeEntryId=en.id;
+    renderEntryForm(mi,ei,en.id);
+    setTimeout(function(){
+      var f=document.getElementById('entry-form-area');
+      if(f) f.scrollIntoView({behavior:'smooth',block:'start'});
+    },80);
+  };
+
   var del=document.createElement('button'); del.className='entry-del'; del.textContent='✕';
   del.onclick=function(e){
     e.stopPropagation();
     if(!confirm('Delete this entry?')) return;
     var arr=getEntries(mi,exId).filter(function(x){return x.id!==en.id;});
     saveEntries(mi,exId,arr);
-    if(activeEntryId===en.id) activeEntryId=null;
+    if(activeEntryId===en.id){
+      activeEntryId=null;
+      var fw=document.getElementById('entry-form-area');
+      if(fw) fw.innerHTML='';
+    }
     renderExPage(mi,ei);
     buildExTabs(mi);
     renderOverview();
   };
+
+  chip.appendChild(dateSpan);
+  chip.appendChild(prevSpan);
+  chip.appendChild(editBtn);
   chip.appendChild(del);
-  chip.onclick=function(){
-    document.querySelectorAll('.entry-chip').forEach(function(c){c.classList.remove('active-entry');});
-    chip.classList.add('active-entry');
-    activeEntryId=en.id;
-    renderEntryForm(mi,ei,en.id);
+
+  // clicking the chip row itself also opens edit
+  chip.onclick=function(e){
+    if(e.target===editBtn||e.target===del) return;
+    editBtn.click();
   };
   return chip;
 }
@@ -1226,6 +1242,7 @@ function createEntry(mi,ei){
   renderExPage(mi,ei);
   buildExTabs(mi);
   renderOverview();
+  // auto-scroll to form after render
   setTimeout(function(){
     var f=document.getElementById('entry-form-area');
     if(f) f.scrollIntoView({behavior:'smooth',block:'start'});
@@ -1246,11 +1263,35 @@ function renderEntryForm(mi,ei,entryId){
   wrap.innerHTML='';
   var form=document.createElement('div'); form.className='entry-form';
   var fhdr=document.createElement('div'); fhdr.className='entry-form-hdr';
-  fhdr.innerHTML='<span class="entry-form-date">'+en.date+'</span><span class="saved-indicator" id="saved-ind">✓ Auto-saved</span>';
+
+  var dateSpan=document.createElement('span'); dateSpan.className='entry-form-date'; dateSpan.textContent=en.date;
+  var savedSpan=document.createElement('span'); savedSpan.className='saved-indicator'; savedSpan.id='saved-ind'; savedSpan.textContent='✓ Auto-saved';
+
+  var completeBtn=document.createElement('button'); completeBtn.className='complete-btn';
+  completeBtn.textContent='✓ Complete';
+  completeBtn.onclick=function(){
+    activeEntryId=null;
+    wrap.innerHTML='';
+    // refresh chips to update preview text
+    renderExPage(mi,ei);
+    buildExTabs(mi);
+    renderOverview();
+  };
+
+  fhdr.appendChild(dateSpan);
+  fhdr.appendChild(savedSpan);
+  fhdr.appendChild(completeBtn);
   form.appendChild(fhdr);
   buildFields(form, ex.fields, en, mi, ei);
   var orn=document.createElement('div'); orn.className='ornament'; orn.textContent='✦ ✿ ✦';
   form.appendChild(orn);
+
+  // Bottom complete button too
+  var bottomBtn=document.createElement('button'); bottomBtn.className='complete-btn'; bottomBtn.style.marginTop='16px';
+  bottomBtn.textContent='✓ Complete & Collapse';
+  bottomBtn.onclick=completeBtn.onclick;
+  form.appendChild(bottomBtn);
+
   wrap.appendChild(form);
 }
 
