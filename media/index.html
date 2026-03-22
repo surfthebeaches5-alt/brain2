@@ -161,6 +161,11 @@ body{background:#f0e8e4;font-family:'Jost',sans-serif;color:var(--ink);min-heigh
       <label class="f-label">Date Completed</label>
       <input class="f-input" id="m-date" type="date">
     </div>
+    <!-- Books: page count -->
+    <div class="f-field" id="pages-field-wrap" style="display:none;">
+      <label class="f-label">Page Count</label>
+      <input class="f-input" id="m-pages" type="number" min="0" placeholder="e.g. 320">
+    </div>
 
     <!-- Podcasts: episode tracking -->
     <div id="podcast-fields-wrap" style="display:none;">
@@ -241,6 +246,8 @@ body{background:#f0e8e4;font-family:'Jost',sans-serif;color:var(--ink);min-heigh
 </div>
 
 <script>
+var pwd=localStorage.getItem('brain2auth');
+if(pwd!=='0421'){var attempt=prompt('Password:');if(attempt!=='0421'){document.body.innerHTML='';throw new Error('Unauthorized');}localStorage.setItem('brain2auth',attempt);}
 var SK='mediaTracker3';
 var MONTHS_SHORT=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
 
@@ -432,6 +439,10 @@ function renderStats(){
     html+='<div class="stat-divider"></div><div class="stat"><div class="stat-num">'+cnt+'</div><div class="stat-label">'+s.label+'</div></div>';
   });
   // Year breakdown for books & screen
+  if(currentSection==='books'){
+    var totalPages=all.filter(function(i){return i.status==='done'&&i.pages>0;}).reduce(function(sum,i){return sum+(i.pages||0);},0);
+    if(totalPages>0) html+='<div class="stat-divider"></div><div class="stat"><div class="stat-num">'+totalPages.toLocaleString()+'</div><div class="stat-label">Pages Read</div></div>';
+  }
   if(sec.showDate){
     var counts=getYearCounts(currentSection);
     var yrs=Object.keys(counts).sort().reverse();
@@ -587,6 +598,7 @@ function findItem(id){return(data[currentSection]||[]).find(function(i){return i
 // Modal helpers
 function showModalFields(sec){
   document.getElementById('date-field-wrap').style.display=     sec==='books'?'block':'none';
+  document.getElementById('pages-field-wrap').style.display=    sec==='books'?'block':'none';
   document.getElementById('podcast-fields-wrap').style.display= sec==='podcasts'?'block':'none';
   document.getElementById('music-fields-wrap').style.display=   sec==='music'?'block':'none';
   document.getElementById('screen-fields-wrap').style.display=  sec==='screen'?'block':'none';
@@ -604,6 +616,7 @@ function clearModalFields(){
   document.getElementById('m-note').value='';
   document.getElementById('m-rating').value='0';
   document.getElementById('m-date').value='';
+  document.getElementById('m-pages').value='';
   document.getElementById('m-ep-current').value='';document.getElementById('m-ep-total').value='';
   document.getElementById('m-tracks-done').value='';document.getElementById('m-tracks-total').value='';
   document.getElementById('m-season').value='';document.getElementById('m-episode').value='';document.getElementById('m-seasons-total').value='';
@@ -630,6 +643,7 @@ function openEditModal(id){
   document.getElementById('m-note').value=item.note||'';
   document.getElementById('m-rating').value=item.rating||0;
   document.getElementById('m-date').value=item.date||'';
+  document.getElementById('m-pages').value=item.pages||'';
   document.getElementById('m-ep-current').value=item.epCurrent||'';
   document.getElementById('m-ep-total').value=item.epTotal||'';
   document.getElementById('m-tracks-done').value=item.tracksDone||'';
@@ -662,6 +676,7 @@ function saveItem(){
     link:document.getElementById('m-link').value.trim(),
     note:document.getElementById('m-note').value.trim(),
     date:dateVal,
+    pages:parseInt(document.getElementById('m-pages').value)||0,
     epCurrent:parseInt(document.getElementById('m-ep-current').value)||0,
     epTotal:parseInt(document.getElementById('m-ep-total').value)||0,
     tracksDone:parseInt(document.getElementById('m-tracks-done').value)||0,
