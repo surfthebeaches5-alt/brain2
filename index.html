@@ -47,17 +47,16 @@ body{background:#f0e8e4;font-family:'Jost',sans-serif;color:var(--ink);min-heigh
 .cs{font-size:0.72rem;color:var(--muted);line-height:1.5;}
 
 /* HERO */
-.hero{background:linear-gradient(135deg,#fce8ef,#f0e0f0);border:1px solid var(--blush);border-radius:16px;padding:24px 28px;}
-.hero-greeting{font-family:'Cormorant Garamond',serif;font-size:2rem;font-weight:300;font-style:italic;margin-bottom:3px;}
-.hero-sub{font-size:0.7rem;color:var(--muted);margin-bottom:14px;}
+.hero{background:linear-gradient(135deg,#fce8ef,#f0e0f0);border:1px solid var(--blush);border-radius:16px;padding:18px 28px;}
+.hero-greeting{font-family:'Cormorant Garamond',serif;font-size:2rem;font-weight:300;font-style:italic;margin-bottom:2px;}
+.hero-sub{font-size:0.7rem;color:var(--muted);margin-bottom:12px;}
 .prog-label{display:flex;justify-content:space-between;font-size:0.64rem;color:var(--muted);margin-bottom:4px;}
-.prog-bar{height:5px;background:rgba(201,160,180,.25);border-radius:3px;overflow:hidden;margin-bottom:16px;}
+.prog-bar{height:5px;background:rgba(201,160,180,.25);border-radius:3px;overflow:hidden;margin-bottom:0;}
 .prog-fill{height:100%;border-radius:3px;}
 .pf-pink{background:linear-gradient(90deg,var(--blush),var(--mauve));}
 .pf-sage{background:linear-gradient(90deg,#b8cfb0,#7aaa70);}
 .pf-lav{background:linear-gradient(90deg,var(--lavender),#a880c8);}
 .pf-teal{background:linear-gradient(90deg,#a8d8d0,#5ab0a8);}
-.hero-btns{display:flex;gap:8px;flex-wrap:wrap;}
 
 /* BUTTONS */
 .btn{display:inline-flex;align-items:center;gap:5px;padding:7px 16px;border:none;border-radius:20px;font-family:'Jost',sans-serif;font-size:0.72rem;font-weight:600;cursor:pointer;text-decoration:none;transition:all .15s;}
@@ -109,11 +108,10 @@ hr.div{border:none;border-top:1px solid var(--rule);margin:10px 0;}
 .plan-sub{font-size:0.68rem;color:var(--muted);margin-bottom:8px;}
 
 /* TOOL GRID */
-.tool-card{background:var(--cream);border:1px solid var(--rule);border-radius:12px;padding:15px 16px;text-decoration:none;color:var(--ink);display:block;transition:all .15s;}
+.tool-card{background:var(--cream);border:1px solid var(--rule);border-radius:12px;padding:12px 14px;text-decoration:none;color:var(--ink);display:flex;align-items:center;gap:10px;transition:all .15s;}
 .tool-card:hover{transform:translateY(-2px);box-shadow:0 5px 16px rgba(180,130,140,.13);border-color:var(--mauve);}
-.tool-emoji{font-size:1.5rem;margin-bottom:6px;display:block;}
-.tool-name{font-family:'Cormorant Garamond',serif;font-size:0.95rem;font-weight:600;margin-bottom:2px;}
-.tool-desc{font-size:0.63rem;color:var(--muted);line-height:1.4;}
+.tool-emoji{font-size:1.2rem;flex-shrink:0;}
+.tool-name{font-family:'Cormorant Garamond',serif;font-size:0.95rem;font-weight:600;}
 
 .empty-txt{font-size:0.7rem;color:var(--muted);font-style:italic;padding:6px 0;}
 </style>
@@ -127,40 +125,16 @@ hr.div{border:none;border-top:1px solid var(--rule);margin:10px 0;}
 
 <div class="hub">
 
-  <!-- HERO + QUICK LAUNCH -->
-  <div class="row hero-layout" style="margin-bottom:24px;">
+  <!-- HERO -->
+  <div style="margin-bottom:24px;">
     <div class="hero">
-      <div class="hero-greeting" id="hero-greeting">Good morning ✦</div>
+      <div class="hero-greeting" id="hero-greeting">Good evening ✦</div>
       <div class="hero-sub" id="hero-sub"></div>
       <div class="prog-label">
         <span id="year-label">Day — of 365</span>
         <span id="year-pct">—%</span>
       </div>
       <div class="prog-bar"><div class="prog-fill pf-pink" id="year-bar" style="width:0%"></div></div>
-      <div class="hero-btns">
-        <a href="weekly-audit/"  class="btn btn-mauve">Weekly Audit →</a>
-        <a href="monthly/"       class="btn btn-ghost">Monthly Planner →</a>
-        <a href="fitness/"       class="btn btn-ghost">Fitness →</a>
-        <a href="calendar/"      class="btn btn-ghost">Calendar →</a>
-      </div>
-    </div>
-    <div class="card flat" style="padding:14px 16px;">
-      <div style="font-size:0.57rem;letter-spacing:2px;text-transform:uppercase;color:var(--muted);font-weight:600;margin-bottom:8px;">Quick Launch — All Tools</div>
-      <div class="ql-grid">
-        <a href="weekly-audit/"    class="ql">📋 Weekly Audit<span class="ql-arrow">↗</span></a>
-        <a href="monthly/"         class="ql">🗓️ Monthly Plan<span class="ql-arrow">↗</span></a>
-        <a href="reset-2026/"      class="ql">✨ 2026 Reset<span class="ql-arrow">↗</span></a>
-        <a href="curriculum/"      class="ql">📖 Curriculum<span class="ql-arrow">↗</span></a>
-        <a href="stoic/"           class="ql">🌿 Stoic Workbook<span class="ql-arrow">↗</span></a>
-        <a href="fitness/"         class="ql">💪 Fitness<span class="ql-arrow">↗</span></a>
-        <a href="finances/"        class="ql">💳 Finances<span class="ql-arrow">↗</span></a>
-        <a href="language-portal/" class="ql">🌍 Languages<span class="ql-arrow">↗</span></a>
-        <a href="media/"           class="ql">🎵 Media<span class="ql-arrow">↗</span></a>
-        <a href="wishlist/"        class="ql">✦ Wishlist<span class="ql-arrow">↗</span></a>
-        <a href="passport/"        class="ql">🗺️ DC Passport<span class="ql-arrow">↗</span></a>
-        <a href="professional-dev/" class="ql">📊 Prof Dev<span class="ql-arrow">↗</span></a>
-        <a href="calendar/"        class="ql">📅 Calendar<span class="ql-arrow">↗</span></a>
-      </div>
     </div>
   </div>
 
@@ -195,7 +169,7 @@ hr.div{border:none;border-top:1px solid var(--rule);margin:10px 0;}
       <hr class="div">
       <div style="display:flex;gap:6px;flex-wrap:wrap;">
         <a href="finances/" class="btn btn-ghost btn-sm">Tracker →</a>
-        <a href="https://secure.chase.com" target="_blank" class="btn btn-ghost btn-sm">Chase ↗</a>
+        <a href="https://www.sofi.com/login/" target="_blank" class="btn btn-ghost btn-sm">SoFi ↗</a>
         <a href="https://app.useorigin.com" target="_blank" class="btn btn-ghost btn-sm">Origin ↗</a>
       </div>
     </div>
@@ -205,6 +179,14 @@ hr.div{border:none;border-top:1px solid var(--rule);margin:10px 0;}
   <!-- PLANNING SYSTEM -->
   <div class="sec-title">Planning System</div>
   <div class="row col-3" style="margin-bottom:24px;">
+
+    <div class="card c-blush">
+      <div class="cl">Weekly Audit</div>
+      <div class="ct" style="margin-bottom:6px;">This Week</div>
+      <div style="font-size:0.72rem;color:var(--muted);margin-bottom:10px;" id="weekly-week"></div>
+      <hr class="div">
+      <a href="weekly-audit/" class="btn btn-ghost btn-sm">Open Audit →</a>
+    </div>
 
     <div class="card c-mauve">
       <div class="cl">Monthly Planner</div>
@@ -216,14 +198,6 @@ hr.div{border:none;border-top:1px solid var(--rule);margin:10px 0;}
       </div>
       <hr class="div">
       <a href="monthly/" class="btn btn-ghost btn-sm">Open Planner →</a>
-    </div>
-
-    <div class="card c-blush">
-      <div class="cl">2026 Reset</div>
-      <div class="ct" style="margin-bottom:6px;">Identity Manifesto</div>
-      <div id="reset-preview" class="cs" style="font-style:italic;min-height:36px;"></div>
-      <hr class="div">
-      <a href="reset-2026/" class="btn btn-ghost btn-sm">Open Reset →</a>
     </div>
 
     <div class="card c-lav">
@@ -294,31 +268,33 @@ hr.div{border:none;border-top:1px solid var(--rule);margin:10px 0;}
   <!-- ALL TOOLS -->
   <div class="sec-title">All Tools</div>
   <div class="row col-5" style="margin-bottom:10px;">
-    <a href="weekly-audit/"    class="tool-card c-blush"><span class="tool-emoji">📋</span><div class="tool-name">Weekly Audit</div><div class="tool-desc">Sunday review · life wheel · goals · letter to self</div></a>
-    <a href="monthly/"         class="tool-card c-mauve"><span class="tool-emoji">🗓️</span><div class="tool-name">Monthly Planner</div><div class="tool-desc">11-part monthly focus system · habit stacking</div></a>
-    <a href="reset-2026/"      class="tool-card c-blush"><span class="tool-emoji">✨</span><div class="tool-name">2026 Reset</div><div class="tool-desc">Identity audit · narrative · lifestyle rebrand</div></a>
-    <a href="curriculum/"      class="tool-card c-lav"><span class="tool-emoji">📖</span><div class="tool-name">Personal Curriculum</div><div class="tool-desc">12 monthly learning modules · 4-week framework</div></a>
-    <a href="stoic/"           class="tool-card c-sage"><span class="tool-emoji">🌿</span><div class="tool-name">Stoic Workbook</div><div class="tool-desc">8 modules · living journal · dated entries</div></a>
+    <a href="weekly-audit/"    class="tool-card c-blush"><span class="tool-emoji">📋</span><div class="tool-name">Weekly Audit</div></a>
+    <a href="monthly/"         class="tool-card c-mauve"><span class="tool-emoji">🗓️</span><div class="tool-name">Monthly Planner</div></a>
+    <a href="reset-2026/"      class="tool-card c-blush"><span class="tool-emoji">✨</span><div class="tool-name">2026 Reset</div></a>
+    <a href="curriculum/"      class="tool-card c-lav"><span class="tool-emoji">📖</span><div class="tool-name">Personal Curriculum</div></a>
+    <a href="stoic/"           class="tool-card c-sage"><span class="tool-emoji">🌿</span><div class="tool-name">Stoic Workbook</div></a>
   </div>
   <div class="row col-5" style="margin-bottom:10px;">
-    <a href="fitness/"         class="tool-card c-sage"><span class="tool-emoji">💪</span><div class="tool-name">Fitness Tracker</div><div class="tool-desc">7-day workouts · steps · meals · protein · habits</div></a>
-    <a href="finances/"        class="tool-card c-blush"><span class="tool-emoji">💳</span><div class="tool-name">Financial Tracker</div><div class="tool-desc">Credit cards · due dates · banking links</div></a>
-    <a href="language-portal/" class="tool-card c-mauve"><span class="tool-emoji">🌍</span><div class="tool-name">Language Portal</div><div class="tool-desc">Spanish & Portuguese · session launcher · Anki</div></a>
-    <a href="professional-dev/" class="tool-card c-sage"><span class="tool-emoji">📊</span><div class="tool-name">Professional Dev</div><div class="tool-desc">Coursera progress · skills · certifications</div></a>
-    <a href="media/"           class="tool-card c-teal"><span class="tool-emoji">🎵</span><div class="tool-name">Media Tracker</div><div class="tool-desc">Books · podcasts · articles · albums · screen</div></a>
+    <a href="fitness/"         class="tool-card c-sage"><span class="tool-emoji">💪</span><div class="tool-name">Fitness Tracker</div></a>
+    <a href="finances/"        class="tool-card c-blush"><span class="tool-emoji">💳</span><div class="tool-name">Financial Tracker</div></a>
+    <a href="language-portal/" class="tool-card c-mauve"><span class="tool-emoji">🌍</span><div class="tool-name">Language Portal</div></a>
+    <a href="professional-dev/" class="tool-card c-sage"><span class="tool-emoji">📊</span><div class="tool-name">Professional Dev</div></a>
+    <a href="media/"           class="tool-card c-teal"><span class="tool-emoji">🎵</span><div class="tool-name">Media Tracker</div></a>
   </div>
   <div class="row col-5">
-    <a href="wishlist/"        class="tool-card c-blush"><span class="tool-emoji">✦</span><div class="tool-name">Wishlist</div><div class="tool-desc">Categories · priorities · prices · links</div></a>
-    <a href="passport/"        class="tool-card c-amber"><span class="tool-emoji">🗺️</span><div class="tool-name">DC Passport</div><div class="tool-desc">Interactive map · restaurants · museums · visited</div></a>
-    <a href="calendar/"        class="tool-card c-rose"><span class="tool-emoji">📅</span><div class="tool-name">Calendar</div><div class="tool-desc">Monthly & weekly · 8 categories · event notes</div></a>
-    <div style="border-radius:12px;border:1.5px dashed var(--rule);padding:15px;opacity:0.45;"><span class="tool-emoji" style="opacity:.5;">＋</span><div class="tool-name" style="color:var(--muted);font-family:'Jost',sans-serif;font-size:0.8rem;">More coming</div></div>
+    <a href="wishlist/"        class="tool-card c-blush"><span class="tool-emoji">✦</span><div class="tool-name">Wishlist</div></a>
+    <a href="passport/"        class="tool-card c-amber"><span class="tool-emoji">🗺️</span><div class="tool-name">DC Passport</div></a>
+    <a href="calendar/"        class="tool-card c-rose"><span class="tool-emoji">📅</span><div class="tool-name">Calendar</div></a>
+    <div></div>
     <div></div>
   </div>
 
 </div>
 
 <script>
-var DAYS=['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+var pwd=localStorage.getItem('brain2auth');
+if(pwd!=='Nikkireed234!'){var attempt=prompt('Password:');if(attempt!=='Nikkireed234!'){document.body.innerHTML='';throw new Error('Unauthorized');}localStorage.setItem('brain2auth',attempt);}
+['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
 var MONTHS=['January','February','March','April','May','June','July','August','September','October','November','December'];
 var MONTHS_S=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
 
@@ -406,6 +382,12 @@ CARDS.slice().sort(function(a,b){return daysUntil(a.day)-daysUntil(b.day);}).for
   document.getElementById('due-dates-list').appendChild(row);
 });
 
+// Weekly audit week label
+(function(){
+  var el=document.getElementById('weekly-week');
+  if(el) el.textContent='Week '+getWeekNum()+' · '+MONTHS[now.getMonth()]+' '+now.getDate()+', '+now.getFullYear();
+})();
+
 // Monthly planner — reads from localStorage
 (function(){
   var mo=now.getMonth();var yr=now.getFullYear();
@@ -423,16 +405,6 @@ CARDS.slice().sort(function(a,b){return daysUntil(a.day)-daysUntil(b.day);}).for
   document.getElementById('monthly-month').textContent=MONTHS[mo]+' progress';
   document.getElementById('monthly-pct').textContent=done+'/5 sections';
   document.getElementById('monthly-bar').style.width=Math.round(done/5*100)+'%';
-})();
-
-// 2026 Reset
-(function(){
-  var raw=localStorage.getItem('reset2026v1');
-  var preview='';
-  if(raw){try{var d=JSON.parse(raw);
-    preview=((d.cover_intention||d.narr_mission||'')+'').replace(/<[^>]+>/g,'').trim();
-  }catch(e){}}
-  document.getElementById('reset-preview').textContent=preview?('"'+preview.slice(0,90)+(preview.length>90?'…':'')+'"'):'Your identity manifesto awaits.';
 })();
 
 // Personal Curriculum — current month's module
