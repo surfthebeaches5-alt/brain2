@@ -153,6 +153,17 @@ hr.r{border:none;border-top:1px solid var(--rule);margin:18px 0;}
 .ornament{text-align:center;color:var(--blush);font-size:0.9rem;letter-spacing:10px;margin:22px 0 0;}
 
 @media(max-width:700px){.module-grid{grid-template-columns:1fr 1fr;}.two-col,.three-col{grid-template-columns:1fr;}}
+.pdf-btn{padding:6px 14px;border:none;border-radius:20px;background:var(--rose);color:white;font-family:'Jost',sans-serif;font-size:0.7rem;font-weight:600;cursor:pointer;transition:all .15s;white-space:nowrap;}
+.pdf-btn:hover{background:var(--mauve);}
+
+@media print{
+  .topbar,.mod-nav,.ex-tabs,.new-btn,.entry-del,.pdf-btn{display:none!important;}
+  body{background:white!important;}
+  .mod-view{padding:20px!important;}
+  .ex-page{display:block!important;}
+  .entry-form{break-inside:avoid;}
+  .entry-chip.active-entry{background:#fce8ef!important;}
+}
 </style>
 </head>
 <body>
@@ -182,6 +193,7 @@ hr.r{border:none;border-top:1px solid var(--rule);margin:18px 0;}
       <button class="mod-back" onclick="goOverview()">← All Modules</button>
       <span class="mod-badge" id="mod-badge"></span>
       <span class="mod-heading" id="mod-heading"></span>
+      <button class="pdf-btn" onclick="saveModulePDF()">⬇ Save PDF</button>
     </div>
     <div class="mod-intro" id="mod-intro"></div>
     <div class="ex-tabs" id="ex-tabs"></div>
@@ -1172,6 +1184,7 @@ function renderLatestEntry(mi,ei,entries){
 }
 
 function buildChip(en,mi,ei){
+  var exId=MODULES[mi].exercises[ei].id;
   var chip=document.createElement('div'); chip.className='entry-chip'; chip.dataset.id=en.id;
   var preview=getFirstText(en);
   chip.innerHTML=
@@ -1181,8 +1194,8 @@ function buildChip(en,mi,ei){
   del.onclick=function(e){
     e.stopPropagation();
     if(!confirm('Delete this entry?')) return;
-    var arr=getEntries(mi,ei).filter(function(x){return x.id!==en.id;});
-    saveEntries(mi,ei,arr);
+    var arr=getEntries(mi,exId).filter(function(x){return x.id!==en.id;});
+    saveEntries(mi,exId,arr);
     if(activeEntryId===en.id) activeEntryId=null;
     renderExPage(mi,ei);
     buildExTabs(mi);
@@ -1205,11 +1218,12 @@ function getFirstText(en){
 }
 
 function createEntry(mi,ei){
+  var exId=MODULES[mi].exercises[ei].id;
   var en={id:'e_'+Date.now(), date:todayLabel(), fields:{}};
-  var arr=getEntries(mi,ei); arr.push(en);
-  saveEntries(mi,ei,arr);
+  var arr=getEntries(mi,exId); arr.push(en);
+  saveEntries(mi,exId,arr);
   activeEntryId=en.id;
-  renderExPage(mi,ei);   // rebuilds page
+  renderExPage(mi,ei);
   buildExTabs(mi);
   renderOverview();
   setTimeout(function(){
@@ -1222,7 +1236,8 @@ function createEntry(mi,ei){
 // RENDER ENTRY FORM
 // ─────────────────────────────────────────────────────────────
 function renderEntryForm(mi,ei,entryId){
-  var arr=getEntries(mi,ei);
+  var exId=MODULES[mi].exercises[ei].id;
+  var arr=getEntries(mi,exId);
   var en=arr.find(function(x){return x.id===entryId;});
   if(!en) return;
   var ex=MODULES[mi].exercises[ei];
@@ -1230,18 +1245,25 @@ function renderEntryForm(mi,ei,entryId){
   if(!wrap) return;
   wrap.innerHTML='';
   var form=document.createElement('div'); form.className='entry-form';
-
-  // Header
   var fhdr=document.createElement('div'); fhdr.className='entry-form-hdr';
   fhdr.innerHTML='<span class="entry-form-date">'+en.date+'</span><span class="saved-indicator" id="saved-ind">✓ Auto-saved</span>';
   form.appendChild(fhdr);
-
-  // Build fields
   buildFields(form, ex.fields, en, mi, ei);
-
   var orn=document.createElement('div'); orn.className='ornament'; orn.textContent='✦ ✿ ✦';
   form.appendChild(orn);
   wrap.appendChild(form);
+}
+
+function autoSave(mi,ei,entryId,fieldId,val){
+  var exId=MODULES[mi].exercises[ei].id;
+  var arr=getEntries(mi,exId);
+  var en=arr.find(function(x){return x.id===entryId;});
+  if(!en) return;
+  if(!en.fields) en.fields={};
+  en.fields[fieldId]=val;
+  saveEntries(mi,exId,arr);
+  var ind=document.getElementById('saved-ind');
+  if(ind) ind.textContent='✓ Saved';
 }
 
 function buildFields(parent, fields, en, mi, ei){
@@ -1306,6 +1328,7 @@ function makeWriteGroup(f,en,mi,ei){
 }
 
 function buildDistortions(f,en,mi,ei){
+  var exId=MODULES[mi].exercises[ei].id;
   var wrap=document.createElement('div');
   var grid=document.createElement('div'); grid.className='distortion-grid';
   var checked=(en.fields[f.id]||[]);
@@ -1313,13 +1336,13 @@ function buildDistortions(f,en,mi,ei){
     var item=document.createElement('div'); item.className='distortion-item'+(checked.indexOf(d)>=0?' checked':'');
     item.innerHTML='<div class="di-check"></div><div class="di-label">'+d+'</div>';
     item.onclick=function(){
-      var arr=getEntries(mi,ei);
+      var arr=getEntries(mi,exId);
       var entry=arr.find(function(x){return x.id===en.id;});
       if(!entry) return;
       if(!entry.fields[f.id]) entry.fields[f.id]=[];
       var idx=entry.fields[f.id].indexOf(d);
       if(idx>=0) entry.fields[f.id].splice(idx,1); else entry.fields[f.id].push(d);
-      saveEntries(mi,ei,arr);
+      saveEntries(mi,exId,arr);
       item.classList.toggle('checked', entry.fields[f.id].indexOf(d)>=0);
     };
     grid.appendChild(item);
@@ -1352,11 +1375,12 @@ function buildWeatherTable(f,en,mi,ei){
       if(val) input.innerHTML=val;
       else { input.setAttribute('data-ph','—'); }
       input.oninput=(function(cid){return function(){
-        var arr=getEntries(mi,ei); var entry=arr.find(function(x){return x.id===en.id;});
+        var exId=MODULES[mi].exercises[ei].id;
+        var arr=getEntries(mi,exId); var entry=arr.find(function(x){return x.id===en.id;});
         if(!entry) return;
         if(!entry.fields[f.id]) entry.fields[f.id]={};
         entry.fields[f.id][cid]=this.innerHTML;
-        saveEntries(mi,ei,arr);
+        saveEntries(mi,exId,arr);
       };})(cellId);
       td.appendChild(input); tr.appendChild(td);
     });
@@ -1376,6 +1400,86 @@ function autoSave(mi,ei,entryId,fieldId,val){
   saveEntries(mi,ei,arr);
   var ind=document.getElementById('saved-ind');
   if(ind) ind.textContent='✓ Saved';
+}
+
+// ─────────────────────────────────────────────────────────────
+// PDF
+// ─────────────────────────────────────────────────────────────
+function saveModulePDF(){
+  // Show all entry forms for every exercise in this module
+  var mi = activeModIdx;
+  var m = MODULES[mi];
+  var pdfContainer = document.createElement('div');
+  pdfContainer.id = 'pdf-print-area';
+  pdfContainer.style.cssText = 'display:none;';
+
+  // Module header
+  var mhdr = document.createElement('div');
+  mhdr.style.cssText = 'text-align:center;margin-bottom:28px;padding-bottom:16px;border-bottom:1px solid #e0cec8;';
+  mhdr.innerHTML = '<div style="font-size:0.6rem;letter-spacing:3px;text-transform:uppercase;color:#9a8088;margin-bottom:4px;">Module '+m.num+'</div>'+
+    '<div style="font-family:\'Cormorant Garamond\',serif;font-size:2rem;font-weight:300;font-style:italic;">'+m.title+'</div>'+
+    '<div style="font-size:0.7rem;color:#9a8088;margin-top:4px;">'+m.sub+'</div>'+
+    '<div style="font-family:\'Cormorant Garamond\',serif;font-style:italic;color:#c9a0b4;margin-top:8px;">'+m.quote+'</div>';
+  pdfContainer.appendChild(mhdr);
+
+  // Each exercise
+  m.exercises.forEach(function(ex){
+    var entries = getEntries(mi, ex.id);
+    if(!entries.length) return;
+
+    var exSection = document.createElement('div');
+    exSection.style.cssText = 'margin-bottom:32px;page-break-before:auto;';
+    exSection.innerHTML = '<div style="font-size:0.6rem;letter-spacing:2px;text-transform:uppercase;color:#9a8088;font-weight:600;margin-bottom:3px;">'+ex.label+'</div>'+
+      '<div style="font-family:\'Cormorant Garamond\',serif;font-size:1.3rem;font-style:italic;margin-bottom:12px;border-bottom:1px solid #e0cec8;padding-bottom:8px;">'+ex.title+'</div>';
+
+    entries.forEach(function(en, idx){
+      var enDiv = document.createElement('div');
+      enDiv.style.cssText = 'margin-bottom:20px;padding:14px 18px;background:#f7ece4;border-radius:8px;page-break-inside:avoid;';
+      var dateLine = document.createElement('div');
+      dateLine.style.cssText = 'font-family:\'Cormorant Garamond\',serif;font-style:italic;color:#c9a0b4;font-size:0.9rem;margin-bottom:10px;';
+      dateLine.textContent = en.date;
+      enDiv.appendChild(dateLine);
+
+      // Print all field values
+      var fields = en.fields || {};
+      ex.fields.forEach(function(f){
+        if(f.t==='hr'||f.t==='sec') return;
+        var printFields = [];
+        if(f.t==='write') printFields=[f];
+        else if(f.t==='two'||f.t==='three') printFields=f.fields;
+        else if(f.t==='box-write') printFields=f.fields;
+        else if(f.t==='box3') printFields=f.items;
+        printFields.forEach(function(ff){
+          var val = fields[ff.id];
+          if(!val||!val.replace(/<[^>]+>/g,'').trim()) return;
+          var row = document.createElement('div');
+          row.style.cssText = 'margin-bottom:8px;';
+          row.innerHTML = '<div style="font-size:0.58rem;letter-spacing:1.5px;text-transform:uppercase;color:#9a8088;font-weight:600;margin-bottom:2px;">'+ff.label+'</div>'+
+            '<div style="font-size:0.8rem;line-height:1.7;color:#3a2a2e;">'+val+'</div>';
+          enDiv.appendChild(row);
+        });
+        // Distortions
+        if(f.t==='distortions'&&fields[f.id]&&fields[f.id].length){
+          var row=document.createElement('div');row.style.marginBottom='8px';
+          row.innerHTML='<div style="font-size:0.58rem;letter-spacing:1.5px;text-transform:uppercase;color:#9a8088;font-weight:600;margin-bottom:4px;">Distortions Checked</div>'+
+            '<div style="font-size:0.8rem;color:#3a2a2e;">'+fields[f.id].join(', ')+'</div>';
+          enDiv.appendChild(row);
+        }
+      });
+      exSection.appendChild(enDiv);
+    });
+    pdfContainer.appendChild(exSection);
+  });
+
+  document.body.appendChild(pdfContainer);
+  pdfContainer.style.display = 'block';
+
+  // Hide main content, print, restore
+  var modView = document.getElementById('view-module');
+  modView.style.display = 'none';
+  window.print();
+  modView.style.display = 'block';
+  document.body.removeChild(pdfContainer);
 }
 
 // ─────────────────────────────────────────────────────────────
