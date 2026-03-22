@@ -161,12 +161,9 @@ hr.r{border:none;border-top:1px solid var(--rule);margin:18px 0;}
 .pdf-btn:hover{background:var(--mauve);}
 
 @media print{
-  .topbar,.mod-nav,.ex-tabs,.new-btn,.entry-del,.pdf-btn{display:none!important;}
+  .topbar,.mod-nav,.ex-tabs,.new-btn,.entry-del,.pdf-btn,.chip-edit-btn,.complete-btn{display:none!important;}
   body{background:white!important;}
-  .mod-view{padding:20px!important;}
-  .ex-page{display:block!important;}
-  .entry-form{break-inside:avoid;}
-  .entry-chip.active-entry{background:#fce8ef!important;}
+  #pdf-print-area{display:block!important;padding:20px;}
 }
 </style>
 </head>
@@ -1432,95 +1429,94 @@ function buildWeatherTable(f,en,mi,ei){
   return wrap;
 }
 
-function autoSave(mi,ei,entryId,fieldId,val){
-  var arr=getEntries(mi,ei);
-  var en=arr.find(function(x){return x.id===entryId;});
-  if(!en) return;
-  if(!en.fields) en.fields={};
-  en.fields[fieldId]=val;
-  saveEntries(mi,ei,arr);
-  var ind=document.getElementById('saved-ind');
-  if(ind) ind.textContent='✓ Saved';
-}
 
 // ─────────────────────────────────────────────────────────────
 // PDF
 // ─────────────────────────────────────────────────────────────
+
 function saveModulePDF(){
-  // Show all entry forms for every exercise in this module
-  var mi = activeModIdx;
-  var m = MODULES[mi];
-  var pdfContainer = document.createElement('div');
-  pdfContainer.id = 'pdf-print-area';
-  pdfContainer.style.cssText = 'display:none;';
-
-  // Module header
-  var mhdr = document.createElement('div');
-  mhdr.style.cssText = 'text-align:center;margin-bottom:28px;padding-bottom:16px;border-bottom:1px solid #e0cec8;';
-  mhdr.innerHTML = '<div style="font-size:0.6rem;letter-spacing:3px;text-transform:uppercase;color:#9a8088;margin-bottom:4px;">Module '+m.num+'</div>'+
-    '<div style="font-family:\'Cormorant Garamond\',serif;font-size:2rem;font-weight:300;font-style:italic;">'+m.title+'</div>'+
-    '<div style="font-size:0.7rem;color:#9a8088;margin-top:4px;">'+m.sub+'</div>'+
+  var mi=activeModIdx; var m=MODULES[mi];
+  var pc=document.createElement('div'); pc.id='pdf-print-area';
+  // Header
+  var mh=document.createElement('div');
+  mh.style.cssText='text-align:center;margin-bottom:28px;padding-bottom:16px;border-bottom:2px solid #e0cec8;';
+  mh.innerHTML='<div style="font-size:0.6rem;letter-spacing:3px;text-transform:uppercase;color:#9a8088;margin-bottom:4px;">Module '+m.num+'</div>'+
+    '<div style="font-family:\'Cormorant Garamond\',serif;font-size:2rem;font-weight:300;font-style:italic;color:#3a2a2e;">'+m.title+'</div>'+
+    '<div style="font-size:0.72rem;color:#9a8088;margin-top:4px;">'+m.sub+'</div>'+
     '<div style="font-family:\'Cormorant Garamond\',serif;font-style:italic;color:#c9a0b4;margin-top:8px;">'+m.quote+'</div>';
-  pdfContainer.appendChild(mhdr);
+  pc.appendChild(mh);
 
-  // Each exercise
-  m.exercises.forEach(function(ex){
-    var entries = getEntries(mi, ex.id);
-    if(!entries.length) return;
-
-    var exSection = document.createElement('div');
-    exSection.style.cssText = 'margin-bottom:32px;page-break-before:auto;';
-    exSection.innerHTML = '<div style="font-size:0.6rem;letter-spacing:2px;text-transform:uppercase;color:#9a8088;font-weight:600;margin-bottom:3px;">'+ex.label+'</div>'+
-      '<div style="font-family:\'Cormorant Garamond\',serif;font-size:1.3rem;font-style:italic;margin-bottom:12px;border-bottom:1px solid #e0cec8;padding-bottom:8px;">'+ex.title+'</div>';
-
-    entries.forEach(function(en, idx){
-      var enDiv = document.createElement('div');
-      enDiv.style.cssText = 'margin-bottom:20px;padding:14px 18px;background:#f7ece4;border-radius:8px;page-break-inside:avoid;';
-      var dateLine = document.createElement('div');
-      dateLine.style.cssText = 'font-family:\'Cormorant Garamond\',serif;font-style:italic;color:#c9a0b4;font-size:0.9rem;margin-bottom:10px;';
-      dateLine.textContent = en.date;
-      enDiv.appendChild(dateLine);
-
-      // Print all field values
-      var fields = en.fields || {};
-      ex.fields.forEach(function(f){
-        if(f.t==='hr'||f.t==='sec') return;
-        var printFields = [];
-        if(f.t==='write') printFields=[f];
-        else if(f.t==='two'||f.t==='three') printFields=f.fields;
-        else if(f.t==='box-write') printFields=f.fields;
-        else if(f.t==='box3') printFields=f.items;
-        printFields.forEach(function(ff){
-          var val = fields[ff.id];
-          if(!val||!val.replace(/<[^>]+>/g,'').trim()) return;
-          var row = document.createElement('div');
-          row.style.cssText = 'margin-bottom:8px;';
-          row.innerHTML = '<div style="font-size:0.58rem;letter-spacing:1.5px;text-transform:uppercase;color:#9a8088;font-weight:600;margin-bottom:2px;">'+ff.label+'</div>'+
-            '<div style="font-size:0.8rem;line-height:1.7;color:#3a2a2e;">'+val+'</div>';
-          enDiv.appendChild(row);
-        });
-        // Distortions
-        if(f.t==='distortions'&&fields[f.id]&&fields[f.id].length){
-          var row=document.createElement('div');row.style.marginBottom='8px';
-          row.innerHTML='<div style="font-size:0.58rem;letter-spacing:1.5px;text-transform:uppercase;color:#9a8088;font-weight:600;margin-bottom:4px;">Distortions Checked</div>'+
-            '<div style="font-size:0.8rem;color:#3a2a2e;">'+fields[f.id].join(', ')+'</div>';
-          enDiv.appendChild(row);
+  // Recursively extract all written field values from an entry
+  function extractFields(fieldDefs, fd, parent){
+    fieldDefs.forEach(function(f){
+      if(f.t==='hr'||f.t==='sec') return;
+      var subs=null;
+      if(f.t==='write') subs=[f];
+      else if(f.t==='two'||f.t==='three') subs=f.fields;
+      else if(f.t==='box-write') subs=f.fields;
+      else if(f.t==='box3') subs=f.items;
+      else if(f.t==='distortions'){
+        var checked=fd[f.id];
+        if(checked&&checked.length){
+          var r=document.createElement('div');r.style.cssText='margin-bottom:10px;';
+          r.innerHTML='<div style="font-size:0.58rem;letter-spacing:1.5px;text-transform:uppercase;color:#9a8088;font-weight:600;margin-bottom:3px;">Distortions Checked</div>'+
+            '<div style="font-size:0.8rem;line-height:1.7;color:#3a2a2e;">'+checked.join(' · ')+'</div>';
+          parent.appendChild(r);
         }
+        return;
+      } else if(f.t==='weather'){
+        var td=fd[f.id];
+        if(td&&Object.keys(td).length){
+          var tbl=document.createElement('div');tbl.style.marginBottom='10px';
+          tbl.innerHTML='<div style="font-size:0.58rem;letter-spacing:1.5px;text-transform:uppercase;color:#9a8088;font-weight:600;margin-bottom:4px;">Weekly Log</div>';
+          f.days.forEach(function(day){
+            var parts=[];
+            f.cols.forEach(function(col,ci){var cv=td[f.id+'_'+day+'_'+ci];if(cv){var clean=(cv+'').replace(/<[^>]+>/g,'').trim();if(clean)parts.push(clean);}});
+            if(parts.length) tbl.innerHTML+='<div style="font-size:0.74rem;color:#3a2a2e;padding:2px 0;"><strong>'+day+':</strong> '+parts.join(' | ')+'</div>';
+          });
+          parent.appendChild(tbl);
+        }
+        return;
+      }
+      if(!subs) return;
+      subs.forEach(function(ff){
+        if(!ff||!ff.id) return;
+        var val=fd[ff.id];
+        if(!val) return;
+        var clean=(val+'').replace(/<[^>]+>/g,'').trim();
+        if(!clean) return;
+        var r=document.createElement('div');r.style.cssText='margin-bottom:10px;';
+        r.innerHTML='<div style="font-size:0.58rem;letter-spacing:1.5px;text-transform:uppercase;color:#9a8088;font-weight:600;margin-bottom:2px;">'+ff.label+'</div>'+
+          '<div style="font-size:0.8rem;line-height:1.75;color:#3a2a2e;">'+val+'</div>';
+        parent.appendChild(r);
       });
-      exSection.appendChild(enDiv);
     });
-    pdfContainer.appendChild(exSection);
+  }
+
+  m.exercises.forEach(function(ex){
+    var entries=getEntries(mi,ex.id);
+    if(!entries.length) return;
+    var xs=document.createElement('div');xs.style.cssText='margin-bottom:36px;';
+    xs.innerHTML='<div style="font-size:0.6rem;letter-spacing:2px;text-transform:uppercase;color:#9a8088;font-weight:600;margin-bottom:3px;">'+ex.label+'</div>'+
+      '<div style="font-family:\'Cormorant Garamond\',serif;font-size:1.3rem;font-style:italic;margin-bottom:14px;border-bottom:1px solid #e0cec8;padding-bottom:8px;">'+ex.title+'</div>';
+    entries.forEach(function(en){
+      if(!en.fields||!Object.keys(en.fields).length) return;
+      var ed=document.createElement('div');ed.style.cssText='margin-bottom:18px;padding:14px 18px;background:#f7ece4;border-radius:8px;page-break-inside:avoid;';
+      var dl=document.createElement('div');dl.style.cssText='font-family:\'Cormorant Garamond\',serif;font-style:italic;color:#c9a0b4;font-size:0.9rem;margin-bottom:10px;border-bottom:1px dashed #e0cec8;padding-bottom:6px;';
+      dl.textContent=en.date; ed.appendChild(dl);
+      extractFields(ex.fields,en.fields,ed);
+      xs.appendChild(ed);
+    });
+    pc.appendChild(xs);
   });
 
-  document.body.appendChild(pdfContainer);
-  pdfContainer.style.display = 'block';
-
-  // Hide main content, print, restore
-  var modView = document.getElementById('view-module');
-  modView.style.display = 'none';
+  document.body.appendChild(pc);
+  var mv=document.getElementById('view-module');
+  var ov=document.getElementById('view-overview');
+  mv.style.display='none'; ov.style.display='none';
   window.print();
-  modView.style.display = 'block';
-  document.body.removeChild(pdfContainer);
+  mv.style.display='block'; ov.style.display='';
+  document.body.removeChild(pc);
 }
 
 // ─────────────────────────────────────────────────────────────
