@@ -132,16 +132,6 @@ body{background:#f0e8e4;font-family:'Jost',sans-serif;color:var(--ink);}
 </div>
 
 <script>
-var pwd = localStorage.getItem('brain2auth');
-if (pwd !== 'Nikkireed234!') {
-  var attempt = prompt('Password:');
-  if (attempt !== 'Nikkireed234!') {
-    document.body.innerHTML = '';
-    throw new Error('Unauthorized');
-  }
-  localStorage.setItem('brain2auth', attempt);
-}
-   
 // day = day-of-month the payment is due (no hardcoded month — auto-rolls every month)
 var CARDS = [
   {name:'Chase Sapphire Preferred', day:22, url:'https://secure.chase.com/web/auth/dashboard#/dashboard/overview', color:'#f2c4ce', active:true},
