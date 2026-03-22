@@ -13,443 +13,464 @@
 *{box-sizing:border-box;margin:0;padding:0;}
 body{background:#f0e8e4;font-family:'Jost',sans-serif;color:var(--ink);min-height:100vh;}
 
-.topbar{background:var(--cream);border-bottom:1px solid var(--rule);padding:14px 32px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;}
+.topbar{background:var(--cream);border-bottom:1px solid var(--rule);padding:13px 32px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;}
 .topbar-title{font-family:'Cormorant Garamond',serif;font-size:1.6rem;font-weight:300;letter-spacing:2px;}
 .topbar-title em{font-style:italic;color:var(--mauve);}
-.topbar-date{font-size:0.68rem;letter-spacing:2px;text-transform:uppercase;color:var(--muted);}
-.greeting{font-size:0.78rem;color:var(--muted);font-style:italic;}
+.topbar-date{font-size:0.66rem;letter-spacing:2px;text-transform:uppercase;color:var(--muted);}
 
-.hub{max-width:1100px;margin:0 auto;padding:28px 24px 60px;}
+.hub{max-width:1120px;margin:0 auto;padding:24px 24px 60px;}
 
-.sec-title{font-family:'Cormorant Garamond',serif;font-size:1rem;font-weight:600;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin-bottom:14px;display:flex;align-items:center;gap:10px;}
+.sec-title{font-family:'Cormorant Garamond',serif;font-size:0.95rem;font-weight:600;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin-bottom:12px;display:flex;align-items:center;gap:10px;}
 .sec-title:after{content:'';flex:1;height:1px;background:var(--rule);}
 
-.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
-.grid-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px;}
-.grid-4{display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:14px;}
-.hero-row{display:grid;grid-template-columns:2fr 1fr;gap:14px;margin-bottom:28px;}
+.row{display:grid;gap:14px;margin-bottom:24px;}
+.col-2{grid-template-columns:1fr 1fr;}
+.col-3{grid-template-columns:1fr 1fr 1fr;}
+.col-4{grid-template-columns:repeat(4,1fr);}
+.col-5{grid-template-columns:repeat(5,1fr);}
+.hero-layout{grid-template-columns:2fr 1fr;}
 
-.card{background:var(--cream);border:1px solid var(--rule);border-radius:14px;padding:20px 22px;transition:transform .15s,box-shadow .15s;}
-.card:hover{transform:translateY(-2px);box-shadow:0 6px 20px rgba(180,130,140,.13);}
-.card-accent-blush{border-top:3px solid var(--blush);}
-.card-accent-sage{border-top:3px solid var(--sage);}
-.card-accent-lav{border-top:3px solid var(--lavender);}
-.card-accent-rose{border-top:3px solid var(--rose);}
-.card-accent-mauve{border-top:3px solid var(--mauve);}
-.card-label{font-size:0.6rem;letter-spacing:2.5px;text-transform:uppercase;color:var(--muted);margin-bottom:4px;}
-.card-title{font-family:'Cormorant Garamond',serif;font-size:1.05rem;font-weight:600;color:var(--ink);margin-bottom:6px;}
-.card-sub{font-size:0.74rem;color:var(--muted);line-height:1.5;}
+.card{background:var(--cream);border:1px solid var(--rule);border-radius:14px;padding:18px 20px;transition:transform .15s,box-shadow .15s;}
+.card:hover{transform:translateY(-2px);box-shadow:0 6px 20px rgba(180,130,140,.12);}
+.card.flat:hover{transform:none;box-shadow:none;}
+.c-blush{border-top:3px solid var(--blush);}
+.c-sage{border-top:3px solid var(--sage);}
+.c-lav{border-top:3px solid var(--lavender);}
+.c-rose{border-top:3px solid var(--rose);}
+.c-mauve{border-top:3px solid var(--mauve);}
+.c-teal{border-top:3px solid #a8d8d0;}
+.c-amber{border-top:3px solid #f7d9b0;}
+.c-blue{border-top:3px solid #b8d4f0;}
 
-.hero-card{background:linear-gradient(135deg,#fce8ef,#f0e0f0);border:1px solid var(--blush);border-radius:14px;padding:24px 26px;}
-.hero-title{font-family:'Cormorant Garamond',serif;font-size:1.5rem;font-weight:300;font-style:italic;color:var(--ink);margin-bottom:6px;}
-.hero-sub{font-size:0.74rem;color:var(--muted);line-height:1.6;margin-bottom:16px;}
+.cl{font-size:0.58rem;letter-spacing:2.5px;text-transform:uppercase;color:var(--muted);margin-bottom:3px;}
+.ct{font-family:'Cormorant Garamond',serif;font-size:1.05rem;font-weight:600;color:var(--ink);margin-bottom:4px;}
+.cs{font-size:0.72rem;color:var(--muted);line-height:1.5;}
 
-.launch-btn{display:inline-flex;align-items:center;gap:5px;padding:8px 18px;background:var(--mauve);color:white;border:none;border-radius:20px;font-family:'Jost',sans-serif;font-size:0.76rem;font-weight:600;cursor:pointer;text-decoration:none;transition:background .15s;}
-.launch-btn:hover{background:var(--rose);}
-.launch-btn.ghost{background:var(--cream);color:var(--ink);border:1.5px solid var(--rule);}
-.launch-btn.ghost:hover{border-color:var(--rose);background:var(--warm);}
-
-.quick-links{display:flex;flex-direction:column;gap:8px;}
-.quick-link{display:flex;align-items:center;gap:10px;padding:10px 14px;background:var(--warm);border:1px solid var(--rule);border-radius:10px;text-decoration:none;color:var(--ink);font-size:0.78rem;font-weight:500;transition:all .15s;}
-.quick-link:hover{border-color:var(--rose);background:var(--cream);}
-.quick-link-arrow{margin-left:auto;color:var(--muted);font-size:0.7rem;}
-
-.due-row{display:flex;align-items:center;gap:10px;padding:7px 0;border-bottom:1px solid var(--rule);font-size:0.78rem;}
-.due-row:last-child{border-bottom:none;}
-.due-dot{width:9px;height:9px;border-radius:50%;flex-shrink:0;}
-.due-name{flex:1;font-weight:500;}
-.due-date{font-size:0.68rem;color:var(--muted);}
-.due-pill{font-size:0.6rem;font-weight:600;letter-spacing:.4px;text-transform:uppercase;padding:2px 8px;border-radius:10px;white-space:nowrap;}
-.urgent{background:#fce4ec;color:#a0304a;}
-.soon{background:#fff8e1;color:#8a5a10;}
-.ok{background:#e8f5e9;color:#2a6a30;}
-
-/* UPCOMING EVENTS LIST — same style as due dates */
-.upcoming-row{display:flex;align-items:center;gap:10px;padding:7px 0;border-bottom:1px solid var(--rule);font-size:0.78rem;}
-.upcoming-row:last-child{border-bottom:none;}
-.upcoming-dot{width:9px;height:9px;border-radius:50%;flex-shrink:0;}
-.upcoming-name{flex:1;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;padding-right:6px;}
-.upcoming-date{font-size:0.68rem;color:var(--muted);flex-shrink:0;}
-.upcoming-pill{font-size:0.6rem;font-weight:600;letter-spacing:.4px;text-transform:uppercase;padding:2px 8px;border-radius:10px;white-space:nowrap;flex-shrink:0;}
-.today-pill{background:#fce4ec;color:#a0304a;}
-.tomorrow-pill{background:#fff8e1;color:#8a5a10;}
-.soon-pill{background:#e8f5e9;color:#2a6a30;}
-.upcoming-empty{font-size:0.74rem;color:var(--muted);font-style:italic;padding:8px 0;}
-
-.prog-wrap{margin:8px 0 4px;}
-.prog-label{display:flex;justify-content:space-between;font-size:0.67rem;color:var(--muted);margin-bottom:4px;}
-.prog-bar{height:5px;background:var(--rule);border-radius:3px;overflow:hidden;}
+/* HERO */
+.hero{background:linear-gradient(135deg,#fce8ef,#f0e0f0);border:1px solid var(--blush);border-radius:16px;padding:24px 28px;}
+.hero-greeting{font-family:'Cormorant Garamond',serif;font-size:2rem;font-weight:300;font-style:italic;margin-bottom:3px;}
+.hero-sub{font-size:0.7rem;color:var(--muted);margin-bottom:14px;}
+.prog-label{display:flex;justify-content:space-between;font-size:0.64rem;color:var(--muted);margin-bottom:4px;}
+.prog-bar{height:5px;background:rgba(201,160,180,.25);border-radius:3px;overflow:hidden;margin-bottom:16px;}
 .prog-fill{height:100%;border-radius:3px;}
-.prog-fill.pink{background:linear-gradient(90deg,var(--blush),var(--mauve));}
-.prog-fill.sage{background:linear-gradient(90deg,#b8cfb0,#7aaa70);}
-.prog-fill.lav{background:linear-gradient(90deg,var(--lavender),#a880c8);}
+.pf-pink{background:linear-gradient(90deg,var(--blush),var(--mauve));}
+.pf-sage{background:linear-gradient(90deg,#b8cfb0,#7aaa70);}
+.pf-lav{background:linear-gradient(90deg,var(--lavender),#a880c8);}
+.pf-teal{background:linear-gradient(90deg,#a8d8d0,#5ab0a8);}
+.hero-btns{display:flex;gap:8px;flex-wrap:wrap;}
 
-.goal-row{display:flex;align-items:center;gap:10px;padding:6px 0;border-bottom:1px solid var(--rule);font-size:0.78rem;}
-.goal-row:last-child{border-bottom:none;}
-.goal-check{width:16px;height:16px;border-radius:50%;border:1.5px solid var(--rule);flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:9px;}
-.goal-check.done{background:var(--sage);border-color:var(--sage);color:white;}
+/* BUTTONS */
+.btn{display:inline-flex;align-items:center;gap:5px;padding:7px 16px;border:none;border-radius:20px;font-family:'Jost',sans-serif;font-size:0.72rem;font-weight:600;cursor:pointer;text-decoration:none;transition:all .15s;}
+.btn-mauve{background:var(--mauve);color:white;}.btn-mauve:hover{background:var(--rose);}
+.btn-ghost{background:var(--cream);color:var(--ink);border:1.5px solid var(--rule);}.btn-ghost:hover{border-color:var(--rose);}
+.btn-sm{font-size:0.67rem;padding:5px 12px;}
 
-.pill{display:inline-block;padding:2px 9px;border-radius:12px;font-size:0.6rem;font-weight:600;letter-spacing:.5px;text-transform:uppercase;}
-.pill-sage{background:#e8f5e4;color:#3a6a30;}
-.pill-muted{background:var(--warm);color:var(--muted);}
-.pill-amber{background:#fdf3e0;color:#8a5a10;}
+/* QUICK LAUNCH */
+.ql-grid{display:grid;grid-template-columns:1fr 1fr;gap:5px;}
+.ql{display:flex;align-items:center;gap:6px;padding:6px 9px;background:var(--warm);border:1px solid var(--rule);border-radius:8px;text-decoration:none;color:var(--ink);font-size:0.68rem;font-weight:500;transition:all .15s;white-space:nowrap;overflow:hidden;}
+.ql:hover{border-color:var(--rose);background:var(--cream);}
+.ql-arrow{margin-left:auto;color:var(--muted);font-size:0.6rem;flex-shrink:0;}
 
-.lang-chip{display:flex;align-items:center;gap:8px;padding:8px 10px;background:var(--warm);border-radius:8px;margin-bottom:8px;font-size:0.78rem;}
-.lang-name{font-weight:500;font-size:0.78rem;}
-.lang-sub{font-size:0.67rem;color:var(--muted);}
+/* LIST ROWS */
+hr.div{border:none;border-top:1px solid var(--rule);margin:10px 0;}
+.irow{display:flex;align-items:center;gap:8px;padding:5px 0;border-bottom:1px solid var(--rule);font-size:0.74rem;}
+.irow:last-child{border-bottom:none;}
+.idot{width:8px;height:8px;border-radius:50%;flex-shrink:0;}
+.iname{flex:1;font-weight:500;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.idate{font-size:0.64rem;color:var(--muted);flex-shrink:0;}
+.badge{font-size:0.57rem;font-weight:600;letter-spacing:.3px;text-transform:uppercase;padding:2px 7px;border-radius:8px;white-space:nowrap;flex-shrink:0;}
+.b-red{background:#fce4ec;color:#a0304a;}
+.b-amber{background:#fff8e1;color:#8a5a10;}
+.b-green{background:#e8f5e9;color:#2a6a30;}
+.b-muted{background:var(--warm);color:var(--muted);}
 
-.course-row{display:flex;align-items:center;justify-content:space-between;padding:7px 0;border-bottom:1px solid var(--rule);font-size:0.78rem;}
-.course-row:last-child{border-bottom:none;}
-.course-name{font-weight:500;flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;padding-right:10px;}
-.course-pct{font-family:'Cormorant Garamond',serif;font-size:0.95rem;font-weight:600;color:var(--mauve);flex-shrink:0;}
+/* PROGRESS MINI */
+.mprog-wrap{margin:6px 0 3px;}
+.mprog-lbl{display:flex;justify-content:space-between;font-size:0.63rem;color:var(--muted);margin-bottom:3px;}
 
-hr.divider{border:none;border-top:1px solid var(--rule);margin:14px 0;}
+/* LANG CHIP */
+.lang-chip{display:flex;align-items:center;gap:8px;padding:7px 10px;background:var(--warm);border-radius:8px;margin-bottom:6px;}
+.lang-name{font-weight:600;font-size:0.74rem;}
+.lang-sub{font-size:0.63rem;color:var(--muted);}
+
+/* COURSE ROW */
+.crow{display:flex;align-items:center;padding:5px 0;border-bottom:1px solid var(--rule);font-size:0.73rem;gap:8px;}
+.crow:last-child{border-bottom:none;}
+.crow-name{flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.crow-pct{font-family:'Cormorant Garamond',serif;font-size:0.9rem;font-weight:600;color:var(--mauve);flex-shrink:0;}
+
+/* WORKOUT */
+.workout-name{font-family:'Cormorant Garamond',serif;font-size:1.1rem;font-style:italic;margin-bottom:2px;}
+.workout-focus{font-size:0.67rem;color:var(--muted);margin-bottom:8px;}
+.nn-row{display:flex;align-items:center;gap:7px;font-size:0.7rem;color:var(--muted);padding:2px 0;}
+
+/* PLANNING CARDS */
+.plan-theme{font-family:'Cormorant Garamond',serif;font-size:1.05rem;font-style:italic;color:var(--mauve);margin-bottom:2px;}
+.plan-sub{font-size:0.68rem;color:var(--muted);margin-bottom:8px;}
+
+/* TOOL GRID */
+.tool-card{background:var(--cream);border:1px solid var(--rule);border-radius:12px;padding:15px 16px;text-decoration:none;color:var(--ink);display:block;transition:all .15s;}
+.tool-card:hover{transform:translateY(-2px);box-shadow:0 5px 16px rgba(180,130,140,.13);border-color:var(--mauve);}
+.tool-emoji{font-size:1.5rem;margin-bottom:6px;display:block;}
+.tool-name{font-family:'Cormorant Garamond',serif;font-size:0.95rem;font-weight:600;margin-bottom:2px;}
+.tool-desc{font-size:0.63rem;color:var(--muted);line-height:1.4;}
+
+.empty-txt{font-size:0.7rem;color:var(--muted);font-style:italic;padding:6px 0;}
 </style>
 </head>
 <body>
 
 <div class="topbar">
   <div class="topbar-title">Brain <em>2.0</em></div>
-  <div style="display:flex;align-items:center;gap:20px;">
-    <span class="greeting">your personal command center</span>
-    <span class="topbar-date" id="today-date"></span>
-  </div>
+  <span class="topbar-date" id="today-date"></span>
 </div>
 
 <div class="hub">
 
-  <!-- HERO -->
-  <div class="hero-row">
-    <div class="hero-card">
-      <div class="hero-title" id="hero-greeting">Good morning ✦</div>
-      <div class="hero-sub">This is your life hub — one place for everything that matters. Launch any module below, or check in on your week at a glance.</div>
-      <a href="weekly-audit/" class="launch-btn">Open Weekly Audit →</a>
+  <!-- HERO + QUICK LAUNCH -->
+  <div class="row hero-layout" style="margin-bottom:24px;">
+    <div class="hero">
+      <div class="hero-greeting" id="hero-greeting">Good morning ✦</div>
+      <div class="hero-sub" id="hero-sub"></div>
+      <div class="prog-label">
+        <span id="year-label">Day — of 365</span>
+        <span id="year-pct">—%</span>
+      </div>
+      <div class="prog-bar"><div class="prog-fill pf-pink" id="year-bar" style="width:0%"></div></div>
+      <div class="hero-btns">
+        <a href="weekly-audit/"  class="btn btn-mauve">Weekly Audit →</a>
+        <a href="monthly/"       class="btn btn-ghost">Monthly Planner →</a>
+        <a href="fitness/"       class="btn btn-ghost">Fitness →</a>
+        <a href="calendar/"      class="btn btn-ghost">Calendar →</a>
+      </div>
     </div>
-    <div style="display:flex;flex-direction:column;gap:10px;">
-      <div style="font-size:0.6rem;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin-bottom:2px;">Quick launch</div>
-      <div class="quick-links">
-        <a href="weekly-audit/" class="quick-link">📋 Weekly Audit<span class="quick-link-arrow">↗</span></a>
-        <a href="finances/" class="quick-link">💳 Financial Tracker<span class="quick-link-arrow">↗</span></a>
-        <a href="language-portal/" class="quick-link">🌍 Language Portal<span class="quick-link-arrow">↗</span></a>
-        <a href="professional-dev/" class="quick-link">📊 Professional Dev<span class="quick-link-arrow">↗</span></a>
-        <a href="calendar/" class="quick-link">🗓️ Calendar<span class="quick-link-arrow">↗</span></a>
+    <div class="card flat" style="padding:14px 16px;">
+      <div style="font-size:0.57rem;letter-spacing:2px;text-transform:uppercase;color:var(--muted);font-weight:600;margin-bottom:8px;">Quick Launch — All Tools</div>
+      <div class="ql-grid">
+        <a href="weekly-audit/"    class="ql">📋 Weekly Audit<span class="ql-arrow">↗</span></a>
+        <a href="monthly/"         class="ql">🗓️ Monthly Plan<span class="ql-arrow">↗</span></a>
+        <a href="reset-2026/"      class="ql">✨ 2026 Reset<span class="ql-arrow">↗</span></a>
+        <a href="curriculum/"      class="ql">📖 Curriculum<span class="ql-arrow">↗</span></a>
+        <a href="stoic/"           class="ql">🌿 Stoic Workbook<span class="ql-arrow">↗</span></a>
+        <a href="fitness/"         class="ql">💪 Fitness<span class="ql-arrow">↗</span></a>
+        <a href="finances/"        class="ql">💳 Finances<span class="ql-arrow">↗</span></a>
+        <a href="language-portal/" class="ql">🌍 Languages<span class="ql-arrow">↗</span></a>
+        <a href="media/"           class="ql">🎵 Media<span class="ql-arrow">↗</span></a>
+        <a href="wishlist/"        class="ql">✦ Wishlist<span class="ql-arrow">↗</span></a>
+        <a href="passport/"        class="ql">🗺️ DC Passport<span class="ql-arrow">↗</span></a>
+        <a href="professional-dev/" class="ql">📊 Prof Dev<span class="ql-arrow">↗</span></a>
+        <a href="calendar/"        class="ql">📅 Calendar<span class="ql-arrow">↗</span></a>
       </div>
     </div>
   </div>
 
-  <!-- WEEKLY SNAPSHOT -->
-  <div class="sec-title" style="margin-bottom:14px;">This Week</div>
-  <div class="grid-4" style="margin-bottom:28px;">
-    <div class="card card-accent-blush">
-      <div class="card-label">Weekly Audit</div>
-      <div class="card-title" id="week-num">Week — of 52</div>
-      <div class="card-sub" id="week-year" style="margin-bottom:12px;">2026</div>
-      <a href="weekly-audit/" class="launch-btn" style="font-size:0.7rem;padding:6px 14px;">Open →</a>
-    </div>
-    <div class="card card-accent-sage">
-      <div class="card-label">Sunday Audit</div>
-      <div class="card-title">Weekly Ritual</div>
-      <div style="margin-top:8px;">
-        <div class="goal-row"><div class="goal-check">·</div><span>Brain Dump</span></div>
-        <div class="goal-row"><div class="goal-check">·</div><span>Life Wheel</span></div>
-        <div class="goal-row"><div class="goal-check">·</div><span>Set 3 Goals</span></div>
-        <div class="goal-row"><div class="goal-check">·</div><span>Letter to Self</span></div>
-      </div>
-    </div>
-    <div class="card card-accent-lav">
-      <div class="card-label">Year Progress</div>
-      <div class="card-title">2026</div>
-      <div class="prog-wrap">
-        <div class="prog-label"><span id="year-days-label">Day — of 365</span><span id="year-pct">—%</span></div>
-        <div class="prog-bar"><div class="prog-fill pink" id="year-bar" style="width:0%"></div></div>
-      </div>
-      <div class="card-sub" style="margin-top:6px;" id="year-remaining">— days remaining</div>
+  <!-- THIS WEEK -->
+  <div class="sec-title">This Week</div>
+  <div class="row col-3" style="margin-bottom:24px;">
+
+    <div class="card c-rose">
+      <div class="cl">Next 3 Days</div>
+      <div class="ct">Upcoming</div>
+      <div id="upcoming-list" style="margin-top:8px;"></div>
+      <hr class="div">
+      <a href="calendar/" class="btn btn-ghost btn-sm">Open Calendar →</a>
     </div>
 
-    <!-- NEXT UP — reads from calendar localStorage -->
-    <div class="card card-accent-rose">
-      <div class="card-label">Next Up · 3 Days</div>
-      <div class="card-title">Upcoming</div>
-      <div id="upcoming-list" style="margin-top:6px;"></div>
-      <hr class="divider">
-      <a href="calendar/" class="launch-btn ghost" style="font-size:0.7rem;padding:5px 12px;">Open Calendar →</a>
-    </div>
-  </div>
-
-  <!-- FINANCES + LANGUAGES -->
-  <div class="grid-2" style="margin-bottom:28px;">
-
-    <div>
-      <div class="sec-title">Finances</div>
-      <div class="card card-accent-blush">
-        <div class="card-label">Upcoming Credit Card Due Dates</div>
-        <div class="card-title" style="margin-bottom:10px;">Active Cards</div>
-        <div id="due-dates-list"></div>
-        <hr class="divider">
-        <div style="display:flex;gap:8px;flex-wrap:wrap;">
-          <a href="finances/" class="launch-btn" style="font-size:0.7rem;padding:6px 14px;">Full Tracker →</a>
-          <a href="https://secure.chase.com/web/auth/dashboard#/dashboard/overview" target="_blank" class="launch-btn ghost" style="font-size:0.7rem;padding:6px 14px;">Chase ↗</a>
-          <a href="https://app.useorigin.com/" target="_blank" class="launch-btn ghost" style="font-size:0.7rem;padding:6px 14px;">Origin ↗</a>
-        </div>
-      </div>
+    <div class="card c-sage">
+      <div class="cl">Today</div>
+      <div class="workout-name" id="workout-name">—</div>
+      <div class="workout-focus" id="workout-focus"></div>
+      <div class="nn-row">💨 Morning Vacuum</div>
+      <div class="nn-row">💧 3L Water</div>
+      <div class="nn-row">🌅 Walking Pad AM + PM</div>
+      <div class="nn-row">👟 6k+ Steps</div>
+      <hr class="div">
+      <a href="fitness/" class="btn btn-ghost btn-sm">Open Tracker →</a>
     </div>
 
-    <div>
-      <div class="sec-title">Languages</div>
-      <div class="card card-accent-mauve">
-        <div class="card-label">Active Languages</div>
-        <div class="card-title" style="margin-bottom:10px;">Current Study</div>
-        <div class="lang-chip">
-          <span style="font-size:1.1rem;">🇪🇸</span>
-          <div style="flex:1;">
-            <div class="lang-name">Spanish</div>
-            <div class="lang-sub">C1 · Phase 3 — Listening & Immersion</div>
-          </div>
-          <span class="pill pill-amber">Reactivating</span>
-        </div>
-        <div class="lang-chip">
-          <span style="font-size:1.1rem;">🇧🇷</span>
-          <div style="flex:1;">
-            <div class="lang-name">Portuguese BR</div>
-            <div class="lang-sub">A1 · Phase 1 — Foundation</div>
-          </div>
-          <span class="pill pill-muted">Beginner</span>
-        </div>
-        <hr class="divider">
-        <a href="language-portal/" class="launch-btn" style="font-size:0.7rem;padding:6px 14px;">Start a Session →</a>
+    <div class="card c-blush">
+      <div class="cl">Finances</div>
+      <div class="ct">Card Due Dates</div>
+      <div id="due-dates-list" style="margin-top:8px;"></div>
+      <hr class="div">
+      <div style="display:flex;gap:6px;flex-wrap:wrap;">
+        <a href="finances/" class="btn btn-ghost btn-sm">Tracker →</a>
+        <a href="https://secure.chase.com" target="_blank" class="btn btn-ghost btn-sm">Chase ↗</a>
+        <a href="https://app.useorigin.com" target="_blank" class="btn btn-ghost btn-sm">Origin ↗</a>
       </div>
     </div>
 
   </div>
 
-  <!-- PROFESSIONAL DEV + PERSONAL DEV -->
-  <div class="grid-2" style="margin-bottom:28px;">
+  <!-- PLANNING SYSTEM -->
+  <div class="sec-title">Planning System</div>
+  <div class="row col-3" style="margin-bottom:24px;">
 
-    <div>
-      <div class="sec-title">Professional Development</div>
-      <div class="card card-accent-sage">
-        <div class="card-label">Active Courses — Coursera</div>
-        <div class="card-title" style="margin-bottom:10px;">In Progress</div>
-        <div class="course-row"><span class="course-name">Microsoft Power BI Data Analyst</span><span class="course-pct">~23%</span></div>
-        <div class="course-row"><span class="course-name">Google UX Design</span><span class="course-pct">~30%</span></div>
-        <div class="course-row"><span class="course-name">Beginner: Figma UI/UX Essentials</span><span class="course-pct">11%</span></div>
-        <div class="course-row"><span class="course-name">Data Management: Quality & Communication</span><span class="course-pct">27%</span></div>
-        <hr class="divider">
-        <div style="display:flex;gap:8px;">
-          <a href="professional-dev/" class="launch-btn" style="font-size:0.7rem;padding:6px 14px;">Full Tracker →</a>
-          <a href="https://www.coursera.org/my-learning?myLearningTab=IN_PROGRESS" target="_blank" class="launch-btn ghost" style="font-size:0.7rem;padding:6px 14px;">Coursera ↗</a>
-        </div>
+    <div class="card c-mauve">
+      <div class="cl">Monthly Planner</div>
+      <div class="plan-theme" id="monthly-theme">—</div>
+      <div class="plan-sub" id="monthly-focus"></div>
+      <div class="mprog-wrap">
+        <div class="mprog-lbl"><span id="monthly-month">This month</span><span id="monthly-pct">—</span></div>
+        <div class="prog-bar"><div class="prog-fill pf-lav" id="monthly-bar" style="width:0%"></div></div>
+      </div>
+      <hr class="div">
+      <a href="monthly/" class="btn btn-ghost btn-sm">Open Planner →</a>
+    </div>
+
+    <div class="card c-blush">
+      <div class="cl">2026 Reset</div>
+      <div class="ct" style="margin-bottom:6px;">Identity Manifesto</div>
+      <div id="reset-preview" class="cs" style="font-style:italic;min-height:36px;"></div>
+      <hr class="div">
+      <a href="reset-2026/" class="btn btn-ghost btn-sm">Open Reset →</a>
+    </div>
+
+    <div class="card c-lav">
+      <div class="cl">Personal Curriculum</div>
+      <div class="plan-theme" id="curr-topic">—</div>
+      <div class="plan-sub" id="curr-type"></div>
+      <div class="mprog-wrap">
+        <div class="mprog-lbl"><span id="curr-month">This month</span><span id="curr-pct">—</span></div>
+        <div class="prog-bar"><div class="prog-fill pf-pink" id="curr-bar" style="width:0%"></div></div>
+      </div>
+      <hr class="div">
+      <a href="curriculum/" class="btn btn-ghost btn-sm">Open Curriculum →</a>
+    </div>
+
+  </div>
+
+  <!-- GROWTH & LEARNING -->
+  <div class="sec-title">Growth & Learning</div>
+  <div class="row col-3" style="margin-bottom:24px;">
+
+    <div class="card c-mauve">
+      <div class="cl">Language Portal</div>
+      <div class="ct" style="margin-bottom:8px;">Active Languages</div>
+      <div class="lang-chip">
+        <span style="font-size:1.1rem;">🇪🇸</span>
+        <div style="flex:1;"><div class="lang-name">Spanish</div><div class="lang-sub">C1 · Phase 3 — Listening & Immersion</div></div>
+        <span class="badge b-amber">Active</span>
+      </div>
+      <div class="lang-chip">
+        <span style="font-size:1.1rem;">🇧🇷</span>
+        <div style="flex:1;"><div class="lang-name">Portuguese BR</div><div class="lang-sub">A1 · Phase 1 — Foundation</div></div>
+        <span class="badge b-muted">Beginner</span>
+      </div>
+      <hr class="div">
+      <a href="language-portal/" class="btn btn-ghost btn-sm">Start Session →</a>
+    </div>
+
+    <div class="card c-sage">
+      <div class="cl">Professional Dev</div>
+      <div class="ct" style="margin-bottom:8px;">Active Courses</div>
+      <div class="crow"><div class="idot" style="background:var(--sage)"></div><span class="crow-name">Microsoft Power BI Data Analyst</span><span class="crow-pct">23%</span></div>
+      <div class="crow"><div class="idot" style="background:var(--blush)"></div><span class="crow-name">Google UX Design</span><span class="crow-pct">30%</span></div>
+      <div class="crow"><div class="idot" style="background:var(--lavender)"></div><span class="crow-name">Figma UI/UX Essentials</span><span class="crow-pct">11%</span></div>
+      <div class="crow"><div class="idot" style="background:#f7d9b0"></div><span class="crow-name">Data Management Quality</span><span class="crow-pct">27%</span></div>
+      <hr class="div">
+      <div style="display:flex;gap:6px;">
+        <a href="professional-dev/" class="btn btn-ghost btn-sm">Tracker →</a>
+        <a href="https://www.coursera.org/my-learning" target="_blank" class="btn btn-ghost btn-sm">Coursera ↗</a>
       </div>
     </div>
 
-    <div>
-      <div class="sec-title">Personal Development</div>
-      <div class="card card-accent-lav">
-        <div class="card-label">2026 Focus Areas</div>
-        <div class="card-title" style="margin-bottom:10px;">Goals & Habits</div>
-        <div class="goal-row"><div class="goal-check">·</div><span>Health & Fitness</span><span class="pill pill-muted" style="margin-left:auto;">ongoing</span></div>
-        <div class="goal-row"><div class="goal-check">·</div><span>Language Learning</span><span class="pill pill-muted" style="margin-left:auto;">ongoing</span></div>
-        <div class="goal-row"><div class="goal-check">·</div><span>Professional Skills</span><span class="pill pill-muted" style="margin-left:auto;">ongoing</span></div>
-        <div class="goal-row"><div class="goal-check">·</div><span>Financial Goals</span><span class="pill pill-muted" style="margin-left:auto;">ongoing</span></div>
-        <hr class="divider">
-        <a href="weekly-audit/" class="launch-btn ghost" style="font-size:0.7rem;padding:6px 14px;">Open Weekly Audit →</a>
+    <div class="card c-teal">
+      <div class="cl">Inner Work & Media</div>
+      <div class="ct" style="margin-bottom:8px;">Reading & Workbook</div>
+      <div style="font-size:0.68rem;font-weight:600;color:var(--muted);margin-bottom:4px;letter-spacing:.5px;text-transform:uppercase;">📚 Books</div>
+      <div id="media-stats" class="cs" style="margin-bottom:10px;"></div>
+      <div style="font-size:0.68rem;font-weight:600;color:var(--muted);margin-bottom:4px;letter-spacing:.5px;text-transform:uppercase;">🌿 Stoic Workbook</div>
+      <div id="stoic-stats" class="cs"></div>
+      <hr class="div">
+      <div style="display:flex;gap:6px;">
+        <a href="media/" class="btn btn-ghost btn-sm">Media →</a>
+        <a href="stoic/" class="btn btn-ghost btn-sm">Workbook →</a>
       </div>
     </div>
 
   </div>
 
-  <!-- TOOLS ROW -->
-  <div class="sec-title">Quick Access</div>
-  <div class="grid-4" style="margin-bottom:14px;">
-    <a href="weekly-audit/" class="card card-accent-blush" style="text-decoration:none;display:block;">
-      <div style="font-size:1.6rem;margin-bottom:8px;">📋</div>
-      <div class="card-label">Tool</div>
-      <div class="card-title">Weekly Audit</div>
-      <div class="card-sub">Sunday review, goals, life wheel, letter to self</div>
-    </a>
-    <a href="finances/" class="card card-accent-sage" style="text-decoration:none;display:block;">
-      <div style="font-size:1.6rem;margin-bottom:8px;">💳</div>
-      <div class="card-label">Tool</div>
-      <div class="card-title">Financial Tracker</div>
-      <div class="card-sub">Credit cards, due dates, banking & investment links</div>
-    </a>
-    <a href="language-portal/" class="card card-accent-mauve" style="text-decoration:none;display:block;">
-      <div style="font-size:1.6rem;margin-bottom:8px;">🌍</div>
-      <div class="card-label">Tool</div>
-      <div class="card-title">Language Portal</div>
-      <div class="card-sub">Spanish & Portuguese session launcher, Anki, log</div>
-    </a>
-    <a href="professional-dev/" class="card card-accent-lav" style="text-decoration:none;display:block;">
-      <div style="font-size:1.6rem;margin-bottom:8px;">📊</div>
-      <div class="card-label">Tool</div>
-      <div class="card-title">Professional Dev</div>
-      <div class="card-sub">Coursera programs, course progress, skills tracker</div>
-    </a>
+  <!-- ALL TOOLS -->
+  <div class="sec-title">All Tools</div>
+  <div class="row col-5" style="margin-bottom:10px;">
+    <a href="weekly-audit/"    class="tool-card c-blush"><span class="tool-emoji">📋</span><div class="tool-name">Weekly Audit</div><div class="tool-desc">Sunday review · life wheel · goals · letter to self</div></a>
+    <a href="monthly/"         class="tool-card c-mauve"><span class="tool-emoji">🗓️</span><div class="tool-name">Monthly Planner</div><div class="tool-desc">11-part monthly focus system · habit stacking</div></a>
+    <a href="reset-2026/"      class="tool-card c-blush"><span class="tool-emoji">✨</span><div class="tool-name">2026 Reset</div><div class="tool-desc">Identity audit · narrative · lifestyle rebrand</div></a>
+    <a href="curriculum/"      class="tool-card c-lav"><span class="tool-emoji">📖</span><div class="tool-name">Personal Curriculum</div><div class="tool-desc">12 monthly learning modules · 4-week framework</div></a>
+    <a href="stoic/"           class="tool-card c-sage"><span class="tool-emoji">🌿</span><div class="tool-name">Stoic Workbook</div><div class="tool-desc">8 modules · living journal · dated entries</div></a>
   </div>
-  <div class="grid-4">
-    <a href="calendar/" class="card card-accent-rose" style="text-decoration:none;display:block;">
-      <div style="font-size:1.6rem;margin-bottom:8px;">🗓️</div>
-      <div class="card-label">Tool</div>
-      <div class="card-title">Calendar</div>
-      <div class="card-sub">Monthly & weekly planner, color-coded categories</div>
-    </a>
+  <div class="row col-5" style="margin-bottom:10px;">
+    <a href="fitness/"         class="tool-card c-sage"><span class="tool-emoji">💪</span><div class="tool-name">Fitness Tracker</div><div class="tool-desc">7-day workouts · steps · meals · protein · habits</div></a>
+    <a href="finances/"        class="tool-card c-blush"><span class="tool-emoji">💳</span><div class="tool-name">Financial Tracker</div><div class="tool-desc">Credit cards · due dates · banking links</div></a>
+    <a href="language-portal/" class="tool-card c-mauve"><span class="tool-emoji">🌍</span><div class="tool-name">Language Portal</div><div class="tool-desc">Spanish & Portuguese · session launcher · Anki</div></a>
+    <a href="professional-dev/" class="tool-card c-sage"><span class="tool-emoji">📊</span><div class="tool-name">Professional Dev</div><div class="tool-desc">Coursera progress · skills · certifications</div></a>
+    <a href="media/"           class="tool-card c-teal"><span class="tool-emoji">🎵</span><div class="tool-name">Media Tracker</div><div class="tool-desc">Books · podcasts · articles · albums · screen</div></a>
+  </div>
+  <div class="row col-5">
+    <a href="wishlist/"        class="tool-card c-blush"><span class="tool-emoji">✦</span><div class="tool-name">Wishlist</div><div class="tool-desc">Categories · priorities · prices · links</div></a>
+    <a href="passport/"        class="tool-card c-amber"><span class="tool-emoji">🗺️</span><div class="tool-name">DC Passport</div><div class="tool-desc">Interactive map · restaurants · museums · visited</div></a>
+    <a href="calendar/"        class="tool-card c-rose"><span class="tool-emoji">📅</span><div class="tool-name">Calendar</div><div class="tool-desc">Monthly & weekly · 8 categories · event notes</div></a>
+    <div style="border-radius:12px;border:1.5px dashed var(--rule);padding:15px;opacity:0.45;"><span class="tool-emoji" style="opacity:.5;">＋</span><div class="tool-name" style="color:var(--muted);font-family:'Jost',sans-serif;font-size:0.8rem;">More coming</div></div>
+    <div></div>
   </div>
 
 </div>
 
 <script>
-var pwd = localStorage.getItem('brain2auth');
-if (pwd !== '0421') {
-  var attempt = prompt('Password:');
-  if (attempt !== '0421') {
-    document.body.innerHTML = '';
-    throw new Error('Unauthorized');
-  }
-  localStorage.setItem('brain2auth', attempt);
-}
+var DAYS=['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+var MONTHS=['January','February','March','April','May','June','July','August','September','October','November','December'];
+var MONTHS_S=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
 
-var DAYS   = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
-var MONTHS = ['January','February','March','April','May','June','July','August','September','October','November','December'];
-var MONTHS_SHORT = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
-
-var now = new Date();
-var h = now.getHours();
-var greeting = h < 12 ? 'Good morning' : h < 17 ? 'Good afternoon' : 'Good evening';
-document.getElementById('hero-greeting').textContent = greeting + ' ✦';
-document.getElementById('today-date').textContent = DAYS[now.getDay()] + ', ' + MONTHS[now.getMonth()] + ' ' + now.getDate() + ', ' + now.getFullYear();
-
-// Week number
-var startOfYear = new Date(now.getFullYear(), 0, 1);
-var weekNum = Math.ceil(((now - startOfYear) / 86400000 + startOfYear.getDay() + 1) / 7);
-document.getElementById('week-num').textContent = 'Week ' + weekNum + ' of 52';
-document.getElementById('week-year').textContent = now.getFullYear();
-
-// Year progress
-var isLeap = now.getFullYear() % 4 === 0;
-var totalDays = isLeap ? 366 : 365;
-var dayOfYear = Math.ceil((now - startOfYear) / 86400000);
-var yearPct = (dayOfYear / totalDays * 100).toFixed(1);
-var remaining = totalDays - dayOfYear;
-document.getElementById('year-days-label').textContent = 'Day ' + dayOfYear + ' of ' + totalDays;
-document.getElementById('year-pct').textContent = yearPct + '%';
-document.getElementById('year-bar').style.width = yearPct + '%';
-document.getElementById('year-remaining').textContent = remaining + ' days remaining in ' + now.getFullYear();
-
-// ── UPCOMING EVENTS from calendar localStorage ──
-var CAT_COLORS = {
-  work:     '#f2c4ce',
-  social:   '#b8d4f0',
-  travel:   '#b8cfb0',
-  learning: '#f0dea0',
-  tasks:    '#d4b8e0',
-  health:   '#a8d8d0',
-  selfcare: '#f4b8d4',
-  personal: '#f7d9b0'
+var WORKOUTS={
+  0:{name:'Rest & Prep',      focus:'Light walking · meal prep · self-care'},
+  1:{name:'Lower Body Sculpt',focus:'Squats · lunges · donkey kicks · glutes'},
+  2:{name:'Waist Snatching',  focus:'Infinity hoop · planks · dead bugs'},
+  3:{name:'Upper Body Sculpt',focus:'Arms · shoulders · rear delts · shadowbox'},
+  4:{name:'Active Recovery',  focus:'10k steps · walking pad only'},
+  5:{name:'Full Body Glow',   focus:'Thrusters · step-ups · glute bridges'},
+  6:{name:'Sweat Session',    focus:'Hoop + bodyweight circuit'},
 };
 
-function dateKey(d) {
-  var y = d.getFullYear();
-  var m = String(d.getMonth()+1).padStart(2,'0');
-  var day = String(d.getDate()).padStart(2,'0');
-  return y + '-' + m + '-' + day;
-}
+var CAT_COLORS={work:'#f2c4ce',social:'#b8d4f0',travel:'#b8cfb0',learning:'#f0dea0',tasks:'#d4b8e0',health:'#a8d8d0',selfcare:'#f4b8d4',personal:'#f7d9b0'};
 
-function formatTime(t) {
-  if (!t) return '';
-  var p = t.split(':'); var hr = parseInt(p[0]), mn = p[1];
-  var ampm = hr >= 12 ? 'pm' : 'am'; hr = hr % 12 || 12;
-  return hr + (mn !== '00' ? ':' + mn : '') + ampm;
-}
+var now=new Date();
+var h=now.getHours();
+var greeting=h<12?'Good morning':h<17?'Good afternoon':'Good evening';
 
-function renderUpcoming() {
-  var container = document.getElementById('upcoming-list');
-  var raw = localStorage.getItem('lifeCalendar1');
-  if (!raw) { container.innerHTML = '<div class="upcoming-empty">No upcoming events. Add some in your Calendar!</div>'; return; }
+// Topbar + hero
+document.getElementById('today-date').textContent=DAYS[now.getDay()]+', '+MONTHS[now.getMonth()]+' '+now.getDate()+', '+now.getFullYear();
+document.getElementById('hero-greeting').textContent=greeting+' ✦';
 
-  var calData;
-  try { calData = JSON.parse(raw); } catch(e) { container.innerHTML = '<div class="upcoming-empty">No events found.</div>'; return; }
-  var allEvents = calData.events || [];
+// Week number
+function getWeekNum(){var d=new Date(now);d.setHours(0,0,0,0);d.setDate(d.getDate()+4-(d.getDay()||7));var y=new Date(d.getFullYear(),0,1);return Math.ceil((((d-y)/86400000)+1)/7);}
+document.getElementById('hero-sub').textContent='Week '+getWeekNum()+' of 52 · '+MONTHS[now.getMonth()]+' '+now.getFullYear();
 
-  // Build keys for today, tomorrow, day after
-  var today = new Date(); today.setHours(0,0,0,0);
-  var days = [];
-  for (var i = 0; i <= 2; i++) {
-    var d = new Date(today); d.setDate(today.getDate() + i);
-    days.push(dateKey(d));
-  }
+// Year progress
+var soy=new Date(now.getFullYear(),0,1);
+var totalDays=(now.getFullYear()%4===0)?366:365;
+var doy=Math.ceil((now-soy)/86400000);
+var ypct=(doy/totalDays*100).toFixed(1);
+document.getElementById('year-label').textContent='Day '+doy+' of '+totalDays+' · '+(totalDays-doy)+' days remaining';
+document.getElementById('year-pct').textContent=ypct+'%';
+document.getElementById('year-bar').style.width=ypct+'%';
 
-  // Filter events within next 3 days, not done, sorted by date then time
-  var upcoming = allEvents.filter(function(e) {
-    return days.indexOf(e.date) !== -1 && !e.done;
-  }).sort(function(a, b) {
-    if (a.date !== b.date) return a.date.localeCompare(b.date);
-    return (a.time || '').localeCompare(b.time || '');
+// Today's workout
+var wo=WORKOUTS[now.getDay()];
+document.getElementById('workout-name').textContent=wo.name;
+document.getElementById('workout-focus').textContent=wo.focus;
+
+// Date key helper
+function dateKey(d){return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');}
+function formatTime(t){if(!t)return '';var p=t.split(':');var hr=parseInt(p[0]),mn=p[1];var ap=hr>=12?'pm':'am';hr=hr%12||12;return hr+(mn!=='00'?':'+mn:'')+ap;}
+
+// Upcoming events
+(function(){
+  var c=document.getElementById('upcoming-list');
+  var raw=localStorage.getItem('lifeCalendar1');
+  if(!raw){c.innerHTML='<div class="empty-txt">Add events in your Calendar!</div>';return;}
+  var cal;try{cal=JSON.parse(raw);}catch(e){c.innerHTML='<div class="empty-txt">Could not load events.</div>';return;}
+  var events=cal.events||[];
+  var today=new Date();today.setHours(0,0,0,0);
+  var days=[];for(var i=0;i<=2;i++){var d=new Date(today);d.setDate(today.getDate()+i);days.push(dateKey(d));}
+  var upcoming=events.filter(function(e){return days.indexOf(e.date)!==-1&&!e.done;}).sort(function(a,b){return a.date!==b.date?a.date.localeCompare(b.date):(a.time||'').localeCompare(b.time||'');});
+  if(!upcoming.length){c.innerHTML='<div class="empty-txt">Nothing in the next 3 days — enjoy the calm!</div>';return;}
+  c.innerHTML='';
+  upcoming.forEach(function(ev){
+    var color=CAT_COLORS[ev.cat]||'#e0cec8';
+    var pl,pc;
+    if(ev.date===days[0]){pl='Today';pc='b-red';}
+    else if(ev.date===days[1]){pl='Tomorrow';pc='b-amber';}
+    else{pl=MONTHS_S[parseInt(ev.date.split('-')[1])-1]+' '+parseInt(ev.date.split('-')[2]);pc='b-green';}
+    var row=document.createElement('div');row.className='irow';
+    row.innerHTML='<div class="idot" style="background:'+color+'"></div><span class="iname">'+ev.title+(ev.time?' · '+formatTime(ev.time):'')+'</span><span class="badge '+pc+'">'+pl+'</span>';
+    c.appendChild(row);
   });
+})();
 
-  if (!upcoming.length) {
-    container.innerHTML = '<div class="upcoming-empty">Nothing in the next 3 days — enjoy the calm!</div>';
-    return;
-  }
-
-  container.innerHTML = '';
-  var todayKey = days[0], tomorrowKey = days[1];
-
-  upcoming.forEach(function(ev) {
-    var color = CAT_COLORS[ev.cat] || '#e0cec8';
-    var row = document.createElement('div'); row.className = 'upcoming-row';
-
-    var pillLabel, pillClass;
-    if (ev.date === todayKey)    { pillLabel = 'Today';    pillClass = 'today-pill'; }
-    else if (ev.date === tomorrowKey) { pillLabel = 'Tomorrow'; pillClass = 'tomorrow-pill'; }
-    else                          { pillLabel = MONTHS_SHORT[parseInt(ev.date.split('-')[1])-1] + ' ' + parseInt(ev.date.split('-')[2]); pillClass = 'soon-pill'; }
-
-    row.innerHTML =
-      '<div class="upcoming-dot" style="background:' + color + '"></div>' +
-      '<span class="upcoming-name">' + ev.title + (ev.time ? ' · ' + formatTime(ev.time) : '') + '</span>' +
-      '<span class="upcoming-pill ' + pillClass + '">' + pillLabel + '</span>';
-
-    container.appendChild(row);
-  });
-}
-
-renderUpcoming();
-
-// ── CREDIT CARD DUE DATES ──
-var CARDS = [
-  {name:'Chase Sapphire Preferred', day:22, color:'#f2c4ce'},
-  {name:'Venture X',                day:28, color:'#d4b8e0'},
-  {name:'Citi AAdvantage Platinum', day:1,  color:'#b8cfb0'},
-  {name:'Bilt Blue Card',           day:5,  color:'#b8d4f0'},
-  {name:'Marriott Bonvoy',          day:12, color:'#f7d9b0'},
+// Credit card due dates
+var CARDS=[
+  {name:'Chase Sapphire Preferred',day:22,color:'#f2c4ce'},
+  {name:'Venture X',               day:28,color:'#d4b8e0'},
+  {name:'Citi AAdvantage Platinum',day:1, color:'#b8cfb0'},
+  {name:'Bilt Blue Card',          day:5, color:'#b8d4f0'},
+  {name:'Marriott Bonvoy',         day:12,color:'#f7d9b0'},
 ];
-
-function daysUntil(day) {
-  var n = new Date(); n.setHours(0,0,0,0);
-  var due = new Date(n.getFullYear(), n.getMonth(), day);
-  if (due < n) due = new Date(n.getFullYear(), n.getMonth()+1, day);
-  return Math.ceil((due - n) / 86400000);
-}
-
-function nextDueDate(day) {
-  var n = new Date(); n.setHours(0,0,0,0);
-  var due = new Date(n.getFullYear(), n.getMonth(), day);
-  if (due < n) due = new Date(n.getFullYear(), n.getMonth()+1, day);
-  return MONTHS_SHORT[due.getMonth()] + ' ' + due.getDate();
-}
-
-var sorted = CARDS.slice().sort(function(a,b){ return daysUntil(a.day) - daysUntil(b.day); });
-var list = document.getElementById('due-dates-list');
-sorted.slice(0,4).forEach(function(c) {
-  var d = daysUntil(c.day);
-  var cls = d<=7?'urgent':d<=14?'soon':'ok';
-  var label = d===0?'today!':d+'d';
-  var row = document.createElement('div'); row.className='due-row';
-  row.innerHTML = '<div class="due-dot" style="background:'+c.color+'"></div>' +
-    '<span class="due-name">'+c.name+'</span>' +
-    '<span class="due-date">'+nextDueDate(c.day)+'</span>' +
-    '<span class="due-pill '+cls+'">'+label+'</span>';
-  list.appendChild(row);
+function daysUntil(day){var n=new Date();n.setHours(0,0,0,0);var due=new Date(n.getFullYear(),n.getMonth(),day);if(due<n)due=new Date(n.getFullYear(),n.getMonth()+1,day);return Math.ceil((due-n)/86400000);}
+function nextDue(day){var n=new Date();n.setHours(0,0,0,0);var due=new Date(n.getFullYear(),n.getMonth(),day);if(due<n)due=new Date(n.getFullYear(),n.getMonth()+1,day);return MONTHS_S[due.getMonth()]+' '+due.getDate();}
+CARDS.slice().sort(function(a,b){return daysUntil(a.day)-daysUntil(b.day);}).forEach(function(c){
+  var d=daysUntil(c.day);
+  var cls=d<=7?'b-red':d<=14?'b-amber':'b-green';
+  var row=document.createElement('div');row.className='irow';
+  row.innerHTML='<div class="idot" style="background:'+c.color+'"></div><span class="iname">'+c.name+'</span><span class="idate">'+nextDue(c.day)+'</span><span class="badge '+cls+'">'+(d===0?'today':d+'d')+'</span>';
+  document.getElementById('due-dates-list').appendChild(row);
 });
+
+// Monthly planner — reads from localStorage
+(function(){
+  var mo=now.getMonth();var yr=now.getFullYear();
+  var key='monthlyPlanner1_'+yr+'_'+mo;
+  var raw=localStorage.getItem(key);
+  var theme='',focus='',done=0;
+  if(raw){try{var d=JSON.parse(raw);
+    theme=(d.focus_theme||'').replace(/<[^>]+>/g,'').trim();
+    focus=(d.focus_area_val||'').replace(/<[^>]+>/g,'').trim();
+    var wd=d._weekDone||{};
+    done=['setup','w1','w2','w3','w4'].filter(function(w){return wd[w];}).length;
+  }catch(e){}}
+  document.getElementById('monthly-theme').textContent=theme||MONTHS[mo]+' — not set yet';
+  document.getElementById('monthly-focus').textContent=focus?'Focus: '+focus:'Click to set your monthly focus';
+  document.getElementById('monthly-month').textContent=MONTHS[mo]+' progress';
+  document.getElementById('monthly-pct').textContent=done+'/5 sections';
+  document.getElementById('monthly-bar').style.width=Math.round(done/5*100)+'%';
+})();
+
+// 2026 Reset
+(function(){
+  var raw=localStorage.getItem('reset2026v1');
+  var preview='';
+  if(raw){try{var d=JSON.parse(raw);
+    preview=((d.cover_intention||d.narr_mission||'')+'').replace(/<[^>]+>/g,'').trim();
+  }catch(e){}}
+  document.getElementById('reset-preview').textContent=preview?('"'+preview.slice(0,90)+(preview.length>90?'…':'')+'"'):'Your identity manifesto awaits.';
+})();
+
+// Personal Curriculum — current month's module
+(function(){
+  var mo=now.getMonth();
+  var raw=localStorage.getItem('curriculum1_m'+mo);
+  var topic='',type='',done=0;
+  if(raw){try{var d=JSON.parse(raw);
+    topic=(d.title||'').replace(/<[^>]+>/g,'').trim();
+    type=d.type||'';
+    var wd=d._weekDone||{};
+    done=['setup','w1','w2','w3','w4'].filter(function(w){return wd[w];}).length;
+  }catch(e){}}
+  document.getElementById('curr-topic').textContent=topic||MONTHS[mo]+' module — not set yet';
+  document.getElementById('curr-type').textContent=type||'Open to set this month\'s topic';
+  document.getElementById('curr-month').textContent=MONTHS[mo]+' progress';
+  document.getElementById('curr-pct').textContent=done+'/5';
+  document.getElementById('curr-bar').style.width=Math.round(done/5*100)+'%';
+})();
+
+// Media stats
+(function(){
+  var raw=localStorage.getItem('mediaTracker3');
+  if(!raw){document.getElementById('media-stats').textContent='No books tracked yet.';return;}
+  try{
+    var d=JSON.parse(raw);
+    var books=d.books||[];
+    var read=books.filter(function(b){return b.status==='done';}).length;
+    document.getElementById('media-stats').textContent=read+' of '+books.length+' books read in 2026';
+  }catch(e){document.getElementById('media-stats').textContent='Media tracker active.';}
+})();
+
+// Stoic workbook stats
+(function(){
+  var total=0;
+  try{Object.keys(localStorage).forEach(function(k){if(k.indexOf('stoicWorkbook2_')===0){var a=JSON.parse(localStorage[k]);total+=a.length;}});}catch(e){}
+  document.getElementById('stoic-stats').textContent=total>0?(total+' journal entr'+(total===1?'y':'ies')+' saved'):'No entries yet — open to begin.';
+})();
 </script>
 </body>
 </html>
