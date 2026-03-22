@@ -199,9 +199,6 @@ html,body{height:100%;font-family:'Jost',sans-serif;color:var(--ink);background:
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
 <script>
-var pwd=localStorage.getItem('brain2auth');
-if(pwd!=='YOURPASSWORD'){var attempt=prompt('Password:');if(attempt!=='YOURPASSWORD'){document.body.innerHTML='';throw new Error('Unauthorized');}localStorage.setItem('brain2auth',attempt);}
-  
 var SK = 'dcPassport1';
 
 var CATEGORIES = [
