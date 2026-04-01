@@ -375,8 +375,7 @@ hr.rule{border:none;border-top:1px solid var(--rule);margin:14px 0;}
 </div>
 
 <script>
-var pwd=localStorage.getItem('brain2auth');
-if(pwd!=='Nikkireed234!'){var attempt=prompt('Password:');if(attempt!=='Nikkireed234!'){document.body.innerHTML='';throw new Error('Unauthorized');}localStorage.setItem('brain2auth',attempt);location.reload();}
+// password handled at dashboard level
 
 var SK='mealPlanner1';
 var DAYS_FULL=['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
@@ -419,6 +418,7 @@ function load(){
   else{data.pantry=JSON.parse(JSON.stringify(DEFAULT_PANTRY));save();}
   if(!data.meals) data.meals={};
   if(!data.shopping) data.shopping=[];
+  if(!data.dismissedAuto) data.dismissedAuto=[];
 }
 
 function costPerUnit(item){if(!item.totalUnits||!item.totalPrice)return 0;return item.totalPrice/item.totalUnits;}
@@ -734,12 +734,13 @@ document.getElementById('meal-modal').addEventListener('click',function(e){if(e.
 // SHOPPING RENDER
 // ══════════════════════════════════════
 function updateShoppingAuto(){
+  if(!data.dismissedAuto) data.dismissedAuto=[];
   // Remove old auto items
   data.shopping=data.shopping.filter(function(s){return !s.auto;});
-  // Add auto items for LOW/OUT
+  // Add auto items for LOW/OUT unless dismissed
   data.pantry.forEach(function(item){
     var st=stockStatus(item);
-    if(st==='low'||st==='out'){
+    if((st==='low'||st==='out')&&data.dismissedAuto.indexOf('auto_'+item.id)===-1){
       data.shopping.push({
         id:'auto_'+item.id,
         name:item.name,
@@ -786,10 +787,14 @@ function renderShopping(){
       var cost=document.createElement('span');cost.className='shop-item-cost';
       cost.textContent=s.cost?'$'+parseFloat(s.cost).toFixed(2):'';
       var del=document.createElement('button');del.className='shop-item-del';del.textContent='✕';
-      del.onclick=(function(id){return function(){
+      del.onclick=(function(id,isAuto){return function(){
+        if(isAuto){
+          if(!data.dismissedAuto) data.dismissedAuto=[];
+          if(data.dismissedAuto.indexOf(id)===-1) data.dismissedAuto.push(id);
+        }
         data.shopping=data.shopping.filter(function(x){return x.id!==id;});
         save();renderShopping();
-      };})(s.id);
+      };})(s.id,s.auto);
       row.appendChild(check);row.appendChild(name);row.appendChild(cost);row.appendChild(del);
       sec.appendChild(row);
     });
