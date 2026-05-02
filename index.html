@@ -5,289 +5,454 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Brain 2.0</title>
 <style>
-@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,400&family=Jost:wght@300;400;500;600&display=swap');
-:root{
-  --blush:#f2c4ce;--rose:#e8a0b0;--mauve:#c9a0b4;--lavender:#d4b8e0;
-  --sage:#b8cfb0;--cream:#fdf6f0;--warm:#f7ece4;--ink:#3a2a2e;--muted:#9a8088;--rule:#e0cec8;
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400;1,500&family=Jost:wght@300;400;500;600&display=swap');
+
+:root {
+  --gold:  #C49A35;  --gold-bg:  #F6EED4;
+  --blue:  #6B8FAD;  --blue-bg:  #DCE9F3;
+  --rose:  #BC6B7A;  --rose-bg:  #F1D6DB;
+  --sage:  #6A9A62;  --sage-bg:  #E0F1DC;
+  --teal:  #5A9E98;  --teal-bg:  #D9EFED;
+  --lav:   #8A72B0;  --lav-bg:   #EDE5F5;
+  --sidebar-bg: #EAE0D5;
+  --sidebar-w:  230px;
+  --sidebar-w-collapsed: 56px;
+  --bg:    #EDE5DC;
+  --card:  #FAF6F1;
+  --border:rgba(170,145,120,.2);
+  --ink:   #2C2420;
+  --muted: #8A7E78;
+  --rule:  rgba(170,145,120,.2);
 }
-*{box-sizing:border-box;margin:0;padding:0;}
-body{background:#f0e8e4;font-family:'Jost',sans-serif;color:var(--ink);min-height:100vh;}
 
-.topbar{background:var(--cream);border-bottom:1px solid var(--rule);padding:13px 32px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;}
-.topbar-title{font-family:'Cormorant Garamond',serif;font-size:1.6rem;font-weight:300;letter-spacing:2px;}
-.topbar-title em{font-style:italic;color:var(--mauve);}
-.topbar-date{font-size:0.66rem;letter-spacing:2px;text-transform:uppercase;color:var(--muted);}
+* { box-sizing:border-box; margin:0; padding:0; }
+body { background:var(--bg); font-family:'Jost',sans-serif; color:var(--ink); display:flex; min-height:100vh; }
 
-.hub{max-width:1120px;margin:0 auto;padding:24px 24px 60px;}
+/* ══ SIDEBAR ══ */
+.sidebar {
+  position:fixed; left:0; top:0; bottom:0;
+  width:var(--sidebar-w);
+  background:var(--sidebar-bg);
+  border-right:1px solid var(--border);
+  display:flex; flex-direction:column;
+  z-index:200; overflow-y:auto;
+  transition:width .25s ease;
+}
+.sidebar::-webkit-scrollbar { width:0; }
 
-.sec-title{font-family:'Cormorant Garamond',serif;font-size:0.95rem;font-weight:600;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin-bottom:12px;display:flex;align-items:center;gap:10px;}
-.sec-title:after{content:'';flex:1;height:1px;background:var(--rule);}
+/* Collapse toggle */
+.sb-toggle {
+  position:absolute; top:18px; left:14px;
+  width:24px; height:24px;
+  display:flex; flex-direction:column; justify-content:center; gap:4px;
+  background:transparent; border:none; cursor:pointer;
+  padding:4px; border-radius:5px; transition:background .15s;
+  z-index:10;
+}
+.sb-toggle:hover { background:rgba(170,145,120,.18); }
+.sb-toggle span {
+  display:block; height:1.5px; background:var(--muted); border-radius:1px;
+  transition:all .2s;
+}
+.sb-toggle span:nth-child(1) { width:14px; }
+.sb-toggle span:nth-child(2) { width:11px; }
+.sb-toggle span:nth-child(3) { width:14px; }
 
-.row{display:grid;gap:14px;margin-bottom:24px;}
-.col-2{grid-template-columns:1fr 1fr;}
-.col-3{grid-template-columns:1fr 1fr 1fr;}
-.col-4{grid-template-columns:repeat(4,1fr);}
-.col-5{grid-template-columns:repeat(5,1fr);}
-.hero-layout{grid-template-columns:2fr 1fr;}
+.sb-brand { padding:18px 22px 16px 44px; border-bottom:1px solid var(--rule); }
 
-.card{background:var(--cream);border:1px solid var(--rule);border-radius:14px;padding:18px 20px;transition:transform .15s,box-shadow .15s;}
-.card:hover{transform:translateY(-2px);box-shadow:0 6px 20px rgba(180,130,140,.12);}
-.card.flat:hover{transform:none;box-shadow:none;}
-.c-blush{border-top:3px solid var(--blush);}
-.c-sage{border-top:3px solid var(--sage);}
-.c-lav{border-top:3px solid var(--lavender);}
-.c-rose{border-top:3px solid var(--rose);}
-.c-mauve{border-top:3px solid var(--mauve);}
-.c-teal{border-top:3px solid #a8d8d0;}
-.c-amber{border-top:3px solid #f7d9b0;}
-.c-blue{border-top:3px solid #b8d4f0;}
+/* Collapsed sidebar — icons only */
+body.sb-collapsed .sidebar { width:var(--sidebar-w-collapsed); }
+body.sb-collapsed .main { margin-left:var(--sidebar-w-collapsed); }
+body.sb-collapsed .sb-logo,
+body.sb-collapsed .sb-date-line,
+body.sb-collapsed .sb-today-day,
+body.sb-collapsed .sb-today-week,
+body.sb-collapsed .sb-group,
+body.sb-collapsed .sb-link span:not(.sb-icon) { display:none; }
+body.sb-collapsed .sb-brand,
+body.sb-collapsed .sb-today { padding-left:0; padding-right:0; text-align:center; }
+body.sb-collapsed .sb-link {
+  justify-content:center; padding:9px 0;
+}
+body.sb-collapsed .sb-icon { width:auto; font-size:1.05rem; }
+body.sb-collapsed .sb-toggle { right:auto; left:50%; transform:translateX(-50%); top:18px; }
+body.sb-collapsed .sb-brand { padding-top:54px; }
+body.sb-collapsed .main { transition:margin-left .25s ease; }
+.main { transition:margin-left .25s ease; }
 
-.cl{font-size:0.58rem;letter-spacing:2.5px;text-transform:uppercase;color:var(--muted);margin-bottom:3px;}
-.ct{font-family:'Cormorant Garamond',serif;font-size:1.05rem;font-weight:600;color:var(--ink);margin-bottom:4px;}
-.cs{font-size:0.72rem;color:var(--muted);line-height:1.5;}
+.sb-logo  { font-family:'Cormorant Garamond',serif; font-size:1.45rem; font-weight:300; font-style:italic; color:var(--gold); letter-spacing:2px; }
+.sb-date-line { font-size:0.56rem; letter-spacing:2.5px; text-transform:uppercase; color:var(--muted); margin-top:3px; }
 
-/* HERO */
-.hero{background:linear-gradient(135deg,#fce8ef,#f0e0f0);border:1px solid var(--blush);border-radius:16px;padding:18px 28px;}
-.hero-greeting{font-family:'Cormorant Garamond',serif;font-size:2rem;font-weight:300;font-style:italic;margin-bottom:2px;}
-.hero-sub{font-size:0.7rem;color:var(--muted);margin-bottom:12px;}
-.prog-label{display:flex;justify-content:space-between;font-size:0.64rem;color:var(--muted);margin-bottom:4px;}
-.prog-bar{height:5px;background:rgba(201,160,180,.25);border-radius:3px;overflow:hidden;margin-bottom:0;}
-.prog-fill{height:100%;border-radius:3px;}
-.pf-pink{background:linear-gradient(90deg,var(--blush),var(--mauve));}
-.pf-sage{background:linear-gradient(90deg,#b8cfb0,#7aaa70);}
-.pf-lav{background:linear-gradient(90deg,var(--lavender),#a880c8);}
-.pf-teal{background:linear-gradient(90deg,#a8d8d0,#5ab0a8);}
+.sb-today { padding:12px 22px 14px; border-bottom:1px solid var(--rule); }
+.sb-today-day  { font-family:'Cormorant Garamond',serif; font-size:0.92rem; color:var(--ink); font-style:italic; }
+.sb-today-week { font-size:0.57rem; letter-spacing:2px; text-transform:uppercase; color:var(--muted); margin-top:2px; }
 
-/* BUTTONS */
-.btn{display:inline-flex;align-items:center;gap:5px;padding:7px 16px;border:none;border-radius:20px;font-family:'Jost',sans-serif;font-size:0.72rem;font-weight:600;cursor:pointer;text-decoration:none;transition:all .15s;}
-.btn-mauve{background:var(--mauve);color:white;}.btn-mauve:hover{background:var(--rose);}
-.btn-ghost{background:var(--cream);color:var(--ink);border:1.5px solid var(--rule);}.btn-ghost:hover{border-color:var(--rose);}
-.btn-sm{font-size:0.67rem;padding:5px 12px;}
+.sb-group { padding:12px 22px 4px; font-size:0.53rem; letter-spacing:2.5px; text-transform:uppercase; color:var(--muted); font-weight:600; }
+.sb-nav { flex:1; padding:0 12px 16px; }
+.sb-link {
+  display:flex; align-items:center; gap:9px;
+  padding:7px 10px; border-radius:7px;
+  text-decoration:none; color:var(--muted);
+  font-size:0.7rem; font-weight:500;
+  transition:all .14s; margin-bottom:1px;
+}
+.sb-link:hover { background:rgba(170,145,120,.14); color:var(--ink); }
+.sb-link.on    { background:rgba(196,154,53,.13); color:var(--gold); font-weight:600; }
+.sb-icon { font-size:0.88rem; width:17px; text-align:center; flex-shrink:0; }
+.sb-rule { height:1px; background:var(--rule); margin:6px 10px; }
 
-/* QUICK LAUNCH */
-.ql-grid{display:grid;grid-template-columns:1fr 1fr;gap:5px;}
-.ql{display:flex;align-items:center;gap:6px;padding:6px 9px;background:var(--warm);border:1px solid var(--rule);border-radius:8px;text-decoration:none;color:var(--ink);font-size:0.68rem;font-weight:500;transition:all .15s;white-space:nowrap;overflow:hidden;}
-.ql:hover{border-color:var(--rose);background:var(--cream);}
-.ql-arrow{margin-left:auto;color:var(--muted);font-size:0.6rem;flex-shrink:0;}
+/* ══ MAIN ══ */
+.main { margin-left:var(--sidebar-w); flex:1; padding:24px 26px 60px; }
 
-/* LIST ROWS */
-hr.div{border:none;border-top:1px solid var(--rule);margin:10px 0;}
-.irow{display:flex;align-items:center;gap:8px;padding:5px 0;border-bottom:1px solid var(--rule);font-size:0.74rem;}
-.irow:last-child{border-bottom:none;}
-.idot{width:8px;height:8px;border-radius:50%;flex-shrink:0;}
-.iname{flex:1;font-weight:500;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
-.idate{font-size:0.64rem;color:var(--muted);flex-shrink:0;}
-.badge{font-size:0.57rem;font-weight:600;letter-spacing:.3px;text-transform:uppercase;padding:2px 7px;border-radius:8px;white-space:nowrap;flex-shrink:0;}
-.b-red{background:#fce4ec;color:#a0304a;}
-.b-amber{background:#fff8e1;color:#8a5a10;}
-.b-green{background:#e8f5e9;color:#2a6a30;}
-.b-muted{background:var(--warm);color:var(--muted);}
+/* ══ HERO ══ */
+.hero {
+  background:var(--card); border:1px solid var(--border);
+  border-radius:14px; padding:22px 26px 20px;
+  margin-bottom:12px;
+  display:grid; grid-template-columns:1fr 140px; gap:16px; align-items:start;
+}
+.hero-greeting {
+  font-family:'Cormorant Garamond',serif;
+  font-size:1.6rem; font-weight:300; font-style:normal;
+  color:var(--ink); line-height:1; margin-bottom:3px; letter-spacing:.5px;
+}
+.hero-meta { font-size:0.65rem; color:var(--muted); margin-bottom:12px; }
+.hero-chips { display:flex; gap:5px; flex-wrap:wrap; }
+.chip {
+  padding:3px 9px; background:var(--bg);
+  border:1px solid var(--border); border-radius:6px;
+  font-size:0.61rem; color:var(--muted);
+}
+.chip .hi { color:var(--gold); font-family:'Cormorant Garamond',serif; font-style:italic; }
+.hero-right { text-align:right; padding-top:2px; }
+.doy-num  { font-family:'Cormorant Garamond',serif; font-size:3.4rem; font-weight:300; line-height:1; color:var(--gold); opacity:.55; }
+.doy-lbl  { font-size:0.52rem; letter-spacing:2px; text-transform:uppercase; color:var(--muted); margin-bottom:10px; }
+.bar-wrap  { }
+.bar-lbl   { display:flex; justify-content:space-between; font-size:0.57rem; color:var(--muted); margin-bottom:3px; }
+.bar-track { height:2px; background:rgba(170,145,120,.2); border-radius:1px; overflow:hidden; }
+.bar-fill  { height:100%; border-radius:1px; background:var(--gold); }
 
-/* PROGRESS MINI */
-.mprog-wrap{margin:6px 0 3px;}
-.mprog-lbl{display:flex;justify-content:space-between;font-size:0.63rem;color:var(--muted);margin-bottom:3px;}
+/* ══ GRID ══ */
+.grid { display:grid; grid-template-columns:repeat(12,1fr); gap:11px; margin-bottom:11px; }
+.c3  { grid-column:span 3; }
+.c4  { grid-column:span 4; }
+.c5  { grid-column:span 5; }
+.c7  { grid-column:span 7; }
 
-/* LANG CHIP */
-.lang-chip{display:flex;align-items:center;gap:8px;padding:7px 10px;background:var(--warm);border-radius:8px;margin-bottom:6px;}
-.lang-name{font-weight:600;font-size:0.74rem;}
-.lang-sub{font-size:0.63rem;color:var(--muted);}
+/* ══ TILE ══ */
+.tile {
+  background:var(--card); border:1px solid var(--border);
+  border-radius:13px; padding:16px 18px;
+  border-left:3px solid var(--border);
+  transition:box-shadow .18s;
+}
+.tile:hover { box-shadow:0 4px 18px rgba(44,36,32,.08); }
+.t-gold  { border-left-color:var(--gold); }
+.t-blue  { border-left-color:var(--blue); }
+.t-rose  { border-left-color:var(--rose); }
+.t-sage  { border-left-color:var(--sage); }
+.t-teal  { border-left-color:var(--teal); }
+.t-lav   { border-left-color:var(--lav);  }
 
-/* COURSE ROW */
-.crow{display:flex;align-items:center;padding:5px 0;border-bottom:1px solid var(--rule);font-size:0.73rem;gap:8px;}
-.crow:last-child{border-bottom:none;}
-.crow-name{flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
-.crow-pct{font-family:'Cormorant Garamond',serif;font-size:0.9rem;font-weight:600;color:var(--mauve);flex-shrink:0;}
+/* eyebrow */
+.ey {
+  font-size:0.53rem; letter-spacing:2.5px; text-transform:uppercase;
+  color:var(--muted); margin-bottom:5px; font-weight:600;
+  display:flex; align-items:center; gap:5px;
+}
+.ey-dot { width:5px; height:5px; border-radius:50%; flex-shrink:0; }
 
-/* WORKOUT */
-.workout-name{font-family:'Cormorant Garamond',serif;font-size:1.1rem;font-style:italic;margin-bottom:2px;}
-.workout-focus{font-size:0.67rem;color:var(--muted);margin-bottom:8px;}
-.nn-row{display:flex;align-items:center;gap:7px;font-size:0.7rem;color:var(--muted);padding:2px 0;}
+.ttl { font-family:'Cormorant Garamond',serif; font-size:1.15rem; font-weight:600; margin-bottom:10px; line-height:1.2; }
+hr.r { border:none; border-top:1px solid var(--rule); margin:10px 0; }
+.empty { font-size:0.68rem; color:var(--muted); font-style:italic; }
 
-/* PLANNING CARDS */
-.plan-theme{font-family:'Cormorant Garamond',serif;font-size:1.05rem;font-style:italic;color:var(--mauve);margin-bottom:2px;}
-.plan-sub{font-size:0.68rem;color:var(--muted);margin-bottom:8px;}
+/* btns */
+.btns { display:flex; gap:5px; flex-wrap:wrap; }
+.btn {
+  padding:5px 11px; border:1.5px solid var(--border);
+  border-radius:10px; font-family:'Jost',sans-serif;
+  font-size:0.61rem; font-weight:600; color:var(--muted);
+  text-decoration:none; background:transparent; cursor:pointer;
+  transition:all .14s; display:inline-flex; align-items:center; gap:3px;
+}
+.btn:hover { border-color:var(--gold); color:var(--ink); background:var(--gold-bg); }
 
-/* TOOL GRID */
-.tool-card{background:var(--cream);border:1px solid var(--rule);border-radius:12px;padding:12px 14px;text-decoration:none;color:var(--ink);display:flex;align-items:center;gap:10px;transition:all .15s;}
-.tool-card:hover{transform:translateY(-2px);box-shadow:0 5px 16px rgba(180,130,140,.13);border-color:var(--mauve);}
-.tool-emoji{font-size:1.2rem;flex-shrink:0;}
-.tool-name{font-family:'Cormorant Garamond',serif;font-size:0.95rem;font-weight:600;}
+/* ══ CALENDAR ══ */
+.ev-list { display:flex; flex-direction:column; gap:4px; }
+.ev-row  {
+  display:flex; align-items:center; gap:7px;
+  padding:6px 8px; border-radius:7px;
+  background:rgba(255,255,255,.6); border:1px solid var(--rule);
+  font-size:0.7rem;
+}
+.ev-dot  { width:5px; height:5px; border-radius:50%; flex-shrink:0; }
+.ev-name { flex:1; font-weight:500; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+.ev-time { font-size:0.59rem; color:var(--muted); }
+.ev-tag  { font-size:0.54rem; font-weight:700; padding:1px 6px; border-radius:5px; white-space:nowrap; }
+.tag-t   { background:var(--rose-bg); color:var(--rose); }
+.tag-tm  { background:var(--gold-bg); color:var(--gold); }
+.tag-s   { background:var(--blue-bg); color:var(--blue); }
 
-.empty-txt{font-size:0.7rem;color:var(--muted);font-style:italic;padding:6px 0;}
+/* ══ PLANNER ══ */
+.big-num {
+  font-family:'Cormorant Garamond',serif;
+  font-size:3.5rem; font-weight:300; line-height:1;
+  color:var(--gold); display:block; text-align:center; margin-bottom:2px;
+}
+.big-lbl { font-size:0.52rem; letter-spacing:2px; text-transform:uppercase; color:var(--muted); text-align:center; display:block; margin-bottom:10px; }
+.theme   { font-family:'Cormorant Garamond',serif; font-size:0.88rem; font-style:italic; color:var(--ink); text-align:center; padding:8px 0 0; border-top:1px solid var(--rule); line-height:1.5; }
+.mp-lbl  { display:flex; justify-content:space-between; font-size:0.57rem; color:var(--muted); margin:8px 0 3px; }
+.mp-track{ height:2px; background:rgba(170,145,120,.18); border-radius:1px; overflow:hidden; }
+.mp-fill { height:100%; border-radius:1px; background:var(--gold); }
+
+/* ══ FINANCE ══ */
+.due-row { display:flex; align-items:center; gap:7px; padding:5px 0; border-bottom:1px solid var(--rule); font-size:0.69rem; }
+.due-row:last-child { border-bottom:none; }
+.due-dot  { width:5px; height:5px; border-radius:50%; flex-shrink:0; }
+.due-name { flex:1; font-weight:500; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+.due-date { font-size:0.59rem; color:var(--muted); }
+.due-tag  { font-size:0.53rem; font-weight:700; padding:1px 6px; border-radius:5px; white-space:nowrap; }
+.hot  { background:var(--rose-bg); color:var(--rose); }
+.warm { background:var(--gold-bg); color:var(--gold); }
+.cool { background:var(--sage-bg); color:var(--sage); }
+
+/* ══ PROF DEV ══ */
+.rings { display:grid; grid-template-columns:1fr 1fr; gap:8px; }
+.ring-card { display:flex; align-items:center; gap:8px; padding:7px 9px; border-radius:8px; background:rgba(255,255,255,.6); border:1px solid var(--rule); }
+.rsvg  { transform:rotate(-90deg); flex-shrink:0; }
+.r-bg  { fill:none; stroke:rgba(170,145,120,.18); stroke-width:3; }
+.r-fill{ fill:none; stroke-width:3; stroke-linecap:round; }
+.r-txt { fill:var(--ink); font-size:8px; transform:rotate(90deg); dominant-baseline:middle; text-anchor:middle; font-family:'Cormorant Garamond',serif; font-weight:600; }
+.r-name{ font-size:0.64rem; font-weight:500; color:var(--muted); line-height:1.3; }
+.r-pct { font-family:'Cormorant Garamond',serif; font-size:0.8rem; font-weight:600; }
+
+/* ══ MEDIA ══ */
+.m-stats { display:flex; border:1px solid var(--border); border-radius:8px; overflow:hidden; margin-bottom:10px; background:rgba(255,255,255,.5); }
+.m-stat  { flex:1; padding:8px 6px; text-align:center; border-right:1px solid var(--border); }
+.m-stat:last-child { border-right:none; }
+.m-num   { font-family:'Cormorant Garamond',serif; font-size:1.4rem; font-weight:600; line-height:1; }
+.m-lbl   { font-size:0.5rem; letter-spacing:1.5px; text-transform:uppercase; color:var(--muted); margin-top:1px; }
+.book    { display:flex; align-items:center; gap:8px; padding:5px 8px; border-radius:7px; background:rgba(255,255,255,.6); border:1px solid var(--rule); margin-bottom:4px; }
+.bcover  { width:22px; height:30px; border-radius:3px; background:var(--bg); flex-shrink:0; overflow:hidden; display:flex; align-items:center; justify-content:center; font-size:0.68rem; }
+.bcover img { width:100%; height:100%; object-fit:cover; }
+.btitle  { font-weight:600; font-size:0.67rem; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+.bauth   { font-size:0.57rem; color:var(--muted); }
+.b-tag   { font-size:0.52rem; font-weight:700; padding:1px 5px; border-radius:5px; white-space:nowrap; flex-shrink:0; }
+.b-r  { background:var(--blue-bg); color:var(--blue); }
+.b-w  { background:var(--gold-bg); color:var(--gold); }
+
+/* reading summary */
+.reading-summary { display:flex; flex-direction:column; gap:5px; }
+.rs-row { display:flex; align-items:center; justify-content:space-between; font-size:0.7rem; padding:2px 0; }
+.rs-label { color:var(--ink); }
+.rs-label strong { font-weight:600; letter-spacing:.3px; }
+.rs-val { font-family:'Cormorant Garamond',serif; font-size:0.95rem; font-weight:600; color:var(--teal); }
+
+/* ══ LANGS ══ */
+.lang  { display:flex; align-items:center; gap:9px; padding:8px 10px; border-radius:8px; background:rgba(255,255,255,.6); border:1px solid var(--rule); margin-bottom:6px; }
+.lflag { font-size:1.1rem; }
+.lname { font-weight:600; font-size:0.72rem; }
+.lsub  { font-size:0.59rem; color:var(--muted); }
+.l-tag { font-size:0.52rem; font-weight:700; padding:2px 6px; border-radius:5px; white-space:nowrap; }
+.l-a   { background:var(--gold-bg); color:var(--gold); }
+.l-b   { background:var(--sage-bg); color:var(--sage); }
+
+/* ══ FITNESS ══ */
+.wo-name  { font-family:'Cormorant Garamond',serif; font-size:1.1rem; font-style:italic; margin-bottom:2px; }
+.wo-focus { font-size:0.62rem; color:var(--muted); margin-bottom:9px; }
+.nn { display:flex; flex-direction:column; gap:3px; }
+.nn-row { font-size:0.67rem; color:var(--muted); padding:2px 0; display:flex; align-items:center; gap:6px; }
+
+/* ══ MEALS ══ */
+.ps-row { display:flex; align-items:center; justify-content:space-between; padding:5px 0; border-bottom:1px solid var(--rule); font-size:0.69rem; }
+.ps-row:last-child { border-bottom:none; }
+.ps-lbl { color:var(--muted); }
+.ps-val { font-family:'Cormorant Garamond',serif; font-size:0.95rem; font-weight:600; }
+.warn { color:var(--rose); }
+.good { color:var(--sage); }
 </style>
 </head>
 <body>
 
-<div class="topbar">
-  <div class="topbar-title">Brain <em>2.0</em></div>
-  <span class="topbar-date" id="today-date"></span>
+<!-- SIDEBAR -->
+<div class="sidebar">
+  <button class="sb-toggle" onclick="toggleSidebar()" aria-label="Collapse sidebar">
+    <span></span><span></span><span></span>
+  </button>
+  <div class="sb-brand">
+    <div class="sb-logo">Brain 2.0</div>
+    <div class="sb-date-line" id="sb-month"></div>
+  </div>
+  <div class="sb-today">
+    <div class="sb-today-day" id="sb-day"></div>
+    <div class="sb-today-week" id="sb-week"></div>
+  </div>
+  <nav class="sb-nav">
+    <div class="sb-group">Daily</div>
+    <a href="weekly-audit/"    class="sb-link"><span class="sb-icon">📋</span><span>Weekly Audit</span></a>
+    <a href="monthly/"         class="sb-link"><span class="sb-icon">🗓️</span><span>Monthly Planner</span></a>
+    <a href="calendar/"        class="sb-link on"><span class="sb-icon">📅</span><span>Calendar</span></a>
+    <a href="fitness/"         class="sb-link"><span class="sb-icon">💪</span><span>Fitness Tracker</span></a>
+    <a href="meals/"           class="sb-link"><span class="sb-icon">🥗</span><span>Meal Planner</span></a>
+    <div class="sb-rule"></div>
+    <div class="sb-group" style="padding-top:6px;">Growth</div>
+    <a href="professional-dev/" class="sb-link"><span class="sb-icon">📊</span><span>Professional Dev</span></a>
+    <a href="media/"            class="sb-link"><span class="sb-icon">🎵</span><span>Media Tracker</span></a>
+    <a href="language-portal/"  class="sb-link"><span class="sb-icon">🌍</span><span>Languages</span></a>
+    <a href="curriculum/"       class="sb-link"><span class="sb-icon">📖</span><span>Curriculum</span></a>
+    <a href="stoic/"            class="sb-link"><span class="sb-icon">🌿</span><span>Stoic Workbook</span></a>
+    <div class="sb-rule"></div>
+    <div class="sb-group" style="padding-top:6px;">Life</div>
+    <a href="finances/"         class="sb-link"><span class="sb-icon">💳</span><span>Finances</span></a>
+    <a href="wishlist/"         class="sb-link"><span class="sb-icon">✦</span><span>Wishlist</span></a>
+    <a href="passport/"         class="sb-link"><span class="sb-icon">🗺️</span><span>DC Passport</span></a>
+    <a href="reset-2026/"       class="sb-link"><span class="sb-icon">✨</span><span>2026 Reset</span></a>
+  </nav>
 </div>
 
-<div class="hub">
+<!-- MAIN -->
+<div class="main">
 
   <!-- HERO -->
-  <div style="margin-bottom:24px;">
-    <div class="hero">
+  <div class="hero">
+    <div>
       <div class="hero-greeting" id="hero-greeting">Good evening ✦</div>
-      <div class="hero-sub" id="hero-sub"></div>
-      <div class="prog-label">
-        <span id="year-label">Day — of 365</span>
-        <span id="year-pct">—%</span>
+      <div class="hero-meta" id="hero-meta"></div>
+      <div class="hero-chips">
+        <div class="chip">💪 <span class="hi" id="wo-chip">—</span></div>
+        <div class="chip">💨 Vacuum · 💧 3L · 👟 6k Steps</div>
       </div>
-      <div class="prog-bar"><div class="prog-fill pf-pink" id="year-bar" style="width:0%"></div></div>
+    </div>
+    <div class="hero-right">
+      <div class="doy-num" id="doy">—</div>
+      <div class="doy-lbl">day of 2026</div>
+      <div class="bar-wrap">
+        <div class="bar-lbl"><span id="yr-rem">—</span><span id="yr-pct">—%</span></div>
+        <div class="bar-track"><div class="bar-fill" id="yr-bar" style="width:0%"></div></div>
+      </div>
     </div>
   </div>
 
-  <!-- THIS WEEK -->
-  <div class="sec-title">This Week</div>
-  <div class="row col-3" style="margin-bottom:24px;">
-
-    <div class="card c-rose">
-      <div class="cl">Next 3 Days</div>
-      <div class="ct">Upcoming</div>
-      <div id="upcoming-list" style="margin-top:8px;"></div>
-      <hr class="div">
-      <a href="calendar/" class="btn btn-ghost btn-sm">Open Calendar →</a>
+  <!-- ROW 1 -->
+  <div class="grid">
+    <!-- Calendar -->
+    <div class="tile t-blue c5">
+      <div class="ey"><span class="ey-dot" style="background:var(--blue)"></span>Calendar</div>
+      <div class="ttl">Coming Up</div>
+      <div class="ev-list" id="ev-list"></div>
+      <hr class="r">
+      <a href="calendar/" class="btn">Open Calendar →</a>
     </div>
 
-    <div class="card c-sage">
-      <div class="cl">Today</div>
-      <div class="workout-name" id="workout-name">—</div>
-      <div class="workout-focus" id="workout-focus"></div>
-      <div class="nn-row">💨 Morning Vacuum</div>
-      <div class="nn-row">💧 3L Water</div>
-      <div class="nn-row">🌅 Walking Pad AM + PM</div>
-      <div class="nn-row">👟 6k+ Steps</div>
-      <hr class="div">
-      <a href="fitness/" class="btn btn-ghost btn-sm">Open Tracker →</a>
+    <!-- Monthly Planner -->
+    <div class="tile t-gold c4">
+      <div class="ey"><span class="ey-dot" style="background:var(--gold)"></span>Monthly Planner</div>
+      <span class="big-num" id="mp-num">—</span>
+      <span class="big-lbl">sections complete</span>
+      <div class="theme" id="mp-theme">—</div>
+      <div class="mp-lbl"><span id="mp-mo">—</span><span id="mp-pct">—</span></div>
+      <div class="mp-track"><div class="mp-fill" id="mp-bar" style="width:0%"></div></div>
+      <hr class="r">
+      <a href="monthly/" class="btn">Open Planner →</a>
     </div>
 
-    <div class="card c-blush">
-      <div class="cl">Finances</div>
-      <div class="ct">Card Due Dates</div>
-      <div id="due-dates-list" style="margin-top:8px;"></div>
-      <hr class="div">
-      <div style="display:flex;gap:6px;flex-wrap:wrap;">
-        <a href="finances/" class="btn btn-ghost btn-sm">Tracker →</a>
-        <a href="https://www.sofi.com/login/" target="_blank" class="btn btn-ghost btn-sm">SoFi ↗</a>
-        <a href="https://app.useorigin.com" target="_blank" class="btn btn-ghost btn-sm">Origin ↗</a>
+    <!-- Finances -->
+    <div class="tile t-rose c3">
+      <div class="ey"><span class="ey-dot" style="background:var(--rose)"></span>Finances</div>
+      <div class="ttl">Due Dates</div>
+      <div id="due-list"></div>
+      <hr class="r">
+      <div class="btns">
+        <a href="finances/"                                    class="btn">Tracker →</a>
+        <a href="https://www.sofi.com/login/" target="_blank" class="btn">SoFi ↗</a>
+        <a href="https://app.useorigin.com"   target="_blank" class="btn">Origin ↗</a>
       </div>
     </div>
-
   </div>
 
-  <!-- PLANNING SYSTEM -->
-  <div class="sec-title">Planning System</div>
-  <div class="row col-3" style="margin-bottom:24px;">
-
-    <div class="card c-blush">
-      <div class="cl">Weekly Audit</div>
-      <div class="ct" style="margin-bottom:6px;">This Week</div>
-      <div style="font-size:0.72rem;color:var(--muted);margin-bottom:10px;" id="weekly-week"></div>
-      <hr class="div">
-      <a href="weekly-audit/" class="btn btn-ghost btn-sm">Open Audit →</a>
-    </div>
-
-    <div class="card c-mauve">
-      <div class="cl">Monthly Planner</div>
-      <div class="plan-theme" id="monthly-theme">—</div>
-      <div class="plan-sub" id="monthly-focus"></div>
-      <div class="mprog-wrap">
-        <div class="mprog-lbl"><span id="monthly-month">This month</span><span id="monthly-pct">—</span></div>
-        <div class="prog-bar"><div class="prog-fill pf-lav" id="monthly-bar" style="width:0%"></div></div>
-      </div>
-      <hr class="div">
-      <a href="monthly/" class="btn btn-ghost btn-sm">Open Planner →</a>
-    </div>
-
-    <div class="card c-lav">
-      <div class="cl">Personal Curriculum</div>
-      <div class="plan-theme" id="curr-topic">—</div>
-      <div class="plan-sub" id="curr-type"></div>
-      <div class="mprog-wrap">
-        <div class="mprog-lbl"><span id="curr-month">This month</span><span id="curr-pct">—</span></div>
-        <div class="prog-bar"><div class="prog-fill pf-pink" id="curr-bar" style="width:0%"></div></div>
-      </div>
-      <hr class="div">
-      <a href="curriculum/" class="btn btn-ghost btn-sm">Open Curriculum →</a>
-    </div>
-
-  </div>
-
-  <!-- GROWTH & LEARNING -->
-  <div class="sec-title">Growth & Learning</div>
-  <div class="row col-3" style="margin-bottom:24px;">
-
-    <div class="card c-mauve">
-      <div class="cl">Language Portal</div>
-      <div class="ct" style="margin-bottom:8px;">Active Languages</div>
-      <div class="lang-chip">
-        <span style="font-size:1.1rem;">🇪🇸</span>
-        <div style="flex:1;"><div class="lang-name">Spanish</div><div class="lang-sub">C1 · Phase 3 — Listening & Immersion</div></div>
-        <span class="badge b-amber">Active</span>
-      </div>
-      <div class="lang-chip">
-        <span style="font-size:1.1rem;">🇧🇷</span>
-        <div style="flex:1;"><div class="lang-name">Portuguese BR</div><div class="lang-sub">A1 · Phase 1 — Foundation</div></div>
-        <span class="badge b-muted">Beginner</span>
-      </div>
-      <hr class="div">
-      <a href="language-portal/" class="btn btn-ghost btn-sm">Start Session →</a>
-    </div>
-
-    <div class="card c-sage">
-      <div class="cl">Professional Dev</div>
-      <div class="ct" style="margin-bottom:8px;">Active Courses</div>
-      <div class="crow"><div class="idot" style="background:var(--sage)"></div><span class="crow-name">Microsoft Power BI Data Analyst</span><span class="crow-pct">23%</span></div>
-      <div class="crow"><div class="idot" style="background:var(--blush)"></div><span class="crow-name">Google UX Design</span><span class="crow-pct">30%</span></div>
-      <div class="crow"><div class="idot" style="background:var(--lavender)"></div><span class="crow-name">Figma UI/UX Essentials</span><span class="crow-pct">11%</span></div>
-      <div class="crow"><div class="idot" style="background:#f7d9b0"></div><span class="crow-name">Data Management Quality</span><span class="crow-pct">27%</span></div>
-      <hr class="div">
-      <div style="display:flex;gap:6px;">
-        <a href="professional-dev/" class="btn btn-ghost btn-sm">Tracker →</a>
-        <a href="https://www.coursera.org/my-learning" target="_blank" class="btn btn-ghost btn-sm">Coursera ↗</a>
-        <a href="https://drive.google.com/drive/u/0/folders/1WfsBUVgMU2BVHq6UyZ7HAzipAI5_uf5P" target="_blank" class="btn btn-ghost btn-sm">Notes ↗</a>
+  <!-- ROW 2 -->
+  <div class="grid">
+    <!-- Prof Dev -->
+    <div class="tile t-gold c5">
+      <div class="ey"><span class="ey-dot" style="background:var(--gold)"></span>Professional Dev</div>
+      <div class="ttl">Active Courses</div>
+      <div class="rings" id="rings"></div>
+      <hr class="r">
+      <div class="btns">
+        <a href="professional-dev/"                                     class="btn">Tracker →</a>
+        <a href="https://www.coursera.org/my-learning" target="_blank"  class="btn">Coursera ↗</a>
+        <a href="https://drive.google.com/drive/u/0/folders/1WfsBUVgMU2BVHq6UyZ7HAzipAI5_uf5P" target="_blank" class="btn">Notes ↗</a>
       </div>
     </div>
 
-    <div class="card c-teal">
-      <div class="cl">Inner Work & Media</div>
-      <div class="ct" style="margin-bottom:8px;">Reading & Workbook</div>
-      <div style="font-size:0.68rem;font-weight:600;color:var(--muted);margin-bottom:4px;letter-spacing:.5px;text-transform:uppercase;">📚 Books</div>
-      <div id="media-stats" class="cs" style="margin-bottom:10px;"></div>
-      <div style="font-size:0.68rem;font-weight:600;color:var(--muted);margin-bottom:4px;letter-spacing:.5px;text-transform:uppercase;">🌿 Stoic Workbook</div>
-      <div id="stoic-stats" class="cs"></div>
-      <hr class="div">
-      <div style="display:flex;gap:6px;">
-        <a href="media/" class="btn btn-ghost btn-sm">Media →</a>
-        <a href="stoic/" class="btn btn-ghost btn-sm">Workbook →</a>
+    <!-- Media -->
+    <div class="tile t-teal c7">
+      <div class="ey"><span class="ey-dot" style="background:var(--teal)"></span>Media Tracker</div>
+      <div class="ttl">Reading Life</div>
+      <div class="m-stats" id="m-stats"></div>
+      <div class="ey" style="margin-bottom:6px;">Currently Reading &amp; Up Next</div>
+      <div id="book-list"></div>
+      <hr class="r">
+      <div class="reading-summary">
+        <div class="rs-row">
+          <span class="rs-label">📚 <strong>Books</strong></span>
+          <span class="rs-val" id="rs-books">— of —</span>
+        </div>
+        <div class="rs-row">
+          <span class="rs-label">📰 <strong>Articles</strong></span>
+          <span class="rs-val" id="rs-articles">— of —</span>
+        </div>
       </div>
+      <hr class="r">
+      <a href="media/" class="btn">Open Tracker →</a>
+    </div>  </div>
+
+  <!-- ROW 3 -->
+  <div class="grid">
+    <!-- Languages -->
+    <div class="tile t-lav c4">
+      <div class="ey"><span class="ey-dot" style="background:var(--lav)"></span>Language Portal</div>
+      <div class="ttl">Active Languages</div>
+      <div class="lang">
+        <span class="lflag">🇪🇸</span>
+        <div style="flex:1;"><div class="lname">Spanish</div><div class="lsub">C1 · Phase 3 — Listening & Immersion</div></div>
+        <span class="l-tag l-a">Active</span>
+      </div>
+      <div class="lang">
+        <span class="lflag">🇧🇷</span>
+        <div style="flex:1;"><div class="lname">Portuguese BR</div><div class="lsub">A1 · Phase 1 — Foundation</div></div>
+        <span class="l-tag l-b">Beginner</span>
+      </div>
+      <hr class="r">
+      <a href="language-portal/" class="btn">Start Session →</a>
     </div>
 
-  </div>
+    <!-- Fitness -->
+    <div class="tile t-sage c4">
+      <div class="ey"><span class="ey-dot" style="background:var(--sage)"></span>Fitness</div>
+      <div class="wo-name" id="wo-name">—</div>
+      <div class="wo-focus" id="wo-focus"></div>
+      <div class="nn">
+        <div class="nn-row">💨 Morning Vacuum</div>
+        <div class="nn-row">💧 3L Water</div>
+        <div class="nn-row">🌅 Walking Pad AM + PM</div>
+        <div class="nn-row">👟 6,000+ Steps</div>
+      </div>
+      <hr class="r">
+      <a href="fitness/" class="btn">Open Tracker →</a>
+    </div>
 
-  <!-- ALL TOOLS -->
-  <div class="sec-title">All Tools</div>
-  <div class="row col-5" style="margin-bottom:10px;">
-    <a href="weekly-audit/"    class="tool-card c-blush"><span class="tool-emoji">📋</span><div class="tool-name">Weekly Audit</div></a>
-    <a href="monthly/"         class="tool-card c-mauve"><span class="tool-emoji">🗓️</span><div class="tool-name">Monthly Planner</div></a>
-    <a href="reset-2026/"      class="tool-card c-blush"><span class="tool-emoji">✨</span><div class="tool-name">2026 Reset</div></a>
-    <a href="curriculum/"      class="tool-card c-lav"><span class="tool-emoji">📖</span><div class="tool-name">Personal Curriculum</div></a>
-    <a href="stoic/"           class="tool-card c-sage"><span class="tool-emoji">🌿</span><div class="tool-name">Stoic Workbook</div></a>
-  </div>
-  <div class="row col-5" style="margin-bottom:10px;">
-    <a href="fitness/"         class="tool-card c-sage"><span class="tool-emoji">💪</span><div class="tool-name">Fitness Tracker</div></a>
-    <a href="finances/"        class="tool-card c-blush"><span class="tool-emoji">💳</span><div class="tool-name">Financial Tracker</div></a>
-    <a href="language-portal/" class="tool-card c-mauve"><span class="tool-emoji">🌍</span><div class="tool-name">Language Portal</div></a>
-    <a href="professional-dev/" class="tool-card c-sage"><span class="tool-emoji">📊</span><div class="tool-name">Professional Dev</div></a>
-    <a href="media/"           class="tool-card c-teal"><span class="tool-emoji">🎵</span><div class="tool-name">Media Tracker</div></a>
-  </div>
-  <div class="row col-5">
-    <a href="wishlist/"        class="tool-card c-blush"><span class="tool-emoji">✦</span><div class="tool-name">Wishlist</div></a>
-    <a href="passport/"        class="tool-card c-amber"><span class="tool-emoji">🗺️</span><div class="tool-name">DC Passport</div></a>
-    <a href="calendar/"        class="tool-card c-rose"><span class="tool-emoji">📅</span><div class="tool-name">Calendar</div></a>
-    <a href="meals/"           class="tool-card c-sage"><span class="tool-emoji">🥗</span><div class="tool-name">Meal Planner</div></a>
-    <div></div>
+    <!-- Meals -->
+    <div class="tile t-gold c4">
+      <div class="ey"><span class="ey-dot" style="background:var(--gold)"></span>Meal Planner</div>
+      <div class="ttl">Pantry Status</div>
+      <div id="pantry"></div>
+      <hr class="r">
+      <div class="btns">
+        <a href="meals/"                                        class="btn">Open Planner →</a>
+        <a href="https://www.instacart.com/store" target="_blank" class="btn">Instacart ↗</a>
+      </div>
+    </div>
   </div>
 
 </div>
@@ -295,154 +460,167 @@ hr.div{border:none;border-top:1px solid var(--rule);margin:10px 0;}
 <script>
 var pwd=localStorage.getItem('brain2auth');
 if(pwd!=='Nikkireed234!'){var attempt=prompt('Password:');if(attempt!=='Nikkireed234!'){document.body.innerHTML='';throw new Error('Unauthorized');}localStorage.setItem('brain2auth',attempt);location.reload();}
+
+// Sidebar collapse — restore saved state then expose toggle
+if(localStorage.getItem('sbCollapsed')==='1') document.body.classList.add('sb-collapsed');
+function toggleSidebar(){
+  document.body.classList.toggle('sb-collapsed');
+  localStorage.setItem('sbCollapsed', document.body.classList.contains('sb-collapsed') ? '1' : '0');
+}
+
 var DAYS=['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
 var MONTHS=['January','February','March','April','May','June','July','August','September','October','November','December'];
-var MONTHS_S=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+var MS=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
 
-var WORKOUTS={
-  0:{name:'Rest & Prep',      focus:'Light walking · meal prep · self-care'},
-  1:{name:'Lower Body Sculpt',focus:'Squats · lunges · donkey kicks · glutes'},
-  2:{name:'Waist Snatching',  focus:'Infinity hoop · planks · dead bugs'},
-  3:{name:'Upper Body Sculpt',focus:'Arms · shoulders · rear delts · shadowbox'},
-  4:{name:'Active Recovery',  focus:'10k steps · walking pad only'},
-  5:{name:'Full Body Glow',   focus:'Thrusters · step-ups · glute bridges'},
-  6:{name:'Sweat Session',    focus:'Hoop + bodyweight circuit'},
-};
+var WO={0:'Rest & Prep',1:'Lower Body Sculpt',2:'Waist Snatching',3:'Upper Body Sculpt',4:'Active Recovery',5:'Full Body Glow',6:'Sweat Session'};
+var WF={0:'Light walking · meal prep',1:'Squats · lunges · donkey kicks',2:'Hoop · planks · dead bugs',3:'Arms · shoulders · rear delts',4:'10k steps · walking pad',5:'Thrusters · step-ups · bridges',6:'Hoop + bodyweight circuit'};
+var CAT={work:'#BC6B7A',social:'#6B8FAD',travel:'#6A9A62',learning:'#C49A35',tasks:'#8A72B0',health:'#5A9E98',selfcare:'#BC6B7A',personal:'#C49A35'};
+var COURSES=[
+  {name:'Power BI Data Analyst',pct:23,color:'#C49A35'},
+  {name:'Google UX Design',     pct:30,color:'#6B8FAD'},
+  {name:'Figma UI/UX',          pct:11,color:'#BC6B7A'},
+  {name:'Data Management',      pct:27,color:'#5A9E98'},
+];
 
-var CAT_COLORS={work:'#f2c4ce',social:'#b8d4f0',travel:'#b8cfb0',learning:'#f0dea0',tasks:'#d4b8e0',health:'#a8d8d0',selfcare:'#f4b8d4',personal:'#f7d9b0'};
+var now=new Date(), h=now.getHours(), d=now.getDay();
 
-var now=new Date();
-var h=now.getHours();
-var greeting=h<12?'Good morning':h<17?'Good afternoon':'Good evening';
+// dates
+document.getElementById('sb-month').textContent=MONTHS[now.getMonth()]+' '+now.getFullYear();
+document.getElementById('sb-day').textContent=DAYS[d]+', '+MONTHS[now.getMonth()]+' '+now.getDate();
+function wk(){var x=new Date(now);x.setHours(0,0,0,0);x.setDate(x.getDate()+4-(x.getDay()||7));var y=new Date(x.getFullYear(),0,1);return Math.ceil((((x-y)/86400000)+1)/7);}
+document.getElementById('sb-week').textContent='Week '+wk()+' of 52';
+document.getElementById('hero-greeting').textContent=(h<12?'Good morning':h<17?'Good afternoon':'Good evening')+' ✦';
+document.getElementById('hero-meta').textContent='Week '+wk()+' · '+MONTHS[now.getMonth()]+' '+now.getFullYear();
+document.getElementById('wo-chip').textContent=WO[d];
+document.getElementById('wo-name').textContent=WO[d];
+document.getElementById('wo-focus').textContent=WF[d];
 
-// Topbar + hero
-document.getElementById('today-date').textContent=DAYS[now.getDay()]+', '+MONTHS[now.getMonth()]+' '+now.getDate()+', '+now.getFullYear();
-document.getElementById('hero-greeting').textContent=greeting+' ✦';
-
-// Week number
-function getWeekNum(){var d=new Date(now);d.setHours(0,0,0,0);d.setDate(d.getDate()+4-(d.getDay()||7));var y=new Date(d.getFullYear(),0,1);return Math.ceil((((d-y)/86400000)+1)/7);}
-document.getElementById('hero-sub').textContent='Week '+getWeekNum()+' of 52 · '+MONTHS[now.getMonth()]+' '+now.getFullYear();
-
-// Year progress
 var soy=new Date(now.getFullYear(),0,1);
-var totalDays=(now.getFullYear()%4===0)?366:365;
+var tot=(now.getFullYear()%4===0)?366:365;
 var doy=Math.ceil((now-soy)/86400000);
-var ypct=(doy/totalDays*100).toFixed(1);
-document.getElementById('year-label').textContent='Day '+doy+' of '+totalDays+' · '+(totalDays-doy)+' days remaining';
-document.getElementById('year-pct').textContent=ypct+'%';
-document.getElementById('year-bar').style.width=ypct+'%';
+var pct=(doy/tot*100).toFixed(1);
+document.getElementById('doy').textContent=doy;
+document.getElementById('yr-rem').textContent=(tot-doy)+' days remaining';
+document.getElementById('yr-pct').textContent=pct+'%';
+document.getElementById('yr-bar').style.width=pct+'%';
 
-// Today's workout
-var wo=WORKOUTS[now.getDay()];
-document.getElementById('workout-name').textContent=wo.name;
-document.getElementById('workout-focus').textContent=wo.focus;
-
-// Date key helper
-function dateKey(d){return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');}
-function formatTime(t){if(!t)return '';var p=t.split(':');var hr=parseInt(p[0]),mn=p[1];var ap=hr>=12?'pm':'am';hr=hr%12||12;return hr+(mn!=='00'?':'+mn:'')+ap;}
-
-// Upcoming events
+// calendar
 (function(){
-  var c=document.getElementById('upcoming-list');
+  var c=document.getElementById('ev-list');
   var raw=localStorage.getItem('lifeCalendar1');
-  if(!raw){c.innerHTML='<div class="empty-txt">Add events in your Calendar!</div>';return;}
-  var cal;try{cal=JSON.parse(raw);}catch(e){c.innerHTML='<div class="empty-txt">Could not load events.</div>';return;}
-  var events=cal.events||[];
-  var today=new Date();today.setHours(0,0,0,0);
-  var days=[];for(var i=0;i<=2;i++){var d=new Date(today);d.setDate(today.getDate()+i);days.push(dateKey(d));}
-  var upcoming=events.filter(function(e){return days.indexOf(e.date)!==-1&&!e.done;}).sort(function(a,b){return a.date!==b.date?a.date.localeCompare(b.date):(a.time||'').localeCompare(b.time||'');});
-  if(!upcoming.length){c.innerHTML='<div class="empty-txt">Nothing in the next 3 days — enjoy the calm!</div>';return;}
-  c.innerHTML='';
-  upcoming.forEach(function(ev){
-    var color=CAT_COLORS[ev.cat]||'#e0cec8';
-    var pl,pc;
-    if(ev.date===days[0]){pl='Today';pc='b-red';}
-    else if(ev.date===days[1]){pl='Tomorrow';pc='b-amber';}
-    else{pl=MONTHS_S[parseInt(ev.date.split('-')[1])-1]+' '+parseInt(ev.date.split('-')[2]);pc='b-green';}
-    var row=document.createElement('div');row.className='irow';
-    row.innerHTML='<div class="idot" style="background:'+color+'"></div><span class="iname">'+ev.title+(ev.time?' · '+formatTime(ev.time):'')+'</span><span class="badge '+pc+'">'+pl+'</span>';
+  if(!raw){c.innerHTML='<div class="empty">Add events in Calendar to see them here.</div>';return;}
+  var cal;try{cal=JSON.parse(raw);}catch(e){c.innerHTML='<div class="empty">—</div>';return;}
+  var ev=cal.events||[];
+  var t=new Date();t.setHours(0,0,0,0);
+  function dk(x){return x.getFullYear()+'-'+String(x.getMonth()+1).padStart(2,'0')+'-'+String(x.getDate()).padStart(2,'0');}
+  function ft(x){if(!x)return '';var p=x.split(':');var hr=parseInt(p[0]),mn=p[1];var ap=hr>=12?'pm':'am';hr=hr%12||12;return hr+(mn!=='00'?':'+mn:'')+ap;}
+  var days=[];for(var i=0;i<=2;i++){var x=new Date(t);x.setDate(t.getDate()+i);days.push(dk(x));}
+  var up=ev.filter(function(e){return days.indexOf(e.date)!==-1&&!e.done;}).sort(function(a,b){return a.date!==b.date?a.date.localeCompare(b.date):(a.time||'').localeCompare(b.time||'');}).slice(0,5);
+  if(!up.length){c.innerHTML='<div class="empty">Nothing in the next 3 days ✦</div>';return;}
+  up.forEach(function(ev){
+    var cl=CAT[ev.cat]||'#C49A35';
+    var wl,wc;
+    if(ev.date===days[0]){wl='Today';wc='tag-t';}
+    else if(ev.date===days[1]){wl='Tomorrow';wc='tag-tm';}
+    else{wl=MS[parseInt(ev.date.split('-')[1])-1]+' '+parseInt(ev.date.split('-')[2]);wc='tag-s';}
+    var row=document.createElement('div');row.className='ev-row';
+    row.innerHTML='<div class="ev-dot" style="background:'+cl+'"></div><span class="ev-name">'+ev.title+'</span>'+(ev.time?'<span class="ev-time">'+ft(ev.time)+'</span>':'')+'<span class="ev-tag '+wc+'">'+wl+'</span>';
     c.appendChild(row);
   });
 })();
 
-// Credit card due dates
-var CARDS=[
-  {name:'Chase Sapphire Preferred',day:22,color:'#f2c4ce'},
-  {name:'Venture X',               day:28,color:'#d4b8e0'},
-  {name:'Citi AAdvantage Platinum',day:1, color:'#b8cfb0'},
-  {name:'Bilt Blue Card',          day:5, color:'#b8d4f0'},
-  {name:'Marriott Bonvoy',         day:12,color:'#f7d9b0'},
-];
-function daysUntil(day){var n=new Date();n.setHours(0,0,0,0);var due=new Date(n.getFullYear(),n.getMonth(),day);if(due<n)due=new Date(n.getFullYear(),n.getMonth()+1,day);return Math.ceil((due-n)/86400000);}
-function nextDue(day){var n=new Date();n.setHours(0,0,0,0);var due=new Date(n.getFullYear(),n.getMonth(),day);if(due<n)due=new Date(n.getFullYear(),n.getMonth()+1,day);return MONTHS_S[due.getMonth()]+' '+due.getDate();}
-CARDS.slice().sort(function(a,b){return daysUntil(a.day)-daysUntil(b.day);}).forEach(function(c){
-  var d=daysUntil(c.day);
-  var cls=d<=7?'b-red':d<=14?'b-amber':'b-green';
-  var row=document.createElement('div');row.className='irow';
-  row.innerHTML='<div class="idot" style="background:'+c.color+'"></div><span class="iname">'+c.name+'</span><span class="idate">'+nextDue(c.day)+'</span><span class="badge '+cls+'">'+(d===0?'today':d+'d')+'</span>';
-  document.getElementById('due-dates-list').appendChild(row);
+// due dates
+var CARDS=[{name:'Chase Sapphire',day:22,color:'#BC6B7A'},{name:'Venture X',day:28,color:'#8A72B0'},{name:'Citi AAdvantage',day:1,color:'#5A9E98'},{name:'Bilt Blue',day:5,color:'#6B8FAD'},{name:'Marriott Bonvoy',day:12,color:'#C49A35'}];
+function du(day){var n=new Date();n.setHours(0,0,0,0);var x=new Date(n.getFullYear(),n.getMonth(),day);if(x<n)x=new Date(n.getFullYear(),n.getMonth()+1,day);return Math.ceil((x-n)/86400000);}
+function nd(day){var n=new Date();n.setHours(0,0,0,0);var x=new Date(n.getFullYear(),n.getMonth(),day);if(x<n)x=new Date(n.getFullYear(),n.getMonth()+1,day);return MS[x.getMonth()]+' '+x.getDate();}
+CARDS.slice().sort(function(a,b){return du(a.day)-du(b.day);}).forEach(function(c){
+  var days=du(c.day);
+  var cls=days<=7?'hot':days<=14?'warm':'cool';
+  var row=document.createElement('div');row.className='due-row';
+  row.innerHTML='<div class="due-dot" style="background:'+c.color+'"></div><span class="due-name">'+c.name+'</span><span class="due-date">'+nd(c.day)+'</span><span class="due-tag '+cls+'">'+(days===0?'today!':days+'d')+'</span>';
+  document.getElementById('due-list').appendChild(row);
 });
 
-// Weekly audit week label
-(function(){
-  var el=document.getElementById('weekly-week');
-  if(el) el.textContent='Week '+getWeekNum()+' · '+MONTHS[now.getMonth()]+' '+now.getDate()+', '+now.getFullYear();
-})();
-
-// Monthly planner — reads from localStorage
-(function(){
-  var mo=now.getMonth();var yr=now.getFullYear();
-  var key='monthlyPlanner1_'+yr+'_'+mo;
-  var raw=localStorage.getItem(key);
-  var theme='',focus='',done=0;
-  if(raw){try{var d=JSON.parse(raw);
-    theme=(d.focus_theme||'').replace(/<[^>]+>/g,'').trim();
-    focus=(d.focus_area_val||'').replace(/<[^>]+>/g,'').trim();
-    var wd=d._weekDone||{};
-    done=['setup','w1','w2','w3','w4'].filter(function(w){return wd[w];}).length;
-  }catch(e){}}
-  document.getElementById('monthly-theme').textContent=theme||MONTHS[mo]+' — not set yet';
-  document.getElementById('monthly-focus').textContent=focus?'Focus: '+focus:'Click to set your monthly focus';
-  document.getElementById('monthly-month').textContent=MONTHS[mo]+' progress';
-  document.getElementById('monthly-pct').textContent=done+'/5 sections';
-  document.getElementById('monthly-bar').style.width=Math.round(done/5*100)+'%';
-})();
-
-// Personal Curriculum — current month's module
+// monthly planner
 (function(){
   var mo=now.getMonth();
-  var raw=localStorage.getItem('curriculum1_m'+mo);
-  var topic='',type='',done=0;
-  if(raw){try{var d=JSON.parse(raw);
-    topic=(d.title||'').replace(/<[^>]+>/g,'').trim();
-    type=d.type||'';
-    var wd=d._weekDone||{};
+  var raw=localStorage.getItem('monthlyPlanner1_'+now.getFullYear()+'_'+mo);
+  var theme='',done=0;
+  if(raw){try{var x=JSON.parse(raw);
+    theme=(x.focus_theme||'').replace(/<[^>]+>/g,'').trim();
+    var wd=x._weekDone||{};
     done=['setup','w1','w2','w3','w4'].filter(function(w){return wd[w];}).length;
   }catch(e){}}
-  document.getElementById('curr-topic').textContent=topic||MONTHS[mo]+' module — not set yet';
-  document.getElementById('curr-type').textContent=type||'Open to set this month\'s topic';
-  document.getElementById('curr-month').textContent=MONTHS[mo]+' progress';
-  document.getElementById('curr-pct').textContent=done+'/5';
-  document.getElementById('curr-bar').style.width=Math.round(done/5*100)+'%';
+  document.getElementById('mp-num').textContent=done+'/5';
+  document.getElementById('mp-theme').textContent=theme||MONTHS[mo]+' — not set yet';
+  document.getElementById('mp-mo').textContent=MONTHS[mo];
+  document.getElementById('mp-pct').textContent=Math.round(done/5*100)+'%';
+  document.getElementById('mp-bar').style.width=Math.round(done/5*100)+'%';
 })();
 
-// Media stats
+// media
 (function(){
   var raw=localStorage.getItem('mediaTracker3');
-  if(!raw){document.getElementById('media-stats').textContent='No books tracked yet.';return;}
-  try{
-    var d=JSON.parse(raw);
-    var books=d.books||[];
-    var read=books.filter(function(b){return b.status==='done';}).length;
-    document.getElementById('media-stats').textContent=read+' of '+books.length+' books read in 2026';
-  }catch(e){document.getElementById('media-stats').textContent='Media tracker active.';}
+  var books=[],articles=[],rd=[],wt=[];
+  if(raw){try{var x=JSON.parse(raw);
+    books=x.books||[];
+    articles=x.articles||[];
+    rd=books.filter(function(b){return b.status==='progress';});
+    wt=books.filter(function(b){return b.status==='want';});
+  }catch(e){}}
+  var dn=books.filter(function(b){return b.status==='done';});
+  var artDn=articles.filter(function(a){return a.status==='done';});
+  document.getElementById('m-stats').innerHTML=
+    '<div class="m-stat"><div class="m-num">'+dn.length+'</div><div class="m-lbl">Read</div></div>'+
+    '<div class="m-stat"><div class="m-num">'+rd.length+'</div><div class="m-lbl">Reading</div></div>'+
+    '<div class="m-stat"><div class="m-num">'+wt.length+'</div><div class="m-lbl">Want</div></div>'+
+    '<div class="m-stat"><div class="m-num">'+books.length+'</div><div class="m-lbl">Total</div></div>';
+  // reading summary line items
+  document.getElementById('rs-books').textContent=dn.length+' of '+books.length+' read in 2026';
+  document.getElementById('rs-articles').textContent=artDn.length+' of '+articles.length+' read in 2026';
+  var bl=document.getElementById('book-list');
+  var show=rd.slice(0,2).concat(wt.slice(0,4-Math.min(2,rd.length)));
+  if(!show.length){bl.innerHTML='<div class="empty">No books tracked yet.</div>';return;}
+  show.forEach(function(b){
+    var row=document.createElement('div');row.className='book';
+    row.innerHTML='<div class="bcover">'+(b.cover?'<img src="'+b.cover+'" alt="">':'📖')+'</div>'+
+      '<div style="flex:1;min-width:0;"><div class="btitle">'+b.title+'</div><div class="bauth">'+b.creator+'</div></div>'+
+      '<span class="b-tag '+(b.status==='progress'?'b-r':'b-w')+'">'+(b.status==='progress'?'Reading':'Up Next')+'</span>';
+    bl.appendChild(row);
+  });
 })();
 
-// Stoic workbook stats
+// prof dev rings
 (function(){
-  var total=0;
-  try{Object.keys(localStorage).forEach(function(k){if(k.indexOf('stoicWorkbook2_')===0){var a=JSON.parse(localStorage[k]);total+=a.length;}});}catch(e){}
-  document.getElementById('stoic-stats').textContent=total>0?(total+' journal entr'+(total===1?'y':'ies')+' saved'):'No entries yet — open to begin.';
+  var C=125.66, g=document.getElementById('rings');
+  COURSES.forEach(function(c){
+    var off=C*(1-c.pct/100);
+    var item=document.createElement('div');item.className='ring-card';
+    item.innerHTML=
+      '<svg class="rsvg" viewBox="0 0 44 44" width="40" height="40">'+
+        '<circle class="r-bg" cx="22" cy="22" r="18"/>'+
+        '<circle class="r-fill" cx="22" cy="22" r="18" stroke="'+c.color+'" stroke-dasharray="'+C+'" stroke-dashoffset="'+off+'"/>'+
+        '<text class="r-txt" x="22" y="22" style="fill:'+c.color+'">'+c.pct+'%</text>'+
+      '</svg>'+
+      '<div><div class="r-name">'+c.name+'</div><div class="r-pct" style="color:'+c.color+'">'+c.pct+'%</div></div>';
+    g.appendChild(item);
+  });
+})();
+
+// pantry
+(function(){
+  var el=document.getElementById('pantry');
+  var raw=localStorage.getItem('mealPlanner1');
+  var total=0,low=0,out=0;
+  if(raw){try{var x=JSON.parse(raw);var items=x.pantry||[];total=items.length;
+    items.forEach(function(i){if((i.remaining||0)<=0)out++;else if(i.reorderAt>0&&(i.remaining||0)<=i.reorderAt)low++;});
+  }catch(e){}}
+  if(!total){el.innerHTML='<div class="empty">No pantry items yet.</div>';return;}
+  el.innerHTML=
+    '<div class="ps-row"><span class="ps-lbl">Total Items</span><span class="ps-val">'+total+'</span></div>'+
+    '<div class="ps-row"><span class="ps-lbl">Out of Stock</span><span class="ps-val '+(out>0?'warn':'good')+'">'+out+'</span></div>'+
+    '<div class="ps-row"><span class="ps-lbl">Running Low</span><span class="ps-val '+(low>0?'warn':'good')+'">'+low+'</span></div>'+
+    '<div class="ps-row"><span class="ps-lbl">Well Stocked</span><span class="ps-val good">'+(total-low-out)+'</span></div>';
 })();
 </script>
 </body>
