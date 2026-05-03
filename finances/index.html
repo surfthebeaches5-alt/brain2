@@ -532,7 +532,7 @@ function renderUpcomingBanner() {
 /* ── COLOR PICKER ── */
 function buildColorPicker(selected) {
   pendingColor = selected || PRESET_COLORS[0];
-  var picker = document.getElementById('color-picker');
+  var picker = document.getElementById('card-color-picker');
   picker.innerHTML = '';
 
   PRESET_COLORS.forEach(function(col) {
