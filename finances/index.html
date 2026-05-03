@@ -64,6 +64,8 @@ html, body { background: var(--bg); font-family: 'Plus Jakarta Sans', system-ui,
 .card-head { font-family: 'Fraunces', serif; font-size: 18px; font-weight: 600; letter-spacing: -0.3px; margin-bottom: 16px; display: flex; align-items: center; justify-content: space-between; }
 .add-card-btn { padding: 6px 14px; background: var(--ink); color: #fff; border: none; border-radius: 14px; font-size: 11px; font-weight: 700; cursor: pointer; font-family: inherit; transition: transform .15s; }
 .add-card-btn:hover { transform: translateY(-1px); }
+.del-x-btn { background: none; border: none; font-size: 12px; color: #ccc; cursor: pointer; padding: 3px 5px; flex-shrink: 0; transition: color .15s; line-height: 1; }
+.del-x-btn:hover { color: #c44; }
 
 /* ── CC ROWS ── */
 .cc-row { display: flex; align-items: center; gap: 10px; padding: 11px 0; border-bottom: 1px solid var(--line); transition: opacity .2s; }
@@ -92,16 +94,7 @@ html, body { background: var(--bg); font-family: 'Plus Jakarta Sans', system-ui,
 .toggle-inactive { background: var(--warm); color: var(--muted); border-color: var(--line); }
 
 /* ── DOTS MENU on card row ── */
-.dots-wrap { position: relative; flex-shrink: 0; }
-.dots-btn { width: 28px; height: 28px; border-radius: 50%; border: 1.5px solid var(--line); background: var(--surface); cursor: pointer; font-size: 13px; color: var(--muted); display: flex; align-items: center; justify-content: center; transition: all .15s; font-family: inherit; letter-spacing: 1px; }
-.dots-btn:hover { border-color: var(--accent-deep); color: var(--ink); background: var(--accent-soft); }
-.dots-menu { position: absolute; right: 0; bottom: calc(100% + 5px); background: var(--surface); border: 1px solid var(--line); border-radius: 12px; box-shadow: 0 -8px 24px rgba(0,0,0,.1); min-width: 120px; overflow: hidden; display: none; z-index: 50; }
-.dots-menu.open { display: block; animation: popIn .15s; }
 @keyframes popIn { from{opacity:0;transform:scale(.95) translateY(4px)} to{opacity:1;transform:scale(1) translateY(0)} }
-.dots-item { display: flex; align-items: center; padding: 10px 14px; font-size: 12px; font-weight: 600; color: var(--ink); cursor: pointer; transition: background .1s; border: none; background: transparent; font-family: inherit; width: 100%; text-align: left; }
-.dots-item:hover { background: var(--warm); }
-.dots-item.danger { color: #c44; }
-.dots-item.danger:hover { background: #fce8e8; }
 
 /* ── RIGHT STACK ── */
 .right-stack { display: flex; flex-direction: column; gap: 16px; }
@@ -123,8 +116,6 @@ html, body { background: var(--bg); font-family: 'Plus Jakarta Sans', system-ui,
 .reset-notice { display: flex; align-items: center; gap: 8px; padding: 10px 16px; background: #d8eee8; border: 1px solid #a8d8d0; border-radius: 12px; font-size: 11.5px; color: #1a4a44; font-weight: 600; margin-bottom: 20px; }
 
 /* ── MODAL ── */
-.modal-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,.4); backdrop-filter: blur(4px); z-index: 300; align-items: center; justify-content: center; padding: 20px; }
-.modal-overlay.open { display: flex; animation: fadeIn .2s; }
 @keyframes fadeIn { from{opacity:0} to{opacity:1} }
 .modal { background: var(--surface); border-radius: 22px; border: 1px solid var(--line); padding: 26px 28px; width: 100%; max-width: 480px; max-height: 90vh; overflow-y: auto; box-shadow: 0 30px 60px -20px rgba(0,0,0,.3); animation: popBig .2s; }
 @keyframes popBig { from{transform:scale(.95);opacity:0} to{transform:scale(1);opacity:1} }
@@ -167,39 +158,6 @@ html, body { background: var(--bg); font-family: 'Plus Jakarta Sans', system-ui,
 </head>
 <body>
 
-<!-- ── ADD/EDIT MODAL ── -->
-<div class="modal-overlay" id="modal">
-  <div class="modal">
-    <div class="modal-title" id="modal-title">Add Card</div>
-    <div class="f-field">
-      <label class="f-label">Card Name</label>
-      <input class="f-input" id="m-name" type="text" placeholder="e.g. Chase Sapphire Preferred">
-    </div>
-    <div class="f-field">
-      <label class="f-label">Due Day <span class="f-label-note">(day of month, 1–31)</span></label>
-      <input class="f-input" id="m-day" type="number" min="1" max="31" placeholder="e.g. 22">
-    </div>
-    <div class="f-field">
-      <label class="f-label">Portal URL <span>(optional)</span></label>
-      <input class="f-input" id="m-url" type="url" placeholder="https://...">
-    </div>
-    <div class="f-field">
-      <label class="f-label">Card Color</label>
-      <div class="color-picker" id="card-color-picker"></div>
-    </div>
-    <div class="f-field">
-      <label class="f-label" style="display:flex;align-items:center;gap:10px;cursor:pointer;">
-        <input type="checkbox" id="m-active" checked style="width:15px;height:15px;accent-color:var(--accent-deep);">
-        Mark as Active
-      </label>
-    </div>
-    <div class="m-actions">
-      <button class="m-btn m-cancel" onclick="closeModal()">Cancel</button>
-      <button class="m-btn m-delete" id="modal-delete-btn" style="display:none;" onclick="deleteCardFromModal()">Delete Card</button>
-      <button class="m-btn m-save" onclick="saveCard()">Save</button>
-    </div>
-  </div>
-</div>
 
 <!-- ── TOPBAR ── -->
 <div class="topbar">
@@ -233,7 +191,6 @@ html, body { background: var(--bg); font-family: 'Plus Jakarta Sans', system-ui,
             <div class="card-label">Due Dates & Portals</div>
             <div style="font-family:'Fraunces',serif;font-size:18px;font-weight:600;letter-spacing:-.3px;">All Cards</div>
           </div>
-          <button class="add-card-btn" onclick="openAddModal()">+ Add Card</button>
         </div>
         <div id="cc-list"></div>
       </div>
@@ -293,11 +250,6 @@ var TOOLS = [
   {name:'PayPal', url:'https://paypal.com/signin'},
 ];
 
-var PRESET_COLORS = [
-  '#f2c4ce','#f7d9b0','#d4b8e0','#b8d4f0','#b8cfb0',
-  '#e0cec8','#c8c8d8','#f6d6a0','#a8d8d0','#f0c8a0',
-];
-
 /* ── DEFAULT CARDS ── */
 var DEFAULT_CARDS = [
   {id:'c0', name:'Chase Sapphire Preferred', day:22, url:'https://secure.chase.com/web/auth/dashboard#/dashboard/overview', color:'#f2c4ce', active:true,  balance:null},
@@ -316,8 +268,6 @@ var DS = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'
 /* ── STATE ── */
 var SK = 'finTrackerState2';
 var cards = [];      // array of card objects with .paid added
-var editingId = null;
-var pendingColor = PRESET_COLORS[0];
 
 function newId() { return 'c' + Date.now() + Math.random().toString(36).slice(2,6); }
 
@@ -447,37 +397,12 @@ function renderCards() {
         '</button>' +
       '</div>';
 
-    // Dots menu (edit / delete)
-    var dotsWrap = document.createElement('div');
-    dotsWrap.className = 'dots-wrap';
-    var dotsBtn = document.createElement('button');
-    dotsBtn.className = 'dots-btn';
-    dotsBtn.textContent = '···';
-    var dotsMenu = document.createElement('div');
-    dotsMenu.className = 'dots-menu';
-
-    var editItem = document.createElement('button');
-    editItem.className = 'dots-item';
-    editItem.textContent = 'Edit';
-    editItem.onclick = (function(id) { return function(e) { e.stopPropagation(); dotsMenu.classList.remove('open'); openEditModal(id); }; })(c.id);
-
-    var delItem = document.createElement('button');
-    delItem.className = 'dots-item danger';
-    delItem.textContent = 'Delete';
-    delItem.onclick = (function(id) { return function(e) { e.stopPropagation(); dotsMenu.classList.remove('open'); confirmDelete(id); }; })(c.id);
-
-    dotsMenu.appendChild(editItem);
-    dotsMenu.appendChild(delItem);
-
-    dotsBtn.onclick = function(e) {
-      e.stopPropagation();
-      document.querySelectorAll('.dots-menu.open').forEach(function(m) { if (m !== dotsMenu) m.classList.remove('open'); });
-      dotsMenu.classList.toggle('open');
-    };
-
-    dotsWrap.appendChild(dotsBtn);
-    dotsWrap.appendChild(dotsMenu);
-    row.appendChild(dotsWrap);
+    var xBtn = document.createElement('button');
+    xBtn.className = 'del-x-btn';
+    xBtn.textContent = '✕';
+    xBtn.title = 'Delete card';
+    xBtn.onclick = (function(id){ return function(e){ e.stopPropagation(); confirmDelete(id); }; })(c.id);
+    row.appendChild(xBtn);
     list.appendChild(row);
   });
 }
@@ -529,105 +454,12 @@ function renderUpcomingBanner() {
     '<div class="banner-items">' + itemsHtml + '</div>';
 }
 
-/* ── COLOR PICKER ── */
-function buildColorPicker(selected) {
-  pendingColor = selected || PRESET_COLORS[0];
-  var picker = document.getElementById('card-color-picker');
-  picker.innerHTML = '';
-
-  PRESET_COLORS.forEach(function(col) {
-    var sw = document.createElement('div');
-    sw.className = 'color-swatch' + (col === pendingColor ? ' selected' : '');
-    sw.style.background = col;
-    sw.onclick = function() {
-      pendingColor = col;
-      document.querySelectorAll('.color-swatch').forEach(function(s) { s.classList.remove('selected'); });
-      sw.classList.add('selected');
-      // deselect custom
-      var customSw = document.getElementById('custom-swatch');
-      if (customSw) customSw.classList.remove('selected');
-    };
-    picker.appendChild(sw);
-  });
-
-  // Custom color option
-  var customWrap = document.createElement('div');
-  customWrap.id = 'custom-swatch';
-  customWrap.className = 'color-swatch';
-  customWrap.style.background = 'conic-gradient(red, yellow, lime, cyan, blue, magenta, red)';
-  customWrap.title = 'Custom color';
-  var colorInput = document.createElement('input');
-  colorInput.type = 'color';
-  colorInput.style.cssText = 'opacity:0;width:100%;height:100%;cursor:pointer;border:none;padding:0;';
-  colorInput.value = '#c9b6ee';
-  colorInput.oninput = function() {
-    pendingColor = colorInput.value;
-    document.querySelectorAll('.color-swatch').forEach(function(s) { s.classList.remove('selected'); });
-    customWrap.classList.add('selected');
-  };
-  customWrap.appendChild(colorInput);
-  picker.appendChild(customWrap);
-}
 
 /* ── MODAL ── */
-function openAddModal() {
-  editingId = null;
-  document.getElementById('modal-title').textContent = 'Add Card';
-  document.getElementById('m-name').value = '';
-  document.getElementById('m-day').value = '';
-  document.getElementById('m-url').value = '';
-  document.getElementById('m-active').checked = true;
-  document.getElementById('modal-delete-btn').style.display = 'none';
-  buildColorPicker(PRESET_COLORS[0]);
-  document.getElementById('modal').classList.add('open');
-  setTimeout(function() { document.getElementById('m-name').focus(); }, 100);
-}
 
-function openEditModal(id) {
-  var c = cards.find(function(x) { return x.id === id; });
-  if (!c) return;
-  editingId = id;
-  document.getElementById('modal-title').textContent = 'Edit Card';
-  document.getElementById('m-name').value = c.name;
-  document.getElementById('m-day').value = c.day;
-  document.getElementById('m-url').value = c.url || '';
-  document.getElementById('m-active').checked = c.active;
-  document.getElementById('modal-delete-btn').style.display = 'inline-flex';
-  buildColorPicker(c.color);
-  document.getElementById('modal').classList.add('open');
-}
 
-function closeModal() {
-  document.getElementById('modal').classList.remove('open');
-  editingId = null;
-}
 
-function saveCard() {
-  var name    = document.getElementById('m-name').value.trim();
-  var day     = parseInt(document.getElementById('m-day').value);
-  var url     = document.getElementById('m-url').value.trim();
-  var active  = document.getElementById('m-active').checked;
 
-  if (!name) { document.getElementById('m-name').focus(); return; }
-  if (!day || day < 1 || day > 31) { document.getElementById('m-day').focus(); return; }
-
-  if (editingId) {
-    var c = cards.find(function(x) { return x.id === editingId; });
-    if (c) { c.name = name; c.day = day; c.url = url; c.color = pendingColor; c.active = active; }
-  } else {
-    cards.push({id: newId(), name: name, day: day, url: url, color: pendingColor, active: active, paid: false});
-  }
-  save(); closeModal(); renderCards(); renderBanners();
-}
-
-function deleteCardFromModal() {
-  if (!editingId) return;
-  var c = cards.find(function(x) { return x.id === editingId; });
-  if (!c) return;
-  if (!confirm('Delete "' + c.name + '"? Use Inactive to keep it for reference.')) return;
-  cards = cards.filter(function(x) { return x.id !== editingId; });
-  save(); closeModal(); renderCards(); renderBanners();
-}
 
 /* ── LINK LISTS ── */
 function renderLinkList(id, items) {
@@ -726,13 +558,8 @@ function esc(s) {
 }
 
 /* ── CLOSE DOTS ON OUTSIDE CLICK ── */
-document.addEventListener('click', function(e) {
-  if (!e.target.closest('.dots-wrap')) {
-    document.querySelectorAll('.dots-menu.open').forEach(function(m) { m.classList.remove('open'); });
   }
 });
-document.getElementById('modal').addEventListener('click', function(e) { if (e.target === this) closeModal(); });
-document.addEventListener('keydown', function(e) { if (e.key === 'Escape') closeModal(); });
 
 /* ── INIT ── */
 var now = new Date();
