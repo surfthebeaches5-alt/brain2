@@ -10,156 +10,156 @@
 <style>
 * { box-sizing: border-box; margin: 0; padding: 0; }
 :root {
-  --bg: #f3ecd8; --surface: #ffffff; --sidebar: #f8f1dd;
+  --bg: #f3ecd8; --surface: #fff; --sidebar: #f8f1dd;
   --sidebar-line: #e6dec5; --ink: #1a1612; --muted: #7a7468;
   --line: #ececec; --warm: #faf6ec;
   --accent: #c9b6ee; --accent-deep: #b099e0; --accent-soft: #ede5fb;
 }
 html, body { background: var(--bg); font-family: 'Plus Jakarta Sans', system-ui, sans-serif; color: var(--ink); min-height: 100vh; -webkit-font-smoothing: antialiased; }
 
-/* ── TOPBAR ── */
-.topbar { background: var(--sidebar); border-bottom: 1px solid var(--sidebar-line); padding: 16px 32px; display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; z-index: 200; }
+.topbar { background: var(--sidebar); border-bottom: 1px solid var(--sidebar-line); padding: 16px 32px; display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; z-index: 100; }
 .topbar-left { display: flex; align-items: center; gap: 14px; }
 .back-btn { display: inline-flex; align-items: center; gap: 6px; padding: 7px 14px; border: 1.5px solid #d9d2bd; border-radius: 20px; font-size: 12px; color: var(--muted); cursor: pointer; background: transparent; font-family: inherit; text-decoration: none; transition: all .15s; }
 .back-btn:hover { border-color: var(--accent-deep); color: var(--ink); }
 .topbar-title { font-family: 'Fraunces', serif; font-size: 22px; font-weight: 600; letter-spacing: -0.4px; }
 .topbar-date { font-size: 11px; letter-spacing: 1.5px; text-transform: uppercase; color: var(--muted); font-weight: 500; }
 
-/* ── HUB ── */
-.hub { max-width: 1040px; margin: 0 auto; padding: 28px 24px 60px; }
+.hub { max-width: 1060px; margin: 0 auto; padding: 28px 24px 60px; }
 
-/* ── SECTION TITLE ── */
 .sec-title { font-size: 9.5px; letter-spacing: 2px; text-transform: uppercase; color: var(--muted); font-weight: 700; margin-bottom: 12px; display: flex; align-items: center; gap: 10px; }
 .sec-title::after { content: ''; flex: 1; height: 1px; background: var(--line); }
 
-/* ── BANNERS ── */
-.banner-row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 24px; }
-
-
-.upcoming-banner {
-  background: var(--accent-soft); border: 1.5px solid var(--accent); border-radius: 18px;
-  padding: 20px 24px; display: flex; flex-direction: column; gap: 10px;
-}
-.banner-next-label { font-size: 9.5px; letter-spacing: 2px; text-transform: uppercase; color: var(--accent-deep); font-weight: 700; }
-.banner-items { display: flex; align-items: center; gap: 16px; flex-wrap: wrap; flex: 1; }
+/* Banner */
+.upcoming-banner { background: var(--accent-soft); border: 1.5px solid var(--accent); border-radius: 18px; padding: 20px 26px; margin-bottom: 24px; }
+.banner-label { font-size: 9.5px; letter-spacing: 2px; text-transform: uppercase; color: var(--accent-deep); font-weight: 700; margin-bottom: 10px; }
+.banner-items { display: flex; align-items: center; gap: 18px; flex-wrap: wrap; }
 .banner-item { flex: 1; min-width: 110px; }
-.banner-item-label { font-size: 9.5px; color: var(--muted); font-weight: 600; margin-bottom: 2px; }
-.banner-card-name { font-family: 'Fraunces', serif; font-size: 14px; font-weight: 600; letter-spacing: -.2px; line-height: 1.2; }
-.banner-days { font-size: 10.5px; color: var(--muted); margin-top: 3px; }
-.banner-days a { color: var(--accent-deep); text-decoration: none; font-weight: 600; }
-.banner-days a:hover { text-decoration: underline; }
-.banner-divider { width: 1px; height: 34px; background: var(--accent); opacity: .4; flex-shrink: 0; }
+.banner-item-sub { font-size: 9.5px; color: var(--muted); font-weight: 600; margin-bottom: 2px; }
+.banner-card-name { font-family: 'Fraunces', serif; font-size: 15px; font-weight: 600; letter-spacing: -.2px; }
+.banner-due { font-size: 10.5px; color: var(--muted); margin-top: 3px; }
+.banner-due a { color: var(--accent-deep); text-decoration: none; font-weight: 600; }
+.banner-due a:hover { text-decoration: underline; }
+.banner-divider { width: 1px; height: 36px; background: var(--accent); opacity: .4; flex-shrink: 0; }
+.banner-empty { font-size: 13px; color: var(--muted); font-style: italic; }
 
-/* ── MAIN LAYOUT ── */
-.main-layout { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 24px; align-items: start; }
+/* Layout */
+.main-layout { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; align-items: start; }
 
-/* ── CARDS ── */
+/* Cards */
 .card { background: var(--surface); border: 1px solid var(--line); border-radius: 18px; padding: 20px 22px; }
-.card-accent-blush  { border-top: 3px solid #f2c4ce; }
-.card-accent-sage   { border-top: 3px solid #a7b384; }
-.card-accent-lav    { border-top: 3px solid var(--accent); }
-.card-accent-mauve  { border-top: 3px solid var(--accent-deep); }
-.card-accent-peach  { border-top: 3px solid #f6c89e; }
-.card-label { font-size: 9.5px; letter-spacing: 1.8px; text-transform: uppercase; color: var(--muted); font-weight: 700; margin-bottom: 3px; }
-.card-head { font-family: 'Fraunces', serif; font-size: 18px; font-weight: 600; letter-spacing: -0.3px; margin-bottom: 16px; display: flex; align-items: center; justify-content: space-between; }
-.add-card-btn { padding: 6px 14px; background: var(--ink); color: #fff; border: none; border-radius: 14px; font-size: 11px; font-weight: 700; cursor: pointer; font-family: inherit; transition: transform .15s; }
-.add-card-btn:hover { transform: translateY(-1px); }
-.del-x-btn { background: none; border: none; font-size: 12px; color: #ccc; cursor: pointer; padding: 3px 5px; flex-shrink: 0; transition: color .15s; line-height: 1; }
-.del-x-btn:hover { color: #c44; }
+.card-blush  { border-top: 3px solid #f2c4ce; }
+.card-sage   { border-top: 3px solid #a7b384; }
+.card-lav    { border-top: 3px solid var(--accent); }
+.card-peach  { border-top: 3px solid #f6c89e; }
 
-/* ── CC ROWS ── */
-.cc-row { display: flex; align-items: center; gap: 10px; padding: 11px 0; border-bottom: 1px solid var(--line); transition: opacity .2s; }
+.card-label { font-size: 9.5px; letter-spacing: 1.8px; text-transform: uppercase; color: var(--muted); font-weight: 700; margin-bottom: 3px; }
+.card-title { font-family: 'Fraunces', serif; font-size: 18px; font-weight: 600; letter-spacing: -.3px; margin-bottom: 16px; }
+.card-head-row { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 16px; }
+.add-btn { padding: 6px 14px; background: var(--ink); color: #fff; border: none; border-radius: 14px; font-size: 11px; font-weight: 700; cursor: pointer; font-family: inherit; transition: transform .15s; flex-shrink: 0; }
+.add-btn:hover { transform: translateY(-1px); }
+
+/* CC rows */
+.cc-row { display: flex; align-items: center; gap: 9px; padding: 11px 0; border-bottom: 1px solid var(--line); }
 .cc-row:last-child { border-bottom: none; }
-.cc-row.is-inactive { opacity: 0.42; }
-.cc-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; border: 1.5px solid rgba(0,0,0,.1); }
+.cc-row.inactive { opacity: .42; }
+.cc-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; border: 1.5px solid rgba(0,0,0,.08); }
 .cc-info { flex: 1; min-width: 0; }
 .cc-name { font-size: 12.5px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.cc-meta { font-size: 10.5px; color: var(--muted); margin-top: 2px; display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
+.cc-due { font-size: 10.5px; color: var(--muted); margin-top: 2px; }
 
 .cc-urgency { font-size: 9.5px; font-weight: 700; letter-spacing: .5px; text-transform: uppercase; padding: 3px 9px; border-radius: 10px; white-space: nowrap; flex-shrink: 0; }
 .urgent { background: #fde0e0; color: #a04040; }
 .soon   { background: #fff5d6; color: #6a4a08; }
 .ok     { background: #d8eee8; color: #1a4a44; }
-.paid-badge { background: var(--accent-soft); color: var(--accent-deep); font-size: 9.5px; font-weight: 700; letter-spacing: .5px; text-transform: uppercase; padding: 3px 9px; border-radius: 10px; white-space: nowrap; flex-shrink: 0; }
 
-.cc-actions { display: flex; align-items: center; gap: 4px; flex-shrink: 0; }
-.portal-btn { display: inline-flex; align-items: center; padding: 4px 9px; border: 1.5px solid var(--line); border-radius: 11px; font-size: 10.5px; font-weight: 600; color: var(--muted); text-decoration: none; transition: all .15s; font-family: inherit; white-space: nowrap; }
+.cc-actions { display: flex; align-items: center; gap: 5px; flex-shrink: 0; }
+.portal-btn { display: inline-flex; align-items: center; padding: 4px 9px; border: 1.5px solid var(--line); border-radius: 11px; font-size: 10.5px; font-weight: 600; color: var(--muted); text-decoration: none; transition: all .15s; font-family: inherit; }
 .portal-btn:hover { border-color: var(--accent-deep); color: var(--ink); background: var(--accent-soft); }
-.paid-btn { padding: 4px 9px; border-radius: 11px; font-size: 10.5px; font-weight: 700; cursor: pointer; border: 1.5px solid; transition: all .15s; font-family: inherit; white-space: nowrap; }
+.paid-btn { padding: 4px 9px; border-radius: 11px; font-size: 10.5px; font-weight: 700; cursor: pointer; border: 1.5px solid; transition: all .15s; font-family: inherit; }
 .paid-yes { background: var(--accent-soft); color: var(--accent-deep); border-color: var(--accent); }
 .paid-no  { background: var(--warm); color: var(--muted); border-color: var(--line); }
 .paid-no:hover { border-color: var(--accent-deep); }
-.toggle-btn { padding: 4px 9px; border-radius: 11px; font-size: 10.5px; font-weight: 700; cursor: pointer; border: 1.5px solid; transition: all .15s; font-family: inherit; white-space: nowrap; }
-.toggle-active   { background: #d8eee8; color: #1a4a44; border-color: #a8d8d0; }
-.toggle-inactive { background: var(--warm); color: var(--muted); border-color: var(--line); }
+.active-btn { padding: 4px 9px; border-radius: 11px; font-size: 10.5px; font-weight: 700; cursor: pointer; border: 1.5px solid; transition: all .15s; font-family: inherit; }
+.is-active   { background: #d8eee8; color: #1a4a44; border-color: #a8d8d0; }
+.is-inactive { background: var(--warm); color: var(--muted); border-color: var(--line); }
+.del-x { background: none; border: none; font-size: 13px; color: #ccc; cursor: pointer; padding: 2px 4px; flex-shrink: 0; transition: color .15s; line-height: 1; }
+.del-x:hover { color: #c44; }
 
-/* ── DOTS MENU on card row ── */
-@keyframes popIn { from{opacity:0;transform:scale(.95) translateY(4px)} to{opacity:1;transform:scale(1) translateY(0)} }
-
-/* ── RIGHT STACK ── */
+/* Right stack */
 .right-stack { display: flex; flex-direction: column; gap: 16px; }
-.link-row { display: flex; align-items: center; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid var(--line); }
+.link-row { display: flex; align-items: center; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid var(--line); gap: 10px; }
 .link-row:last-child { border-bottom: none; }
 .link-label { font-size: 13px; font-weight: 600; }
 .link-sub { font-size: 10.5px; color: var(--muted); margin-top: 2px; }
-.link-btn { display: inline-flex; align-items: center; gap: 4px; padding: 6px 14px; border: 1.5px solid var(--line); border-radius: 14px; font-size: 11px; font-weight: 600; color: var(--muted); text-decoration: none; transition: all .15s; font-family: inherit; white-space: nowrap; }
-.link-btn:hover { border-color: var(--accent-deep); color: var(--ink); background: var(--accent-soft); }
-.link-btn.primary { background: var(--ink); color: #fff; border-color: var(--ink); }
-.link-btn.primary:hover { background: #2a2218; transform: translateY(-1px); }
+.link-row-right { display: flex; align-items: center; gap: 6px; flex-shrink: 0; }
+.open-btn { display: inline-flex; align-items: center; padding: 6px 12px; border: 1.5px solid var(--line); border-radius: 14px; font-size: 11px; font-weight: 600; color: var(--muted); text-decoration: none; transition: all .15s; font-family: inherit; }
+.open-btn:hover { border-color: var(--accent-deep); color: var(--ink); background: var(--accent-soft); }
+.open-btn.primary { background: var(--ink); color: #fff; border-color: var(--ink); }
+.open-btn.primary:hover { background: #2a2218; transform: translateY(-1px); }
+.list-empty { font-size: 12px; color: var(--muted); padding: 6px 0; font-style: italic; }
 
-/* ── TOOLS ── */
-.tools-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-.tool-item { display: flex; align-items: center; justify-content: space-between; padding: 12px 16px; background: var(--warm); border: 1px solid var(--line); border-radius: 12px; }
-.tool-name { font-size: 12.5px; font-weight: 600; }
-
-/* ── RESET NOTICE ── */
-.reset-notice { display: flex; align-items: center; gap: 8px; padding: 10px 16px; background: #d8eee8; border: 1px solid #a8d8d0; border-radius: 12px; font-size: 11.5px; color: #1a4a44; font-weight: 600; margin-bottom: 20px; }
-
-/* ── MODAL ── */
-@keyframes fadeIn { from{opacity:0} to{opacity:1} }
-.modal { background: var(--surface); border-radius: 22px; border: 1px solid var(--line); padding: 26px 28px; width: 100%; max-width: 480px; max-height: 90vh; overflow-y: auto; box-shadow: 0 30px 60px -20px rgba(0,0,0,.3); animation: popBig .2s; }
-@keyframes popBig { from{transform:scale(.95);opacity:0} to{transform:scale(1);opacity:1} }
+/* Tool modal */
+.modal-bg { display: none; position: fixed; inset: 0; background: rgba(0,0,0,.4); backdrop-filter: blur(4px); z-index: 300; align-items: center; justify-content: center; padding: 20px; }
+.modal-bg.open { display: flex; }
+.modal-box { background: #fff; border-radius: 22px; padding: 26px 28px; width: 100%; max-width: 440px; box-shadow: 0 30px 60px -20px rgba(0,0,0,.3); border: 1px solid var(--line); }
 .modal-title { font-family: 'Fraunces', serif; font-size: 22px; font-weight: 600; margin-bottom: 20px; letter-spacing: -.3px; }
-.f-field { margin-bottom: 14px; }
-.f-label { font-size: 9.5px; letter-spacing: 1.5px; text-transform: uppercase; color: var(--muted); margin-bottom: 6px; display: block; font-weight: 700; }
-.f-label span { font-weight: 400; letter-spacing: 0; text-transform: none; }
-.f-input { width: 100%; border: 1.5px solid var(--line); border-radius: 10px; padding: 10px 12px; font-size: 13px; font-family: inherit; color: var(--ink); background: var(--surface); outline: none; transition: border .15s; }
+.f-label { font-size: 9.5px; letter-spacing: 1.5px; text-transform: uppercase; color: var(--muted); font-weight: 700; margin-bottom: 6px; display: block; }
+.f-input { width: 100%; border: 1.5px solid var(--line); border-radius: 10px; padding: 10px 12px; font-size: 13px; font-family: inherit; color: var(--ink); background: #fff; outline: none; transition: border .15s; margin-bottom: 14px; }
 .f-input:focus { border-color: var(--accent-deep); }
-.f-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-.f-row3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; }
-
-/* Color picker */
-.color-picker { display: flex; gap: 8px; flex-wrap: wrap; }
-.color-swatch { width: 28px; height: 28px; border-radius: 50%; cursor: pointer; border: 2.5px solid transparent; transition: all .15s; flex-shrink: 0; }
-.color-swatch:hover { transform: scale(1.1); }
-.color-swatch.selected { border-color: var(--ink); transform: scale(1.1); }
-.color-custom { width: 28px; height: 28px; border-radius: 50%; border: 2px dashed #ccc; cursor: pointer; overflow: hidden; }
-.color-custom input { width: 100%; height: 100%; opacity: 0; cursor: pointer; border: none; padding: 0; }
-
-.m-actions { display: flex; gap: 10px; justify-content: flex-end; margin-top: 22px; flex-wrap: wrap; }
+.check-row { display: flex; align-items: center; gap: 10px; margin-bottom: 14px; }
+.check-row input { width: 15px; height: 15px; accent-color: var(--accent-deep); cursor: pointer; }
+.check-row label { font-size: 13px; font-weight: 600; cursor: pointer; }
+.modal-actions { display: flex; gap: 10px; justify-content: flex-end; margin-top: 8px; }
 .m-btn { padding: 10px 22px; border-radius: 22px; font-family: inherit; font-size: 13px; font-weight: 600; cursor: pointer; border: 1.5px solid; transition: all .15s; }
 .m-cancel { background: var(--warm); border-color: var(--line); color: var(--muted); }
-.m-cancel:hover { background: #f0e8d8; color: var(--ink); }
+.m-cancel:hover { color: var(--ink); }
 .m-save { background: var(--ink); border-color: var(--ink); color: #fff; }
 .m-save:hover { transform: translateY(-1px); }
-.m-delete { background: #fce4ec; border-color: #f2c4ce; color: #a0304a; }
-.m-delete:hover { background: #f8c8c8; }
+.m-del { background: #fce4ec; border-color: #f2c4ce; color: #a0304a; }
 
-@media (max-width: 700px) {
-  .topbar { padding: 14px 18px; }
-  .hub { padding: 18px 14px 60px; }
-  .banner-row { grid-template-columns: 1fr; }
-  .main-layout { grid-template-columns: 1fr; }
-  .tools-grid { grid-template-columns: 1fr; }
-  .cc-actions { gap: 3px; }
-  .portal-btn, .paid-btn, .toggle-btn { padding: 3px 7px; font-size: 9.5px; }
-}
+/* Reset notice */
+.reset-notice { display: none; align-items: center; gap: 8px; padding: 10px 16px; background: #d8eee8; border: 1px solid #a8d8d0; border-radius: 12px; font-size: 11.5px; color: #1a4a44; font-weight: 600; margin-bottom: 20px; }
+
+/* Dots for tools/banks/investments */
+.dots-wrap { position: relative; }
+.dots-btn { width: 28px; height: 28px; border-radius: 50%; border: 1.5px solid var(--line); background: #fff; cursor: pointer; font-size: 13px; color: var(--muted); display: flex; align-items: center; justify-content: center; transition: all .15s; font-family: inherit; letter-spacing: 1px; }
+.dots-btn:hover { border-color: var(--accent-deep); color: var(--ink); background: var(--accent-soft); }
+.dots-menu { display: none; position: absolute; right: 0; bottom: calc(100% + 4px); background: #fff; border: 1px solid var(--line); border-radius: 12px; box-shadow: 0 -6px 20px rgba(0,0,0,.1); min-width: 110px; overflow: hidden; z-index: 50; }
+.dots-menu.open { display: block; }
+.dots-item { display: block; padding: 10px 14px; font-size: 12px; font-weight: 600; color: var(--ink); cursor: pointer; border: none; background: transparent; font-family: inherit; width: 100%; text-align: left; }
+.dots-item:hover { background: var(--warm); }
+.dots-item.red { color: #c44; }
+.dots-item.red:hover { background: #fce8e8; }
+
+@media (max-width: 900px) { .main-layout { grid-template-columns: 1fr; } }
+@media (max-width: 700px) { .topbar { padding: 14px 18px; } .hub { padding: 18px 14px 60px; } }
 </style>
 </head>
 <body>
 
+<!-- Tool/Resource Modal -->
+<div class="modal-bg" id="res-modal">
+  <div class="modal-box">
+    <div class="modal-title" id="res-modal-title">Add Resource</div>
+    <label class="f-label">Name</label>
+    <input class="f-input" id="res-name" type="text" placeholder="e.g. Mint">
+    <label class="f-label">Sub-label <span style="font-weight:400;letter-spacing:0;text-transform:none;font-size:9px;">(optional)</span></label>
+    <input class="f-input" id="res-sub" type="text" placeholder="e.g. 401k & Roth IRA">
+    <label class="f-label">URL</label>
+    <input class="f-input" id="res-url" type="url" placeholder="https://...">
+    <div class="check-row">
+      <input type="checkbox" id="res-primary">
+      <label for="res-primary">Primary <span style="font-weight:400;color:var(--muted);font-size:11px;">(dark button)</span></label>
+    </div>
+    <div class="modal-actions">
+      <button class="m-btn m-cancel" id="res-cancel">Cancel</button>
+      <button class="m-btn m-del" id="res-delete" style="display:none">Delete</button>
+      <button class="m-btn m-save" id="res-save">Save</button>
+    </div>
+  </div>
+</div>
 
-<!-- ── TOPBAR ── -->
+<!-- Topbar -->
 <div class="topbar">
   <div class="topbar-left">
     <a href="../" class="back-btn">
@@ -172,192 +172,156 @@ html, body { background: var(--bg); font-family: 'Plus Jakarta Sans', system-ui,
 </div>
 
 <div class="hub">
-
-  <div id="reset-notice" style="display:none;" class="reset-notice">
-    ✓ New month — all cards reset to unpaid
-  </div>
-
-  <!-- ── BANNER ── -->
-  <div class="upcoming-banner" id="upcoming-banner" style="margin-bottom:24px;"></div>
+  <div class="reset-notice" id="reset-notice">✓ New month — all cards reset to unpaid</div>
+  <div class="upcoming-banner" id="upcoming-banner"></div>
 
   <div class="main-layout">
 
     <!-- LEFT: CREDIT CARDS -->
     <div>
       <div class="sec-title">Credit Cards</div>
-      <div class="card card-accent-blush">
-        <div class="card-head">
-          <div>
-            <div class="card-label">Due Dates & Portals</div>
-            <div style="font-family:'Fraunces',serif;font-size:18px;font-weight:600;letter-spacing:-.3px;">All Cards</div>
-          </div>
-        </div>
+      <div class="card card-blush">
+        <div class="card-label">Due Dates & Portals</div>
+        <div class="card-title">All Cards</div>
         <div id="cc-list"></div>
       </div>
     </div>
 
-    <!-- RIGHT: BANKS + INVESTMENTS + TOOLS -->
+    <!-- RIGHT STACK -->
     <div class="right-stack">
+
       <div>
         <div class="sec-title">Bank Accounts</div>
-        <div class="card card-accent-sage">
+        <div class="card card-sage">
+          <div class="card-head-row">
+            <div class="card-title" style="margin-bottom:0">Banks</div>
+            <button class="add-btn" onclick="openAddRes('banks')">+ Add</button>
+          </div>
           <div id="bank-list"></div>
         </div>
       </div>
+
       <div>
         <div class="sec-title">Investments & Retirement</div>
-        <div class="card card-accent-lav">
+        <div class="card card-lav">
+          <div class="card-head-row">
+            <div class="card-title" style="margin-bottom:0">Investments</div>
+            <button class="add-btn" onclick="openAddRes('investments')">+ Add</button>
+          </div>
           <div id="invest-list"></div>
         </div>
       </div>
+
       <div>
         <div class="sec-title">Financial Tools</div>
-        <div class="card card-accent-peach">
-          <div class="card-head" style="margin-bottom:12px;">
-            <div style="font-family:'Fraunces',serif;font-size:18px;font-weight:600;letter-spacing:-.3px;">Tools & Resources</div>
-            <button class="add-card-btn" onclick="openAddToolModal()">+ Add</button>
+        <div class="card card-peach">
+          <div class="card-head-row">
+            <div class="card-title" style="margin-bottom:0">Tools & Resources</div>
+            <button class="add-btn" onclick="openAddRes('tools')">+ Add</button>
           </div>
           <div id="tools-list"></div>
         </div>
       </div>
+
     </div>
-
   </div>
-
 </div>
 
 <script>
-/* ── AUTH ── */
-var pwd = localStorage.getItem('brain2auth');
-if (pwd !== 'Nikkireed234!') {
-  var attempt = prompt('Password:');
-  if (attempt !== 'Nikkireed234!') { document.body.innerHTML = ''; throw new Error('Unauthorized'); }
-  localStorage.setItem('brain2auth', attempt);
-}
+/* AUTH */
+(function() {
+  var p = localStorage.getItem('brain2auth');
+  if (p !== 'Nikkireed234!') {
+    var a = prompt('Password:');
+    if (a !== 'Nikkireed234!') { document.body.innerHTML = ''; return; }
+    localStorage.setItem('brain2auth', a);
+  }
+})();
 
-/* ── STATIC DATA ── */
-var BANKS = [
-  {name:'SchoolsFirst FCU', url:'https://online.schoolsfirstfcu.org/gateway/schoolsfirstfcu/login#/'},
-  {name:'SoFi',             url:'https://login.sofi.com/'},
-];
-var INVESTMENTS = [
-  {name:'Fidelity', sub:'401k & Roth IRA', url:'https://digital.fidelity.com/ftgw/digital/portfolio/summary?poe=wiUser'},
-];
-var TOOLS = [
-  {name:'Origin',                                 url:'https://app.useorigin.com/', primary:true},
-  {name:'2026 Financial Allocations Spreadsheet', url:'https://docs.google.com/spreadsheets/d/12XIOUZYGcwYSgt7mX99h6DRS3w5KgfllyZZ8VLRUIN8/edit?usp=sharing', primary:true},
-  {name:'Venmo',  url:'https://venmo.com/'},
-  {name:'PayPal', url:'https://paypal.com/signin'},
-];
-
-/* ── DEFAULT CARDS ── */
-var DEFAULT_CARDS = [
-  {id:'c0', name:'Chase Sapphire Preferred', day:22, url:'https://secure.chase.com/web/auth/dashboard#/dashboard/overview', color:'#f2c4ce', active:true,  balance:null},
-  {id:'c1', name:'Marriott Bonvoy',          day:12, url:'https://secure.chase.com/web/auth/dashboard#/dashboard/overview', color:'#f7d9b0', active:true,  balance:null},
-  {id:'c2', name:'Venture X',                day:28, url:'https://myaccounts.capitalone.com/#/accountSummary',              color:'#d4b8e0', active:true,  balance:null},
-  {id:'c3', name:'Bilt Blue Card',           day:5,  url:'https://www.bilt.com',                                           color:'#b8d4f0', active:true,  balance:null},
-  {id:'c4', name:'Citi AAdvantage Platinum', day:1,  url:'https://www.citi.com/',                                          color:'#b8cfb0', active:true,  balance:null},
-  {id:'c5', name:'AAdvantage Aviator',       day:18, url:'https://www.aviatormastercard.com/servicing/home',               color:'#e0cec8', active:false, balance:null},
-  {id:'c6', name:'Discover',                 day:24, url:'https://card.discover.com/web/achome/homepage',                  color:'#c8c8d8', active:false, balance:null},
-];
-
+/* CARD DATA */
+var CARD_SK = 'finTrackerState2';
 var MS = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
 var MF = ['January','February','March','April','May','June','July','August','September','October','November','December'];
 var DS = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
 
-/* ── STATE ── */
-var SK = 'finTrackerState2';
-var cards = [];      // array of card objects with .paid added
+var DEFAULT_CARDS = [
+  {id:'c0', name:'Chase Sapphire Preferred', day:22, url:'https://secure.chase.com/web/auth/dashboard#/dashboard/overview', color:'#f2c4ce', active:true,  paid:false},
+  {id:'c1', name:'Marriott Bonvoy',          day:12, url:'https://secure.chase.com/web/auth/dashboard#/dashboard/overview', color:'#f7d9b0', active:true,  paid:false},
+  {id:'c2', name:'Venture X',                day:28, url:'https://myaccounts.capitalone.com/#/accountSummary',              color:'#d4b8e0', active:true,  paid:false},
+  {id:'c3', name:'Bilt Blue Card',           day:5,  url:'https://www.bilt.com',                                           color:'#b8d4f0', active:true,  paid:false},
+  {id:'c4', name:'Citi AAdvantage Platinum', day:1,  url:'https://www.citi.com/',                                          color:'#b8cfb0', active:true,  paid:false},
+  {id:'c5', name:'AAdvantage Aviator',       day:18, url:'https://www.aviatormastercard.com/servicing/home',               color:'#e0cec8', active:false, paid:false},
+  {id:'c6', name:'Discover',                 day:24, url:'https://card.discover.com/web/achome/homepage',                  color:'#c8c8d8', active:false, paid:false},
+];
 
-function newId() { return 'c' + Date.now() + Math.random().toString(36).slice(2,6); }
+var cards = [];
 
-/* ── STORAGE ── */
-function save() {
-  var payload = {
-    cards: cards,
-    lastResetMonth: getMonthKey(),
-  };
-  localStorage.setItem(SK, JSON.stringify(payload));
+function monthKey() {
+  var n = new Date(); return n.getFullYear() + '-' + (n.getMonth() + 1);
 }
-
-function getMonthKey() {
-  var n = new Date();
-  return n.getFullYear() + '-' + (n.getMonth()+1);
+function saveCards() {
+  localStorage.setItem(CARD_SK, JSON.stringify({ cards: cards, lastReset: monthKey() }));
 }
-
-function load() {
-  var raw = localStorage.getItem(SK);
-  var thisMonth = getMonthKey();
-  var didReset = false;
-
-  if (raw) {
-    try {
-      var saved = JSON.parse(raw);
-
-      // Support old format (object keyed by index) → migrate to new array format
-      if (saved.cards && Array.isArray(saved.cards)) {
-        cards = saved.cards;
-      } else {
-        // Old format: migrate
-        cards = DEFAULT_CARDS.map(function(def, i) {
-          var old = saved[i] || {};
-          return Object.assign({}, def, {
-            paid: old.paid || false,
-            active: old.active !== undefined ? old.active : def.active,
-          });
-        });
-      }
-
-      // Ensure all cards have required fields
-      cards.forEach(function(c) {
-        if (!c.id) c.id = newId();
-        if (c.paid === undefined) c.paid = false;
-          if (c.active === undefined) c.active = true;
+function loadCards() {
+  var raw = localStorage.getItem(CARD_SK);
+  if (!raw) {
+    cards = JSON.parse(JSON.stringify(DEFAULT_CARDS));
+    return;
+  }
+  try {
+    var s = JSON.parse(raw);
+    // New format
+    if (s.cards && Array.isArray(s.cards)) {
+      cards = s.cards;
+    } else {
+      // Old format (index-keyed object)
+      cards = DEFAULT_CARDS.map(function(d, i) {
+        var o = s[i] || {};
+        return { id: d.id, name: d.name, day: d.day, url: d.url, color: d.color,
+                 active: o.active !== undefined ? o.active : d.active,
+                 paid: o.paid || false };
       });
-
-      // Monthly auto-reset
-      var savedMonth = saved.lastResetMonth;
-      if (savedMonth && savedMonth !== thisMonth) {
-        cards.forEach(function(c) { c.paid = false; });
-        didReset = true;
-      }
-
-    } catch(e) {
-      cards = DEFAULT_CARDS.map(function(d) { return Object.assign({}, d, {paid:false}); });
     }
-  } else {
-    cards = DEFAULT_CARDS.map(function(d) { return Object.assign({}, d, {paid:false}); });
-  }
-
-  if (didReset) {
-    save();
-    document.getElementById('reset-notice').style.display = 'flex';
-    setTimeout(function() { document.getElementById('reset-notice').style.display = 'none'; }, 4000);
+    // Ensure fields
+    cards.forEach(function(c) {
+      if (!c.id) c.id = 'c' + Date.now() + Math.random().toString(36).slice(2,5);
+      if (c.paid === undefined) c.paid = false;
+      if (c.active === undefined) c.active = true;
+    });
+    // Monthly reset
+    if (s.lastReset && s.lastReset !== monthKey()) {
+      cards.forEach(function(c) { c.paid = false; });
+      saveCards();
+      var n = document.getElementById('reset-notice');
+      n.style.display = 'flex';
+      setTimeout(function() { n.style.display = 'none'; }, 4000);
+    }
+  } catch(e) {
+    cards = JSON.parse(JSON.stringify(DEFAULT_CARDS));
   }
 }
 
-/* ── DATE HELPERS ── */
+/* DATE HELPERS */
 function daysUntil(day) {
   var now = new Date(); now.setHours(0,0,0,0);
   var due = new Date(now.getFullYear(), now.getMonth(), day);
-  if (due < now) due = new Date(now.getFullYear(), now.getMonth()+1, day);
+  if (due < now) due = new Date(now.getFullYear(), now.getMonth() + 1, day);
   return Math.ceil((due - now) / 86400000);
 }
 function dueDateStr(day) {
   var now = new Date(); now.setHours(0,0,0,0);
   var due = new Date(now.getFullYear(), now.getMonth(), day);
-  if (due < now) due = new Date(now.getFullYear(), now.getMonth()+1, day);
+  if (due < now) due = new Date(now.getFullYear(), now.getMonth() + 1, day);
   return MS[due.getMonth()] + ' ' + due.getDate();
 }
 function urgency(d) {
-  if (d <= 7)  return {cls:'urgent', label: d === 0 ? 'Today!' : d + 'd'};
-  if (d <= 14) return {cls:'soon',   label: d + 'd'};
-  return              {cls:'ok',     label: d + 'd'};
+  if (d <= 7)  return { cls: 'urgent', label: d === 0 ? 'Today!' : d + 'd' };
+  if (d <= 14) return { cls: 'soon',   label: d + 'd' };
+  return               { cls: 'ok',    label: d + 'd' };
 }
-
-function getSorted() {
+function sortedCards() {
   return cards.map(function(c) {
-    return Object.assign({}, c, {d: daysUntil(c.day)});
+    return { id:c.id, name:c.name, day:c.day, url:c.url, color:c.color, active:c.active, paid:c.paid, d:daysUntil(c.day) };
   }).sort(function(a, b) {
     if (a.active && !b.active) return -1;
     if (!a.active && b.active) return 1;
@@ -365,233 +329,255 @@ function getSorted() {
   });
 }
 
-/* ── RENDER CARDS ── */
+/* RENDER BANNER */
+function renderBanner() {
+  var el = document.getElementById('upcoming-banner');
+  var top = sortedCards().filter(function(c) { return c.active && !c.paid; }).slice(0, 3);
+  if (!top.length) {
+    el.innerHTML = '<div class="banner-label">Next Up ✦</div><div class="banner-empty">All active cards paid this month ✓</div>';
+    return;
+  }
+  var items = top.map(function(c, i) {
+    return (i > 0 ? '<div class="banner-divider"></div>' : '') +
+      '<div class="banner-item">' +
+        '<div class="banner-item-sub">Due in ' + c.d + ' day' + (c.d !== 1 ? 's' : '') + '</div>' +
+        '<div class="banner-card-name">' + esc(c.name) + '</div>' +
+        '<div class="banner-due">' + dueDateStr(c.day) +
+          (c.url ? ' · <a href="' + esc(c.url) + '" target="_blank">Pay ↗</a>' : '') +
+        '</div>' +
+      '</div>';
+  }).join('');
+  el.innerHTML = '<div class="banner-label">Next Up ✦</div><div class="banner-items">' + items + '</div>';
+}
+
+/* RENDER CARDS */
 function renderCards() {
   var list = document.getElementById('cc-list');
   list.innerHTML = '';
-  getSorted().forEach(function(c) {
+  sortedCards().forEach(function(c) {
     var u = urgency(c.d);
     var row = document.createElement('div');
-    row.className = 'cc-row' + (c.active ? '' : ' is-inactive');
+    row.className = 'cc-row' + (c.active ? '' : ' inactive');
 
-    var badgeHtml = (c.active && !c.paid)
-      ? '<span class="cc-urgency ' + u.cls + '">' + u.label + '</span>'
-      : '';
+    var urgBadge = (c.active && !c.paid) ? '<span class="cc-urgency ' + u.cls + '">' + u.label + '</span>' : '';
 
     row.innerHTML =
       '<div class="cc-dot" style="background:' + c.color + '"></div>' +
       '<div class="cc-info">' +
         '<div class="cc-name">' + esc(c.name) + '</div>' +
-        '<div class="cc-meta">' +
-          '<span>Due ' + dueDateStr(c.day) + '</span>' +
-        '</div>' +
+        '<div class="cc-due">Due ' + dueDateStr(c.day) + '</div>' +
       '</div>' +
-      badgeHtml +
+      urgBadge +
       '<div class="cc-actions">' +
         (c.url ? '<a href="' + esc(c.url) + '" target="_blank" class="portal-btn">Portal ↗</a>' : '') +
-        '<button class="paid-btn ' + (c.paid ? 'paid-yes' : 'paid-no') + '" onclick="togglePaid(\'' + c.id + '\')">' +
+        '<button class="paid-btn ' + (c.paid ? 'paid-yes' : 'paid-no') + '" data-id="' + c.id + '" data-action="paid">' +
           (c.paid ? '✓ Paid' : 'Unpaid') +
         '</button>' +
-        '<button class="toggle-btn ' + (c.active ? 'toggle-active' : 'toggle-inactive') + '" onclick="toggleActive(\'' + c.id + '\')">' +
+        '<button class="active-btn ' + (c.active ? 'is-active' : 'is-inactive') + '" data-id="' + c.id + '" data-action="active">' +
           (c.active ? 'Active' : 'Inactive') +
         '</button>' +
+        '<button class="del-x" data-id="' + c.id + '" data-action="delete" title="Delete card">✕</button>' +
       '</div>';
 
-    var xBtn = document.createElement('button');
-    xBtn.className = 'del-x-btn';
-    xBtn.textContent = '✕';
-    xBtn.title = 'Delete card';
-    xBtn.onclick = (function(id){ return function(e){ e.stopPropagation(); confirmDelete(id); }; })(c.id);
-    row.appendChild(xBtn);
     list.appendChild(row);
   });
 }
 
-function togglePaid(id) {
-  var c = cards.find(function(x) { return x.id === id; });
-  if (c) { c.paid = !c.paid; save(); renderCards(); renderBanners(); }
-}
-function toggleActive(id) {
-  var c = cards.find(function(x) { return x.id === id; });
-  if (c) { c.active = !c.active; save(); renderCards(); renderBanners(); }
-}
-function confirmDelete(id) {
-  var c = cards.find(function(x) { return x.id === id; });
-  if (!c) return;
-  if (!confirm('Delete "' + c.name + '"? This permanently removes it from the list. To keep it for reference, use Inactive instead.')) return;
-  cards = cards.filter(function(x) { return x.id !== id; });
-  save(); renderCards(); renderBanners();
+/* Card actions via event delegation */
+document.getElementById('cc-list').addEventListener('click', function(e) {
+  var btn = e.target.closest('[data-action]');
+  if (!btn) return;
+  var id = btn.dataset.id;
+  var action = btn.dataset.action;
+  var card = cards.find(function(c) { return c.id === id; });
+  if (!card) return;
+
+  if (action === 'paid') {
+    card.paid = !card.paid;
+    saveCards(); renderCards(); renderBanner();
+  } else if (action === 'active') {
+    card.active = !card.active;
+    saveCards(); renderCards(); renderBanner();
+  } else if (action === 'delete') {
+    if (confirm('Delete "' + card.name + '"?\n\nTip: use Inactive to keep it for reference.')) {
+      cards = cards.filter(function(c) { return c.id !== id; });
+      saveCards(); renderCards(); renderBanner();
+    }
+  }
+});
+
+/* RESOURCE DATA */
+var RES_SK = 'finResources1';
+var DEFAULT_RES = {
+  banks: [
+    { id:'b0', name:'SchoolsFirst FCU', sub:'', url:'https://online.schoolsfirstfcu.org/gateway/schoolsfirstfcu/login#/', primary:false },
+    { id:'b1', name:'SoFi', sub:'', url:'https://login.sofi.com/', primary:false },
+  ],
+  investments: [
+    { id:'i0', name:'Fidelity', sub:'401k & Roth IRA', url:'https://digital.fidelity.com/ftgw/digital/portfolio/summary?poe=wiUser', primary:false },
+  ],
+  tools: [
+    { id:'t0', name:'Origin', sub:'', url:'https://app.useorigin.com/', primary:true },
+    { id:'t1', name:'2026 Financial Allocations Spreadsheet', sub:'', url:'https://docs.google.com/spreadsheets/d/12XIOUZYGcwYSgt7mX99h6DRS3w5KgfllyZZ8VLRUIN8/edit?usp=sharing', primary:true },
+    { id:'t2', name:'Venmo', sub:'', url:'https://venmo.com/', primary:false },
+    { id:'t3', name:'PayPal', sub:'', url:'https://paypal.com/signin', primary:false },
+  ],
+};
+var res = { banks:[], investments:[], tools:[] };
+
+function saveRes() { localStorage.setItem(RES_SK, JSON.stringify(res)); }
+function loadRes() {
+  var raw = localStorage.getItem(RES_SK);
+  if (!raw) { res = JSON.parse(JSON.stringify(DEFAULT_RES)); return; }
+  try {
+    var s = JSON.parse(raw);
+    res.banks       = s.banks       || JSON.parse(JSON.stringify(DEFAULT_RES.banks));
+    res.investments = s.investments || JSON.parse(JSON.stringify(DEFAULT_RES.investments));
+    res.tools       = s.tools       || JSON.parse(JSON.stringify(DEFAULT_RES.tools));
+  } catch(e) {
+    res = JSON.parse(JSON.stringify(DEFAULT_RES));
+  }
 }
 
-/* ── RENDER BANNERS ── */
-function renderBanners() {
-  renderUpcomingBanner();
-}
-
-
-function renderUpcomingBanner() {
-  var el = document.getElementById('upcoming-banner');
-  var top = getSorted().filter(function(c) { return c.active && !c.paid; }).slice(0, 3);
-
-  if (!top.length) {
-    el.innerHTML = '<div class="banner-next-label">Next Up ✦</div><div style="font-size:13px;color:var(--muted);font-weight:500;">All active cards paid ✓</div>';
+/* RENDER RESOURCE LIST */
+function renderResList(elId, items, type) {
+  var el = document.getElementById(elId);
+  el.innerHTML = '';
+  if (!items.length) {
+    el.innerHTML = '<div class="list-empty">Nothing added yet.</div>';
     return;
   }
-
-  var itemsHtml = top.map(function(c, idx) {
-    return (idx > 0 ? '<div class="banner-divider"></div>' : '') +
-      '<div class="banner-item">' +
-        '<div class="banner-item-label">Due in ' + c.d + ' day' + (c.d !== 1 ? 's' : '') + '</div>' +
-        '<div class="banner-card-name">' + esc(c.name) + '</div>' +
-        '<div class="banner-days">' + dueDateStr(c.day) +
-          (c.url ? ' · <a href="' + esc(c.url) + '" target="_blank">Pay now ↗</a>' : '') +
-        '</div>' +
-      '</div>';
-  }).join('');
-
-  el.innerHTML =
-    '<div class="banner-next-label">Next Up ✦</div>' +
-    '<div class="banner-items">' + itemsHtml + '</div>';
-}
-
-
-/* ── MODAL ── */
-
-
-
-
-
-/* ── LINK LISTS ── */
-function renderLinkList(id, items) {
-  var el = document.getElementById(id); el.innerHTML = '';
   items.forEach(function(item) {
-    var row = document.createElement('div'); row.className = 'link-row';
-    row.innerHTML =
-      '<div><div class="link-label">' + esc(item.name) + '</div>' +
-      (item.sub ? '<div class="link-sub">' + esc(item.sub) + '</div>' : '') + '</div>' +
-      '<a href="' + item.url + '" target="_blank" class="link-btn' + (item.primary ? ' primary' : '') + '">Open ↗</a>';
+    var row = document.createElement('div');
+    row.className = 'link-row';
+
+    var info = document.createElement('div');
+    info.innerHTML = '<div class="link-label">' + esc(item.name) + '</div>' +
+      (item.sub ? '<div class="link-sub">' + esc(item.sub) + '</div>' : '');
+
+    var right = document.createElement('div');
+    right.className = 'link-row-right';
+
+    var openA = document.createElement('a');
+    openA.className = 'open-btn' + (item.primary ? ' primary' : '');
+    openA.href = item.url || '#';
+    openA.target = '_blank';
+    openA.textContent = 'Open ↗';
+    right.appendChild(openA);
+
+    /* dots menu */
+    var dw = document.createElement('div'); dw.className = 'dots-wrap';
+    var db = document.createElement('button'); db.className = 'dots-btn'; db.textContent = '···';
+    var dm = document.createElement('div'); dm.className = 'dots-menu';
+
+    var editBtn = document.createElement('button'); editBtn.className = 'dots-item'; editBtn.textContent = 'Edit';
+    editBtn.onclick = (function(id, t) { return function(e) { e.stopPropagation(); dm.classList.remove('open'); openEditRes(id, t); }; })(item.id, type);
+
+    var delBtn = document.createElement('button'); delBtn.className = 'dots-item red'; delBtn.textContent = 'Delete';
+    delBtn.onclick = (function(id, t) { return function(e) { e.stopPropagation(); dm.classList.remove('open'); deleteRes(id, t); }; })(item.id, type);
+
+    dm.appendChild(editBtn); dm.appendChild(delBtn);
+    db.onclick = function(e) {
+      e.stopPropagation();
+      document.querySelectorAll('.dots-menu.open').forEach(function(m) { if (m !== dm) m.classList.remove('open'); });
+      dm.classList.toggle('open');
+    };
+    dw.appendChild(db); dw.appendChild(dm);
+    right.appendChild(dw);
+
+    row.appendChild(info); row.appendChild(right);
     el.appendChild(row);
   });
 }
 
-/* ── TOOLS: load/save ── */
-var TOOLS_SK = 'finTools1';
-function loadTools() {
-  try { var r = localStorage.getItem(TOOLS_SK); if(r){ var d=JSON.parse(r); TOOLS.length=0; d.forEach(function(x){TOOLS.push(x);}); } } catch(e){}
-}
-function saveTools() { localStorage.setItem(TOOLS_SK, JSON.stringify(TOOLS)); }
-
-/* ── TOOLS: render as link-rows ── */
-function renderTools() {
-  var el = document.getElementById('tools-list'); el.innerHTML = '';
-  if (!TOOLS.length) {
-    el.innerHTML = '<div style="font-size:12px;color:var(--muted);padding:6px 0;font-style:italic;">No tools added yet.</div>';
-    return;
-  }
-  TOOLS.forEach(function(t) {
-    var row = document.createElement('div'); row.className = 'link-row';
-    var info = document.createElement('div'); info.style.cssText = 'flex:1;min-width:0;';
-    var lbl = document.createElement('div'); lbl.className = 'link-label'; lbl.textContent = t.name; info.appendChild(lbl);
-    var acts = document.createElement('div'); acts.style.cssText = 'display:flex;align-items:center;gap:5px;flex-shrink:0;';
-    var ob = document.createElement('a'); ob.className = 'link-btn' + (t.primary ? ' primary' : ''); ob.href = t.url; ob.target = '_blank'; ob.textContent = 'Open ↗'; acts.appendChild(ob);
-    // dots
-    var dw=document.createElement('div'); dw.className='dots-wrap';
-    var db=document.createElement('button'); db.className='dots-btn'; db.textContent='···';
-    var dm=document.createElement('div'); dm.className='dots-menu';
-    var ei=document.createElement('button'); ei.className='dots-item'; ei.textContent='Edit';
-    ei.onclick=(function(id){return function(e){e.stopPropagation();dm.classList.remove('open');openEditToolModal(id);};})(t.id);
-    var di=document.createElement('button'); di.className='dots-item danger'; di.textContent='Delete';
-    di.onclick=(function(id){return function(e){e.stopPropagation();dm.classList.remove('open');deleteTool(id);};})(t.id);
-    dm.appendChild(ei); dm.appendChild(di);
-    db.onclick=function(e){e.stopPropagation();document.querySelectorAll('.dots-menu.open').forEach(function(m){if(m!==dm)m.classList.remove('open');});dm.classList.toggle('open');};
-    dw.appendChild(db); dw.appendChild(dm); acts.appendChild(dw);
-    row.appendChild(info); row.appendChild(acts); el.appendChild(row);
-  });
+function renderAllRes() {
+  renderResList('bank-list',   res.banks,       'banks');
+  renderResList('invest-list', res.investments, 'investments');
+  renderResList('tools-list',  res.tools,       'tools');
 }
 
-/* ── TOOL MODAL ── */
-var editingToolId = null;
-function openAddToolModal() {
-  editingToolId = null;
-  document.getElementById('tm-title').textContent = 'Add Tool';
-  document.getElementById('tm-name').value = '';
-  document.getElementById('tm-url').value = '';
-  document.getElementById('tm-primary').checked = false;
-  document.getElementById('tm-delete').style.display = 'none';
-  document.getElementById('tool-modal').classList.add('show');
-  setTimeout(function(){ document.getElementById('tm-name').focus(); }, 100);
+/* RESOURCE MODAL */
+var editResId = null, editResType = null;
+
+function openAddRes(type) {
+  editResId = null; editResType = type;
+  var labels = { banks:'Add Bank Account', investments:'Add Investment', tools:'Add Tool / Resource' };
+  document.getElementById('res-modal-title').textContent = labels[type] || 'Add Resource';
+  document.getElementById('res-name').value = '';
+  document.getElementById('res-sub').value = '';
+  document.getElementById('res-url').value = '';
+  document.getElementById('res-primary').checked = false;
+  document.getElementById('res-delete').style.display = 'none';
+  document.getElementById('res-modal').classList.add('open');
+  setTimeout(function() { document.getElementById('res-name').focus(); }, 100);
 }
-function openEditToolModal(id) {
-  var t = TOOLS.find(function(x){ return x.id===id; }); if(!t) return;
-  editingToolId = id;
-  document.getElementById('tm-title').textContent = 'Edit Tool';
-  document.getElementById('tm-name').value = t.name;
-  document.getElementById('tm-url').value = t.url || '';
-  document.getElementById('tm-primary').checked = t.primary || false;
-  document.getElementById('tm-delete').style.display = 'inline-flex';
-  document.getElementById('tool-modal').classList.add('show');
+function openEditRes(id, type) {
+  var item = res[type].find(function(x) { return x.id === id; });
+  if (!item) return;
+  editResId = id; editResType = type;
+  document.getElementById('res-modal-title').textContent = 'Edit';
+  document.getElementById('res-name').value = item.name;
+  document.getElementById('res-sub').value = item.sub || '';
+  document.getElementById('res-url').value = item.url || '';
+  document.getElementById('res-primary').checked = item.primary || false;
+  document.getElementById('res-delete').style.display = 'inline-flex';
+  document.getElementById('res-modal').classList.add('open');
 }
-function saveToolModal() {
-  var name = document.getElementById('tm-name').value.trim(); if(!name){document.getElementById('tm-name').focus();return;}
-  var url = document.getElementById('tm-url').value.trim();
-  var primary = document.getElementById('tm-primary').checked;
-  if (editingToolId) {
-    var t = TOOLS.find(function(x){return x.id===editingToolId;}); if(t){t.name=name;t.url=url;t.primary=primary;}
+function closeResModal() {
+  document.getElementById('res-modal').classList.remove('open');
+  editResId = null; editResType = null;
+}
+function saveResModal() {
+  var name = document.getElementById('res-name').value.trim();
+  if (!name) { document.getElementById('res-name').focus(); return; }
+  var sub     = document.getElementById('res-sub').value.trim();
+  var url     = document.getElementById('res-url').value.trim();
+  var primary = document.getElementById('res-primary').checked;
+  if (editResId) {
+    var item = res[editResType].find(function(x) { return x.id === editResId; });
+    if (item) { item.name = name; item.sub = sub; item.url = url; item.primary = primary; }
   } else {
-    TOOLS.push({id:'t'+Date.now(),name:name,url:url,sub:'',primary:primary});
+    res[editResType].push({ id: 'r' + Date.now(), name: name, sub: sub, url: url, primary: primary });
   }
-  saveTools(); closeToolModal(); renderTools();
+  saveRes(); closeResModal(); renderAllRes();
 }
-function deleteTool(id) {
-  var t = TOOLS.find(function(x){return x.id===id;}); if(!t) return;
-  if(!confirm('Delete "'+t.name+'"?')) return;
-  TOOLS.splice(TOOLS.findIndex(function(x){return x.id===id;}),1);
-  saveTools(); renderTools();
+function deleteRes(id, type) {
+  var item = res[type].find(function(x) { return x.id === id; });
+  if (!item || !confirm('Delete "' + item.name + '"?')) return;
+  res[type] = res[type].filter(function(x) { return x.id !== id; });
+  saveRes(); renderAllRes();
 }
-function deleteToolFromModal() { if(!editingToolId) return; deleteTool(editingToolId); closeToolModal(); }
-function closeToolModal() { document.getElementById('tool-modal').classList.remove('show'); editingToolId=null; }
+function deleteResFromModal() {
+  if (editResId && editResType) { deleteRes(editResId, editResType); closeResModal(); }
+}
 
+document.getElementById('res-cancel').onclick = closeResModal;
+document.getElementById('res-save').onclick = saveResModal;
+document.getElementById('res-delete').onclick = deleteResFromModal;
+document.getElementById('res-modal').addEventListener('click', function(e) { if (e.target === this) closeResModal(); });
+document.addEventListener('keydown', function(e) { if (e.key === 'Escape') closeResModal(); });
+document.addEventListener('click', function(e) {
+  if (!e.target.closest('.dots-wrap')) {
+    document.querySelectorAll('.dots-menu.open').forEach(function(m) { m.classList.remove('open'); });
+  }
+});
+
+/* UTILS */
 function esc(s) {
-  return String(s==null?'':s).replace(/[&<>"']/g, function(c) {
-    return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];
+  return String(s == null ? '' : s).replace(/[&<>"']/g, function(c) {
+    return { '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;', "'":'&#39;' }[c];
   });
 }
 
-
-/* ── INIT ── */
+/* INIT */
 var now = new Date();
 document.getElementById('today-date').textContent = DS[now.getDay()] + ', ' + MF[now.getMonth()] + ' ' + now.getDate() + ', ' + now.getFullYear();
 
-load();
-renderBanners();
+loadCards();
+loadRes();
+renderBanner();
 renderCards();
-renderLinkList('bank-list', BANKS);
-renderLinkList('invest-list', INVESTMENTS);
-renderTools();
-</script>
-
-<!-- TOOL MODAL -->
-<div class="modal-backdrop" id="tool-modal" style="position:fixed;inset:0;background:rgba(0,0,0,.4);backdrop-filter:blur(4px);display:none;align-items:center;justify-content:center;z-index:300;padding:20px;">
-  <div style="background:#fff;border-radius:22px;padding:26px 28px;width:100%;max-width:440px;box-shadow:0 30px 60px -20px rgba(0,0,0,.3);border:1px solid var(--line);">
-    <div id="tm-title" style="font-family:'Fraunces',serif;font-size:22px;font-weight:600;margin-bottom:20px;letter-spacing:-.3px;">Add Tool</div>
-    <div style="margin-bottom:14px;"><label style="font-size:9.5px;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted);font-weight:700;margin-bottom:6px;display:block;">Name</label><input class="f-input" id="tm-name" type="text" placeholder="e.g. Mint"></div>
-    <div style="margin-bottom:14px;"><label style="font-size:9.5px;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted);font-weight:700;margin-bottom:6px;display:block;">URL</label><input class="f-input" id="tm-url" type="url" placeholder="https://..."></div>
-    <div style="margin-bottom:14px;display:flex;align-items:center;gap:10px;"><input type="checkbox" id="tm-primary" style="width:15px;height:15px;accent-color:var(--accent-deep);cursor:pointer;"><label for="tm-primary" style="font-size:13px;font-weight:600;cursor:pointer;">Primary <span style="font-weight:400;color:var(--muted);font-size:11px;">(dark open button)</span></label></div>
-    <div style="display:flex;gap:10px;justify-content:flex-end;margin-top:20px;">
-      <button class="m-btn m-cancel" onclick="closeToolModal()">Cancel</button>
-      <button class="m-btn m-delete" id="tm-delete" style="display:none" onclick="deleteToolFromModal()">Delete</button>
-      <button class="m-btn m-save" onclick="saveToolModal()">Save</button>
-    </div>
-  </div>
-</div>
-<script>
-document.getElementById('tool-modal').addEventListener('click', function(e){ if(e.target===this) closeToolModal(); });
-document.getElementById('tool-modal').style.display = 'none';
-// Override display none with flex when .show is added
-var style = document.createElement('style');
-style.textContent = '#tool-modal.show { display: flex !important; }';
-document.head.appendChild(style);
+renderAllRes();
 </script>
 </body>
 </html>
-
