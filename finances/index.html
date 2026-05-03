@@ -177,7 +177,7 @@ html, body { background: var(--bg); font-family: 'Plus Jakarta Sans', system-ui,
     </div>
     <div class="f-field">
       <label class="f-label">Due Day <span class="f-label-note">(day of month, 1–31)</span></label>
-      <input class="f-input" id="cm-day" type="number" min="1" max="31" placeholder="e.g. 22">
+      <input class="f-input" id="m-day" type="number" min="1" max="31" placeholder="e.g. 22">
     </div>
     <div class="f-field">
       <label class="f-label">Portal URL <span>(optional)</span></label>
@@ -185,7 +185,7 @@ html, body { background: var(--bg); font-family: 'Plus Jakarta Sans', system-ui,
     </div>
     <div class="f-field">
       <label class="f-label">Card Color</label>
-      <div class="color-picker" id="color-picker"></div>
+      <div class="color-picker" id="card-color-picker"></div>
     </div>
     <div class="f-field">
       <label class="f-label" style="display:flex;align-items:center;gap:10px;cursor:pointer;">
@@ -424,12 +424,9 @@ function renderCards() {
     var row = document.createElement('div');
     row.className = 'cc-row' + (c.active ? '' : ' is-inactive');
 
-    var badgeHtml = '';
-    if (c.active) {
-      badgeHtml = c.paid
-        ? '<span class="paid-badge">✓ Paid</span>'
-        : '<span class="cc-urgency ' + u.cls + '">' + u.label + '</span>';
-    }
+    var badgeHtml = (c.active && !c.paid)
+      ? '<span class="cc-urgency ' + u.cls + '">' + u.label + '</span>'
+      : '';
 
     row.innerHTML =
       '<div class="cc-dot" style="background:' + c.color + '"></div>' +
@@ -618,7 +615,7 @@ function saveCard() {
     var c = cards.find(function(x) { return x.id === editingId; });
     if (c) { c.name = name; c.day = day; c.url = url; c.color = pendingColor; c.active = active; }
   } else {
-    cards.push({id: newId(), name: name, day: day, url: url, color: pendingColor, active: active, balance: balance, paid: false});
+    cards.push({id: newId(), name: name, day: day, url: url, color: pendingColor, active: active, paid: false});
   }
   save(); closeModal(); renderCards(); renderBanners();
 }
