@@ -4,287 +4,820 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Calendar</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
-@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Jost:wght@300;400;500;600&display=swap');
-:root{
-  --blush:#f2c4ce;--rose:#e8a0b0;--mauve:#c9a0b4;--lavender:#d4b8e0;
-  --sage:#b8cfb0;--cream:#fdf6f0;--warm:#f7ece4;--ink:#3a2a2e;--muted:#9a8088;--rule:#e0cec8;
-  /* Category colors */
-  --c-work:#f2c4ce;        --c-work-text:#7a1a2e;    --c-work-border:#e8a0b0;
-  --c-social:#b8d4f0;      --c-social-text:#1a3a6a;  --c-social-border:#80acd8;
-  --c-travel:#b8cfb0;      --c-travel-text:#1a4a2a;  --c-travel-border:#80a870;
-  --c-learning:#f0dea0;    --c-learning-text:#5a3a00; --c-learning-border:#d0b840;
-  --c-tasks:#d4b8e0;       --c-tasks-text:#4a1a6a;   --c-tasks-border:#b090c8;
-  --c-health:#a8d8d0;      --c-health-text:#1a4a44;  --c-health-border:#60a8a0;
-  --c-selfcare:#f4b8d4;    --c-selfcare-text:#6a1040; --c-selfcare-border:#d880a8;
-  --c-personal:#f7d9b0;    --c-personal-text:#6a3a00; --c-personal-border:#d8a060;
-}
-*{box-sizing:border-box;margin:0;padding:0;}
-body{background:#f0e8e4;font-family:'Jost',sans-serif;color:var(--ink);min-height:100vh;}
+  * { box-sizing: border-box; margin: 0; padding: 0; }
 
-/* ── TOPBAR ── */
-.topbar{background:var(--cream);border-bottom:1px solid var(--rule);padding:14px 32px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:200;}
-.topbar-title{font-family:'Cormorant Garamond',serif;font-size:1.6rem;font-weight:300;letter-spacing:2px;}
-.topbar-title em{font-style:italic;color:var(--mauve);}
-.topbar-right{display:flex;align-items:center;gap:10px;}
-.back-btn{display:inline-flex;align-items:center;gap:6px;padding:6px 14px;border:1.5px solid var(--rule);border-radius:20px;font-size:0.72rem;color:var(--muted);cursor:pointer;background:transparent;font-family:'Jost',sans-serif;text-decoration:none;transition:all .15s;}
-.back-btn:hover{border-color:var(--rose);color:var(--ink);}
-.topbar-date{font-size:0.68rem;letter-spacing:2px;text-transform:uppercase;color:var(--muted);}
+  :root {
+    --bg: #f3ecd8;
+    --surface: #ffffff;
+    --sidebar: #f8f1dd;
+    --sidebar-line: #e6dec5;
+    --ink: #1a1612;
+    --muted: #7a7468;
+    --line: #ececec;
 
-/* ── CONTROLS BAR ── */
-.controls{max-width:1200px;margin:0 auto;padding:16px 24px 0;display:flex;align-items:center;gap:12px;flex-wrap:wrap;}
-.view-toggle{display:flex;border:1.5px solid var(--rule);border-radius:20px;overflow:hidden;background:var(--cream);}
-.view-btn{padding:6px 18px;font-family:'Jost',sans-serif;font-size:0.73rem;font-weight:500;cursor:pointer;border:none;background:transparent;color:var(--muted);transition:all .15s;}
-.view-btn.active{background:var(--mauve);color:white;}
-.nav-group{display:flex;align-items:center;gap:6px;}
-.nav-btn{width:30px;height:30px;border:1.5px solid var(--rule);border-radius:50%;background:var(--cream);cursor:pointer;font-size:0.8rem;color:var(--muted);display:flex;align-items:center;justify-content:center;transition:all .15s;}
-.nav-btn:hover{border-color:var(--rose);color:var(--ink);}
-.nav-label{font-family:'Cormorant Garamond',serif;font-size:1.2rem;font-weight:400;letter-spacing:1px;min-width:200px;text-align:center;}
-.today-btn{padding:6px 14px;border:1.5px solid var(--rule);border-radius:20px;font-family:'Jost',sans-serif;font-size:0.7rem;font-weight:500;cursor:pointer;background:var(--cream);color:var(--muted);transition:all .15s;}
-.today-btn:hover{border-color:var(--mauve);color:var(--ink);}
-.add-event-btn{padding:7px 18px;border:none;border-radius:20px;background:var(--mauve);color:white;font-family:'Jost',sans-serif;font-size:0.73rem;font-weight:600;cursor:pointer;transition:all .15s;margin-left:auto;}
-.add-event-btn:hover{background:var(--rose);}
+    --accent: #c9b6ee;
+    --accent-deep: #b099e0;
+    --accent-soft: #ede5fb;
 
-/* ── LEGEND ── */
-.legend{max-width:1200px;margin:0 auto;padding:10px 24px 0;display:flex;gap:8px;flex-wrap:wrap;}
-.leg-chip{display:flex;align-items:center;gap:5px;padding:3px 10px;border-radius:12px;font-size:0.65rem;font-weight:600;cursor:pointer;border:1.5px solid transparent;transition:all .15s;user-select:none;opacity:0.65;}
-.leg-chip.active{opacity:1;border-color:var(--ink);}
-.leg-dot{width:8px;height:8px;border-radius:50%;}
+    /* Category colors — mapped from current calendar.html */
+    --c-work-bg: #eaf0fb;       --c-work-text: #2a3a5a;    --c-work-dot: #c2cde6;
+    --c-social-bg: #d8e8f8;     --c-social-text: #1a3a6a;  --c-social-dot: #b8d4f0;
+    --c-travel-bg: #ecf2dd;     --c-travel-text: #3a4a18;  --c-travel-dot: #a7b384;
+    --c-learning-bg: #fffac9;   --c-learning-text: #5a4a08;--c-learning-dot: #f3e26a;
+    --c-tasks-bg: #ede5fb;      --c-tasks-text: #4a3a8a;   --c-tasks-dot: #c9b6ee;
+    --c-health-bg: #d8eee8;     --c-health-text: #1a4a44;  --c-health-dot: #a8d8d0;
+    --c-selfcare-bg: #fde7ef;   --c-selfcare-text: #7a2a4a;--c-selfcare-dot: #f6b9d3;
+    --c-personal-bg: #fde0c8;   --c-personal-text: #6a3a18;--c-personal-dot: #f6c89e;
+  }
 
-/* ── MAIN AREA ── */
-.main{max-width:1200px;margin:0 auto;padding:16px 24px 0;}
+  html, body {
+    background: var(--bg);
+    font-family: 'Plus Jakarta Sans', system-ui, sans-serif;
+    color: var(--ink);
+    min-height: 100vh;
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
 
-/* ── MONTHLY VIEW ── */
-.month-grid{background:var(--cream);border:1px solid var(--rule);border-radius:16px;overflow:hidden;}
-.month-header-row{display:grid;grid-template-columns:repeat(7,1fr);border-bottom:2px solid var(--rule);}
-.month-dow{padding:10px 0;text-align:center;font-size:0.62rem;letter-spacing:2px;text-transform:uppercase;color:var(--muted);font-weight:600;}
-.month-body{display:grid;grid-template-columns:repeat(7,1fr);}
-.month-cell{min-height:90px;border-right:1px solid var(--rule);border-bottom:1px solid var(--rule);padding:6px;display:flex;flex-direction:column;cursor:pointer;transition:background .1s;}
-.month-cell:hover{background:var(--warm);}
-.month-cell:nth-child(7n){border-right:none;}
-.month-cell.other-month{background:#faf4f0;opacity:0.6;}
-.month-cell.today .day-num{background:var(--mauve);color:white;border-radius:50%;width:24px;height:24px;display:flex;align-items:center;justify-content:center;}
-.day-num{font-family:'Cormorant Garamond',serif;font-size:0.95rem;font-weight:600;color:var(--muted);margin-bottom:4px;width:24px;height:24px;display:flex;align-items:center;justify-content:center;}
-.month-events{display:flex;flex-direction:column;gap:2px;flex:1;}
-.month-event-chip{border-radius:5px;padding:2px 6px;font-size:0.62rem;font-weight:500;line-height:1.4;display:flex;align-items:center;gap:4px;cursor:pointer;transition:opacity .15s;}
-.month-event-chip:hover{opacity:0.8;}
-.month-event-chip.done{opacity:0.45;text-decoration:line-through;}
-.chip-check{width:11px;height:11px;border-radius:50%;border:1.5px solid currentColor;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:7px;}
-.chip-check.checked{background:currentColor;}
-.chip-check.checked:after{content:'✓';color:white;}
-.more-chip{font-size:0.6rem;color:var(--muted);padding:1px 4px;}
+  body {
+    padding: 28px;
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+  }
 
-/* ── WEEKLY VIEW ── */
-.week-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:10px;}
-.week-col{background:var(--cream);border:1px solid var(--rule);border-radius:12px;overflow:hidden;display:flex;flex-direction:column;}
-.week-col.today-col{border-color:var(--mauve);border-width:2px;}
-.week-col-header{padding:10px 12px 8px;border-bottom:1px solid var(--rule);text-align:center;}
-.week-dow{font-size:0.62rem;letter-spacing:2px;text-transform:uppercase;color:var(--muted);font-weight:600;}
-.week-day-num{font-family:'Cormorant Garamond',serif;font-size:1.6rem;font-weight:300;line-height:1;margin-top:2px;}
-.week-col.today-col .week-day-num{color:var(--mauve);font-weight:600;}
-.week-events{flex:1;padding:8px;display:flex;flex-direction:column;gap:5px;min-height:200px;}
-.week-event{border-radius:8px;padding:6px 8px;display:flex;align-items:flex-start;gap:6px;cursor:pointer;transition:opacity .15s;position:relative;}
-.week-event:hover{opacity:0.85;}
-.week-event.done{opacity:0.4;}
-.week-event.done .ev-title{text-decoration:line-through;}
-.ev-check{width:14px;height:14px;border-radius:50%;border:1.5px solid currentColor;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:8px;margin-top:1px;cursor:pointer;}
-.ev-check.checked{background:currentColor;}
-.ev-check.checked:after{content:'✓';color:white;}
-.ev-body{flex:1;min-width:0;}
-.ev-title{font-size:0.74rem;font-weight:500;line-height:1.3;}
-.ev-time{font-size:0.62rem;opacity:0.75;margin-top:1px;}
-.ev-del{position:absolute;top:4px;right:5px;background:transparent;border:none;font-size:0.6rem;color:currentColor;cursor:pointer;opacity:0;padding:1px 3px;border-radius:4px;}
-.week-event:hover .ev-del{opacity:0.5;}
-.ev-del:hover{opacity:1!important;}
-.week-add-btn{width:100%;border:none;background:transparent;padding:6px;font-size:0.7rem;cursor:pointer;color:var(--muted);border-top:1px dashed var(--rule);transition:all .15s;}
-.week-add-btn:hover{background:var(--warm);color:var(--ink);}
+  /* ============ SHELL ============ */
+  .page-shell {
+    width: 100%;
+    max-width: 1240px;
+    background: var(--surface);
+    border-radius: 28px;
+    border: 1px solid #d9d2bd;
+    box-shadow: 0 1px 0 rgba(0,0,0,.04), 0 30px 80px -40px rgba(0,0,0,.18);
+    overflow: hidden;
+    min-height: 820px;
+    display: flex;
+    flex-direction: column;
+  }
 
-/* ── FOOTER ── */
-.footer{max-width:1200px;margin:0 auto;padding:24px 24px 60px;text-align:center;}
-.clear-btn{padding:9px 24px;border:1.5px solid var(--rule);background:var(--warm);color:var(--muted);font-family:'Jost',sans-serif;font-size:0.74rem;font-weight:500;cursor:pointer;border-radius:20px;transition:all .15s;}
-.clear-btn:hover{border-color:var(--rose);color:var(--ink);}
-.footer-hint{font-size:0.68rem;color:var(--muted);font-style:italic;margin-bottom:10px;}
+  /* ============ TOPBAR ============ */
+  .topbar {
+    background: var(--sidebar);
+    border-bottom: 1px solid var(--sidebar-line);
+    padding: 18px 32px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .topbar-left { display: flex; align-items: center; gap: 14px; }
+  .back-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 7px 14px;
+    border: 1.5px solid #d9d2bd;
+    border-radius: 20px;
+    font-size: 12px;
+    color: var(--muted);
+    cursor: pointer;
+    background: transparent;
+    font-family: inherit;
+    text-decoration: none;
+    transition: all .15s;
+  }
+  .back-btn:hover { border-color: var(--accent-deep); color: var(--ink); }
+  .topbar-title {
+    font-family: 'Fraunces', serif;
+    font-size: 22px;
+    font-weight: 600;
+    letter-spacing: -0.4px;
+    line-height: 1;
+  }
+  .topbar-date {
+    font-size: 11px;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: var(--muted);
+    font-weight: 500;
+  }
 
-/* ── MODAL ── */
-.modal-overlay{display:none;position:fixed;inset:0;background:rgba(58,42,46,.35);z-index:300;align-items:center;justify-content:center;}
-.modal-overlay.open{display:flex;}
-.modal{background:var(--cream);border-radius:18px;border:1px solid var(--rule);padding:28px 32px;width:90%;max-width:480px;box-shadow:0 20px 60px rgba(58,42,46,.15);}
-.modal-title{font-family:'Cormorant Garamond',serif;font-size:1.4rem;font-weight:600;margin-bottom:20px;}
-.f-field{margin-bottom:13px;}
-.f-label{font-size:0.62rem;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin-bottom:5px;display:block;}
-.f-input{width:100%;border:1.5px solid var(--rule);border-radius:10px;padding:9px 12px;font-size:0.82rem;font-family:'Jost',sans-serif;color:var(--ink);background:var(--warm);outline:none;transition:border .15s;}
-.f-input:focus{border-color:var(--mauve);}
-.f-row{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
-.cat-picker{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;}
-.cat-pick-btn{padding:6px 4px;border-radius:10px;border:1.5px solid transparent;cursor:pointer;font-family:'Jost',sans-serif;font-size:0.62rem;font-weight:600;text-align:center;transition:all .15s;}
-.cat-pick-btn.selected{border-color:var(--ink);transform:scale(1.04);}
-.m-actions{display:flex;gap:10px;justify-content:flex-end;margin-top:18px;}
-.m-btn{padding:8px 20px;border-radius:20px;font-family:'Jost',sans-serif;font-size:0.78rem;font-weight:600;cursor:pointer;border:1.5px solid;transition:all .15s;}
-.m-cancel{background:var(--warm);border-color:var(--rule);color:var(--muted);}
-.m-save{background:var(--mauve);border-color:var(--mauve);color:white;}
-.m-save:hover{background:var(--rose);}
-.m-delete{background:#fce4ec;border-color:#f2c4ce;color:#a0304a;}
-.m-delete:hover{background:#f2c4ce;}
+  /* ============ CONTROLS ============ */
+  .controls {
+    padding: 22px 28px 14px;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    flex-wrap: wrap;
+  }
+  .view-toggle {
+    display: flex;
+    gap: 4px;
+    background: #f3eedc;
+    border-radius: 22px;
+    padding: 3px;
+  }
+  .view-btn {
+    padding: 6px 18px;
+    border: none;
+    border-radius: 18px;
+    font-family: inherit;
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    background: transparent;
+    color: var(--muted);
+    transition: all .15s;
+  }
+  .view-btn.active {
+    background: var(--surface);
+    color: var(--ink);
+    box-shadow: 0 1px 3px rgba(0,0,0,.08);
+  }
+
+  .nav-group {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .nav-arrow {
+    width: 30px; height: 30px;
+    border-radius: 50%;
+    border: 1.5px solid #e2dec5;
+    background: var(--surface);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--ink);
+    transition: background .15s;
+  }
+  .nav-arrow:hover { background: #f3eedc; }
+  .nav-label {
+    font-family: 'Fraunces', serif;
+    font-size: 18px;
+    font-weight: 600;
+    letter-spacing: -.3px;
+    min-width: 200px;
+    text-align: center;
+  }
+  .today-btn {
+    padding: 7px 14px;
+    border: 1.5px solid #e2dec5;
+    border-radius: 20px;
+    font-family: inherit;
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    background: var(--surface);
+    color: var(--ink);
+    transition: all .15s;
+  }
+  .today-btn:hover { background: #f3eedc; }
+
+  .add-event-btn {
+    margin-left: auto;
+    padding: 9px 18px;
+    border: none;
+    border-radius: 22px;
+    background: var(--ink);
+    color: #fff;
+    font-family: inherit;
+    font-size: 12.5px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: transform .15s;
+  }
+  .add-event-btn:hover { transform: translateY(-1px); }
+
+  /* ============ LEGEND ============ */
+  .legend {
+    padding: 0 28px 14px;
+    display: flex;
+    gap: 7px;
+    flex-wrap: wrap;
+  }
+  .leg-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 5px 12px;
+    border-radius: 14px;
+    font-size: 11.5px;
+    font-weight: 600;
+    cursor: pointer;
+    border: 1.5px solid transparent;
+    transition: all .15s;
+    user-select: none;
+    opacity: 0.55;
+  }
+  .leg-chip.active { opacity: 1; }
+  .leg-dot { width: 8px; height: 8px; border-radius: 50%; }
+
+  /* ============ MAIN ============ */
+  .main {
+    padding: 0 28px 28px;
+    flex: 1;
+  }
+
+  /* ============ MONTHLY VIEW ============ */
+  .month-grid {
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 18px;
+    overflow: hidden;
+  }
+  .month-header-row {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    background: #faf6ec;
+    border-bottom: 1.5px solid var(--line);
+  }
+  .month-dow {
+    padding: 12px 0;
+    text-align: center;
+    font-size: 10.5px;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: var(--muted);
+    font-weight: 600;
+  }
+  .month-body {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+  }
+  .month-cell {
+    min-height: 110px;
+    border-right: 1px solid var(--line);
+    border-bottom: 1px solid var(--line);
+    padding: 8px;
+    display: flex;
+    flex-direction: column;
+    cursor: pointer;
+    transition: background .12s;
+  }
+  .month-cell:hover { background: #faf6ec; }
+  .month-cell:nth-child(7n) { border-right: none; }
+  .month-cell.other-month { background: #fbf7ed; opacity: 0.55; }
+  .month-cell.today .day-num {
+    background: var(--accent);
+    color: var(--ink);
+    font-weight: 700;
+  }
+  .day-num {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--ink);
+    width: 26px; height: 26px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 4px;
+  }
+  .month-events {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+    flex: 1;
+    overflow: hidden;
+  }
+  .month-event-chip {
+    border-radius: 6px;
+    padding: 3px 7px;
+    font-size: 10.5px;
+    font-weight: 500;
+    line-height: 1.4;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    cursor: pointer;
+    transition: opacity .15s;
+    overflow: hidden;
+  }
+  .month-event-chip:hover { opacity: 0.82; }
+  .month-event-chip.done { opacity: 0.45; text-decoration: line-through; }
+  .chip-check {
+    width: 11px; height: 11px;
+    border-radius: 50%;
+    border: 1.5px solid currentColor;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 7px;
+  }
+  .chip-check.checked { background: currentColor; }
+  .chip-check.checked::after { content: '✓'; color: #fff; }
+  .chip-text {
+    flex: 1;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .chip-del {
+    opacity: 0;
+    font-size: 10px;
+    cursor: pointer;
+    flex-shrink: 0;
+    transition: opacity .15s;
+  }
+  .month-event-chip:hover .chip-del { opacity: 0.6; }
+  .chip-del:hover { opacity: 1 !important; }
+
+  /* ============ WEEKLY VIEW ============ */
+  .week-grid {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 10px;
+  }
+  .week-col {
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 14px;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    min-height: 380px;
+  }
+  .week-col.today-col {
+    border-color: var(--accent-deep);
+    border-width: 2px;
+  }
+  .week-col-header {
+    padding: 12px 10px 10px;
+    border-bottom: 1px solid var(--line);
+    text-align: center;
+    background: #faf6ec;
+  }
+  .week-dow {
+    font-size: 10.5px;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: var(--muted);
+    font-weight: 600;
+  }
+  .week-day-num {
+    font-family: 'Fraunces', serif;
+    font-size: 22px;
+    font-weight: 600;
+    line-height: 1;
+    margin-top: 3px;
+    letter-spacing: -.5px;
+  }
+  .week-col.today-col .week-day-num { color: var(--accent-deep); }
+  .week-events {
+    flex: 1;
+    padding: 8px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+  .week-event {
+    border-radius: 10px;
+    padding: 8px 10px;
+    display: flex;
+    align-items: flex-start;
+    gap: 7px;
+    cursor: pointer;
+    transition: opacity .15s;
+    position: relative;
+  }
+  .week-event:hover { opacity: 0.88; }
+  .week-event.done { opacity: 0.4; }
+  .week-event.done .ev-title { text-decoration: line-through; }
+  .ev-check {
+    width: 14px; height: 14px;
+    border-radius: 50%;
+    border: 1.5px solid currentColor;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 8px;
+    margin-top: 1px;
+    cursor: pointer;
+  }
+  .ev-check.checked { background: currentColor; }
+  .ev-check.checked::after { content: '✓'; color: #fff; }
+  .ev-body { flex: 1; min-width: 0; }
+  .ev-title {
+    font-size: 11.5px;
+    font-weight: 600;
+    line-height: 1.3;
+  }
+  .ev-time {
+    font-size: 10px;
+    opacity: 0.75;
+    margin-top: 2px;
+  }
+  .ev-del {
+    position: absolute;
+    top: 4px; right: 5px;
+    background: transparent;
+    border: none;
+    font-size: 9px;
+    color: currentColor;
+    cursor: pointer;
+    opacity: 0;
+    padding: 1px 3px;
+    border-radius: 4px;
+    transition: opacity .15s;
+  }
+  .week-event:hover .ev-del { opacity: 0.5; }
+  .ev-del:hover { opacity: 1 !important; }
+
+  .week-add-btn {
+    width: 100%;
+    border: none;
+    background: transparent;
+    padding: 7px;
+    font-size: 11px;
+    cursor: pointer;
+    color: var(--muted);
+    border-top: 1px dashed var(--line);
+    transition: all .15s;
+    font-family: inherit;
+  }
+  .week-add-btn:hover {
+    background: #faf6ec;
+    color: var(--ink);
+  }
+
+  /* Category background classes */
+  .cat-work     { background: var(--c-work-bg);     color: var(--c-work-text); }
+  .cat-social   { background: var(--c-social-bg);   color: var(--c-social-text); }
+  .cat-travel   { background: var(--c-travel-bg);   color: var(--c-travel-text); }
+  .cat-learning { background: var(--c-learning-bg); color: var(--c-learning-text); }
+  .cat-tasks    { background: var(--c-tasks-bg);    color: var(--c-tasks-text); }
+  .cat-health   { background: var(--c-health-bg);   color: var(--c-health-text); }
+  .cat-selfcare { background: var(--c-selfcare-bg); color: var(--c-selfcare-text); }
+  .cat-personal { background: var(--c-personal-bg); color: var(--c-personal-text); }
+
+  /* ============ MODAL ============ */
+  .modal-backdrop {
+    position: fixed; inset: 0;
+    background: rgba(0,0,0,.4);
+    backdrop-filter: blur(4px);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    z-index: 100;
+    padding: 20px;
+  }
+  .modal-backdrop.show { display: flex; animation: fadeIn .2s; }
+  @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+  .modal {
+    background: #fff;
+    border-radius: 22px;
+    padding: 24px 26px;
+    width: 100%;
+    max-width: 460px;
+    box-shadow: 0 30px 60px -20px rgba(0,0,0,.3);
+    animation: pop .2s;
+    max-height: 90vh;
+    overflow-y: auto;
+  }
+  @keyframes pop { from { transform: scale(.95); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+
+  .modal-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 18px;
+  }
+  .modal-title {
+    font-family: 'Fraunces', serif;
+    font-size: 20px;
+    font-weight: 600;
+    letter-spacing: -.3px;
+  }
+  .modal-close {
+    width: 32px; height: 32px;
+    border-radius: 50%;
+    border: none;
+    background: #f3f3f3;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .modal-close:hover { background: #e8e8e8; }
+
+  .form-group { margin-bottom: 14px; }
+  .form-group label {
+    display: block;
+    font-size: 10.5px;
+    color: var(--muted);
+    margin-bottom: 5px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    font-weight: 600;
+  }
+  .form-input {
+    width: 100%;
+    padding: 10px 12px;
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    font-size: 13px;
+    font-family: inherit;
+    color: var(--ink);
+    background: #fff;
+    transition: border-color .2s;
+  }
+  .form-input:focus {
+    outline: none;
+    border-color: var(--accent-deep);
+  }
+  .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+
+  .cat-picker {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 6px;
+  }
+  .cat-option {
+    padding: 8px 6px;
+    border-radius: 10px;
+    font-size: 10.5px;
+    font-weight: 600;
+    cursor: pointer;
+    border: 1.5px solid transparent;
+    text-align: center;
+    transition: all .15s;
+  }
+  .cat-option.selected {
+    border-color: var(--ink);
+    transform: scale(1.04);
+  }
+
+  .form-actions {
+    display: flex;
+    gap: 10px;
+    margin-top: 22px;
+  }
+  .btn {
+    flex: 1;
+    padding: 11px;
+    border-radius: 24px;
+    border: none;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    font-family: inherit;
+    transition: all .15s;
+  }
+  .btn.primary { background: var(--ink); color: #fff; }
+  .btn.primary:hover { transform: translateY(-1px); }
+  .btn.secondary { background: #f3f3f3; color: var(--ink); }
+  .btn.secondary:hover { background: #e8e8e8; }
+  .btn.danger { background: #fde0e0; color: #a04040; flex: 0 0 auto; padding: 11px 18px; }
+  .btn.danger:hover { background: #f8c8c8; }
+
+  /* ============ TOAST ============ */
+  .toast {
+    position: fixed;
+    bottom: 24px; left: 50%;
+    transform: translateX(-50%) translateY(100px);
+    background: var(--ink);
+    color: #fff;
+    padding: 10px 18px;
+    border-radius: 24px;
+    font-size: 13px;
+    font-weight: 500;
+    transition: transform .3s;
+    z-index: 200;
+  }
+  .toast.show { transform: translateX(-50%) translateY(0); }
+
+  @media (max-width: 900px) {
+    body { padding: 10px; }
+    .week-grid { grid-template-columns: 1fr; }
+    .month-cell { min-height: 80px; }
+    .controls { gap: 8px; }
+    .nav-label { min-width: 140px; font-size: 16px; }
+  }
 </style>
 </head>
 <body>
 
-<!-- ADD/EDIT MODAL -->
-<div class="modal-overlay" id="modal">
+<div class="page-shell">
+
+  <!-- ============ TOPBAR ============ -->
+  <div class="topbar">
+    <div class="topbar-left">
+      <a href="../" class="back-btn">
+        <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"/></svg>
+        Brain 2.0
+      </a>
+      <div class="topbar-title">Calendar</div>
+    </div>
+    <div class="topbar-date" id="today-date"></div>
+  </div>
+
+  <!-- ============ CONTROLS ============ -->
+  <div class="controls">
+    <div class="view-toggle">
+      <button class="view-btn active" id="btn-month" onclick="setView('month')">Monthly</button>
+      <button class="view-btn" id="btn-week" onclick="setView('week')">Weekly</button>
+    </div>
+    <div class="nav-group">
+      <button class="nav-arrow" onclick="navigate(-1)">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg>
+      </button>
+      <div class="nav-label" id="nav-label"></div>
+      <button class="nav-arrow" onclick="navigate(1)">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+      </button>
+    </div>
+    <button class="today-btn" onclick="goToday()">Today</button>
+    <button class="add-event-btn" onclick="openAddModal()">+ Add Event</button>
+  </div>
+
+  <!-- ============ LEGEND ============ -->
+  <div class="legend" id="legend"></div>
+
+  <!-- ============ MAIN ============ -->
+  <div class="main" id="main"></div>
+
+</div>
+
+<!-- ============ MODAL ============ -->
+<div class="modal-backdrop" id="modal">
   <div class="modal">
-    <div class="modal-title" id="modal-title">Add Event</div>
-    <div class="f-field">
-      <label class="f-label">Event Title</label>
-      <input class="f-input" id="ev-title" type="text" placeholder="What's happening?">
+    <div class="modal-head">
+      <div class="modal-title" id="modal-title">Add event</div>
+      <button class="modal-close" id="modal-close">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#1a1a1a" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
     </div>
-    <div class="f-row">
-      <div class="f-field">
-        <label class="f-label">Date</label>
-        <input class="f-input" id="ev-date" type="date">
+    <div class="form-group">
+      <label>Title</label>
+      <input class="form-input" type="text" id="ev-title" placeholder="What's happening?">
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label>Date</label>
+        <input class="form-input" type="date" id="ev-date">
       </div>
-      <div class="f-field">
-        <label class="f-label">Time (optional)</label>
-        <input class="f-input" id="ev-time" type="time">
+      <div class="form-group">
+        <label>Time (optional)</label>
+        <input class="form-input" type="time" id="ev-time">
       </div>
     </div>
-    <div class="f-field">
-      <label class="f-label">Category</label>
+    <div class="form-group">
+      <label>Category</label>
       <div class="cat-picker" id="cat-picker"></div>
     </div>
-    <div class="f-field">
-      <label class="f-label">Note (optional)</label>
-      <input class="f-input" id="ev-note" type="text" placeholder="Any extra details...">
+    <div class="form-group">
+      <label>Note (optional)</label>
+      <input class="form-input" type="text" id="ev-note" placeholder="Any extra details...">
     </div>
-    <div class="m-actions">
-      <button class="m-btn m-cancel" onclick="closeModal()">Cancel</button>
-      <button class="m-btn m-delete" id="modal-delete-btn" style="display:none;" onclick="deleteEventFromModal()">Delete</button>
-      <button class="m-btn m-save" onclick="saveEvent()">Save ✦</button>
+    <div class="form-actions">
+      <button class="btn danger" id="modal-delete-btn" style="display:none;">Delete</button>
+      <button class="btn secondary" id="modal-cancel">Cancel</button>
+      <button class="btn primary" id="modal-save">Save</button>
     </div>
   </div>
 </div>
 
-<!-- TOPBAR -->
-<div class="topbar">
-  <div class="topbar-title">Life <em>Calendar</em></div>
-  <div class="topbar-right">
-    <a href="../" class="back-btn">← Brain 2.0</a>
-    <span class="topbar-date" id="today-date"></span>
-  </div>
-</div>
-
-<!-- CONTROLS -->
-<div class="controls">
-  <div class="view-toggle">
-    <button class="view-btn active" id="btn-month" onclick="setView('month')">Monthly</button>
-    <button class="view-btn" id="btn-week" onclick="setView('week')">Weekly</button>
-  </div>
-  <div class="nav-group">
-    <button class="nav-btn" onclick="navigate(-1)">‹</button>
-    <div class="nav-label" id="nav-label"></div>
-    <button class="nav-btn" onclick="navigate(1)">›</button>
-  </div>
-  <button class="today-btn" onclick="goToday()">Today</button>
-  <button class="add-event-btn" onclick="openAddModal()">＋ Add Event</button>
-</div>
-
-<!-- LEGEND -->
-<div class="legend" id="legend"></div>
-
-<!-- MAIN -->
-<div class="main" id="main"></div>
-
-
+<div class="toast" id="toast">Saved ✓</div>
 
 <script>
-var SK = 'lifeCalendar1';
+/* ============ STATE ============ */
+const STORAGE_KEY = 'lifeCalendar1'; // SHARED with dashboard
 
-var CATS = [
-  {id:'work',     label:'Work',      bg:'#f2c4ce', text:'#7a1a2e', border:'#e8a0b0'},
-  {id:'social',   label:'Social',    bg:'#b8d4f0', text:'#1a3a6a', border:'#80acd8'},
-  {id:'travel',   label:'Travel',    bg:'#b8cfb0', text:'#1a4a2a', border:'#80a870'},
-  {id:'learning', label:'Learning',  bg:'#f0dea0', text:'#5a3a00', border:'#d0b840'},
-  {id:'tasks',    label:'Tasks',     bg:'#d4b8e0', text:'#4a1a6a', border:'#b090c8'},
-  {id:'health',   label:'Health',    bg:'#a8d8d0', text:'#1a4a44', border:'#60a8a0'},
-  {id:'selfcare', label:'Self-Care', bg:'#f4b8d4', text:'#6a1040', border:'#d880a8'},
-  {id:'personal', label:'Personal',  bg:'#f7d9b0', text:'#6a3a00', border:'#d8a060'},
+const CATS = [
+  {id:'work',     label:'Work',      bg:'var(--c-work-bg)',     text:'var(--c-work-text)',     dot:'var(--c-work-dot)'},
+  {id:'social',   label:'Social',    bg:'var(--c-social-bg)',   text:'var(--c-social-text)',   dot:'var(--c-social-dot)'},
+  {id:'travel',   label:'Travel',    bg:'var(--c-travel-bg)',   text:'var(--c-travel-text)',   dot:'var(--c-travel-dot)'},
+  {id:'learning', label:'Learning',  bg:'var(--c-learning-bg)', text:'var(--c-learning-text)', dot:'var(--c-learning-dot)'},
+  {id:'tasks',    label:'Tasks',     bg:'var(--c-tasks-bg)',    text:'var(--c-tasks-text)',    dot:'var(--c-tasks-dot)'},
+  {id:'health',   label:'Health',    bg:'var(--c-health-bg)',   text:'var(--c-health-text)',   dot:'var(--c-health-dot)'},
+  {id:'selfcare', label:'Self-Care', bg:'var(--c-selfcare-bg)', text:'var(--c-selfcare-text)', dot:'var(--c-selfcare-dot)'},
+  {id:'personal', label:'Personal',  bg:'var(--c-personal-bg)', text:'var(--c-personal-text)', dot:'var(--c-personal-dot)'},
 ];
 
-function getCat(id) { return CATS.find(function(c){return c.id===id;}) || CATS[0]; }
+function getCat(id) { return CATS.find(c => c.id === id) || CATS[4]; }
 
-var TODAY = new Date(); TODAY.setHours(0,0,0,0);
-var currentView = 'month';
-var currentDate = new Date(TODAY); // anchor: first day of displayed month or week
-var events = []; // {id, title, date (YYYY-MM-DD), time, cat, note, done}
-var activeCategories = {}; // all active by default
-CATS.forEach(function(c){ activeCategories[c.id] = true; });
-var editingId = null;
-var pendingDate = null;
+let TODAY = new Date(); TODAY.setHours(0,0,0,0);
+let currentView = 'month';
+let currentDate = new Date(TODAY);
+let events = [];
+let activeCategories = {};
+CATS.forEach(c => { activeCategories[c.id] = true; });
+let editingId = null;
+let pendingCat = 'tasks';
 
-// ── STORAGE ──
-function save() { localStorage.setItem(SK, JSON.stringify({events:events, view:currentView})); }
+const DAYS_FULL = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+const MONTHS_FULL = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+const MONTHS_SHORT = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+
+/* ============ STORAGE ============ */
+function save() {
+  localStorage.setItem(STORAGE_KEY, JSON.stringify({events, view: currentView}));
+}
 function load() {
-  var raw = localStorage.getItem(SK);
-  if (!raw) return;
   try {
-    var d = JSON.parse(raw);
-    events = d.events || [];
-    currentView = d.view || 'month';
-  } catch(e) {}
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if (raw) {
+      const d = JSON.parse(raw);
+      // Support both old (array) and new ({events, view}) format
+      if (Array.isArray(d)) {
+        events = d;
+      } else {
+        events = d.events || [];
+        if (d.view) currentView = d.view;
+      }
+    }
+  } catch(e) { events = []; }
+
+  // Seed sample events on first load
+  if (events.length === 0) {
+    const today = dateKey(TODAY);
+    events = [
+      {id: id(), title: 'Morning meditation', date: today, time: '07:00', cat: 'health', note: 'Home', done: false},
+      {id: id(), title: 'Deep work: project plan', date: today, time: '09:00', cat: 'work', note: 'Desk', done: false},
+      {id: id(), title: 'Capture weekly ideas', date: today, time: '14:00', cat: 'learning', note: '', done: false},
+      {id: id(), title: 'Walk + audiobook', date: today, time: '17:30', cat: 'health', note: 'Park', done: false},
+    ];
+    save();
+  }
 }
 
-// ── DATE HELPERS ──
-var DAYS_SHORT = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
-var DAYS_FULL  = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
-var MONTHS_FULL = ['January','February','March','April','May','June','July','August','September','October','November','December'];
-var MONTHS_SHORT = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+function id() { return 'ev_' + Math.random().toString(36).slice(2,10); }
 
+/* ============ DATE HELPERS ============ */
 function dateKey(d) {
-  var y=d.getFullYear(), m=String(d.getMonth()+1).padStart(2,'0'), day=String(d.getDate()).padStart(2,'0');
+  const y = d.getFullYear();
+  const m = String(d.getMonth()+1).padStart(2,'0');
+  const day = String(d.getDate()).padStart(2,'0');
   return y+'-'+m+'-'+day;
 }
-function parseDate(s) { var p=s.split('-'); return new Date(parseInt(p[0]),parseInt(p[1])-1,parseInt(p[2])); }
-function isToday(d) { return dateKey(d)===dateKey(TODAY); }
-function isSameMonth(d1,d2) { return d1.getFullYear()===d2.getFullYear() && d1.getMonth()===d2.getMonth(); }
-
+function parseDate(s) {
+  const p = s.split('-');
+  return new Date(parseInt(p[0]), parseInt(p[1])-1, parseInt(p[2]));
+}
+function isToday(d) { return dateKey(d) === dateKey(TODAY); }
+function isSameMonth(d1, d2) {
+  return d1.getFullYear() === d2.getFullYear() && d1.getMonth() === d2.getMonth();
+}
 function getWeekStart(d) {
-  var day = d.getDay(); // 0=Sun
-  var diff = day === 0 ? -6 : 1 - day; // Monday-based
-  var start = new Date(d);
+  const day = d.getDay();
+  const diff = day === 0 ? -6 : 1 - day; // Monday-based
+  const start = new Date(d);
   start.setDate(d.getDate() + diff);
   return start;
 }
-
 function eventsForDate(dateStr) {
-  return events.filter(function(e) {
-    return e.date === dateStr && activeCategories[e.cat];
-  }).sort(function(a,b){ return (a.time||'').localeCompare(b.time||''); });
+  return events
+    .filter(e => e.date === dateStr && activeCategories[e.cat])
+    .sort((a,b) => (a.time||'').localeCompare(b.time||''));
+}
+function formatTime(t) {
+  if (!t) return '';
+  const p = t.split(':');
+  let h = parseInt(p[0]);
+  const m = p[1];
+  const ampm = h >= 12 ? 'pm' : 'am';
+  h = h % 12 || 12;
+  return h + (m !== '00' ? ':'+m : '') + ampm;
 }
 
-// ── LEGEND ──
+/* ============ ESCAPE ============ */
+function esc(s) {
+  return String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+}
+
+/* ============ LEGEND ============ */
 function renderLegend() {
-  var el = document.getElementById('legend'); el.innerHTML='';
-  CATS.forEach(function(c) {
-    var chip = document.createElement('div');
-    chip.className = 'leg-chip' + (activeCategories[c.id] ? ' active' : '');
-    chip.style.background = c.bg;
-    chip.style.color = c.text;
-    chip.innerHTML = '<div class="leg-dot" style="background:'+c.border+'"></div>' + c.label;
-    chip.onclick = function() {
+  const el = document.getElementById('legend');
+  el.innerHTML = '';
+  CATS.forEach(c => {
+    const chip = document.createElement('div');
+    chip.className = 'leg-chip cat-' + c.id + (activeCategories[c.id] ? ' active' : '');
+    chip.innerHTML = `<div class="leg-dot" style="background:${c.dot}"></div>${c.label}`;
+    chip.addEventListener('click', () => {
       activeCategories[c.id] = !activeCategories[c.id];
-      renderLegend(); render();
-    };
+      renderLegend();
+      render();
+    });
     el.appendChild(chip);
   });
 }
 
-// ── NAV LABEL ──
+/* ============ NAV ============ */
 function updateNavLabel() {
-  var label = document.getElementById('nav-label');
+  const label = document.getElementById('nav-label');
   if (currentView === 'month') {
     label.textContent = MONTHS_FULL[currentDate.getMonth()] + ' ' + currentDate.getFullYear();
   } else {
-    var ws = getWeekStart(currentDate);
-    var we = new Date(ws); we.setDate(ws.getDate()+6);
+    const ws = getWeekStart(currentDate);
+    const we = new Date(ws); we.setDate(ws.getDate()+6);
     if (ws.getMonth() === we.getMonth()) {
       label.textContent = MONTHS_SHORT[ws.getMonth()] + ' ' + ws.getDate() + '–' + we.getDate() + ', ' + ws.getFullYear();
     } else {
@@ -293,7 +826,6 @@ function updateNavLabel() {
   }
 }
 
-// ── NAVIGATE ──
 function navigate(dir) {
   if (currentView === 'month') {
     currentDate = new Date(currentDate.getFullYear(), currentDate.getMonth()+dir, 1);
@@ -310,12 +842,13 @@ function goToday() {
 
 function setView(v) {
   currentView = v;
-  document.getElementById('btn-month').classList.toggle('active', v==='month');
-  document.getElementById('btn-week').classList.toggle('active', v==='week');
-  save(); render();
+  document.getElementById('btn-month').classList.toggle('active', v === 'month');
+  document.getElementById('btn-week').classList.toggle('active', v === 'week');
+  save();
+  render();
 }
 
-// ── RENDER ──
+/* ============ RENDER ============ */
 function render() {
   updateNavLabel();
   if (currentView === 'month') renderMonth();
@@ -323,65 +856,71 @@ function render() {
 }
 
 function renderMonth() {
-  var main = document.getElementById('main'); main.innerHTML='';
-  var grid = document.createElement('div'); grid.className='month-grid';
+  const main = document.getElementById('main');
+  main.innerHTML = '';
+  const grid = document.createElement('div'); grid.className = 'month-grid';
 
   // Header row
-  var hrow = document.createElement('div'); hrow.className='month-header-row';
-  // Monday-first: Mon Tue Wed Thu Fri Sat Sun
-  var dowOrder = ['Mon','Tue','Wed','Thu','Fri','Sat','Sun'];
-  dowOrder.forEach(function(d) {
-    var h = document.createElement('div'); h.className='month-dow'; h.textContent=d; hrow.appendChild(h);
+  const hrow = document.createElement('div'); hrow.className = 'month-header-row';
+  ['Mon','Tue','Wed','Thu','Fri','Sat','Sun'].forEach(d => {
+    const h = document.createElement('div');
+    h.className = 'month-dow';
+    h.textContent = d;
+    hrow.appendChild(h);
   });
   grid.appendChild(hrow);
 
-  var body = document.createElement('div'); body.className='month-body';
+  const body = document.createElement('div'); body.className = 'month-body';
+  const y = currentDate.getFullYear(), m = currentDate.getMonth();
+  const firstDay = new Date(y, m, 1);
+  const lastDay = new Date(y, m+1, 0);
+  const startDow = firstDay.getDay() === 0 ? 6 : firstDay.getDay()-1;
+  const totalCells = Math.ceil((startDow + lastDay.getDate()) / 7) * 7;
 
-  var y = currentDate.getFullYear(), m = currentDate.getMonth();
-  var firstDay = new Date(y, m, 1);
-  var lastDay  = new Date(y, m+1, 0);
+  for (let i = 0; i < totalCells; i++) {
+    const cellDate = new Date(y, m, 1 - startDow + i);
+    const isOther = !isSameMonth(cellDate, firstDay);
+    const dStr = dateKey(cellDate);
+    const dayEvs = eventsForDate(dStr);
 
-  // Monday=0...Sunday=6
-  var startDow = firstDay.getDay() === 0 ? 6 : firstDay.getDay()-1;
-  var totalCells = Math.ceil((startDow + lastDay.getDate()) / 7) * 7;
-
-  for (var i=0; i<totalCells; i++) {
-    var cellDate = new Date(y, m, 1 - startDow + i);
-    var isOther = !isSameMonth(cellDate, firstDay);
-    var dStr = dateKey(cellDate);
-    var dayEvs = eventsForDate(dStr);
-
-    var cell = document.createElement('div');
+    const cell = document.createElement('div');
     cell.className = 'month-cell' + (isOther?' other-month':'') + (isToday(cellDate)?' today':'');
-    cell.onclick = (function(ds){ return function(e){ if(e.target===this||e.target.classList.contains('month-events')||e.target.classList.contains('day-num')||e.target.classList.contains('more-chip')) openAddModal(ds); }; })(dStr);
+    cell.addEventListener('click', e => {
+      if (e.target === cell || e.target.classList.contains('month-events') || e.target.classList.contains('day-num')) {
+        openAddModal(dStr);
+      }
+    });
 
-    var num = document.createElement('div'); num.className='day-num'; num.textContent=cellDate.getDate();
+    const num = document.createElement('div');
+    num.className = 'day-num';
+    num.textContent = cellDate.getDate();
     cell.appendChild(num);
 
-    var evsWrap = document.createElement('div'); evsWrap.className='month-events';
-    var shown = dayEvs;
+    const evsWrap = document.createElement('div');
+    evsWrap.className = 'month-events';
 
-    shown.forEach(function(ev) {
-      var cat = getCat(ev.cat);
-      var chip = document.createElement('div');
-      chip.className = 'month-event-chip' + (ev.done?' done':'');
-      chip.style.background = cat.bg; chip.style.color = cat.text;
-      var checkEl = document.createElement('div');
+    dayEvs.forEach(ev => {
+      const cat = getCat(ev.cat);
+      const chip = document.createElement('div');
+      chip.className = 'month-event-chip cat-' + ev.cat + (ev.done?' done':'');
+
+      const checkEl = document.createElement('div');
       checkEl.className = 'chip-check' + (ev.done?' checked':'');
-      checkEl.onclick = function(e){ e.stopPropagation(); toggleDone(ev.id); };
-      var titleEl = document.createElement('span');
-      titleEl.textContent = (ev.time ? formatTime(ev.time)+' ' : '') + ev.title;
-      titleEl.style.flex = '1';
-      titleEl.onclick = function(e){ e.stopPropagation(); openEditModal(ev.id); };
-      var delEl = document.createElement('span');
+      checkEl.addEventListener('click', e => { e.stopPropagation(); toggleDone(ev.id); });
+
+      const textEl = document.createElement('span');
+      textEl.className = 'chip-text';
+      textEl.textContent = (ev.time ? formatTime(ev.time) + ' ' : '') + ev.title;
+      textEl.addEventListener('click', e => { e.stopPropagation(); openEditModal(ev.id); });
+
+      const delEl = document.createElement('span');
+      delEl.className = 'chip-del';
       delEl.textContent = '✕';
-      delEl.style.cssText = 'margin-left:4px;opacity:0;font-size:0.6rem;cursor:pointer;flex-shrink:0;';
-      delEl.onclick = (function(eid){ return function(e){ e.stopPropagation(); deleteEvent(eid); }; })(ev.id);
-      chip.addEventListener('mouseenter', function(){ delEl.style.opacity='0.6'; });
-      chip.addEventListener('mouseleave', function(){ delEl.style.opacity='0'; });
-      chip.style.display = 'flex';
-      chip.style.alignItems = 'center';
-      chip.appendChild(checkEl); chip.appendChild(titleEl); chip.appendChild(delEl);
+      delEl.addEventListener('click', e => { e.stopPropagation(); deleteEvent(ev.id); });
+
+      chip.appendChild(checkEl);
+      chip.appendChild(textEl);
+      chip.appendChild(delEl);
       evsWrap.appendChild(chip);
     });
 
@@ -394,60 +933,74 @@ function renderMonth() {
 }
 
 function renderWeek() {
-  var main = document.getElementById('main'); main.innerHTML='';
-  var grid = document.createElement('div'); grid.className='week-grid';
-  var ws = getWeekStart(currentDate);
+  const main = document.getElementById('main');
+  main.innerHTML = '';
+  const grid = document.createElement('div'); grid.className = 'week-grid';
+  const ws = getWeekStart(currentDate);
 
-  for (var i=0; i<7; i++) {
-    var d = new Date(ws); d.setDate(ws.getDate()+i);
-    var dStr = dateKey(d);
-    var dayEvs = eventsForDate(dStr);
-    var isT = isToday(d);
+  const dowLabels = ['Mon','Tue','Wed','Thu','Fri','Sat','Sun'];
 
-    var col = document.createElement('div');
+  for (let i = 0; i < 7; i++) {
+    const d = new Date(ws);
+    d.setDate(ws.getDate()+i);
+    const dStr = dateKey(d);
+    const dayEvs = eventsForDate(dStr);
+    const isT = isToday(d);
+
+    const col = document.createElement('div');
     col.className = 'week-col' + (isT?' today-col':'');
 
-    var hdr = document.createElement('div'); hdr.className='week-col-header';
-    var dow = document.createElement('div'); dow.className='week-dow';
-    // Mon-based labels
-    var dowLabels = ['Mon','Tue','Wed','Thu','Fri','Sat','Sun'];
-    dow.textContent = dowLabels[i];
-    var dnum = document.createElement('div'); dnum.className='week-day-num';
-    dnum.textContent = d.getDate();
-    hdr.appendChild(dow); hdr.appendChild(dnum);
+    const hdr = document.createElement('div'); hdr.className = 'week-col-header';
+    hdr.innerHTML = `<div class="week-dow">${dowLabels[i]}</div><div class="week-day-num">${d.getDate()}</div>`;
     col.appendChild(hdr);
 
-    var evsWrap = document.createElement('div'); evsWrap.className='week-events';
+    const evsWrap = document.createElement('div'); evsWrap.className = 'week-events';
 
-    dayEvs.forEach(function(ev) {
-      var cat = getCat(ev.cat);
-      var evEl = document.createElement('div');
-      evEl.className = 'week-event' + (ev.done?' done':'');
-      evEl.style.background = cat.bg; evEl.style.color = cat.text;
+    dayEvs.forEach(ev => {
+      const cat = getCat(ev.cat);
+      const evEl = document.createElement('div');
+      evEl.className = 'week-event cat-' + ev.cat + (ev.done?' done':'');
 
-      var checkEl = document.createElement('div');
+      const checkEl = document.createElement('div');
       checkEl.className = 'ev-check' + (ev.done?' checked':'');
-      checkEl.onclick = function(e){ e.stopPropagation(); toggleDone(ev.id); };
+      checkEl.addEventListener('click', e => { e.stopPropagation(); toggleDone(ev.id); });
 
-      var body = document.createElement('div'); body.className='ev-body';
-      var title = document.createElement('div'); title.className='ev-title'; title.textContent=ev.title;
-      body.appendChild(title);
-      if (ev.time) { var time=document.createElement('div'); time.className='ev-time'; time.textContent=formatTime(ev.time); body.appendChild(time); }
-      if (ev.note) { var note=document.createElement('div'); note.className='ev-time'; note.textContent=ev.note; body.appendChild(note); }
+      const body = document.createElement('div'); body.className = 'ev-body';
+      const titleEl = document.createElement('div'); titleEl.className = 'ev-title'; titleEl.textContent = ev.title;
+      body.appendChild(titleEl);
+      if (ev.time) {
+        const timeEl = document.createElement('div');
+        timeEl.className = 'ev-time';
+        timeEl.textContent = formatTime(ev.time);
+        body.appendChild(timeEl);
+      }
+      if (ev.note) {
+        const noteEl = document.createElement('div');
+        noteEl.className = 'ev-time';
+        noteEl.textContent = ev.note;
+        body.appendChild(noteEl);
+      }
 
-      var delBtn = document.createElement('button'); delBtn.className='ev-del'; delBtn.textContent='✕';
-      delBtn.onclick = function(e){ e.stopPropagation(); deleteEvent(ev.id); };
+      const delBtn = document.createElement('button');
+      delBtn.className = 'ev-del';
+      delBtn.textContent = '✕';
+      delBtn.addEventListener('click', e => { e.stopPropagation(); deleteEvent(ev.id); });
 
-      evEl.appendChild(checkEl); evEl.appendChild(body); evEl.appendChild(delBtn);
-      evEl.onclick = function(e){ if(e.target!==checkEl && !e.target.classList.contains('ev-del')) openEditModal(ev.id); };
+      evEl.appendChild(checkEl);
+      evEl.appendChild(body);
+      evEl.appendChild(delBtn);
+      evEl.addEventListener('click', e => {
+        if (e.target !== checkEl && !e.target.classList.contains('ev-del')) openEditModal(ev.id);
+      });
       evsWrap.appendChild(evEl);
     });
 
     col.appendChild(evsWrap);
 
-    var addBtn = document.createElement('button'); addBtn.className='week-add-btn';
-    addBtn.textContent='+ add';
-    addBtn.onclick = (function(ds){ return function(){ openAddModal(ds); }; })(dStr);
+    const addBtn = document.createElement('button');
+    addBtn.className = 'week-add-btn';
+    addBtn.textContent = '+ add';
+    addBtn.addEventListener('click', () => openAddModal(dStr));
     col.appendChild(addBtn);
 
     grid.appendChild(col);
@@ -456,117 +1009,138 @@ function renderWeek() {
   main.appendChild(grid);
 }
 
-// ── FORMAT TIME ──
-function formatTime(t) {
-  if (!t) return '';
-  var p = t.split(':'); var h=parseInt(p[0]), m=p[1];
-  var ampm = h>=12?'pm':'am'; h=h%12||12;
-  return h+(m!=='00'?':'+m:'')+ampm;
-}
-
-// ── MODAL ──
-function buildCatPicker(selected) {
-  var picker = document.getElementById('cat-picker'); picker.innerHTML='';
-  CATS.forEach(function(c) {
-    var btn = document.createElement('button');
-    btn.className = 'cat-pick-btn' + (c.id===selected?' selected':'');
-    btn.style.background=c.bg; btn.style.color=c.text; btn.style.borderColor=(c.id===selected?c.text:c.bg);
-    btn.textContent=c.label;
-    btn.onclick=function(e){ e.preventDefault(); document.querySelectorAll('.cat-pick-btn').forEach(function(b){b.classList.remove('selected');b.style.borderColor=b.style.background;}); btn.classList.add('selected'); btn.style.borderColor=c.text; };
-    btn.dataset.cat=c.id;
+/* ============ MODAL ============ */
+function buildCatPicker(selectedCat) {
+  const picker = document.getElementById('cat-picker');
+  picker.innerHTML = '';
+  pendingCat = selectedCat || 'tasks';
+  CATS.forEach(c => {
+    const btn = document.createElement('div');
+    btn.className = 'cat-option cat-' + c.id + (c.id === pendingCat ? ' selected' : '');
+    btn.textContent = c.label;
+    btn.dataset.cat = c.id;
+    btn.addEventListener('click', () => {
+      pendingCat = c.id;
+      document.querySelectorAll('.cat-option').forEach(o => o.classList.remove('selected'));
+      btn.classList.add('selected');
+    });
     picker.appendChild(btn);
   });
 }
 
-function getSelectedCat() {
-  var sel = document.querySelector('.cat-pick-btn.selected');
-  return sel ? sel.dataset.cat : 'tasks';
-}
-
 function openAddModal(dateStr) {
-  editingId = null; pendingDate = dateStr||null;
-  document.getElementById('modal-title').textContent='Add Event';
-  document.getElementById('ev-title').value='';
+  editingId = null;
+  document.getElementById('modal-title').textContent = 'Add event';
+  document.getElementById('ev-title').value = '';
   document.getElementById('ev-date').value = dateStr || dateKey(TODAY);
-  document.getElementById('ev-time').value='';
-  document.getElementById('ev-note').value='';
-  document.getElementById('modal-delete-btn').style.display='none';
+  document.getElementById('ev-time').value = '';
+  document.getElementById('ev-note').value = '';
+  document.getElementById('modal-delete-btn').style.display = 'none';
   buildCatPicker('tasks');
-  document.getElementById('modal').classList.add('open');
-  setTimeout(function(){ document.getElementById('ev-title').focus(); }, 100);
+  document.getElementById('modal').classList.add('show');
+  setTimeout(() => document.getElementById('ev-title').focus(), 100);
 }
 
 function openEditModal(id) {
-  var ev = events.find(function(e){return e.id===id;}); if(!ev) return;
+  const ev = events.find(e => e.id === id);
+  if (!ev) return;
   editingId = id;
-  document.getElementById('modal-title').textContent='Edit Event';
-  document.getElementById('ev-title').value=ev.title;
-  document.getElementById('ev-date').value=ev.date;
-  document.getElementById('ev-time').value=ev.time||'';
-  document.getElementById('ev-note').value=ev.note||'';
-  document.getElementById('modal-delete-btn').style.display='inline-flex';
+  document.getElementById('modal-title').textContent = 'Edit event';
+  document.getElementById('ev-title').value = ev.title;
+  document.getElementById('ev-date').value = ev.date;
+  document.getElementById('ev-time').value = ev.time || '';
+  document.getElementById('ev-note').value = ev.note || '';
+  document.getElementById('modal-delete-btn').style.display = 'inline-flex';
   buildCatPicker(ev.cat);
-  document.getElementById('modal').classList.add('open');
+  document.getElementById('modal').classList.add('show');
 }
 
 function closeModal() {
-  document.getElementById('modal').classList.remove('open');
-  editingId=null;
+  document.getElementById('modal').classList.remove('show');
+  editingId = null;
 }
 
 function saveEvent() {
-  var title=document.getElementById('ev-title').value.trim();
+  const title = document.getElementById('ev-title').value.trim();
   if (!title) { document.getElementById('ev-title').focus(); return; }
-  var date=document.getElementById('ev-date').value;
+  const date = document.getElementById('ev-date').value;
   if (!date) { document.getElementById('ev-date').focus(); return; }
-  var time=document.getElementById('ev-time').value;
-  var note=document.getElementById('ev-note').value.trim();
-  var cat=getSelectedCat();
+  const time = document.getElementById('ev-time').value;
+  const note = document.getElementById('ev-note').value.trim();
 
   if (editingId) {
-    var idx=events.findIndex(function(e){return e.id===editingId;});
-    if (idx>=0) { events[idx].title=title; events[idx].date=date; events[idx].time=time; events[idx].note=note; events[idx].cat=cat; }
+    const idx = events.findIndex(e => e.id === editingId);
+    if (idx >= 0) {
+      events[idx].title = title;
+      events[idx].date = date;
+      events[idx].time = time;
+      events[idx].note = note;
+      events[idx].cat = pendingCat;
+    }
   } else {
-    events.push({id:'ev_'+Date.now(), title:title, date:date, time:time, cat:cat, note:note, done:false});
+    events.push({id: id(), title, date, time, cat: pendingCat, note, done: false});
   }
-  save(); closeModal(); render();
+  save();
+  closeModal();
+  render();
+  showToast('Event saved ✓');
 }
 
-function deleteEventFromModal() {
+function deleteEvent(eventId) {
+  events = events.filter(e => e.id !== eventId);
+  save();
+  render();
+  showToast('Event removed');
+}
+
+function deleteFromModal() {
   if (!editingId) return;
   if (!confirm('Delete this event?')) return;
-  deleteEvent(editingId); closeModal();
-}
-
-function deleteEvent(id) {
-  events=events.filter(function(e){return e.id!==id;}); save(); render();
+  deleteEvent(editingId);
+  closeModal();
 }
 
 function toggleDone(id) {
-  var ev=events.find(function(e){return e.id===id;}); if(!ev) return;
-  ev.done=!ev.done; save(); render();
+  const ev = events.find(e => e.id === id);
+  if (!ev) return;
+  ev.done = !ev.done;
+  save();
+  render();
 }
 
-function clearAll() {
-  if (!confirm('Clear all events? This cannot be undone.')) return;
-  events=[]; save(); render();
+/* ============ TOAST ============ */
+let toastTimer;
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => t.classList.remove('show'), 2000);
 }
 
-// Close modal on overlay click
-document.getElementById('modal').addEventListener('click', function(e){ if(e.target===this) closeModal(); });
+/* ============ EVENT BINDINGS ============ */
+document.getElementById('modal-close').addEventListener('click', closeModal);
+document.getElementById('modal-cancel').addEventListener('click', closeModal);
+document.getElementById('modal-save').addEventListener('click', saveEvent);
+document.getElementById('modal-delete-btn').addEventListener('click', deleteFromModal);
+document.getElementById('modal').addEventListener('click', e => {
+  if (e.target.id === 'modal') closeModal();
+});
+document.addEventListener('keydown', e => {
+  const modalOpen = document.getElementById('modal').classList.contains('show');
+  if (e.key === 'Escape' && modalOpen) closeModal();
+  if (e.key === 'Enter' && modalOpen && document.activeElement.tagName !== 'BUTTON') {
+    e.preventDefault();
+    saveEvent();
+  }
+});
 
-// Keyboard
-document.addEventListener('keydown', function(e){ if(e.key==='Escape') closeModal(); });
-document.getElementById('ev-title').addEventListener('keydown', function(e){ if(e.key==='Enter') saveEvent(); });
-
-// ── INIT ──
-var now = new Date();
-var DAYS_F=['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
-var MONTHS_F=['January','February','March','April','May','June','July','August','September','October','November','December'];
-document.getElementById('today-date').textContent=DAYS_F[now.getDay()]+', '+MONTHS_F[now.getMonth()]+' '+now.getDate()+', '+now.getFullYear();
+/* ============ INIT ============ */
+const now = new Date();
+document.getElementById('today-date').textContent =
+  DAYS_FULL[now.getDay()] + ', ' + MONTHS_FULL[now.getMonth()] + ' ' + now.getDate() + ', ' + now.getFullYear();
 
 load();
-if (currentView==='week') { setView('week'); } else { setView('month'); }
 renderLegend();
 render();
 </script>
