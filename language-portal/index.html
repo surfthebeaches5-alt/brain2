@@ -253,6 +253,13 @@ textarea.note-input{resize:vertical;min-height:44px;max-height:120px;line-height
 /* Resource modal */
 .res-modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.4);backdrop-filter:blur(4px);z-index:400;align-items:center;justify-content:center;padding:20px;}
 .res-modal-overlay.open{display:flex;}
+
+/* Log date row */
+.log-date-row { display:flex; align-items:center; gap:8px; width:100%; margin-bottom:10px; }
+.log-date-input { border:1.5px solid var(--line); border-radius:10px; padding:6px 10px; font-size:12px; font-family:inherit; color:var(--ink); background:var(--surface); outline:none; transition:border .15s; }
+.log-date-input:focus { border-color:var(--accent-deep); }
+.log-today-btn { padding:5px 10px; border:1.5px solid var(--line); border-radius:10px; font-size:11px; font-weight:600; color:var(--muted); cursor:pointer; background:transparent; font-family:inherit; transition:all .15s; white-space:nowrap; }
+.log-today-btn:hover { border-color:var(--accent-deep); color:var(--accent-deep); background:var(--accent-soft); }
 </style>
 </head>
 <body>
@@ -344,6 +351,11 @@ textarea.note-input{resize:vertical;min-height:44px;max-height:120px;line-height
         <button class="skill-btn" onclick="selectSkill('es','grammar',this)"><span class="skill-icon">&#128300;</span><span class="skill-name">Grammar</span></button>
       </div>
       <div class="log-row" id="es-log-row" style="display:none;">
+        <div class="log-date-row">
+          <span class="log-label">Date:</span>
+          <input type="date" class="log-date-input" id="es-date">
+          <button class="log-today-btn" onclick="resetDate('es')">Today</button>
+        </div>
         <div class="note-row">
           <span class="log-label">Note:</span>
           <textarea class="note-input" id="es-note" placeholder="Optional — what did you work on? Paste vocab, grammar notes..." rows="2"></textarea>
@@ -357,6 +369,7 @@ textarea.note-input{resize:vertical;min-height:44px;max-height:120px;line-height
           <button class="log-btn" onclick="logTime('es',45,event)">45 min</button>
           <button class="log-btn" onclick="logTime('es',60,event)">60 min</button>
           <button class="log-btn" onclick="logTime('es',90,event)">90 min</button>
+          <button class="log-btn" onclick="logTime('es',120,event)">120 min</button>
         </div>
       </div>
       <div id="es-resource-panel" style="display:none;"></div>
@@ -414,6 +427,11 @@ textarea.note-input{resize:vertical;min-height:44px;max-height:120px;line-height
         <button class="skill-btn" onclick="selectSkill('pt','grammar',this)"><span class="skill-icon">&#128300;</span><span class="skill-name">Grammar</span></button>
       </div>
       <div class="log-row" id="pt-log-row" style="display:none;">
+        <div class="log-date-row">
+          <span class="log-label">Date:</span>
+          <input type="date" class="log-date-input" id="pt-date">
+          <button class="log-today-btn" onclick="resetDate('pt')">Today</button>
+        </div>
         <div class="note-row">
           <span class="log-label">Note:</span>
           <textarea class="note-input" id="pt-note" placeholder="Optional — what did you work on? Paste vocab, grammar notes..." rows="2"></textarea>
@@ -427,6 +445,7 @@ textarea.note-input{resize:vertical;min-height:44px;max-height:120px;line-height
           <button class="log-btn" onclick="logTime('pt',45,event)">45 min</button>
           <button class="log-btn" onclick="logTime('pt',60,event)">60 min</button>
           <button class="log-btn" onclick="logTime('pt',90,event)">90 min</button>
+          <button class="log-btn" onclick="logTime('pt',120,event)">120 min</button>
         </div>
       </div>
       <div id="pt-resource-panel" style="display:none;"></div>
@@ -598,8 +617,9 @@ function logTime(lang,mins,evt){
   var resource=activeResource[lang]||'--';
   var noteEl=document.getElementById(lang+'-note');
   var note=noteEl?noteEl.value.trim():'';
-  var now=new Date();
-  S.log.unshift({id:'l_'+Date.now(),lang:lang,skill:skill,skillLabel:skillLabel,resource:resource,note:note,mins:mins,date:now.toISOString()});
+  var dateEl=document.getElementById(lang+'-date');
+  var logDate = dateEl && dateEl.value ? new Date(dateEl.value+'T12:00:00') : new Date();
+  S.log.unshift({id:'l_'+Date.now(),lang:lang,skill:skill,skillLabel:skillLabel,resource:resource,note:note,mins:mins,date:logDate.toISOString()});
   S.hours[lang]=(S.hours[lang]||0)+mins/60;
   if(noteEl)noteEl.value='';
   updateHours(lang);
@@ -1072,6 +1092,22 @@ function renderHeatmap() {
   }
 }
 
+
+function todayDateStr(){
+  var n=new Date();
+  return n.getFullYear()+'-'+String(n.getMonth()+1).padStart(2,'0')+'-'+String(n.getDate()).padStart(2,'0');
+}
+function resetDate(lang){
+  var el=document.getElementById(lang+'-date');
+  if(el) el.value=todayDateStr();
+}
+function initDateInputs(){
+  var t=todayDateStr();
+  ['es','pt'].forEach(function(lang){
+    var el=document.getElementById(lang+'-date');
+    if(el){ el.value=t; el.max=t; } // can't log into the future
+  });
+}
 function loadState(){
   var raw=localStorage.getItem(SK);
   if(raw){
@@ -1101,6 +1137,7 @@ var now=new Date();
 document.getElementById('today-date').textContent=DS[now.getDay()]+', '+MF[now.getMonth()]+' '+now.getDate()+', '+now.getFullYear();
 
 loadState();
+initDateInputs();
 renderDuo();
 updateHours('es');
 updateHours('pt');
