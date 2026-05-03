@@ -4,145 +4,239 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Media Tracker</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
-@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,400&family=Jost:wght@300;400;500;600&display=swap');
-:root{
-  --blush:#f2c4ce;--rose:#e8a0b0;--mauve:#c9a0b4;--lavender:#d4b8e0;
-  --sage:#b8cfb0;--cream:#fdf6f0;--warm:#f7ece4;--ink:#3a2a2e;--muted:#9a8088;--rule:#e0cec8;
+* { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --bg: #f3ecd8; --surface: #ffffff; --sidebar: #f8f1dd;
+  --sidebar-line: #e6dec5; --ink: #1a1612; --muted: #7a7468;
+  --line: #ececec; --warm: #faf6ec;
+  --accent: #c9b6ee; --accent-deep: #b099e0; --accent-soft: #ede5fb;
 }
-*{box-sizing:border-box;margin:0;padding:0;}
-body{background:#f0e8e4;font-family:'Jost',sans-serif;color:var(--ink);min-height:100vh;}
+html,body { background:var(--bg); font-family:'Plus Jakarta Sans',system-ui,sans-serif; color:var(--ink); min-height:100vh; -webkit-font-smoothing:antialiased; }
 
-.topbar{background:var(--cream);border-bottom:1px solid var(--rule);padding:14px 32px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:200;}
-.topbar-title{font-family:'Cormorant Garamond',serif;font-size:1.6rem;font-weight:300;letter-spacing:2px;}
-.topbar-title em{font-style:italic;color:var(--mauve);}
-.topbar-right{display:flex;align-items:center;gap:10px;}
-.back-btn{display:inline-flex;align-items:center;gap:6px;padding:6px 14px;border:1.5px solid var(--rule);border-radius:20px;font-size:0.72rem;color:var(--muted);cursor:pointer;background:transparent;font-family:'Jost',sans-serif;text-decoration:none;transition:all .15s;}
-.back-btn:hover{border-color:var(--rose);color:var(--ink);}
-.topbar-date{font-size:0.68rem;letter-spacing:2px;text-transform:uppercase;color:var(--muted);}
+/* ── TOPBAR ── */
+.topbar { background:var(--sidebar); border-bottom:1px solid var(--sidebar-line); padding:16px 32px; display:flex; align-items:center; justify-content:space-between; position:sticky; top:0; z-index:200; }
+.topbar-left { display:flex; align-items:center; gap:14px; }
+.back-btn { display:inline-flex; align-items:center; gap:6px; padding:7px 14px; border:1.5px solid #d9d2bd; border-radius:20px; font-size:12px; color:var(--muted); cursor:pointer; background:transparent; font-family:inherit; text-decoration:none; transition:all .15s; }
+.back-btn:hover { border-color:var(--accent-deep); color:var(--ink); }
+.topbar-title { font-family:'Fraunces',serif; font-size:22px; font-weight:600; letter-spacing:-0.4px; }
+.topbar-date { font-size:11px; letter-spacing:1.5px; text-transform:uppercase; color:var(--muted); font-weight:500; }
 
-.section-tabs{background:var(--cream);border-bottom:2px solid var(--rule);position:sticky;top:57px;z-index:100;display:flex;overflow-x:auto;}
-.section-tab{padding:13px 24px;font-family:'Jost',sans-serif;font-size:0.76rem;font-weight:500;cursor:pointer;border:none;background:transparent;color:var(--muted);border-bottom:3px solid transparent;margin-bottom:-2px;transition:all .15s;white-space:nowrap;}
-.section-tab.active{color:var(--ink);border-bottom-color:var(--mauve);}
+/* ── TABS ── */
+.section-tabs { background:var(--surface); border-bottom:1px solid var(--line); position:sticky; top:57px; z-index:100; display:flex; overflow-x:auto; padding:0 24px; }
+.section-tab { padding:14px 22px; font-family:inherit; font-size:12.5px; font-weight:600; cursor:pointer; border:none; background:transparent; color:var(--muted); border-bottom:2.5px solid transparent; margin-bottom:-1px; transition:all .15s; white-space:nowrap; }
+.section-tab:hover { color:var(--ink); }
+.section-tab.active { color:var(--ink); border-bottom-color:var(--accent-deep); }
 
-.hub{max-width:1200px;margin:0 auto;padding:22px 24px 60px;}
+/* ── HUB ── */
+.hub { max-width:1240px; margin:0 auto; padding:24px 24px 60px; }
 
-/* Stats */
-.stats-bar{display:flex;gap:14px;flex-wrap:wrap;margin-bottom:16px;padding:12px 18px;background:var(--cream);border:1px solid var(--rule);border-radius:12px;align-items:center;}
-.stat{text-align:center;}
-.stat-num{font-family:'Cormorant Garamond',serif;font-size:1.5rem;font-weight:600;color:var(--ink);line-height:1;}
-.stat-label{font-size:0.58rem;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin-top:2px;}
-.stat-divider{width:1px;height:36px;background:var(--rule);flex-shrink:0;}
-.year-badges{display:flex;gap:8px;flex-wrap:wrap;margin-left:auto;}
-.year-badge{padding:5px 14px;border-radius:12px;font-size:0.65rem;font-weight:600;background:linear-gradient(135deg,#fce8ef,#f0e0f0);border:1.5px solid var(--blush);color:var(--ink);}
-.year-badge span{color:var(--mauve);font-family:'Cormorant Garamond',serif;font-size:1rem;font-weight:600;}
+/* ── STATS BAR ── */
+.stats-bar { display:flex; gap:18px; flex-wrap:wrap; margin-bottom:18px; padding:16px 22px; background:var(--surface); border:1px solid var(--line); border-radius:18px; align-items:center; }
+.stat { text-align:center; }
+.stat-num { font-family:'Fraunces',serif; font-size:26px; font-weight:600; color:var(--ink); line-height:1; letter-spacing:-.5px; }
+.stat-label { font-size:9.5px; letter-spacing:1.5px; text-transform:uppercase; color:var(--muted); margin-top:4px; font-weight:600; }
+.stat-divider { width:1px; height:36px; background:var(--line); flex-shrink:0; }
+.year-badges { display:flex; gap:8px; flex-wrap:wrap; margin-left:auto; }
+.year-badge { padding:6px 14px; border-radius:14px; font-size:11px; font-weight:600; background:var(--accent-soft); border:1.5px solid var(--accent); color:var(--ink); display:inline-flex; align-items:center; gap:6px; }
+.year-badge span { color:var(--accent-deep); font-family:'Fraunces',serif; font-size:16px; font-weight:600; }
 
-/* Controls */
-.controls-wrap{margin-bottom:18px;}
-.filter-group{display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin-bottom:8px;}
-.filter-group-label{font-size:0.6rem;letter-spacing:2px;text-transform:uppercase;color:var(--muted);font-weight:600;min-width:60px;}
-.filter-btn{padding:4px 12px;border:1.5px solid var(--rule);border-radius:14px;background:var(--cream);font-family:'Jost',sans-serif;font-size:0.68rem;font-weight:500;cursor:pointer;color:var(--muted);transition:all .15s;white-space:nowrap;}
-.filter-btn:hover{border-color:var(--mauve);color:var(--ink);}
-.filter-btn.active{background:var(--mauve);border-color:var(--mauve);color:white;}
-.controls-row2{display:flex;align-items:center;gap:8px;margin-top:8px;}
-.search-input{padding:6px 14px;border:1.5px solid var(--rule);border-radius:16px;font-family:'Jost',sans-serif;font-size:0.72rem;color:var(--ink);background:var(--cream);outline:none;transition:border .15s;min-width:180px;}
-.search-input:focus{border-color:var(--mauve);}
-.add-btn{margin-left:auto;padding:7px 18px;border:none;border-radius:20px;background:var(--mauve);color:white;font-family:'Jost',sans-serif;font-size:0.73rem;font-weight:600;cursor:pointer;transition:all .15s;}
-.add-btn:hover{background:var(--rose);}
+/* ── CONTROLS ── */
+.controls-wrap { margin-bottom:22px; background:var(--surface); border:1px solid var(--line); border-radius:18px; padding:16px 18px; }
+.filter-group { display:flex; align-items:center; gap:8px; flex-wrap:wrap; margin-bottom:8px; }
+.filter-group:last-of-type { margin-bottom:0; }
+.filter-group-label { font-size:9.5px; letter-spacing:1.8px; text-transform:uppercase; color:var(--muted); font-weight:700; min-width:64px; }
+.filter-btn { padding:5px 12px; border:1.5px solid var(--line); border-radius:14px; background:var(--surface); font-family:inherit; font-size:11.5px; font-weight:600; cursor:pointer; color:var(--muted); transition:all .15s; white-space:nowrap; }
+.filter-btn:hover { border-color:var(--accent-deep); color:var(--ink); }
+.filter-btn.active { background:var(--ink); border-color:var(--ink); color:#fff; }
+.filter-select { padding:6px 28px 6px 12px; border:1.5px solid var(--line); border-radius:14px; background:var(--surface); font-family:inherit; font-size:12px; font-weight:600; color:var(--ink); cursor:pointer; appearance:none; background-image:url("data:image/svg+xml,%3Csvg width='10' height='6' viewBox='0 0 10 6' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 1L5 5L9 1' stroke='%237a7468' stroke-width='1.5' stroke-linecap='round'/%3E%3C/svg%3E"); background-repeat:no-repeat; background-position:right 10px center; transition:border .15s; outline:none; min-width:140px; }
+.filter-select:focus { border-color:var(--accent-deep); }
+.controls-row2 { display:flex; align-items:center; gap:10px; margin-top:12px; padding-top:12px; border-top:1px solid var(--line); }
+.search-input { padding:8px 14px; border:1.5px solid var(--line); border-radius:18px; font-family:inherit; font-size:13px; color:var(--ink); background:var(--surface); outline:none; transition:border .15s; min-width:220px; }
+.search-input:focus { border-color:var(--accent-deep); }
+.add-btn { margin-left:auto; padding:9px 20px; border:none; border-radius:22px; background:var(--ink); color:#fff; font-family:inherit; font-size:12.5px; font-weight:600; cursor:pointer; transition:transform .15s; }
+.add-btn:hover { transform:translateY(-1px); }
 
-/* Grid */
-.media-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(195px,1fr));gap:16px;}
-.media-card{background:var(--cream);border:1px solid var(--rule);border-radius:14px;overflow:hidden;display:flex;flex-direction:column;transition:transform .15s,box-shadow .15s;}
-.media-card:hover{transform:translateY(-3px);box-shadow:0 8px 24px rgba(180,130,140,.14);}
-.media-card.done{opacity:0.72;}
+/* ── GRID CARDS ──
+   NOTE: NO overflow:hidden here — that was clipping the ··· dropdown.
+   Card cover gets top border-radius instead to clip the image corners.
+── */
+.media-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(200px,1fr)); gap:16px; }
+.media-card { background:var(--surface); border:1px solid var(--line); border-radius:16px; display:flex; flex-direction:column; transition:transform .15s,box-shadow .15s; position:relative; }
+.media-card:hover { transform:translateY(-3px); box-shadow:0 12px 28px rgba(0,0,0,.08); }
+.media-card.done { opacity:0.72; }
+.card-cover { width:100%; height:220px; display:flex; align-items:center; justify-content:center; background:var(--warm); flex-shrink:0; overflow:hidden; border-radius:14px 14px 0 0; }
+.card-cover img { width:100%; height:100%; object-fit:cover; }
+.card-cover-placeholder { font-size:3rem; }
+.card-body { padding:13px 14px; flex:1; display:flex; flex-direction:column; gap:4px; }
+.card-category { font-size:9.5px; letter-spacing:1.8px; text-transform:uppercase; color:var(--muted); font-weight:700; }
+.card-title { font-family:'Fraunces',serif; font-size:16px; font-weight:600; line-height:1.25; letter-spacing:-.2px; }
+.card-title-link { font-family:'Fraunces',serif; font-size:16px; font-weight:600; line-height:1.25; letter-spacing:-.2px; color:var(--ink); text-decoration:none; }
+.card-title-link:hover { color:var(--accent-deep); text-decoration:underline; text-underline-offset:3px; }
+.card-creator { font-size:11.5px; color:var(--muted); }
+.card-stars { display:flex; gap:2px; margin-top:4px; }
+.card-star { font-size:14px; cursor:pointer; color:#e0d8c8; transition:color .1s; }
+.card-star.filled { color:var(--accent-deep); }
+.card-date { font-size:10.5px; color:var(--accent-deep); font-weight:600; margin-top:3px; }
+.card-note { font-size:11px; color:var(--muted); line-height:1.5; font-style:italic; flex:1; margin-top:4px; }
+.card-episode { font-size:11px; font-weight:700; color:var(--accent-deep); margin-top:3px; }
+.card-ep-count { font-size:11px; color:var(--muted); margin-top:2px; font-weight:500; }
+.card-progress { margin-top:8px; }
+.card-progress-bar { height:6px; background:var(--line); border-radius:4px; overflow:hidden; margin-bottom:4px; }
+.card-progress-fill { height:100%; border-radius:4px; background:linear-gradient(90deg,var(--accent),var(--accent-deep)); transition:width .3s; }
+.card-progress-label { font-size:10.5px; color:var(--muted); }
+.card-progress-controls { display:flex; align-items:center; gap:6px; margin-top:5px; }
+.prog-btn { width:22px; height:22px; border-radius:50%; border:1.5px solid var(--line); background:var(--surface); font-size:12px; cursor:pointer; display:flex; align-items:center; justify-content:center; color:var(--muted); transition:all .15s; font-family:inherit; }
+.prog-btn:hover { border-color:var(--accent-deep); color:var(--ink); background:var(--accent-soft); }
+.prog-count { font-family:'Fraunces',serif; font-size:14px; font-weight:600; color:var(--ink); min-width:32px; text-align:center; }
 
-.card-cover{width:100%;height:220px;display:flex;align-items:center;justify-content:center;background:var(--warm);flex-shrink:0;overflow:hidden;}
-.card-cover img{width:100%;height:100%;object-fit:cover;}
-.card-cover-placeholder{font-size:3rem;}
+/* ── INLINE ALBUM SONGS ── */
+.album-songs { border-top:1px solid var(--line); padding:10px 14px; background:var(--warm); border-radius:0 0 14px 14px; }
+.album-songs-header { font-size:9.5px; letter-spacing:1.5px; text-transform:uppercase; color:var(--muted); font-weight:700; margin-bottom:8px; }
+.album-song-row { display:flex; align-items:center; gap:8px; padding:5px 0; border-bottom:1px solid var(--line); }
+.album-song-row:last-of-type { border-bottom:none; }
+.album-song-num { font-size:10px; color:var(--muted); font-weight:700; min-width:16px; text-align:right; flex-shrink:0; }
+.album-song-name { flex:1; font-size:12px; font-family:inherit; color:var(--ink); border:none; background:transparent; outline:none; min-width:0; }
+.album-song-name::placeholder { color:#c9beb4; font-style:italic; }
+.album-song-name:focus { border-bottom:1.5px solid var(--accent-deep); }
+.album-song-stars { display:flex; gap:1px; flex-shrink:0; }
+.album-song-star { font-size:12px; cursor:pointer; color:#e0d8c8; transition:color .1s; line-height:1; }
+.album-song-star.filled { color:var(--accent-deep); }
+.album-song-del { background:none; border:none; font-size:10px; color:#ccc; cursor:pointer; padding:2px 3px; flex-shrink:0; transition:color .1s; }
+.album-song-del:hover { color:#c44; }
+.album-add-song { margin-top:8px; width:100%; padding:7px; border:1.5px dashed var(--line); border-radius:10px; font-size:11.5px; font-weight:600; color:var(--muted); background:transparent; cursor:pointer; font-family:inherit; transition:all .15s; }
+.album-add-song:hover { border-color:var(--accent-deep); color:var(--accent-deep); background:var(--accent-soft); }
 
-.card-body{padding:12px 14px;flex:1;display:flex;flex-direction:column;gap:3px;}
-.card-category{font-size:0.58rem;letter-spacing:2px;text-transform:uppercase;color:var(--muted);font-weight:600;}
-.card-title{font-family:'Cormorant Garamond',serif;font-size:1rem;font-weight:600;line-height:1.3;}
-.card-creator{font-size:0.7rem;color:var(--muted);}
-.card-stars{display:flex;gap:2px;margin-top:3px;}
-.card-star{font-size:0.9rem;cursor:pointer;color:#e0cec8;transition:color .1s;}
-.card-star.filled{color:var(--rose);}
-.card-status{display:inline-block;font-size:0.6rem;font-weight:600;letter-spacing:1px;text-transform:uppercase;padding:2px 9px;border-radius:10px;margin-top:3px;width:fit-content;}
-.status-want{background:#fff8e1;color:#8a5a10;}
-.status-progress{background:#e3f0ff;color:#1a5a9a;}
-.status-done{background:#e8f5e9;color:#2a6a30;}
-.status-subscribed{background:#f3e5f5;color:#6a1a8a;}
-.status-active{background:#e3f0ff;color:#1a5a9a;}
-.status-archived{background:var(--warm);color:var(--muted);}
-.card-date{font-size:0.65rem;color:var(--mauve);font-weight:500;margin-top:2px;}
-.card-note{font-size:0.7rem;color:var(--muted);line-height:1.5;font-style:italic;flex:1;margin-top:3px;}
+/* ── CARD ACTIONS ── */
+.card-actions { display:flex; align-items:center; gap:6px; padding:10px 12px; border-top:1px solid var(--line); background:var(--warm); border-radius:0 0 14px 14px; flex-wrap:wrap; }
+.cycle-btn { padding:6px 12px; border:1.5px solid var(--accent); border-radius:14px; font-family:inherit; font-size:11px; font-weight:700; cursor:pointer; background:var(--accent-soft); color:var(--accent-deep); transition:all .15s; white-space:nowrap; }
+.cycle-btn:hover { background:var(--accent); color:var(--ink); }
+.open-link-btn { padding:6px 12px; border:1.5px solid var(--line); border-radius:14px; font-family:inherit; font-size:11px; font-weight:600; cursor:pointer; background:var(--surface); color:var(--muted); transition:all .15s; text-decoration:none; display:inline-flex; align-items:center; gap:4px; }
+.open-link-btn:hover { border-color:var(--accent-deep); color:var(--ink); background:var(--accent-soft); }
 
-/* Progress bar (music/screen) */
-.card-progress{margin-top:6px;}
-.card-progress-bar{height:5px;background:var(--rule);border-radius:3px;overflow:hidden;margin-bottom:3px;}
-.card-progress-fill{height:100%;border-radius:3px;background:linear-gradient(90deg,var(--blush),var(--mauve));transition:width .3s;}
-.card-progress-label{font-size:0.65rem;color:var(--muted);}
-.card-progress-controls{display:flex;align-items:center;gap:5px;margin-top:4px;}
-.prog-btn{width:20px;height:20px;border-radius:50%;border:1.5px solid var(--rule);background:var(--cream);font-size:0.7rem;cursor:pointer;display:flex;align-items:center;justify-content:center;color:var(--muted);transition:all .15s;}
-.prog-btn:hover{border-color:var(--mauve);color:var(--ink);}
-.prog-count{font-family:'Cormorant Garamond',serif;font-size:0.95rem;font-weight:600;color:var(--ink);min-width:30px;text-align:center;}
+/* ── DOTS MENU (works now that card has no overflow:hidden) ── */
+.dots-wrap { position:relative; margin-left:auto; flex-shrink:0; }
+.dots-btn { width:30px; height:30px; border-radius:50%; border:1.5px solid var(--line); background:var(--surface); cursor:pointer; font-size:14px; color:var(--muted); display:flex; align-items:center; justify-content:center; transition:all .15s; font-family:inherit; letter-spacing:1px; }
+.dots-btn:hover { border-color:var(--accent-deep); color:var(--ink); background:var(--accent-soft); }
+.dots-menu { position:absolute; right:0; bottom:calc(100% + 5px); background:var(--surface); border:1px solid var(--line); border-radius:12px; box-shadow:0 -8px 24px rgba(0,0,0,.1); min-width:130px; overflow:hidden; display:none; z-index:50; }
+.dots-menu.open { display:block; animation:popIn .15s; }
+@keyframes popIn { from{opacity:0;transform:scale(.95) translateY(4px)} to{opacity:1;transform:scale(1) translateY(0)} }
+.dots-item { display:flex; align-items:center; gap:8px; padding:10px 14px; font-size:12px; font-weight:600; color:var(--ink); cursor:pointer; transition:background .1s; border:none; background:transparent; font-family:inherit; width:100%; text-align:left; text-decoration:none; }
+.dots-item:hover { background:var(--warm); }
+.dots-item.danger { color:#c44; }
+.dots-item.danger:hover { background:#fce8e8; }
 
-/* Screen episode info */
-.card-episode{font-size:0.68rem;font-weight:600;color:var(--mauve);margin-top:3px;}
-.card-ep-sub{font-size:0.62rem;color:var(--muted);}
+/* ── STATUS COLORS ── */
+.status-want      { background:#fff5d6; color:#6a4a08; }
+.status-progress  { background:#d8e8f8; color:#1a3a6a; }
+.status-done      { background:#d8eee8; color:#1a4a44; }
+.status-archived  { background:var(--warm); color:var(--muted); }
 
-/* Podcast episode */
-.card-ep-count{font-size:0.68rem;color:var(--muted);margin-top:2px;}
+/* ── LIST CARDS (podcasts only) ── */
+.list-view { display:flex; flex-direction:column; gap:8px; }
+.list-card { background:var(--surface); border:1px solid var(--line); border-radius:14px; display:flex; align-items:center; gap:14px; padding:14px 16px; transition:all .15s; position:relative; }
+.list-card:hover { border-color:#d9d2bd; box-shadow:0 4px 12px rgba(0,0,0,.05); }
+.list-card.done { opacity:0.65; }
+.list-icon { width:44px; height:44px; border-radius:10px; display:flex; align-items:center; justify-content:center; font-size:20px; flex-shrink:0; background:var(--warm); border:1px solid var(--line); overflow:hidden; }
+.list-icon img { width:100%; height:100%; object-fit:cover; border-radius:9px; }
+.list-body { flex:1; min-width:0; }
+.list-title { font-family:'Fraunces',serif; font-size:15px; font-weight:600; line-height:1.3; letter-spacing:-.2px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+.list-meta { font-size:11px; color:var(--muted); margin-top:2px; display:flex; align-items:center; gap:6px; flex-wrap:wrap; }
+.list-meta-dot { width:3px; height:3px; border-radius:50%; background:var(--muted); flex-shrink:0; }
+.list-ep { font-size:10.5px; font-weight:700; color:var(--accent-deep); }
+.list-note { font-size:11px; color:var(--muted); font-style:italic; margin-top:2px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.list-right { display:flex; align-items:center; gap:8px; flex-shrink:0; }
+.list-stars { display:flex; gap:1px; }
+.list-star { font-size:12px; cursor:pointer; color:#e0d8c8; transition:color .1s; }
+.list-star.filled { color:var(--accent-deep); }
 
-.card-actions{display:flex;gap:5px;padding:8px 12px;border-top:1px solid var(--rule);flex-wrap:wrap;}
-.card-action-btn{padding:4px 9px;border:1.5px solid var(--rule);border-radius:10px;font-family:'Jost',sans-serif;font-size:0.62rem;cursor:pointer;background:transparent;color:var(--muted);transition:all .15s;text-decoration:none;display:inline-flex;align-items:center;}
-.card-action-btn:hover{border-color:var(--mauve);color:var(--ink);}
-.card-del-btn{padding:4px 7px;border:none;background:transparent;font-size:0.65rem;color:#ccc;cursor:pointer;margin-left:auto;transition:color .15s;}
-.card-del-btn:hover{color:#a0304a;}
+/* ── EMPTY STATE ── */
+.empty-state { text-align:center; padding:70px 20px; color:var(--muted); background:var(--surface); border:1px dashed var(--line); border-radius:18px; }
+.empty-state-icon { font-size:3rem; margin-bottom:12px; }
+.empty-state-text { font-family:'Fraunces',serif; font-size:22px; font-style:italic; margin-bottom:6px; color:var(--ink); }
+.empty-state-sub { font-size:13px; }
 
-/* Modal */
-.modal-overlay{display:none;position:fixed;inset:0;background:rgba(58,42,46,.35);z-index:300;align-items:center;justify-content:center;}
-.modal-overlay.open{display:flex;}
-.modal{background:var(--cream);border-radius:18px;border:1px solid var(--rule);padding:28px 32px;width:90%;max-width:540px;max-height:90vh;overflow-y:auto;box-shadow:0 20px 60px rgba(58,42,46,.15);}
-.modal-title{font-family:'Cormorant Garamond',serif;font-size:1.4rem;font-weight:600;margin-bottom:20px;}
-.f-field{margin-bottom:12px;}
-.f-label{font-size:0.62rem;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin-bottom:5px;display:block;}
-.f-input{width:100%;border:1.5px solid var(--rule);border-radius:10px;padding:9px 12px;font-size:0.82rem;font-family:'Jost',sans-serif;color:var(--ink);background:var(--warm);outline:none;transition:border .15s;}
-.f-input:focus{border-color:var(--mauve);}
-.f-row{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
-.f-row3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;}
-.f-textarea{resize:vertical;min-height:60px;}
-.f-section-label{font-size:0.62rem;letter-spacing:2px;text-transform:uppercase;color:var(--muted);font-weight:600;padding:8px 0 4px;border-top:1px solid var(--rule);margin-top:4px;display:block;}
-.m-actions{display:flex;gap:10px;justify-content:flex-end;margin-top:18px;}
-.m-btn{padding:8px 20px;border-radius:20px;font-family:'Jost',sans-serif;font-size:0.78rem;font-weight:600;cursor:pointer;border:1.5px solid;transition:all .15s;}
-.m-cancel{background:var(--warm);border-color:var(--rule);color:var(--muted);}
-.m-save{background:var(--mauve);border-color:var(--mauve);color:white;}
-.m-save:hover{background:var(--rose);}
-.m-delete{background:#fce4ec;border-color:#f2c4ce;color:#a0304a;}
+/* ── STATS TAB ── */
+.stats-panel { display:block; }
+.stats-year-nav { display:flex; align-items:center; gap:14px; margin-bottom:24px; padding:14px 22px; background:var(--surface); border:1px solid var(--line); border-radius:18px; }
+.stats-year-btn { width:30px; height:30px; border-radius:50%; border:1.5px solid var(--line); background:var(--surface); cursor:pointer; color:var(--ink); display:flex; align-items:center; justify-content:center; transition:all .15s; font-family:inherit; font-size:14px; }
+.stats-year-btn:hover { background:var(--warm); }
+.stats-year-label { font-family:'Fraunces',serif; font-size:22px; font-weight:600; letter-spacing:-.4px; }
+.stats-note { font-size:11.5px; color:var(--muted); margin-left:auto; }
+.stats-totals { display:grid; grid-template-columns:repeat(5,1fr); gap:12px; margin-bottom:24px; }
+.stats-total-card { background:var(--surface); border:1px solid var(--line); border-radius:16px; padding:18px; text-align:center; transition:all .15s; }
+.stats-total-card:hover { border-color:var(--accent); }
+.stats-total-icon { font-size:28px; margin-bottom:8px; }
+.stats-total-num { font-family:'Fraunces',serif; font-size:38px; font-weight:600; color:var(--ink); line-height:1; letter-spacing:-.8px; }
+.stats-total-label { font-size:10px; letter-spacing:1.5px; text-transform:uppercase; color:var(--muted); margin-top:5px; font-weight:700; }
+.stats-grid-wrap { background:var(--surface); border:1px solid var(--line); border-radius:18px; padding:22px 22px 18px; margin-bottom:16px; }
+.stats-grid-title { font-family:'Fraunces',serif; font-size:17px; font-weight:600; letter-spacing:-.3px; margin-bottom:18px; }
+.stats-month-grid { display:grid; grid-template-columns:90px repeat(12,1fr); gap:5px; align-items:center; }
+.stats-row-label { font-size:11.5px; font-weight:600; color:var(--ink); display:flex; align-items:center; gap:6px; }
+.stats-month-head { font-size:9.5px; font-weight:700; text-align:center; letter-spacing:1px; text-transform:uppercase; color:var(--muted); padding-bottom:4px; }
+.stats-month-head.current-month { color:var(--accent-deep); }
+.stats-cell { height:38px; border-radius:8px; display:flex; align-items:center; justify-content:center; font-size:12px; font-weight:700; color:var(--ink); position:relative; }
+.stats-cell.empty { background:var(--warm); color:var(--line); font-size:10px; }
+.stats-cell.has-data { color:#fff; }
+.stats-cell.future { background:transparent; color:var(--line); font-size:10px; border:1.5px dashed var(--line); }
+.stats-cell-tip { display:none; position:absolute; bottom:calc(100% + 5px); left:50%; transform:translateX(-50%); background:var(--ink); color:#fff; font-size:10px; font-weight:500; padding:4px 8px; border-radius:6px; white-space:nowrap; z-index:10; }
+.stats-cell:hover .stats-cell-tip { display:block; }
+.stats-podcast-wrap { background:var(--surface); border:1px solid var(--line); border-radius:18px; padding:20px 22px; }
+.stats-podcast-title { font-family:'Fraunces',serif; font-size:17px; font-weight:600; letter-spacing:-.3px; margin-bottom:14px; }
+.stats-podcast-list { display:flex; flex-direction:column; gap:10px; }
+.stats-podcast-row { display:flex; align-items:center; gap:14px; padding:12px 14px; background:var(--warm); border-radius:12px; border:1px solid var(--line); }
+.stats-podcast-name { font-size:13px; font-weight:600; flex:1; }
+.stats-podcast-ep { font-family:'Fraunces',serif; font-size:20px; font-weight:600; color:var(--accent-deep); }
+.stats-podcast-ep-label { font-size:10px; color:var(--muted); letter-spacing:1px; text-transform:uppercase; font-weight:600; text-align:right; }
+.stats-empty { text-align:center; padding:40px 20px; color:var(--muted); font-size:13px; }
+.stats-empty strong { display:block; font-family:'Fraunces',serif; font-size:18px; color:var(--ink); margin-bottom:6px; }
 
-.empty-state{text-align:center;padding:60px 20px;color:var(--muted);grid-column:1/-1;}
-.empty-state-icon{font-size:3rem;margin-bottom:12px;}
-.empty-state-text{font-family:'Cormorant Garamond',serif;font-size:1.2rem;font-style:italic;margin-bottom:6px;}
-.empty-state-sub{font-size:0.74rem;}
+/* ── MODAL ── */
+.modal-overlay { display:none; position:fixed; inset:0; background:rgba(0,0,0,.4); backdrop-filter:blur(4px); z-index:300; align-items:center; justify-content:center; padding:20px; }
+.modal-overlay.open { display:flex; animation:fadeIn .2s; }
+@keyframes fadeIn { from{opacity:0} to{opacity:1} }
+.modal { background:var(--surface); border-radius:22px; border:1px solid var(--line); padding:26px 28px; width:100%; max-width:540px; max-height:90vh; overflow-y:auto; box-shadow:0 30px 60px -20px rgba(0,0,0,.3); animation:popBig .2s; }
+@keyframes popBig { from{transform:scale(.95);opacity:0} to{transform:scale(1);opacity:1} }
+.modal-title { font-family:'Fraunces',serif; font-size:22px; font-weight:600; margin-bottom:20px; letter-spacing:-.3px; }
+.f-field { margin-bottom:14px; }
+.f-label { font-size:9.5px; letter-spacing:1.5px; text-transform:uppercase; color:var(--muted); margin-bottom:6px; display:block; font-weight:700; }
+.f-input { width:100%; border:1.5px solid var(--line); border-radius:10px; padding:10px 12px; font-size:13px; font-family:inherit; color:var(--ink); background:var(--surface); outline:none; transition:border .15s; }
+.f-input:focus { border-color:var(--accent-deep); }
+.f-row { display:grid; grid-template-columns:1fr 1fr; gap:12px; }
+.f-row3 { display:grid; grid-template-columns:1fr 1fr 1fr; gap:10px; }
+.f-textarea { resize:vertical; min-height:70px; font-family:inherit; }
+.f-section-label { font-size:9.5px; letter-spacing:1.5px; text-transform:uppercase; color:var(--muted); font-weight:700; padding:10px 0 6px; border-top:1px solid var(--line); margin-top:6px; display:block; }
+.m-actions { display:flex; gap:10px; justify-content:flex-end; margin-top:22px; flex-wrap:wrap; }
+.m-btn { padding:10px 22px; border-radius:22px; font-family:inherit; font-size:13px; font-weight:600; cursor:pointer; border:1.5px solid; transition:all .15s; }
+.m-cancel { background:var(--warm); border-color:var(--line); color:var(--muted); }
+.m-cancel:hover { background:#f0e8d8; color:var(--ink); }
+.m-save { background:var(--ink); border-color:var(--ink); color:#fff; }
+.m-save:hover { transform:translateY(-1px); }
+.m-delete { background:#fce4ec; border-color:#f2c4ce; color:#a0304a; }
+.m-delete:hover { background:#f8c8c8; }
 
-/* Song modal */
-.song-list{display:flex;flex-direction:column;gap:6px;margin-bottom:14px;}
-.song-row{display:flex;align-items:center;gap:8px;padding:8px 10px;background:var(--warm);border-radius:8px;border:1px solid var(--rule);}
-.song-num{font-size:0.65rem;color:var(--muted);font-weight:600;min-width:18px;text-align:right;flex-shrink:0;}
-.song-name{flex:1;font-size:0.8rem;font-family:'Jost',sans-serif;color:var(--ink);border:none;background:transparent;outline:none;}
-.song-name::placeholder{color:#c8aab0;font-style:italic;}
-.song-stars{display:flex;gap:2px;flex-shrink:0;}
-.song-star{font-size:0.85rem;cursor:pointer;color:#e0cec8;transition:color .1s;}
-.song-star.filled{color:var(--rose);}
-.song-del{background:none;border:none;font-size:0.62rem;color:#ccc;cursor:pointer;padding:2px 4px;flex-shrink:0;}
-.song-del:hover{color:#a0304a;}
-.add-song-btn{font-size:0.72rem;color:var(--mauve);background:transparent;border:1.5px solid var(--rule);border-radius:14px;cursor:pointer;padding:5px 14px;font-family:'Jost',sans-serif;transition:all .15s;}
-.add-song-btn:hover{border-color:var(--mauve);background:var(--warm);}
-.song-modal-album{font-family:'Cormorant Garamond',serif;font-size:1rem;font-style:italic;color:var(--muted);margin-bottom:16px;}
+@media(max-width:900px) {
+  .stats-totals { grid-template-columns:repeat(3,1fr); }
+  .stats-month-grid { grid-template-columns:70px repeat(12,1fr); gap:3px; }
+  .stats-cell { height:28px; font-size:10px; }
+}
+@media(max-width:700px) {
+  .topbar { padding:14px 18px; }
+  .hub { padding:18px 14px 60px; }
+  .section-tabs { padding:0 14px; }
+  .section-tab { padding:12px 14px; font-size:11.5px; }
+  .stats-totals { grid-template-columns:repeat(2,1fr); }
+  .search-input { min-width:120px; }
+  .list-stars { display:none; }
+}
 </style>
 </head>
 <body>
 
+<!-- ── MODAL ── -->
 <div class="modal-overlay" id="modal">
   <div class="modal">
     <div class="modal-title" id="modal-title">Add Item</div>
@@ -153,21 +247,12 @@ body{background:#f0e8e4;font-family:'Jost',sans-serif;color:var(--ink);min-heigh
     </div>
     <div class="f-row">
       <div class="f-field"><label class="f-label">Status</label><select class="f-input" id="m-status"></select></div>
-      <div class="f-field"><label class="f-label">Rating (1–5 ★)</label><select class="f-input" id="m-rating"><option value="0">Not rated</option><option value="1">★</option><option value="2">★★</option><option value="3">★★★</option><option value="4">★★★★</option><option value="5">★★★★★</option></select></div>
+      <div class="f-field"><label class="f-label">Rating (1–5)</label>
+        <select class="f-input" id="m-rating"><option value="0">Not rated</option><option value="1">★</option><option value="2">★★</option><option value="3">★★★</option><option value="4">★★★★</option><option value="5">★★★★★</option></select>
+      </div>
     </div>
-
-    <!-- Books: date completed -->
-    <div class="f-field" id="date-field-wrap" style="display:none;">
-      <label class="f-label">Date Completed</label>
-      <input class="f-input" id="m-date" type="date">
-    </div>
-    <!-- Books: page count -->
-    <div class="f-field" id="pages-field-wrap" style="display:none;">
-      <label class="f-label">Page Count</label>
-      <input class="f-input" id="m-pages" type="number" min="0" placeholder="e.g. 320">
-    </div>
-
-    <!-- Podcasts: episode tracking -->
+    <div class="f-field" id="date-field-wrap" style="display:none;"><label class="f-label" id="date-field-label">Date Completed</label><input class="f-input" id="m-date" type="date"></div>
+    <div class="f-field" id="pages-field-wrap" style="display:none;"><label class="f-label">Page Count</label><input class="f-input" id="m-pages" type="number" min="0" placeholder="e.g. 320"></div>
     <div id="podcast-fields-wrap" style="display:none;">
       <span class="f-section-label">Episode Tracking</span>
       <div class="f-row">
@@ -175,17 +260,10 @@ body{background:#f0e8e4;font-family:'Jost',sans-serif;color:var(--ink);min-heigh
         <div class="f-field"><label class="f-label">Total Episodes (optional)</label><input class="f-input" id="m-ep-total" type="number" min="0" placeholder="e.g. 200"></div>
       </div>
     </div>
-
-    <!-- Music: track progress -->
     <div id="music-fields-wrap" style="display:none;">
-      <span class="f-section-label">Album Track Progress</span>
-      <div class="f-row">
-        <div class="f-field"><label class="f-label">Tracks Listened</label><input class="f-input" id="m-tracks-done" type="number" min="0" placeholder="e.g. 7"></div>
-        <div class="f-field"><label class="f-label">Total Tracks on Album</label><input class="f-input" id="m-tracks-total" type="number" min="0" placeholder="e.g. 12"></div>
-      </div>
+      <span class="f-section-label">Album Track Count</span>
+      <div class="f-field"><label class="f-label">Total Tracks on Album</label><input class="f-input" id="m-tracks-total" type="number" min="0" placeholder="e.g. 12"></div>
     </div>
-
-    <!-- Screen: season/episode -->
     <div id="screen-fields-wrap" style="display:none;">
       <span class="f-section-label">Season / Episode Progress</span>
       <div class="f-row3">
@@ -193,167 +271,107 @@ body{background:#f0e8e4;font-family:'Jost',sans-serif;color:var(--ink);min-heigh
         <div class="f-field"><label class="f-label">Current Episode</label><input class="f-input" id="m-episode" type="number" min="1" placeholder="e.g. 4"></div>
         <div class="f-field"><label class="f-label">Total Seasons</label><input class="f-input" id="m-seasons-total" type="number" min="1" placeholder="e.g. 5"></div>
       </div>
-      <div class="f-field" id="screen-date-wrap">
-        <label class="f-label">Date Watched (if done)</label>
-        <input class="f-input" id="m-screen-date" type="date">
-      </div>
     </div>
-
-    <div class="f-field"><label class="f-label">Cover Image URL (optional)</label><input class="f-input" id="m-cover" type="text" placeholder="Paste any image URL..."></div>
-    <div class="f-field"><label class="f-label">Link (optional)</label><input class="f-input" id="m-link" type="text" placeholder="Goodreads, Spotify, Netflix..."></div>
+    <div class="f-field"><label class="f-label">Cover Image URL <span style="font-weight:400;letter-spacing:0">(right-click any image → Copy Image Address)</span></label><input class="f-input" id="m-cover" type="text" placeholder="Paste image URL..."></div>
+    <div class="f-field"><label class="f-label">Link (optional)</label><input class="f-input" id="m-link" type="text" placeholder="Goodreads, Spotify, Substack..."></div>
     <div class="f-field"><label class="f-label">Note (optional)</label><textarea class="f-input f-textarea" id="m-note" placeholder="Your thoughts..."></textarea></div>
     <div class="m-actions">
       <button class="m-btn m-cancel" onclick="closeModal()">Cancel</button>
       <button class="m-btn m-delete" id="m-delete-btn" style="display:none;" onclick="deleteFromModal()">Delete</button>
-      <button class="m-btn m-save" onclick="saveItem()">Save ✦</button>
+      <button class="m-btn m-save" onclick="saveItem()">Save</button>
     </div>
   </div>
 </div>
 
-<!-- SONG MODAL -->
-<div class="modal-overlay" id="song-modal">
-  <div class="modal">
-    <div class="modal-title">Songs</div>
-    <div class="song-modal-album" id="song-modal-album"></div>
-    <div class="song-list" id="song-list"></div>
-    <button class="add-song-btn" onclick="addSong()">＋ Add Song</button>
-    <div class="m-actions" style="margin-top:16px;">
-      <button class="m-btn m-cancel" onclick="closeSongModal()">Done</button>
-    </div>
-  </div>
-</div>
-
+<!-- ── TOPBAR ── -->
 <div class="topbar">
-  <div class="topbar-title">Media <em>Tracker</em></div>
-  <div class="topbar-right">
-    <a href="../" class="back-btn">← Brain 2.0</a>
-    <span class="topbar-date" id="today-date"></span>
+  <div class="topbar-left">
+    <a href="../" class="back-btn">
+      <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"/></svg>
+      Brain 2.0
+    </a>
+    <div class="topbar-title">Media Tracker</div>
   </div>
+  <div class="topbar-date" id="today-date"></div>
 </div>
 
+<!-- ── TABS ── -->
 <div class="section-tabs">
   <button class="section-tab active" id="stab-books"    onclick="setSection('books')">📚 Books</button>
   <button class="section-tab"        id="stab-podcasts" onclick="setSection('podcasts')">🎙️ Podcasts</button>
   <button class="section-tab"        id="stab-articles" onclick="setSection('articles')">📰 Articles</button>
   <button class="section-tab"        id="stab-music"    onclick="setSection('music')">🎵 Albums</button>
   <button class="section-tab"        id="stab-screen"   onclick="setSection('screen')">🎬 Screen</button>
+  <button class="section-tab"        id="stab-stats"    onclick="setSection('stats')">📊 Stats</button>
 </div>
 
 <div class="hub">
-  <div class="stats-bar"    id="stats-bar"></div>
+  <div class="stats-bar"     id="stats-bar"></div>
   <div class="controls-wrap" id="controls-wrap"></div>
-  <div class="media-grid"   id="media-grid"></div>
+  <div class="media-grid"    id="media-grid"></div>
 </div>
 
 <script>
+/* ── AUTH ── */
 var pwd=localStorage.getItem('brain2auth');
-if(pwd!=='Nikkireed234!'){var attempt=prompt('Password:');if(attempt!=='Nikkireed234!'){document.body.innerHTML='';throw new Error('Unauthorized');}localStorage.setItem('brain2auth',attempt);location.reload();}
+if(pwd!=='Nikkireed234!'){var a=prompt('Password:');if(a!=='Nikkireed234!'){document.body.innerHTML='';throw new Error('Unauth');}localStorage.setItem('brain2auth',a);location.reload();}
+
 var SK='mediaTracker3';
-var MONTHS_SHORT=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+var MS=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+var MF=['January','February','March','April','May','June','July','August','September','October','November','December'];
+var DAYS=['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
 
 var SECTIONS={
-  books:{
-    label:'Books',icon:'📚',placeholder:'📖',
-    statuses:[
-      {val:'want',  label:'Want to Read',  cls:'status-want'},
-      {val:'progress',label:'Reading',     cls:'status-progress'},
-      {val:'done',  label:'Read',          cls:'status-done'},
-    ],
-    // Two groups for filter display
-    categoryGroups:[
-      {label:'Fiction',cats:['Fiction','Fantasy','Sci-Fi','Dystopian','Thriller','Romance','Young Adult','Classic']},
-      {label:'Nonfiction',cats:['Nonfiction','History','Psychology','Philosophy','Politics','Science','Biography','Self-Help','Essays','Other']},
-    ],
-    showDate:true, showPodcast:false, showMusic:false, showScreen:false,
-    emptyText:'Your reading list is empty.',
-  },
-  podcasts:{
-    label:'Podcasts',icon:'🎙️',placeholder:'🎙️',
-    statuses:[
-      {val:'queue',    label:'In Queue',  cls:'status-want'},
-      {val:'following',label:'Following', cls:'status-progress'},
-      {val:'archived', label:'Archived',  cls:'status-archived'},
-    ],
-    categoryGroups:[
-      {label:'Genre',cats:['Philosophy','Personal Development','Journalism','History','Politics','True Crime','Culture','Comedy','Education','Science','Other']},
-    ],
-    showDate:false, showPodcast:true, showMusic:false, showScreen:false,
-    emptyText:'No podcasts added yet.',
-  },
-  articles:{
-    label:'Articles & Essays',icon:'📰',placeholder:'📝',
-    statuses:[
-      {val:'want',    label:'Want to Read',cls:'status-want'},
-      {val:'progress',label:'Reading',    cls:'status-progress'},
-      {val:'done',    label:'Read',       cls:'status-done'},
-    ],
-    categoryGroups:[
-      {label:'Type',cats:['Article','Essay','Newsletter','Opinion','Research','Interview','Other']},
-    ],
-    showDate:false, showPodcast:false, showMusic:false, showScreen:false,
-    emptyText:'No articles or essays added yet.',
-  },
-  music:{
-    label:'Albums',icon:'🎵',placeholder:'🎵',
-    statuses:[
-      {val:'want',    label:'Want to Listen',cls:'status-want'},
-      {val:'progress',label:'Listening',    cls:'status-progress'},
-      {val:'done',    label:'Fully Listened',cls:'status-done'},
-    ],
-    categoryGroups:[
-      {label:'Format',cats:['Album','EP','Mixtape','Live Album','Compilation','Other']},
-    ],
-    showDate:false, showPodcast:false, showMusic:true, showScreen:false,
-    emptyText:'No albums added yet. Add an album to start critically listening.',
-  },
-  screen:{
-    label:'Screen',icon:'🎬',placeholder:'🎬',
-    statuses:[
-      {val:'want',    label:'Want to Watch',cls:'status-want'},
-      {val:'progress',label:'Watching',    cls:'status-progress'},
-      {val:'done',    label:'Watched',     cls:'status-done'},
-    ],
-    categoryGroups:[
-      {label:'Type',cats:['Movie','TV Show','Documentary','Mini-Series','Anime','Short Film','Other']},
-    ],
-    showDate:true, showPodcast:false, showMusic:false, showScreen:true,
-    emptyText:'No screen content added yet.',
-  },
+  books:{label:'Books',icon:'📚',placeholder:'📖',listView:false,showStars:true,
+    statuses:[{val:'want',label:'Want to Read',cls:'status-want'},{val:'progress',label:'Reading',cls:'status-progress'},{val:'done',label:'Read',cls:'status-done'}],
+    categoryGroups:[{label:'Fiction',cats:['Fiction','Fantasy','Sci-Fi','Dystopian','Thriller','Romance','Young Adult','Classic']},{label:'Nonfiction',cats:['Nonfiction','History','Psychology','Philosophy','Politics','Science','Biography','Self-Help','Essays','Other']}],
+    showDate:true,showPages:true,showPodcast:false,showMusic:false,showScreen:false,dateLabel:'Date Read',emptyText:'Your reading list is empty.'},
+  podcasts:{label:'Podcasts',icon:'🎙️',placeholder:'🎙️',listView:true,showStars:true,
+    statuses:[{val:'queue',label:'In Queue',cls:'status-want'},{val:'following',label:'Following',cls:'status-progress'},{val:'archived',label:'Archived',cls:'status-archived'}],
+    categoryGroups:[{label:'Genre',cats:['Philosophy','Personal Development','Journalism','History','Politics','True Crime','Culture','Comedy','Education','Science','Other']}],
+    showDate:false,showPages:false,showPodcast:true,showMusic:false,showScreen:false,dateLabel:'',emptyText:'No podcasts added yet.'},
+  articles:{label:'Articles & Essays',icon:'📰',placeholder:'📝',listView:false,showStars:false,
+    statuses:[{val:'want',label:'Want to Read',cls:'status-want'},{val:'progress',label:'Reading',cls:'status-progress'},{val:'done',label:'Read',cls:'status-done'}],
+    categoryGroups:[{label:'Type',cats:['Article','Essay','Newsletter','Opinion','Research','Interview','Other']}],
+    showDate:true,showPages:false,showPodcast:false,showMusic:false,showScreen:false,dateLabel:'Date Read',emptyText:'No articles or essays added yet.'},
+  music:{label:'Albums',icon:'🎵',placeholder:'🎵',listView:false,showStars:true,
+    statuses:[{val:'want',label:'Want to Listen',cls:'status-want'},{val:'progress',label:'Listening',cls:'status-progress'},{val:'done',label:'Fully Listened',cls:'status-done'}],
+    categoryGroups:[{label:'Format',cats:['Album','EP','Mixtape','Live Album','Compilation','Other']}],
+    showDate:true,showPages:false,showPodcast:false,showMusic:true,showScreen:false,dateLabel:'Date Listened',emptyText:'No albums added yet.'},
+  screen:{label:'Screen',icon:'🎬',placeholder:'🎬',listView:false,showStars:true,
+    statuses:[{val:'want',label:'Want to Watch',cls:'status-want'},{val:'progress',label:'Watching',cls:'status-progress'},{val:'done',label:'Watched',cls:'status-done'}],
+    categoryGroups:[{label:'Type',cats:['Movie','TV Show','Documentary','Mini-Series','Anime','Short Film','Other']}],
+    showDate:true,showPages:false,showPodcast:false,showMusic:false,showScreen:true,dateLabel:'Date Watched',emptyText:'No screen content added yet.'},
 };
 
-// All categories flat per section
-function allCats(sec){
-  var out=[];
-  SECTIONS[sec].categoryGroups.forEach(function(g){g.cats.forEach(function(c){out.push(c);});});
-  return out;
-}
+function allCats(sec){var o=[];SECTIONS[sec].categoryGroups.forEach(function(g){g.cats.forEach(function(c){o.push(c);});});return o;}
 
 var DEFAULT_DATA={
   books:[
-    {id:'b1',title:'The Art of Seduction',creator:'Robert Greene',category:'Psychology',status:'want',rating:0,cover:'',link:'',note:'Relationships',date:''},
-    {id:'b2',title:'The Courage to Be Disliked',creator:'Ichiro Kishimi & Fumitake Koga',category:'Philosophy',status:'want',rating:0,cover:'',link:'',note:'',date:''},
-    {id:'b3',title:'Radical Acceptance',creator:'Tara Brach',category:'Self-Help',status:'want',rating:0,cover:'',link:'',note:'',date:''},
-    {id:'b4',title:'The Confidence Code',creator:'Katty Kay & Claire Shipman',category:'Nonfiction',status:'want',rating:0,cover:'',link:'',note:'Women\'s empowerment',date:''},
-    {id:'b5',title:'Breaking the Habit of Being Yourself',creator:'Joe Dispenza',category:'Self-Help',status:'want',rating:0,cover:'',link:'',note:'',date:''},
-    {id:'b6',title:'The Art of Gathering',creator:'Priya Parker',category:'Nonfiction',status:'want',rating:0,cover:'',link:'',note:'How we connect',date:''},
-    {id:'b7',title:'Smart but Scattered',creator:'Peg Dawson & Richard Guare',category:'Psychology',status:'want',rating:0,cover:'',link:'',note:'',date:''},
-    {id:'b8',title:'Chip War',creator:'Chris Miller',category:'Nonfiction',status:'want',rating:0,cover:'',link:'',note:'Technology & geopolitics',date:''},
-    {id:'b9',title:'Becoming Abolitionists',creator:'Derecka Purnell',category:'Politics',status:'want',rating:0,cover:'',link:'',note:'',date:''},
-    {id:'b10',title:'How to Stand Up to a Dictator',creator:'Maria Ressa',category:'Politics',status:'want',rating:0,cover:'',link:'',note:'',date:''},
-    {id:'b11',title:'Medical Apartheid',creator:'Harriet A. Washington',category:'History',status:'want',rating:0,cover:'',link:'',note:'',date:''},
-    {id:'b12',title:'The Song of Achilles',creator:'Madeline Miller',category:'Fiction',status:'want',rating:0,cover:'',link:'',note:'',date:''},
-    {id:'b13',title:'Circe',creator:'Madeline Miller',category:'Fantasy',status:'want',rating:0,cover:'',link:'',note:'Mythology',date:''},
-    {id:'b14',title:'Funny Story',creator:'Emily Henry',category:'Romance',status:'want',rating:0,cover:'',link:'',note:'',date:''},
-    {id:'b15',title:'Beloved',creator:'Toni Morrison',category:'Classic',status:'want',rating:0,cover:'',link:'',note:'',date:''},
-    {id:'b16',title:'The Count of Monte Cristo',creator:'Alexandre Dumas',category:'Classic',status:'want',rating:0,cover:'',link:'',note:'',date:''},
-    {id:'b17',title:'The Age of Innocence',creator:'Edith Wharton',category:'Classic',status:'want',rating:0,cover:'',link:'',note:'',date:''},
-    {id:'b18',title:'The House of Mirth',creator:'Edith Wharton',category:'Classic',status:'want',rating:0,cover:'',link:'',note:'',date:''},
-    {id:'b19',title:'Death in Her Hands',creator:'Ottessa Moshfegh',category:'Thriller',status:'want',rating:0,cover:'',link:'',note:'',date:''},
-    {id:'b20',title:'Carceral Capitalism',creator:'Jackie Wang',category:'Politics',status:'want',rating:0,cover:'',link:'',note:'',date:''},
-    {id:'b21',title:'The Lies My Teacher Told Me',creator:'James Loewen',category:'History',status:'want',rating:0,cover:'',link:'',note:'',date:''},
-    {id:'b22',title:'Hold Me Tight',creator:'Sue Johnson',category:'Self-Help',status:'want',rating:0,cover:'',link:'',note:'Relationships',date:''},
-    {id:'b23',title:'The Last Story of Mina Lee',creator:'Nancy Jooyoun Kim',category:'Fiction',status:'want',rating:0,cover:'',link:'',note:'',date:''},
-    {id:'b24',title:'Soju Club',creator:'Jinsung Park',category:'Fiction',status:'want',rating:0,cover:'',link:'',note:'',date:''},
+    {id:'b1',title:'The Art of Seduction',creator:'Robert Greene',category:'Psychology',status:'want',rating:0,cover:'',link:'',note:'Relationships',date:'',pages:0},
+    {id:'b2',title:'The Courage to Be Disliked',creator:'Ichiro Kishimi & Fumitake Koga',category:'Philosophy',status:'want',rating:0,cover:'',link:'',note:'',date:'',pages:0},
+    {id:'b3',title:'Radical Acceptance',creator:'Tara Brach',category:'Self-Help',status:'want',rating:0,cover:'',link:'',note:'',date:'',pages:0},
+    {id:'b4',title:'The Confidence Code',creator:'Katty Kay & Claire Shipman',category:'Nonfiction',status:'want',rating:0,cover:'',link:'',note:"Women's empowerment",date:'',pages:0},
+    {id:'b5',title:'Breaking the Habit of Being Yourself',creator:'Joe Dispenza',category:'Self-Help',status:'want',rating:0,cover:'',link:'',note:'',date:'',pages:0},
+    {id:'b6',title:'The Art of Gathering',creator:'Priya Parker',category:'Nonfiction',status:'want',rating:0,cover:'',link:'',note:'How we connect',date:'',pages:0},
+    {id:'b7',title:'Smart but Scattered',creator:'Peg Dawson & Richard Guare',category:'Psychology',status:'want',rating:0,cover:'',link:'',note:'',date:'',pages:0},
+    {id:'b8',title:'Chip War',creator:'Chris Miller',category:'Nonfiction',status:'want',rating:0,cover:'',link:'',note:'Technology & geopolitics',date:'',pages:0},
+    {id:'b9',title:'Becoming Abolitionists',creator:'Derecka Purnell',category:'Politics',status:'want',rating:0,cover:'',link:'',note:'',date:'',pages:0},
+    {id:'b10',title:'How to Stand Up to a Dictator',creator:'Maria Ressa',category:'Politics',status:'want',rating:0,cover:'',link:'',note:'',date:'',pages:0},
+    {id:'b11',title:'Medical Apartheid',creator:'Harriet A. Washington',category:'History',status:'want',rating:0,cover:'',link:'',note:'',date:'',pages:0},
+    {id:'b12',title:'The Song of Achilles',creator:'Madeline Miller',category:'Fiction',status:'want',rating:0,cover:'',link:'',note:'',date:'',pages:0},
+    {id:'b13',title:'Circe',creator:'Madeline Miller',category:'Fantasy',status:'want',rating:0,cover:'',link:'',note:'Mythology',date:'',pages:0},
+    {id:'b14',title:'Funny Story',creator:'Emily Henry',category:'Romance',status:'want',rating:0,cover:'',link:'',note:'',date:'',pages:0},
+    {id:'b15',title:'Beloved',creator:'Toni Morrison',category:'Classic',status:'want',rating:0,cover:'',link:'',note:'',date:'',pages:0},
+    {id:'b16',title:'The Count of Monte Cristo',creator:'Alexandre Dumas',category:'Classic',status:'want',rating:0,cover:'',link:'',note:'',date:'',pages:0},
+    {id:'b17',title:'The Age of Innocence',creator:'Edith Wharton',category:'Classic',status:'want',rating:0,cover:'',link:'',note:'',date:'',pages:0},
+    {id:'b18',title:'The House of Mirth',creator:'Edith Wharton',category:'Classic',status:'want',rating:0,cover:'',link:'',note:'',date:'',pages:0},
+    {id:'b19',title:'Death in Her Hands',creator:'Ottessa Moshfegh',category:'Thriller',status:'want',rating:0,cover:'',link:'',note:'',date:'',pages:0},
+    {id:'b20',title:'Carceral Capitalism',creator:'Jackie Wang',category:'Politics',status:'want',rating:0,cover:'',link:'',note:'',date:'',pages:0},
+    {id:'b21',title:'The Lies My Teacher Told Me',creator:'James Loewen',category:'History',status:'want',rating:0,cover:'',link:'',note:'',date:'',pages:0},
+    {id:'b22',title:'Hold Me Tight',creator:'Sue Johnson',category:'Self-Help',status:'want',rating:0,cover:'',link:'',note:'Relationships',date:'',pages:0},
+    {id:'b23',title:'The Last Story of Mina Lee',creator:'Nancy Jooyoun Kim',category:'Fiction',status:'want',rating:0,cover:'',link:'',note:'',date:'',pages:0},
+    {id:'b24',title:'Soju Club',creator:'Jinsung Park',category:'Fiction',status:'want',rating:0,cover:'',link:'',note:'',date:'',pages:0},
   ],
   podcasts:[
     {id:'p1',title:'The Daily Stoic',creator:'Ryan Holiday',category:'Philosophy',status:'queue',rating:0,cover:'',link:'',note:'',epCurrent:0,epTotal:0},
@@ -361,26 +379,26 @@ var DEFAULT_DATA={
     {id:'p3',title:'Mel Robbins Podcast',creator:'Mel Robbins',category:'Personal Development',status:'queue',rating:0,cover:'',link:'',note:'',epCurrent:0,epTotal:0},
   ],
   articles:[
-    {id:'a1',title:'Being single isn\'t sad, it\'s fucking...',creator:'Pepper Maria W.',category:'Essay',status:'want',rating:0,cover:'',link:'https://peppermariaw.substack.com/p/being-single-isnt-sad-its-fucking',note:''},
-    {id:'a2',title:'Why I don\'t use dating apps',creator:'Pepper Maria W.',category:'Article',status:'want',rating:0,cover:'',link:'https://peppermariaw.substack.com/p/why-i-dont-use-datingapps-and-thi',note:''},
-    {id:'a3',title:'i wish you were as curious as me',creator:'Girl on the Internet',category:'Essay',status:'want',rating:0,cover:'',link:'',note:''},
-    {id:'a4',title:'The hands that never rest',creator:'Fracture Notes',category:'Essay',status:'want',rating:0,cover:'',link:'',note:''},
-    {id:'a5',title:'i hope i linger',creator:'To Be Honest',category:'Essay',status:'want',rating:0,cover:'',link:'',note:''},
-    {id:'a6',title:'The epidemic of constant communication',creator:'Good Riddance',category:'Essay',status:'want',rating:0,cover:'',link:'',note:''},
-    {id:'a7',title:'to the people who overanalyze everything',creator:'Chemical Hearts',category:'Essay',status:'want',rating:0,cover:'',link:'',note:''},
-    {id:'a8',title:'Why I Refuse to Live Only for Myself',creator:'Ghufrane Daymi',category:'Essay',status:'want',rating:0,cover:'',link:'',note:''},
-    {id:'a9',title:'An existential guide to making friends',creator:'The Shadowed Archive',category:'Article',status:'want',rating:0,cover:'',link:'',note:''},
-    {id:'a10',title:'Gatekept',creator:'',category:'Newsletter',status:'want',rating:0,cover:'',link:'',note:'Fashion analysis and news'},
+    {id:'a1',title:"Being single isn't sad, it's fucking...",creator:'Pepper Maria W.',category:'Essay',status:'want',rating:0,cover:'',link:'https://peppermariaw.substack.com/p/being-single-isnt-sad-its-fucking',note:'',date:''},
+    {id:'a2',title:"Why I don't use dating apps",creator:'Pepper Maria W.',category:'Article',status:'want',rating:0,cover:'',link:'https://peppermariaw.substack.com/p/why-i-dont-use-datingapps-and-thi',note:'',date:''},
+    {id:'a3',title:'i wish you were as curious as me',creator:'Girl on the Internet',category:'Essay',status:'want',rating:0,cover:'',link:'',note:'',date:''},
+    {id:'a4',title:'The hands that never rest',creator:'Fracture Notes',category:'Essay',status:'want',rating:0,cover:'',link:'',note:'',date:''},
+    {id:'a5',title:'i hope i linger',creator:'To Be Honest',category:'Essay',status:'want',rating:0,cover:'',link:'',note:'',date:''},
+    {id:'a6',title:'The epidemic of constant communication',creator:'Good Riddance',category:'Essay',status:'want',rating:0,cover:'',link:'',note:'',date:''},
+    {id:'a7',title:'to the people who overanalyze everything',creator:'Chemical Hearts',category:'Essay',status:'want',rating:0,cover:'',link:'',note:'',date:''},
+    {id:'a8',title:'Why I Refuse to Live Only for Myself',creator:'Ghufrane Daymi',category:'Essay',status:'want',rating:0,cover:'',link:'',note:'',date:''},
+    {id:'a9',title:'An existential guide to making friends',creator:'The Shadowed Archive',category:'Article',status:'want',rating:0,cover:'',link:'',note:'',date:''},
+    {id:'a10',title:'Gatekept',creator:'',category:'Newsletter',status:'want',rating:0,cover:'',link:'',note:'Fashion analysis and news',date:''},
   ],
   music:[
-    {id:'m1',title:'In-between',creator:'Lily Moore',category:'EP',status:'want',rating:0,cover:'',link:'',note:'New discovery',tracksDone:0,tracksTotal:0},
+    {id:'m1',title:'In-between',creator:'Lily Moore',category:'EP',status:'want',rating:0,cover:'',link:'',note:'New discovery',tracksTotal:0,date:'',songs:[]},
   ],
   screen:[
     {id:'s1',title:'Heart of Dixie',creator:'',category:'TV Show',status:'want',rating:0,cover:'',link:'',note:'Amazon Prime',season:1,episode:1,seasonsTotal:4,date:''},
     {id:'s2',title:'The Buccaneers',creator:'',category:'TV Show',status:'want',rating:0,cover:'',link:'',note:'Apple TV',season:1,episode:1,seasonsTotal:0,date:''},
     {id:'s3',title:'The Haunting of Hill House',creator:'Mike Flanagan',category:'TV Show',status:'want',rating:0,cover:'',link:'',note:'Netflix',season:1,episode:1,seasonsTotal:2,date:''},
     {id:'s4',title:'Twin Peaks',creator:'David Lynch',category:'TV Show',status:'want',rating:0,cover:'',link:'',note:'',season:1,episode:1,seasonsTotal:3,date:''},
-    {id:'s5',title:'Dawson\'s Creek',creator:'',category:'TV Show',status:'want',rating:0,cover:'',link:'',note:'Netflix',season:1,episode:1,seasonsTotal:6,date:''},
+    {id:'s5',title:"Dawson's Creek",creator:'',category:'TV Show',status:'want',rating:0,cover:'',link:'',note:'Netflix',season:1,episode:1,seasonsTotal:6,date:''},
     {id:'s6',title:'Club de Cuervos',creator:'',category:'TV Show',status:'want',rating:0,cover:'',link:'https://netflix.com/title/80030346',note:'Netflix — Mexico',season:1,episode:1,seasonsTotal:4,date:''},
     {id:'s7',title:'¿Quién mató a Sara?',creator:'',category:'TV Show',status:'want',rating:0,cover:'',link:'https://www.netflix.com/title/81166747',note:'Netflix — Mexico',season:1,episode:1,seasonsTotal:3,date:''},
     {id:'s8',title:'Control Z',creator:'',category:'TV Show',status:'want',rating:0,cover:'',link:'',note:'Netflix — Mexico',season:1,episode:1,seasonsTotal:3,date:''},
@@ -393,7 +411,8 @@ var DEFAULT_DATA={
   ]
 };
 
-var currentSection='books',currentStatus='all',currentCat='all',searchQuery='',editingId=null;
+/* ── STATE ── */
+var currentSection='books',currentStatus='all',currentCat='all',searchQuery='',editingId=null,selectedYear=new Date().getFullYear();
 var data={books:[],podcasts:[],articles:[],music:[],screen:[]};
 
 function save(){localStorage.setItem(SK,JSON.stringify(data));}
@@ -402,17 +421,24 @@ function load(){
   if(raw){try{data=JSON.parse(raw);}catch(e){}}
   else{data=JSON.parse(JSON.stringify(DEFAULT_DATA));save();}
   Object.keys(SECTIONS).forEach(function(s){if(!data[s])data[s]=[];});
+  // Migrate: ensure music items have songs array
+  (data.music||[]).forEach(function(m){if(!m.songs)m.songs=[];});
 }
-
 function todayStr(){var n=new Date();return n.getFullYear()+'-'+String(n.getMonth()+1).padStart(2,'0')+'-'+String(n.getDate()).padStart(2,'0');}
+function esc(s){return String(s==null?'':s).replace(/[&<>"']/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];});}
 
+/* ── SECTION ── */
 function setSection(sec){
   currentSection=sec;currentStatus='all';currentCat='all';searchQuery='';
   document.querySelectorAll('.section-tab').forEach(function(t){t.classList.remove('active');});
   document.getElementById('stab-'+sec).classList.add('active');
+  var isStats=sec==='stats';
+  document.getElementById('stats-bar').style.display=isStats?'none':'';
+  document.getElementById('controls-wrap').style.display=isStats?'none':'';
   render();
 }
 
+/* ── FILTER ── */
 function getFiltered(){
   var items=data[currentSection]||[];
   if(currentStatus!=='all') items=items.filter(function(i){return i.status===currentStatus;});
@@ -420,347 +446,321 @@ function getFiltered(){
   if(searchQuery){var q=searchQuery.toLowerCase();items=items.filter(function(i){return(i.title||'').toLowerCase().includes(q)||(i.creator||'').toLowerCase().includes(q)||(i.note||'').toLowerCase().includes(q);});}
   return items;
 }
+function setFilter(t,v){if(t==='status')currentStatus=v;else currentCat=v;render();}
 
-function getYearCounts(sec){
-  var counts={};
-  (data[sec]||[]).forEach(function(i){
-    var d=i.date||(sec==='screen'?i.date:'');
-    if(i.status==='done'&&d){var yr=d.split('-')[0];counts[yr]=(counts[yr]||0)+1;}
-  });
-  return counts;
-}
-
-function renderStats(){
-  var all=data[currentSection]||[];
-  var sec=SECTIONS[currentSection];
+/* ── STATS BAR ── */
+function renderStatsBar(){
+  if(currentSection==='stats')return;
+  var all=data[currentSection]||[];var sec=SECTIONS[currentSection];
   var html='<div class="stat"><div class="stat-num">'+all.length+'</div><div class="stat-label">Total</div></div>';
-  sec.statuses.forEach(function(s){
-    var cnt=all.filter(function(i){return i.status===s.val;}).length;
-    html+='<div class="stat-divider"></div><div class="stat"><div class="stat-num">'+cnt+'</div><div class="stat-label">'+s.label+'</div></div>';
-  });
-  // Year breakdown for books & screen
-  if(currentSection==='books'){
-    var totalPages=all.filter(function(i){return i.status==='done'&&i.pages>0;}).reduce(function(sum,i){return sum+(i.pages||0);},0);
-    if(totalPages>0) html+='<div class="stat-divider"></div><div class="stat"><div class="stat-num">'+totalPages.toLocaleString()+'</div><div class="stat-label">Pages Read</div></div>';
-  }
-  if(sec.showDate){
-    var counts=getYearCounts(currentSection);
-    var yrs=Object.keys(counts).sort().reverse();
-    if(yrs.length){
-      html+='<div class="stat-divider"></div><div class="year-badges">';
-      yrs.forEach(function(yr){html+='<div class="year-badge">'+yr+' <span>'+counts[yr]+'</span></div>';});
-      html+='</div>';
-    }
-  }
+  sec.statuses.forEach(function(s){var cnt=all.filter(function(i){return i.status===s.val;}).length;html+='<div class="stat-divider"></div><div class="stat"><div class="stat-num">'+cnt+'</div><div class="stat-label">'+s.label+'</div></div>';});
+  if(currentSection==='books'){var tp=all.filter(function(i){return i.status==='done'&&i.pages>0;}).reduce(function(s,i){return s+(i.pages||0);},0);if(tp>0)html+='<div class="stat-divider"></div><div class="stat"><div class="stat-num">'+tp.toLocaleString()+'</div><div class="stat-label">Pages Read</div></div>';}
+  if(sec.showDate){var counts={};all.forEach(function(i){if(i.status==='done'&&i.date){var yr=i.date.split('-')[0];counts[yr]=(counts[yr]||0)+1;}});var yrs=Object.keys(counts).sort().reverse();if(yrs.length){html+='<div class="year-badges">';yrs.forEach(function(yr){html+='<div class="year-badge">'+yr+' <span>'+counts[yr]+'</span></div>';});html+='</div>';}}
   document.getElementById('stats-bar').innerHTML=html;
 }
 
+/* ── CONTROLS ── */
 function renderControls(){
-  var sec=SECTIONS[currentSection];
-  var wrap=document.getElementById('controls-wrap');wrap.innerHTML='';
-
-  // Status filter row
+  if(currentSection==='stats')return;
+  var sec=SECTIONS[currentSection];var wrap=document.getElementById('controls-wrap');wrap.innerHTML='';
+  // Status row
   var sRow=document.createElement('div');sRow.className='filter-group';
-  var sLabel=document.createElement('span');sLabel.className='filter-group-label';sLabel.textContent='Status';
-  sRow.appendChild(sLabel);
-  var allBtn=document.createElement('button');allBtn.className='filter-btn'+(currentStatus==='all'?' active':'');allBtn.textContent='All';
-  allBtn.onclick=function(){setFilter('status','all');};sRow.appendChild(allBtn);
-  sec.statuses.forEach(function(s){
-    var b=document.createElement('button');b.className='filter-btn'+(currentStatus===s.val?' active':'');b.textContent=s.label;
-    b.onclick=(function(v){return function(){setFilter('status',v);};})(s.val);sRow.appendChild(b);
-  });
+  var sLabel=document.createElement('span');sLabel.className='filter-group-label';sLabel.textContent='Status';sRow.appendChild(sLabel);
+  var ab=document.createElement('button');ab.className='filter-btn'+(currentStatus==='all'?' active':'');ab.textContent='All';ab.onclick=function(){setFilter('status','all');};sRow.appendChild(ab);
+  sec.statuses.forEach(function(s){var b=document.createElement('button');b.className='filter-btn'+(currentStatus===s.val?' active':'');b.textContent=s.label;b.onclick=(function(v){return function(){setFilter('status',v);};})(s.val);sRow.appendChild(b);});
   wrap.appendChild(sRow);
-
-  // Category filter row(s)
+  // Category dropdown
+  var cRow=document.createElement('div');cRow.className='filter-group';
+  var cLabel=document.createElement('span');cLabel.className='filter-group-label';cLabel.textContent='Category';cRow.appendChild(cLabel);
+  var sel=document.createElement('select');sel.className='filter-select';
+  var ao=document.createElement('option');ao.value='all';ao.textContent='All categories';sel.appendChild(ao);
   sec.categoryGroups.forEach(function(grp){
-    var gRow=document.createElement('div');gRow.className='filter-group';
-    var gLabel=document.createElement('span');gLabel.className='filter-group-label';gLabel.textContent=grp.label;
-    gRow.appendChild(gLabel);
-    var aBtn=document.createElement('button');aBtn.className='filter-btn'+(currentCat==='all'?' active':'');aBtn.textContent='All';
-    aBtn.onclick=function(){setFilter('cat','all');};gRow.appendChild(aBtn);
-    grp.cats.forEach(function(c){
-      var b=document.createElement('button');b.className='filter-btn'+(currentCat===c?' active':'');b.textContent=c;
-      b.onclick=(function(cv){return function(){setFilter('cat',cv);};})(c);gRow.appendChild(b);
-    });
-    wrap.appendChild(gRow);
+    if(sec.categoryGroups.length>1){var og=document.createElement('optgroup');og.label=grp.label;grp.cats.forEach(function(c){var o=document.createElement('option');o.value=c;o.textContent=c;if(c===currentCat)o.selected=true;og.appendChild(o);});sel.appendChild(og);}
+    else{grp.cats.forEach(function(c){var o=document.createElement('option');o.value=c;o.textContent=c;if(c===currentCat)o.selected=true;sel.appendChild(o);});}
   });
-
-  // Search + add row
-  var row2=document.createElement('div');row2.className='controls-row2';
-  var searchEl=document.createElement('input');searchEl.className='search-input';searchEl.type='text';searchEl.placeholder='Search...';searchEl.value=searchQuery;
-  searchEl.oninput=function(){searchQuery=this.value;render();};row2.appendChild(searchEl);
-  var addBtn=document.createElement('button');addBtn.className='add-btn';addBtn.textContent='＋ Add';addBtn.onclick=openAddModal;row2.appendChild(addBtn);
-  wrap.appendChild(row2);
+  sel.onchange=function(){setFilter('cat',this.value);};cRow.appendChild(sel);wrap.appendChild(cRow);
+  // Search + add
+  var r2=document.createElement('div');r2.className='controls-row2';
+  var si=document.createElement('input');si.className='search-input';si.type='text';si.placeholder='Search title, author, notes...';si.value=searchQuery;si.oninput=function(){searchQuery=this.value;renderGrid();};r2.appendChild(si);
+  var addB=document.createElement('button');addB.className='add-btn';addB.textContent='+ Add';addB.onclick=openAddModal;r2.appendChild(addB);
+  wrap.appendChild(r2);
 }
 
-function setFilter(type,val){if(type==='status')currentStatus=val;else currentCat=val;render();}
+/* ── DOTS MENU ── */
+function makeDots(actions){
+  var wrap=document.createElement('div');wrap.className='dots-wrap';
+  var btn=document.createElement('button');btn.className='dots-btn';btn.textContent='···';
+  var menu=document.createElement('div');menu.className='dots-menu';
+  btn.onclick=function(e){
+    e.stopPropagation();
+    document.querySelectorAll('.dots-menu.open').forEach(function(m){if(m!==menu)m.classList.remove('open');});
+    menu.classList.toggle('open');
+  };
+  actions.forEach(function(a){
+    if(a.href){var el=document.createElement('a');el.className='dots-item';el.href=a.href;el.target='_blank';el.textContent=a.label;menu.appendChild(el);}
+    else{var el=document.createElement('button');el.className='dots-item'+(a.danger?' danger':'');el.textContent=a.label;el.onclick=function(e){e.stopPropagation();menu.classList.remove('open');a.fn();};menu.appendChild(el);}
+  });
+  wrap.appendChild(btn);wrap.appendChild(menu);return wrap;
+}
 
-function renderGrid(){
-  var grid=document.getElementById('media-grid');grid.innerHTML='';
-  var items=getFiltered();var sec=SECTIONS[currentSection];
-  if(!items.length){grid.innerHTML='<div class="empty-state"><div class="empty-state-icon">'+sec.icon+'</div><div class="empty-state-text">'+sec.emptyText+'</div><div class="empty-state-sub">Click "+ Add" to get started.</div></div>';return;}
-
-  var statusMap={};sec.statuses.forEach(function(s){statusMap[s.val]=s;});
-
-  items.forEach(function(item){
-    var card=document.createElement('div');card.className='media-card'+(item.status==='done'?' done':'');
-
-    // Cover
-    var coverDiv=document.createElement('div');coverDiv.className='card-cover';
-    if(item.cover){var img=document.createElement('img');img.src=item.cover;img.alt=item.title;img.onerror=function(){coverDiv.innerHTML='<div class="card-cover-placeholder">'+sec.placeholder+'</div>';};coverDiv.appendChild(img);}
-    else{coverDiv.innerHTML='<div class="card-cover-placeholder">'+sec.placeholder+'</div>';}
-    card.appendChild(coverDiv);
-
-    // Body
-    var body=document.createElement('div');body.className='card-body';
-    body.innerHTML='<div class="card-category">'+item.category+'</div><div class="card-title">'+item.title+'</div>'+(item.creator?'<div class="card-creator">'+item.creator+'</div>':'');
-
-    // Stars
+/* ── GRID CARD ── */
+function makeGridCard(item,statusMap,sec){
+  var card=document.createElement('div');card.className='media-card'+(item.status==='done'?' done':'');
+  // Cover
+  var coverDiv=document.createElement('div');coverDiv.className='card-cover';
+  if(item.cover){var img=document.createElement('img');img.src=item.cover;img.alt=item.title;img.onerror=function(){coverDiv.innerHTML='<div class="card-cover-placeholder">'+sec.placeholder+'</div>';};coverDiv.appendChild(img);}
+  else{coverDiv.innerHTML='<div class="card-cover-placeholder">'+sec.placeholder+'</div>';}
+  card.appendChild(coverDiv);
+  // Body
+  var body=document.createElement('div');body.className='card-body';
+  body.innerHTML='<div class="card-category">'+esc(item.category)+'</div>';
+  // Title — clickable link for articles
+  if(currentSection==='articles'&&item.link){
+    var titleA=document.createElement('a');titleA.className='card-title-link';titleA.href=item.link;titleA.target='_blank';titleA.textContent=item.title;body.appendChild(titleA);
+  } else {
+    var titleDiv=document.createElement('div');titleDiv.className='card-title';titleDiv.textContent=item.title;body.appendChild(titleDiv);
+  }
+  if(item.creator){var cr=document.createElement('div');cr.className='card-creator';cr.textContent=item.creator;body.appendChild(cr);}
+  // Stars (not for articles)
+  if(sec.showStars){
     var starsDiv=document.createElement('div');starsDiv.className='card-stars';
     for(var s=1;s<=5;s++){var star=document.createElement('span');star.className='card-star'+(s<=item.rating?' filled':'');star.textContent='★';star.onclick=(function(id,sv){return function(e){e.stopPropagation();rateItem(id,sv);};})(item.id,s);starsDiv.appendChild(star);}
     body.appendChild(starsDiv);
+  }
+  // Date (books/screen/music/articles when done)
+  if(sec.showDate&&item.status==='done'&&item.date){var dd=document.createElement('div');dd.className='card-date';var d=new Date(item.date+'T00:00:00');dd.textContent='✓ '+MS[d.getMonth()]+' '+d.getDate()+', '+d.getFullYear();body.appendChild(dd);}
+  // Music progress bar
+  if(currentSection==='music'&&(item.tracksTotal>0||item.songs&&item.songs.length>0)){
+    var total=item.tracksTotal||(item.songs?item.songs.length:0);
+    if(total>0){
+      var pct=Math.min(100,Math.round((item.songs?item.songs.length:0)/total*100));
+      var pw=document.createElement('div');pw.className='card-progress';
+      pw.innerHTML='<div class="card-progress-bar"><div class="card-progress-fill" style="width:'+pct+'%"></div></div><div class="card-progress-label">'+(item.songs?item.songs.length:0)+' / '+total+' tracks tracked</div>';
+      body.appendChild(pw);
+    }
+  }
+  // Screen progress
+  if(currentSection==='screen'){
+    if((item.season||item.episode)&&item.status!=='done'){var ep=document.createElement('div');ep.className='card-episode';ep.textContent='S'+(item.season||1)+' · E'+(item.episode||1)+(item.seasonsTotal?' · '+item.seasonsTotal+' seasons':'');body.appendChild(ep);}
+    if(item.status==='done'&&item.date){var dd2=document.createElement('div');dd2.className='card-date';var d2=new Date(item.date+'T00:00:00');dd2.textContent='✓ '+MS[d2.getMonth()]+' '+d2.getDate()+', '+d2.getFullYear();body.appendChild(dd2);}
+  }
+  if(item.note){var note=document.createElement('div');note.className='card-note';note.textContent=item.note;body.appendChild(note);}
+  card.appendChild(body);
 
-    var si=statusMap[item.status]||{label:item.status,cls:'status-want'};
-    var statusSpan=document.createElement('span');statusSpan.className='card-status '+si.cls;statusSpan.textContent=si.label;body.appendChild(statusSpan);
+  // Inline songs for music
+  if(currentSection==='music'){card.appendChild(makeAlbumSongs(item));}
 
-    // Section-specific extras
-    if(currentSection==='books'&&item.status==='done'&&item.date){
-      var dateDiv=document.createElement('div');dateDiv.className='card-date';
-      var d=new Date(item.date+'T00:00:00');dateDiv.textContent='✓ '+MONTHS_SHORT[d.getMonth()]+' '+d.getDate()+', '+d.getFullYear();body.appendChild(dateDiv);
-    }
-    if(currentSection==='podcasts'){
-      if(item.epCurrent){var epDiv=document.createElement('div');epDiv.className='card-ep-count';epDiv.textContent='Episode '+item.epCurrent+(item.epTotal?' / '+item.epTotal:'');body.appendChild(epDiv);}
-    }
-    if(currentSection==='music'&&item.tracksTotal>0){
-      var pct=Math.min(100,Math.round((item.tracksDone||0)/item.tracksTotal*100));
-      var progWrap=document.createElement('div');progWrap.className='card-progress';
-      progWrap.innerHTML='<div class="card-progress-bar"><div class="card-progress-fill" style="width:'+pct+'%"></div></div><div class="card-progress-label">'+(item.tracksDone||0)+' / '+item.tracksTotal+' tracks ('+pct+'%)</div>';
-      var controls=document.createElement('div');controls.className='card-progress-controls';
-      var minusBtn=document.createElement('button');minusBtn.className='prog-btn';minusBtn.textContent='−';
-      minusBtn.onclick=(function(id){return function(e){e.stopPropagation();adjustTracks(id,-1);};})(item.id);
-      var count=document.createElement('span');count.className='prog-count';count.textContent=(item.tracksDone||0);
-      var plusBtn=document.createElement('button');plusBtn.className='prog-btn';plusBtn.textContent='+';
-      plusBtn.onclick=(function(id){return function(e){e.stopPropagation();adjustTracks(id,1);};})(item.id);
-      controls.appendChild(minusBtn);controls.appendChild(count);controls.appendChild(plusBtn);
-      progWrap.appendChild(controls);body.appendChild(progWrap);
-    }
-    if(currentSection==='screen'){
-      var epInfo='';
-      if(item.season||item.episode){
-        epInfo='S'+((item.season||1))+' E'+((item.episode||1));
-        if(item.seasonsTotal) epInfo+=' · '+item.seasonsTotal+' season'+(item.seasonsTotal!==1?'s':'');
-      }
-      if(epInfo&&item.status!=='done'){var epDiv=document.createElement('div');epDiv.className='card-episode';epDiv.textContent=epInfo;body.appendChild(epDiv);}
-      if(item.status==='done'&&item.date){var dateDiv=document.createElement('div');dateDiv.className='card-date';var d=new Date(item.date+'T00:00:00');dateDiv.textContent='✓ '+MONTHS_SHORT[d.getMonth()]+' '+d.getDate()+', '+d.getFullYear();body.appendChild(dateDiv);}
-    }
-
-    if(item.note){var note=document.createElement('div');note.className='card-note';note.textContent=item.note;body.appendChild(note);}
-    card.appendChild(body);
-
-    // Actions
-    var actions=document.createElement('div');actions.className='card-actions';
-    var editBtn=document.createElement('button');editBtn.className='card-action-btn';editBtn.textContent='Edit';editBtn.onclick=(function(id){return function(){openEditModal(id);};})(item.id);actions.appendChild(editBtn);
-    if(item.link){var lk=document.createElement('a');lk.className='card-action-btn';lk.textContent='Open ↗';lk.href=item.link;lk.target='_blank';lk.style.textDecoration='none';actions.appendChild(lk);}
-    // cycle status
-    var si2=statusMap[item.status];var statuses=sec.statuses;
-    var curIdx=statuses.findIndex(function(s){return s.val===item.status;});
-    var nextIdx=(curIdx+1)%statuses.length;var nextS=statuses[nextIdx];
-    var cycleBtn=document.createElement('button');cycleBtn.className='card-action-btn';cycleBtn.textContent='→ '+nextS.label.split(' ').pop();
-    cycleBtn.onclick=(function(id,ns){return function(){cycleStatus(id,ns);};})(item.id,nextS.val);actions.appendChild(cycleBtn);
-    var delBtn=document.createElement('button');delBtn.className='card-del-btn';delBtn.textContent='✕';delBtn.onclick=(function(id){return function(){if(confirm('Remove?'))deleteItem(id);};})(item.id);actions.appendChild(delBtn);
-    // Songs button for music
-    if(currentSection==='music'){
-      var songsBtn=document.createElement('button');songsBtn.className='card-action-btn';
-      var sc=(item.songs&&item.songs.length)?item.songs.length+' song'+(item.songs.length!==1?'s':''):'Songs';
-      songsBtn.textContent='🎵 '+sc;
-      songsBtn.onclick=(function(id){return function(e){e.stopPropagation();openSongModal(id);};})(item.id);
-      actions.insertBefore(songsBtn,delBtn);
-    }
-    card.appendChild(actions);grid.appendChild(card);
-  });
+  // Actions
+  var actions=document.createElement('div');actions.className='card-actions';
+  var statuses=sec.statuses;var ci=statuses.findIndex(function(s){return s.val===item.status;});var ns=statuses[(ci+1)%statuses.length];
+  var cycleB=document.createElement('button');cycleB.className='cycle-btn';cycleB.textContent='→ '+ns.label;
+  cycleB.onclick=(function(id,nv){return function(){cycleStatus(id,nv);};})(item.id,ns.val);actions.appendChild(cycleB);
+  // Open link — visible for articles (primary), in dots for others
+  if(currentSection==='articles'&&item.link){
+    var ol=document.createElement('a');ol.className='open-link-btn';ol.href=item.link;ol.target='_blank';ol.innerHTML='Open <svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>';
+    actions.appendChild(ol);
+  }
+  var dotsActions=[{label:'Edit',fn:(function(id){return function(){openEditModal(id);};})(item.id)}];
+  if(item.link&&currentSection!=='articles') dotsActions.push({label:'Open ↗',href:item.link});
+  dotsActions.push({label:'Delete',danger:true,fn:(function(id){return function(){if(confirm('Remove?'))deleteItem(id);};})(item.id)});
+  actions.appendChild(makeDots(dotsActions));
+  card.appendChild(actions);
+  return card;
 }
 
-function rateItem(id,rating){var item=findItem(id);if(!item)return;item.rating=item.rating===rating?0:rating;save();renderGrid();}
-function adjustTracks(id,delta){var item=findItem(id);if(!item)return;item.tracksDone=Math.max(0,Math.min(item.tracksTotal||99,(item.tracksDone||0)+delta));if(item.tracksDone===item.tracksTotal&&item.tracksTotal>0)item.status='done';save();render();}
-function cycleStatus(id,ns){
-  var item=findItem(id);if(!item)return;
-  item.status=ns;
-  // auto-set date when marking done
-  if(ns==='done'){
-    if(currentSection==='books'&&!item.date) item.date=todayStr();
-    if(currentSection==='screen'&&!item.date) item.date=todayStr();
+/* ── INLINE ALBUM SONGS ── */
+function makeAlbumSongs(item){
+  var section=document.createElement('div');section.className='album-songs';
+  section.onclick=function(e){e.stopPropagation();};
+  var header=document.createElement('div');header.className='album-songs-header';header.textContent='Track List';section.appendChild(header);
+  if(item.songs&&item.songs.length>0){
+    item.songs.forEach(function(song,si){
+      var row=document.createElement('div');row.className='album-song-row';
+      var num=document.createElement('span');num.className='album-song-num';num.textContent=si+1+'.';
+      var nameInput=document.createElement('input');nameInput.className='album-song-name';nameInput.type='text';nameInput.value=song.name||'';nameInput.placeholder='Song title...';
+      nameInput.oninput=(function(itemId,idx){return function(){var it=(data.music||[]).find(function(i){return i.id===itemId;});if(it&&it.songs[idx]!==undefined)it.songs[idx].name=this.value;};})(item.id,si);
+      nameInput.onblur=function(){save();};
+      var stars=document.createElement('div');stars.className='album-song-stars';
+      for(var s=1;s<=5;s++){
+        var star=document.createElement('span');star.className='album-song-star'+(s<=(song.rating||0)?' filled':'');star.textContent='★';
+        star.onclick=(function(itemId,idx,sv){return function(){var it=(data.music||[]).find(function(i){return i.id===itemId;});if(!it||!it.songs[idx])return;it.songs[idx].rating=it.songs[idx].rating===sv?0:sv;save();renderGrid();};})(item.id,si,s);
+        stars.appendChild(star);
+      }
+      var del=document.createElement('button');del.className='album-song-del';del.textContent='✕';
+      del.onclick=(function(itemId,idx){return function(){var it=(data.music||[]).find(function(i){return i.id===itemId;});if(!it)return;it.songs.splice(idx,1);save();renderGrid();};})(item.id,si);
+      row.appendChild(num);row.appendChild(nameInput);row.appendChild(stars);row.appendChild(del);section.appendChild(row);
+    });
   }
+  var addB=document.createElement('button');addB.className='album-add-song';addB.textContent='+ Add Song';
+  addB.onclick=function(){var it=(data.music||[]).find(function(i){return i.id===item.id;});if(!it)return;if(!it.songs)it.songs=[];it.songs.push({name:'',rating:0});save();renderGrid();};
+  section.appendChild(addB);
+  return section;
+}
+
+/* ── LIST CARD (podcasts) ── */
+function makeListCard(item,statusMap,sec){
+  var card=document.createElement('div');card.className='list-card'+(item.status==='done'?' done':'');
+  // Icon / cover
+  var iconDiv=document.createElement('div');iconDiv.className='list-icon';
+  if(item.cover){var img=document.createElement('img');img.src=item.cover;img.alt=item.title;img.onerror=function(){iconDiv.textContent=sec.icon;};iconDiv.appendChild(img);}
+  else{iconDiv.textContent=sec.icon;}
+  card.appendChild(iconDiv);
+  // Body
+  var body=document.createElement('div');body.className='list-body';
+  var title=document.createElement('div');title.className='list-title';title.textContent=item.title;body.appendChild(title);
+  var meta=document.createElement('div');meta.className='list-meta';
+  if(item.creator){var cr=document.createElement('span');cr.textContent=item.creator;meta.appendChild(cr);var dot=document.createElement('span');dot.className='list-meta-dot';meta.appendChild(dot);}
+  var catS=document.createElement('span');catS.textContent=item.category;meta.appendChild(catS);
+  if(currentSection==='podcasts'&&item.epCurrent){var d2=document.createElement('span');d2.className='list-meta-dot';meta.appendChild(d2);var ep=document.createElement('span');ep.className='list-ep';ep.textContent='Ep '+item.epCurrent+(item.epTotal?'/'+item.epTotal:'');meta.appendChild(ep);}
+  body.appendChild(meta);
+  if(item.note){var noteEl=document.createElement('div');noteEl.className='list-note';noteEl.textContent=item.note;body.appendChild(noteEl);}
+  card.appendChild(body);
+  // Right
+  var right=document.createElement('div');right.className='list-right';
+  if(sec.showStars){
+    var starsDiv=document.createElement('div');starsDiv.className='list-stars';
+    for(var s=1;s<=5;s++){var star=document.createElement('span');star.className='list-star'+(s<=item.rating?' filled':'');star.textContent='★';star.onclick=(function(id,sv){return function(e){e.stopPropagation();rateItem(id,sv);};})(item.id,s);starsDiv.appendChild(star);}
+    right.appendChild(starsDiv);
+  }
+  var statuses=sec.statuses;var ci=statuses.findIndex(function(s){return s.val===item.status;});var ns=statuses[(ci+1)%statuses.length];
+  var cycleB=document.createElement('button');cycleB.className='cycle-btn';cycleB.textContent='→ '+ns.label.split(' ').pop();
+  cycleB.onclick=(function(id,nv){return function(){cycleStatus(id,nv);};})(item.id,ns.val);right.appendChild(cycleB);
+  var dotsActs=[{label:'Edit',fn:(function(id){return function(){openEditModal(id);};})(item.id)}];
+  if(item.link) dotsActs.push({label:'Open ↗',href:item.link});
+  dotsActs.push({label:'Delete',danger:true,fn:(function(id){return function(){if(confirm('Remove?'))deleteItem(id);};})(item.id)});
+  right.appendChild(makeDots(dotsActs));
+  card.appendChild(right);
+  return card;
+}
+
+/* ── RENDER GRID ── */
+function renderGrid(){
+  if(currentSection==='stats'){renderStatsTab();return;}
+  var grid=document.getElementById('media-grid');grid.innerHTML='';
+  var sec=SECTIONS[currentSection];
+  grid.className=sec.listView?'list-view':'media-grid';
+  var items=getFiltered();
+  if(!items.length){var e=document.createElement('div');e.className='empty-state';e.innerHTML='<div class="empty-state-icon">'+sec.icon+'</div><div class="empty-state-text">'+sec.emptyText+'</div><div class="empty-state-sub">Click "+ Add" to get started.</div>';grid.appendChild(e);return;}
+  var statusMap={};sec.statuses.forEach(function(s){statusMap[s.val]=s;});
+  items.forEach(function(item){grid.appendChild(sec.listView?makeListCard(item,statusMap,sec):makeGridCard(item,statusMap,sec));});
+}
+
+/* ── STATS TAB ── */
+function renderStatsTab(){
+  var grid=document.getElementById('media-grid');grid.className='stats-panel';grid.innerHTML='';
+  var today=new Date();var cm=today.getMonth();
+  // Year nav
+  var nav=document.createElement('div');nav.className='stats-year-nav';
+  var pb=document.createElement('button');pb.className='stats-year-btn';pb.textContent='←';pb.onclick=function(){selectedYear--;renderStatsTab();};
+  var lbl=document.createElement('div');lbl.className='stats-year-label';lbl.textContent=selectedYear;
+  var nb=document.createElement('button');nb.className='stats-year-btn';nb.textContent='→';nb.onclick=function(){selectedYear++;renderStatsTab();};
+  var note=document.createElement('div');note.className='stats-note';note.textContent='Items marked "done" with a date are counted';
+  nav.appendChild(pb);nav.appendChild(lbl);nav.appendChild(nb);nav.appendChild(note);grid.appendChild(nav);
+  function mc(sec,yr,mo){var m=String(mo+1).padStart(2,'0');var p=yr+'-'+m;return(data[sec]||[]).filter(function(i){return i.status==='done'&&i.date&&i.date.startsWith(p);}).length;}
+  function yt(sec,yr){return(data[sec]||[]).filter(function(i){return i.status==='done'&&i.date&&i.date.startsWith(String(yr));}).length;}
+  // Totals
+  var types=[{key:'books',icon:'📚',label:'Books'},{key:'articles',icon:'📰',label:'Articles'},{key:'screen',icon:'🎬',label:'Shows & Films'},{key:'music',icon:'🎵',label:'Albums'}];
+  var totalEp=(data.podcasts||[]).reduce(function(s,p){return s+(p.epCurrent||0);},0);
+  var tg=document.createElement('div');tg.className='stats-totals';
+  types.forEach(function(t){var card=document.createElement('div');card.className='stats-total-card';card.innerHTML='<div class="stats-total-icon">'+t.icon+'</div><div class="stats-total-num">'+yt(t.key,selectedYear)+'</div><div class="stats-total-label">'+t.label+'</div>';tg.appendChild(card);});
+  var pc=document.createElement('div');pc.className='stats-total-card';pc.innerHTML='<div class="stats-total-icon">🎙️</div><div class="stats-total-num">'+totalEp+'</div><div class="stats-total-label">Episodes Logged</div>';tg.appendChild(pc);
+  grid.appendChild(tg);
+  // Heatmap
+  var hw=document.createElement('div');hw.className='stats-grid-wrap';
+  var ht=document.createElement('div');ht.className='stats-grid-title';ht.textContent='Month by Month';hw.appendChild(ht);
+  var hg=document.createElement('div');hg.className='stats-month-grid';
+  var eh=document.createElement('div');hg.appendChild(eh);
+  MS.forEach(function(m,mi){var h=document.createElement('div');h.className='stats-month-head'+(mi===cm&&selectedYear===today.getFullYear()?' current-month':'');h.textContent=m;hg.appendChild(h);});
+  types.forEach(function(t){
+    var rl=document.createElement('div');rl.className='stats-row-label';rl.innerHTML='<span>'+t.icon+'</span><span>'+t.label.split(' ')[0]+'</span>';hg.appendChild(rl);
+    var counts=[];for(var mi=0;mi<12;mi++)counts.push(mc(t.key,selectedYear,mi));
+    var max=Math.max.apply(null,counts.concat([1]));
+    counts.forEach(function(cnt,mi){
+      var cell=document.createElement('div');
+      var isFuture=selectedYear>today.getFullYear()||(selectedYear===today.getFullYear()&&mi>cm);
+      if(isFuture){cell.className='stats-cell future';cell.textContent='·';}
+      else if(cnt===0){cell.className='stats-cell empty';cell.textContent='–';}
+      else{cell.className='stats-cell has-data';cell.style.background='rgba(176,153,224,'+(0.35+(cnt/max)*0.65)+')';cell.textContent=cnt;var tip=document.createElement('div');tip.className='stats-cell-tip';tip.textContent=cnt+' '+t.label.split(' ')[0].toLowerCase()+' in '+MF[mi];cell.appendChild(tip);}
+      hg.appendChild(cell);
+    });
+  });
+  hw.appendChild(hg);grid.appendChild(hw);
+  // Podcasts
+  var pw=document.createElement('div');pw.className='stats-podcast-wrap';
+  var pt=document.createElement('div');pt.className='stats-podcast-title';pt.textContent='🎙️ Podcast Episodes Logged';pw.appendChild(pt);
+  var following=(data.podcasts||[]).filter(function(p){return p.status!=='archived'&&p.epCurrent>0;});
+  if(!following.length){var em=document.createElement('div');em.className='stats-empty';em.innerHTML='<strong>No episodes tracked yet</strong>Log your current episode number on any podcast.';pw.appendChild(em);}
+  else{var pl=document.createElement('div');pl.className='stats-podcast-list';following.sort(function(a,b){return(b.epCurrent||0)-(a.epCurrent||0);});following.forEach(function(p){var row=document.createElement('div');row.className='stats-podcast-row';row.innerHTML='<div class="stats-podcast-name">'+esc(p.title)+(p.creator?'<br><span style="font-weight:400;font-size:11px;color:var(--muted)">'+esc(p.creator)+'</span>':'')+'</div><div style="text-align:right"><div class="stats-podcast-ep">'+p.epCurrent+'</div><div class="stats-podcast-ep-label">episodes</div></div>';pl.appendChild(row);});pw.appendChild(pl);}
+  grid.appendChild(pw);
+}
+
+/* ── ITEM ACTIONS ── */
+function rateItem(id,rating){var item=findItem(id);if(!item)return;item.rating=item.rating===rating?0:rating;save();renderGrid();}
+function cycleStatus(id,ns){
+  var item=findItem(id);if(!item)return;item.status=ns;
+  if(ns==='done'&&!item.date&&['books','screen','articles','music'].includes(currentSection))item.date=todayStr();
   save();render();
 }
 function deleteItem(id){data[currentSection]=data[currentSection].filter(function(i){return i.id!==id;});save();render();}
 function findItem(id){return(data[currentSection]||[]).find(function(i){return i.id===id;});}
 
-// Modal helpers
+/* ── MODAL ── */
 function showModalFields(sec){
-  document.getElementById('date-field-wrap').style.display=     sec==='books'?'block':'none';
-  document.getElementById('pages-field-wrap').style.display=    sec==='books'?'block':'none';
-  document.getElementById('podcast-fields-wrap').style.display= sec==='podcasts'?'block':'none';
-  document.getElementById('music-fields-wrap').style.display=   sec==='music'?'block':'none';
-  document.getElementById('screen-fields-wrap').style.display=  sec==='screen'?'block':'none';
+  var sd=SECTIONS[sec].showDate;
+  document.getElementById('date-field-wrap').style.display=sd?'block':'none';
+  if(sd)document.getElementById('date-field-label').textContent=SECTIONS[sec].dateLabel||'Date Completed';
+  document.getElementById('pages-field-wrap').style.display=sec==='books'?'block':'none';
+  document.getElementById('podcast-fields-wrap').style.display=sec==='podcasts'?'block':'none';
+  document.getElementById('music-fields-wrap').style.display=sec==='music'?'block':'none';
+  document.getElementById('screen-fields-wrap').style.display=sec==='screen'?'block':'none';
 }
-function buildStatusOptions(sec,selected){
-  var sel=document.getElementById('m-status');sel.innerHTML='';
-  SECTIONS[sec].statuses.forEach(function(s){var opt=document.createElement('option');opt.value=s.val;opt.textContent=s.label;if(s.val===selected)opt.selected=true;sel.appendChild(opt);});
-}
-function buildCategoryOptions(sec,selected){
-  var sel=document.getElementById('m-category');sel.innerHTML='';
-  allCats(sec).forEach(function(c){var opt=document.createElement('option');opt.value=c;opt.textContent=c;if(c===selected)opt.selected=true;sel.appendChild(opt);});
-}
+function buildStatusOptions(sec,selected){var sel=document.getElementById('m-status');sel.innerHTML='';SECTIONS[sec].statuses.forEach(function(s){var o=document.createElement('option');o.value=s.val;o.textContent=s.label;if(s.val===selected)o.selected=true;sel.appendChild(o);});}
+function buildCategoryOptions(sec,selected){var sel=document.getElementById('m-category');sel.innerHTML='';allCats(sec).forEach(function(c){var o=document.createElement('option');o.value=c;o.textContent=c;if(c===selected)o.selected=true;sel.appendChild(o);});}
 function clearModalFields(){
   ['m-title','m-creator','m-cover','m-link'].forEach(function(id){document.getElementById(id).value='';});
-  document.getElementById('m-note').value='';
-  document.getElementById('m-rating').value='0';
-  document.getElementById('m-date').value='';
-  document.getElementById('m-pages').value='';
-  document.getElementById('m-ep-current').value='';document.getElementById('m-ep-total').value='';
-  document.getElementById('m-tracks-done').value='';document.getElementById('m-tracks-total').value='';
-  document.getElementById('m-season').value='';document.getElementById('m-episode').value='';document.getElementById('m-seasons-total').value='';
-  document.getElementById('m-screen-date').value='';
+  document.getElementById('m-note').value='';document.getElementById('m-rating').value='0';document.getElementById('m-date').value='';
+  document.getElementById('m-pages').value='';document.getElementById('m-ep-current').value='';document.getElementById('m-ep-total').value='';
+  document.getElementById('m-tracks-total').value='';document.getElementById('m-season').value='';document.getElementById('m-episode').value='';document.getElementById('m-seasons-total').value='';
 }
-function openAddModal(){
-  editingId=null;
-  document.getElementById('modal-title').textContent='Add to '+SECTIONS[currentSection].label;
-  clearModalFields();
-  document.getElementById('m-delete-btn').style.display='none';
-  buildStatusOptions(currentSection,'want');
-  buildCategoryOptions(currentSection,'');
-  showModalFields(currentSection);
-  document.getElementById('modal').classList.add('open');
-  setTimeout(function(){document.getElementById('m-title').focus();},100);
-}
+function openAddModal(){if(currentSection==='stats')return;editingId=null;document.getElementById('modal-title').textContent='Add to '+SECTIONS[currentSection].label;clearModalFields();document.getElementById('m-delete-btn').style.display='none';buildStatusOptions(currentSection,'want');buildCategoryOptions(currentSection,'');showModalFields(currentSection);document.getElementById('modal').classList.add('open');setTimeout(function(){document.getElementById('m-title').focus();},100);}
 function openEditModal(id){
   var item=findItem(id);if(!item)return;editingId=id;
   document.getElementById('modal-title').textContent='Edit Item';
-  document.getElementById('m-title').value=item.title;
-  document.getElementById('m-creator').value=item.creator||'';
-  document.getElementById('m-cover').value=item.cover||'';
-  document.getElementById('m-link').value=item.link||'';
-  document.getElementById('m-note').value=item.note||'';
-  document.getElementById('m-rating').value=item.rating||0;
-  document.getElementById('m-date').value=item.date||'';
-  document.getElementById('m-pages').value=item.pages||'';
-  document.getElementById('m-ep-current').value=item.epCurrent||'';
-  document.getElementById('m-ep-total').value=item.epTotal||'';
-  document.getElementById('m-tracks-done').value=item.tracksDone||'';
+  document.getElementById('m-title').value=item.title;document.getElementById('m-creator').value=item.creator||'';document.getElementById('m-cover').value=item.cover||'';document.getElementById('m-link').value=item.link||'';document.getElementById('m-note').value=item.note||'';document.getElementById('m-rating').value=item.rating||0;document.getElementById('m-date').value=item.date||'';document.getElementById('m-pages').value=item.pages||'';
+  document.getElementById('m-ep-current').value=item.epCurrent||'';document.getElementById('m-ep-total').value=item.epTotal||'';
   document.getElementById('m-tracks-total').value=item.tracksTotal||'';
-  document.getElementById('m-season').value=item.season||'';
-  document.getElementById('m-episode').value=item.episode||'';
-  document.getElementById('m-seasons-total').value=item.seasonsTotal||'';
-  document.getElementById('m-screen-date').value=item.date||'';
-  document.getElementById('m-delete-btn').style.display='inline-flex';
-  buildStatusOptions(currentSection,item.status);
-  buildCategoryOptions(currentSection,item.category);
-  showModalFields(currentSection);
-  document.getElementById('modal').classList.add('open');
+  document.getElementById('m-season').value=item.season||'';document.getElementById('m-episode').value=item.episode||'';document.getElementById('m-seasons-total').value=item.seasonsTotal||'';
+  document.getElementById('m-delete-btn').style.display='inline-flex';buildStatusOptions(currentSection,item.status);buildCategoryOptions(currentSection,item.category);showModalFields(currentSection);document.getElementById('modal').classList.add('open');
 }
 function closeModal(){document.getElementById('modal').classList.remove('open');editingId=null;}
 function saveItem(){
   var title=document.getElementById('m-title').value.trim();if(!title){document.getElementById('m-title').focus();return;}
   var status=document.getElementById('m-status').value;
-  var dateVal=currentSection==='screen'?document.getElementById('m-screen-date').value:document.getElementById('m-date').value;
-  // auto today if done and no date
-  if((currentSection==='books'||currentSection==='screen')&&status==='done'&&!dateVal) dateVal=todayStr();
+  var dateVal=document.getElementById('m-date').value;
+  if(SECTIONS[currentSection].showDate&&status==='done'&&!dateVal)dateVal=todayStr();
+  var existing=editingId?findItem(editingId):null;
   var item={
-    id:editingId||'i_'+Date.now(),
-    title:title,
-    creator:document.getElementById('m-creator').value.trim(),
-    category:document.getElementById('m-category').value,
-    status:status,
-    rating:parseInt(document.getElementById('m-rating').value)||0,
-    cover:document.getElementById('m-cover').value.trim(),
-    link:document.getElementById('m-link').value.trim(),
-    note:document.getElementById('m-note').value.trim(),
-    date:dateVal,
-    pages:parseInt(document.getElementById('m-pages').value)||0,
-    epCurrent:parseInt(document.getElementById('m-ep-current').value)||0,
-    epTotal:parseInt(document.getElementById('m-ep-total').value)||0,
-    tracksDone:parseInt(document.getElementById('m-tracks-done').value)||0,
+    id:editingId||'i_'+Date.now(),title:title,creator:document.getElementById('m-creator').value.trim(),category:document.getElementById('m-category').value,
+    status:status,rating:parseInt(document.getElementById('m-rating').value)||0,cover:document.getElementById('m-cover').value.trim(),link:document.getElementById('m-link').value.trim(),note:document.getElementById('m-note').value.trim(),date:dateVal,
+    pages:parseInt(document.getElementById('m-pages').value)||0,epCurrent:parseInt(document.getElementById('m-ep-current').value)||0,epTotal:parseInt(document.getElementById('m-ep-total').value)||0,
     tracksTotal:parseInt(document.getElementById('m-tracks-total').value)||0,
-    season:parseInt(document.getElementById('m-season').value)||1,
-    episode:parseInt(document.getElementById('m-episode').value)||1,
-    seasonsTotal:parseInt(document.getElementById('m-seasons-total').value)||0,
+    season:parseInt(document.getElementById('m-season').value)||1,episode:parseInt(document.getElementById('m-episode').value)||1,seasonsTotal:parseInt(document.getElementById('m-seasons-total').value)||0,
   };
+  if(existing&&existing.songs)item.songs=existing.songs;
+  if(!item.songs&&currentSection==='music')item.songs=[];
   if(editingId){var idx=data[currentSection].findIndex(function(i){return i.id===editingId;});if(idx>=0)data[currentSection][idx]=item;}
   else data[currentSection].push(item);
   save();closeModal();render();
 }
-function deleteFromModal(){if(!editingId)return;if(!confirm('Delete this item?'))return;deleteItem(editingId);closeModal();}
+function deleteFromModal(){if(!editingId)return;if(!confirm('Delete?'))return;deleteItem(editingId);closeModal();}
 document.getElementById('modal').addEventListener('click',function(e){if(e.target===this)closeModal();});
 document.addEventListener('keydown',function(e){if(e.key==='Escape')closeModal();});
+document.addEventListener('click',function(e){if(!e.target.closest('.dots-wrap'))document.querySelectorAll('.dots-menu.open').forEach(function(m){m.classList.remove('open');});});
 
-// ── SONG MODAL ──
-var currentAlbumId = null;
-
-function openSongModal(id) {
-  currentAlbumId = id;
-  var item = findItem(id); if (!item) return;
-  if (!item.songs) item.songs = [];
-  document.getElementById('song-modal-album').textContent = item.title + (item.creator ? ' · ' + item.creator : '');
-  renderSongList();
-  document.getElementById('song-modal').classList.add('open');
-}
-
-function closeSongModal() {
-  document.getElementById('song-modal').classList.remove('open');
-  currentAlbumId = null;
-  save(); render();
-}
-
-function renderSongList() {
-  var item = findItem(currentAlbumId); if (!item) return;
-  if (!item.songs) item.songs = [];
-  var list = document.getElementById('song-list'); list.innerHTML = '';
-  item.songs.forEach(function(song, si) {
-    var row = document.createElement('div'); row.className = 'song-row';
-    var num = document.createElement('span'); num.className = 'song-num'; num.textContent = (si+1)+'.';
-    var nameInput = document.createElement('input'); nameInput.className = 'song-name'; nameInput.type = 'text';
-    nameInput.placeholder = 'Song title...'; nameInput.value = song.name || '';
-    nameInput.oninput = (function(idx){ return function(){ var it=findItem(currentAlbumId); if(it&&it.songs[idx]!==undefined) it.songs[idx].name=this.value; }; })(si);
-    // Stars
-    var starsDiv = document.createElement('div'); starsDiv.className = 'song-stars';
-    for (var s=1; s<=5; s++) {
-      var star = document.createElement('span'); star.className = 'song-star' + (s <= (song.rating||0) ? ' filled' : '');
-      star.textContent = '★';
-      star.onclick = (function(idx, sv){ return function(){
-        var it = findItem(currentAlbumId); if (!it||!it.songs[idx]) return;
-        it.songs[idx].rating = it.songs[idx].rating===sv ? 0 : sv;
-        save(); renderSongList();
-      }; })(si, s);
-      starsDiv.appendChild(star);
-    }
-    var del = document.createElement('button'); del.className = 'song-del'; del.textContent = '✕';
-    del.onclick = (function(idx){ return function(){
-      var it = findItem(currentAlbumId); if (!it) return;
-      it.songs.splice(idx, 1); save(); renderSongList();
-    }; })(si);
-    row.appendChild(num); row.appendChild(nameInput); row.appendChild(starsDiv); row.appendChild(del);
-    list.appendChild(row);
-  });
-}
-
-function addSong() {
-  var item = findItem(currentAlbumId); if (!item) return;
-  if (!item.songs) item.songs = [];
-  item.songs.push({name:'', rating:0});
-  save(); renderSongList();
-  // focus new input
-  var inputs = document.querySelectorAll('.song-name');
-  if (inputs.length) inputs[inputs.length-1].focus();
-}
-
-document.getElementById('song-modal').addEventListener('click', function(e){ if(e.target===this) closeSongModal(); });
-
-function render(){renderStats();renderControls();renderGrid();}
-
+/* ── RENDER + INIT ── */
+function render(){renderStatsBar();renderControls();renderGrid();}
 var now=new Date();
-var DAYS=['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
-var MONTHS=['January','February','March','April','May','June','July','August','September','October','November','December'];
-document.getElementById('today-date').textContent=DAYS[now.getDay()]+', '+MONTHS[now.getMonth()]+' '+now.getDate()+', '+now.getFullYear();
+document.getElementById('today-date').textContent=DAYS[now.getDay()]+', '+MF[now.getMonth()]+' '+now.getDate()+', '+now.getFullYear();
 load();render();
 </script>
 </body>
