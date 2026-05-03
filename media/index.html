@@ -94,8 +94,15 @@ html,body { background:var(--bg); font-family:'Plus Jakarta Sans',system-ui,sans
 .prog-count { font-family:'Fraunces',serif; font-size:14px; font-weight:600; color:var(--ink); min-width:32px; text-align:center; }
 
 /* ── INLINE ALBUM SONGS ── */
-.album-songs { border-top:1px solid var(--line); padding:10px 14px; background:var(--warm); border-radius:0 0 14px 14px; }
-.album-songs-header { font-size:9.5px; letter-spacing:1.5px; text-transform:uppercase; color:var(--muted); font-weight:700; margin-bottom:8px; }
+.album-songs { border-top:1px solid var(--line); background:var(--warm); border-radius:0 0 14px 14px; }
+.album-songs-toggle { display:flex; align-items:center; justify-content:space-between; padding:10px 14px; cursor:pointer; user-select:none; }
+.album-songs-toggle:hover { background:rgba(0,0,0,.03); border-radius:0 0 14px 14px; }
+.album-songs-header { font-size:9.5px; letter-spacing:1.5px; text-transform:uppercase; color:var(--muted); font-weight:700; display:flex; align-items:center; gap:7px; }
+.album-songs-count { font-size:9.5px; color:var(--accent-deep); font-weight:700; background:var(--accent-soft); padding:2px 7px; border-radius:8px; letter-spacing:0; text-transform:none; }
+.album-songs-chevron { font-size:10px; color:var(--muted); transition:transform .2s; }
+.album-songs-chevron.open { transform:rotate(180deg); }
+.album-songs-body { padding:0 14px 10px; display:none; }
+.album-songs-body.open { display:block; }
 .album-song-row { display:flex; align-items:center; gap:8px; padding:5px 0; border-bottom:1px solid var(--line); }
 .album-song-row:last-of-type { border-bottom:none; }
 .album-song-num { font-size:10px; color:var(--muted); font-weight:700; min-width:16px; text-align:right; flex-shrink:0; }
@@ -572,28 +579,59 @@ function makeGridCard(item,statusMap,sec){
 function makeAlbumSongs(item){
   var section=document.createElement('div');section.className='album-songs';
   section.onclick=function(e){e.stopPropagation();};
-  var header=document.createElement('div');header.className='album-songs-header';header.textContent='Track List';section.appendChild(header);
-  if(item.songs&&item.songs.length>0){
-    item.songs.forEach(function(song,si){
-      var row=document.createElement('div');row.className='album-song-row';
-      var num=document.createElement('span');num.className='album-song-num';num.textContent=si+1+'.';
-      var nameInput=document.createElement('input');nameInput.className='album-song-name';nameInput.type='text';nameInput.value=song.name||'';nameInput.placeholder='Song title...';
-      nameInput.oninput=(function(itemId,idx){return function(){var it=(data.music||[]).find(function(i){return i.id===itemId;});if(it&&it.songs[idx]!==undefined)it.songs[idx].name=this.value;};})(item.id,si);
-      nameInput.onblur=function(){save();};
-      var stars=document.createElement('div');stars.className='album-song-stars';
-      for(var s=1;s<=5;s++){
-        var star=document.createElement('span');star.className='album-song-star'+(s<=(song.rating||0)?' filled':'');star.textContent='★';
-        star.onclick=(function(itemId,idx,sv){return function(){var it=(data.music||[]).find(function(i){return i.id===itemId;});if(!it||!it.songs[idx])return;it.songs[idx].rating=it.songs[idx].rating===sv?0:sv;save();renderGrid();};})(item.id,si,s);
-        stars.appendChild(star);
-      }
-      var del=document.createElement('button');del.className='album-song-del';del.textContent='✕';
-      del.onclick=(function(itemId,idx){return function(){var it=(data.music||[]).find(function(i){return i.id===itemId;});if(!it)return;it.songs.splice(idx,1);save();renderGrid();};})(item.id,si);
-      row.appendChild(num);row.appendChild(nameInput);row.appendChild(stars);row.appendChild(del);section.appendChild(row);
-    });
+
+  var songCount=(item.songs&&item.songs.length)||0;
+  // Remember open/closed state per album
+  var stateKey='albumOpen_'+item.id;
+  var isOpen=sessionStorage.getItem(stateKey)==='1';
+
+  // Toggle row
+  var toggle=document.createElement('div');toggle.className='album-songs-toggle';
+  var headerLeft=document.createElement('div');headerLeft.className='album-songs-header';
+  headerLeft.textContent='Track List';
+  if(songCount>0){var countBadge=document.createElement('span');countBadge.className='album-songs-count';countBadge.textContent=songCount+' song'+(songCount!==1?'s':'');headerLeft.appendChild(countBadge);}
+  var chevron=document.createElement('span');chevron.className='album-songs-chevron'+(isOpen?' open':'');chevron.textContent='▼';
+  toggle.appendChild(headerLeft);toggle.appendChild(chevron);
+  section.appendChild(toggle);
+
+  // Body (hidden by default)
+  var body=document.createElement('div');body.className='album-songs-body'+(isOpen?' open':'');
+
+  function rebuildRows(){
+    body.innerHTML='';
+    var currentItem=(data.music||[]).find(function(i){return i.id===item.id;})||item;
+    if(currentItem.songs&&currentItem.songs.length>0){
+      currentItem.songs.forEach(function(song,si){
+        var row=document.createElement('div');row.className='album-song-row';
+        var num=document.createElement('span');num.className='album-song-num';num.textContent=si+1+'.';
+        var nameInput=document.createElement('input');nameInput.className='album-song-name';nameInput.type='text';nameInput.value=song.name||'';nameInput.placeholder='Song title...';
+        nameInput.oninput=(function(itemId,idx){return function(){var it=(data.music||[]).find(function(i){return i.id===itemId;});if(it&&it.songs[idx]!==undefined)it.songs[idx].name=this.value;};})(item.id,si);
+        nameInput.onblur=function(){save();};
+        var stars=document.createElement('div');stars.className='album-song-stars';
+        for(var s=1;s<=5;s++){
+          var star=document.createElement('span');star.className='album-song-star'+(s<=(song.rating||0)?' filled':'');star.textContent='★';
+          star.onclick=(function(itemId,idx,sv){return function(){var it=(data.music||[]).find(function(i){return i.id===itemId;});if(!it||!it.songs[idx])return;it.songs[idx].rating=it.songs[idx].rating===sv?0:sv;save();renderGrid();};})(item.id,si,s);
+          stars.appendChild(star);
+        }
+        var del=document.createElement('button');del.className='album-song-del';del.textContent='✕';
+        del.onclick=(function(itemId,idx){return function(){var it=(data.music||[]).find(function(i){return i.id===itemId;});if(!it)return;it.songs.splice(idx,1);save();renderGrid();};})(item.id,si);
+        row.appendChild(num);row.appendChild(nameInput);row.appendChild(stars);row.appendChild(del);body.appendChild(row);
+      });
+    }
+    var addB=document.createElement('button');addB.className='album-add-song';addB.textContent='+ Add Song';
+    addB.onclick=function(){var it=(data.music||[]).find(function(i){return i.id===item.id;});if(!it)return;if(!it.songs)it.songs=[];it.songs.push({name:'',rating:0});save();renderGrid();sessionStorage.setItem(stateKey,'1');};
+    body.appendChild(addB);
   }
-  var addB=document.createElement('button');addB.className='album-add-song';addB.textContent='+ Add Song';
-  addB.onclick=function(){var it=(data.music||[]).find(function(i){return i.id===item.id;});if(!it)return;if(!it.songs)it.songs=[];it.songs.push({name:'',rating:0});save();renderGrid();};
-  section.appendChild(addB);
+
+  rebuildRows();
+  section.appendChild(body);
+
+  toggle.onclick=function(){
+    var open=body.classList.toggle('open');
+    chevron.classList.toggle('open',open);
+    sessionStorage.setItem(stateKey,open?'1':'0');
+  };
+
   return section;
 }
 
