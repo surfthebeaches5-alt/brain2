@@ -14,7 +14,7 @@
   --ink:#1a1612;--muted:#7a7468;--line:#ececec;--warm:#faf6ec;
   --accent:#c9b6ee;--accent-deep:#b099e0;--accent-soft:#ede5fb;
 }
-html,body{background:var(--bg);font-family:'Plus Jakarta Sans',system-ui,sans-serif;color:var(--ink);min-height:100vh;-webkit-font-smoothing:antialiased;}
+html,body{background:var(--bg);overflow-x:hidden;font-family:'Plus Jakarta Sans',system-ui,sans-serif;color:var(--ink);min-height:100vh;-webkit-font-smoothing:antialiased;}
 
 /* TOPBAR */
 .topbar{background:var(--sidebar);border-bottom:1px solid var(--sidebar-line);padding:16px 32px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:200;}
@@ -44,8 +44,8 @@ html,body{background:var(--bg);font-family:'Plus Jakarta Sans',system-ui,sans-se
 .tab-btn.active{color:var(--ink);border-bottom-color:var(--accent-deep);}
 
 /* HUB */
-.hub{max-width:720px;margin:0 auto;padding:32px 24px 80px;}
-.page{display:none;}.page.active{display:block;}
+.hub{max-width:720px;margin:0 auto;padding:32px 24px 80px;overflow-x:hidden;box-sizing:border-box;width:100%;}
+.page{display:none;width:100%;box-sizing:border-box;}.page.active{display:block;}
 
 /* PAPER HEADER */
 .paper-header{text-align:center;margin-bottom:36px;padding-bottom:24px;border-bottom:1px solid var(--line);}
@@ -395,7 +395,7 @@ hr.rule{border:none;border-top:1px solid var(--line);margin:30px 0;}
 
 
     <div class="ornament">✦ ✿ ✦</div>
-  </div>
+  
   <!-- ═══ TAB 1: MINDSET ═══ -->
   <div class="page" id="p1">
 
@@ -548,7 +548,7 @@ hr.rule{border:none;border-top:1px solid var(--line);margin:30px 0;}
 
     <div class="ornament">✦ ✿ ✦</div>
 
-</div><!-- /hub -->
+</div></div><!-- /hub -->
 
 <script>
 var MF=['January','February','March','April','May','June','July','August','September','October','November','December'];
