@@ -30,7 +30,7 @@ html,body{background:var(--bg);font-family:'Plus Jakarta Sans',system-ui,sans-se
 .pdf-btn:hover{border-color:var(--accent-deep);color:var(--ink);}
 
 /* MONTH NAV */
-.month-nav{max-width:860px;margin:0 auto;padding:24px 24px 0;display:flex;align-items:center;gap:14px;}
+.month-nav{max-width:720px;margin:0 auto;padding:24px 24px 0;display:flex;align-items:center;gap:14px;}
 .month-nav-btn{width:34px;height:34px;border:1.5px solid var(--sidebar-line);border-radius:50%;background:var(--sidebar);cursor:pointer;font-size:14px;color:var(--muted);display:flex;align-items:center;justify-content:center;transition:all .15s;font-family:inherit;}
 .month-nav-btn:hover{border-color:var(--accent-deep);color:var(--ink);}
 .month-label{font-family:'Fraunces',serif;font-size:2rem;font-weight:600;letter-spacing:-0.6px;color:var(--ink);}
@@ -38,13 +38,13 @@ html,body{background:var(--bg);font-family:'Plus Jakarta Sans',system-ui,sans-se
 
 /* TABS */
 .tab-bar{background:var(--surface);border-bottom:1px solid var(--line);position:sticky;top:57px;z-index:150;margin-top:16px;}
-.tab-bar-inner{max-width:860px;margin:0 auto;padding:0 24px;display:flex;}
+.tab-bar-inner{max-width:720px;margin:0 auto;padding:0 24px;display:flex;}
 .tab-btn{padding:13px 22px;font-family:inherit;font-size:12.5px;font-weight:600;cursor:pointer;border:none;background:transparent;color:var(--muted);border-bottom:2.5px solid transparent;margin-bottom:-1px;transition:all .15s;white-space:nowrap;}
 .tab-btn:hover{color:var(--ink);}
 .tab-btn.active{color:var(--ink);border-bottom-color:var(--accent-deep);}
 
 /* HUB */
-.hub{max-width:860px;margin:0 auto;padding:32px 24px 80px;}
+.hub{max-width:720px;margin:0 auto;padding:32px 24px 80px;}
 .page{display:none;}.page.active{display:block;}
 
 /* PAPER HEADER */
@@ -499,6 +499,55 @@ hr.rule{border:none;border-top:1px solid var(--line);margin:30px 0;}
     <div class="ornament">✦ ✿ ✦</div>
   </div>
 
+
+  <!-- ═══ TAB 2: RETROSPECTIVE ═══ -->
+  <div class="page" id="p2">
+
+    <div class="sec-group">
+      <div class="sec-title">Monthly Review</div>
+      <div class="sec-sub">Look back before you leap forward.</div>
+
+      <div class="rating-wrap">
+        <span class="rating-label">Overall month rating:</span>
+        <div class="rating-stars" id="overall-rating"></div>
+        <span class="rating-denom">/10</span>
+      </div>
+
+      <label class="field-label" style="margin-top:0;">Monthly highlight — the single best thing</label>
+      <textarea class="write short" data-save-id="review_highlight" placeholder="The single best thing about this month..." oninput="autoExpand(this);debouncedSave()"></textarea>
+
+      <hr class="rule">
+
+      <div class="two-col" style="margin-bottom:20px;">
+        <div class="col-card" style="border-top:3px solid #b8cfb0;">
+          <div class="col-card-title">🏆 Top Wins</div>
+          <div class="col-card-sub">What you're proud of</div>
+          <textarea class="write" data-save-id="review_wins" placeholder="— &#10;— &#10;— " oninput="autoExpand(this);debouncedSave()"></textarea>
+        </div>
+        <div class="col-card" style="border-top:3px solid #f2c4ce;">
+          <div class="col-card-title">🌱 What Didn't Work</div>
+          <div class="col-card-sub">Learn from it, don't shame it</div>
+          <textarea class="write" data-save-id="review_notwork" placeholder="— &#10;— " oninput="autoExpand(this);debouncedSave()"></textarea>
+        </div>
+      </div>
+
+      <label class="field-label">What did I learn about myself this month?</label>
+      <textarea class="write short" data-save-id="review_learned" placeholder="An honest insight about yourself..." oninput="autoExpand(this);debouncedSave()"></textarea>
+    </div>
+
+    <hr class="rule">
+
+    <div class="sec-group">
+      <div class="sec-group-title">Life Wheel — Monthly Average</div>
+      <p style="font-size:12px;color:var(--muted);font-style:italic;margin-bottom:16px;">Rate your average satisfaction this month in each area (1–10)</p>
+      <div id="wheel-grid"></div>
+      <label class="field-label">Which area is calling for attention next month?</label>
+      <textarea class="write short" data-save-id="review_attention" placeholder="Based on your ratings, where do you want to focus..." oninput="autoExpand(this);debouncedSave()"></textarea>
+    </div>
+
+
+    <div class="ornament">✦ ✿ ✦</div>
+
 </div><!-- /hub -->
 
 <script>
@@ -695,50 +744,4 @@ switchMonth();
 document.querySelector('.hub').addEventListener('input',debouncedSave);
 </script>
 </body>
-</html>  <!-- ═══ TAB 2: RETROSPECTIVE ═══ -->
-  <div class="page" id="p2">
-
-    <div class="sec-group">
-      <div class="sec-title">Monthly Review</div>
-      <div class="sec-sub">Look back before you leap forward.</div>
-
-      <div class="rating-wrap">
-        <span class="rating-label">Overall month rating:</span>
-        <div class="rating-stars" id="overall-rating"></div>
-        <span class="rating-denom">/10</span>
-      </div>
-
-      <label class="field-label" style="margin-top:0;">Monthly highlight — the single best thing</label>
-      <textarea class="write short" data-save-id="review_highlight" placeholder="The single best thing about this month..." oninput="autoExpand(this);debouncedSave()"></textarea>
-
-      <hr class="rule">
-
-      <div class="two-col" style="margin-bottom:20px;">
-        <div class="col-card" style="border-top:3px solid #b8cfb0;">
-          <div class="col-card-title">🏆 Top Wins</div>
-          <div class="col-card-sub">What you're proud of</div>
-          <textarea class="write" data-save-id="review_wins" placeholder="— &#10;— &#10;— " oninput="autoExpand(this);debouncedSave()"></textarea>
-        </div>
-        <div class="col-card" style="border-top:3px solid #f2c4ce;">
-          <div class="col-card-title">🌱 What Didn't Work</div>
-          <div class="col-card-sub">Learn from it, don't shame it</div>
-          <textarea class="write" data-save-id="review_notwork" placeholder="— &#10;— " oninput="autoExpand(this);debouncedSave()"></textarea>
-        </div>
-      </div>
-
-      <label class="field-label">What did I learn about myself this month?</label>
-      <textarea class="write short" data-save-id="review_learned" placeholder="An honest insight about yourself..." oninput="autoExpand(this);debouncedSave()"></textarea>
-    </div>
-
-    <hr class="rule">
-
-    <div class="sec-group">
-      <div class="sec-group-title">Life Wheel — Monthly Average</div>
-      <p style="font-size:12px;color:var(--muted);font-style:italic;margin-bottom:16px;">Rate your average satisfaction this month in each area (1–10)</p>
-      <div id="wheel-grid"></div>
-      <label class="field-label">Which area is calling for attention next month?</label>
-      <textarea class="write short" data-save-id="review_attention" placeholder="Based on your ratings, where do you want to focus..." oninput="autoExpand(this);debouncedSave()"></textarea>
-    </div>
-
-
-    <div class="ornament">✦ ✿ ✦</div>
+</html>
