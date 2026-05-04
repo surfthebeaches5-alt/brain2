@@ -4,196 +4,302 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Weekly Life Audit</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
-@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Jost:wght@300;400;500;600&display=swap');
-:root{--blush:#f2c4ce;--rose:#e8a0b0;--mauve:#c9a0b4;--lavender:#d4b8e0;--sage:#b8cfb0;--cream:#fdf6f0;--warm:#f7ece4;--sand:#ede0d4;--ink:#3a2a2e;--muted:#9a8088;--rule:#e0cec8;}
 *{box-sizing:border-box;margin:0;padding:0;}
-body{background:#f0e8e4;font-family:'Jost',sans-serif;color:var(--ink);}
+:root{
+  --bg:#f3ecd8;--surface:#fff;--sidebar:#f8f1dd;--sidebar-line:#e6dec5;
+  --ink:#1a1612;--muted:#7a7468;--line:#ececec;--warm:#faf6ec;
+  --accent:#c9b6ee;--accent-deep:#b099e0;--accent-soft:#ede5fb;
+}
+html,body{background:var(--bg);font-family:'Plus Jakarta Sans',system-ui,sans-serif;color:var(--ink);min-height:100vh;-webkit-font-smoothing:antialiased;}
 
 /* TOPBAR */
-.topbar{background:var(--cream);border-bottom:1px solid var(--rule);padding:14px 32px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;}
-.topbar-title{font-family:'Cormorant Garamond',serif;font-size:1.6rem;font-weight:300;letter-spacing:2px;}
-.topbar-title em{font-style:italic;color:var(--mauve);}
-.topbar-right{display:flex;align-items:center;gap:10px;}
-.back-btn{display:inline-flex;align-items:center;gap:6px;padding:6px 14px;border:1.5px solid var(--rule);border-radius:20px;font-size:0.72rem;color:var(--muted);cursor:pointer;background:transparent;font-family:'Jost',sans-serif;text-decoration:none;transition:all .15s;}
-.back-btn:hover{border-color:var(--rose);color:var(--ink);}
-.topbar-date{font-size:0.68rem;letter-spacing:2px;text-transform:uppercase;color:var(--muted);}
+.topbar{background:var(--sidebar);border-bottom:1px solid var(--sidebar-line);padding:16px 32px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:200;}
+.topbar-left{display:flex;align-items:center;gap:14px;}
+.back-btn{display:inline-flex;align-items:center;gap:6px;padding:7px 14px;border:1.5px solid #d9d2bd;border-radius:20px;font-size:12px;color:var(--muted);cursor:pointer;background:transparent;font-family:inherit;text-decoration:none;transition:all .15s;}
+.back-btn:hover{border-color:var(--accent-deep);color:var(--ink);}
+.topbar-title{font-family:'Fraunces',serif;font-size:22px;font-weight:600;letter-spacing:-0.4px;}
+.topbar-right{display:flex;align-items:center;gap:12px;}
+.topbar-date{font-size:11px;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted);font-weight:500;}
+.save-indicator{font-size:11px;font-weight:600;color:#1a4a44;opacity:0;transition:opacity .4s;}
+.save-indicator.show{opacity:1;}
+.pdf-btn{padding:7px 14px;border:1.5px solid var(--line);border-radius:16px;font-size:12px;font-weight:600;color:var(--muted);cursor:pointer;background:transparent;font-family:inherit;transition:all .15s;}
+.pdf-btn:hover{border-color:var(--accent-deep);color:var(--ink);}
 
-/* TOOLBAR */
-#toolbar{max-width:980px;margin:0 auto 12px;display:flex;gap:8px;flex-wrap:wrap;align-items:center;padding:16px 0 0;}
-.tab-btn{padding:7px 15px;border:1.5px solid var(--mauve);background:var(--cream);color:var(--ink);font-family:'Jost',sans-serif;font-size:0.73rem;font-weight:500;cursor:pointer;border-radius:20px;letter-spacing:.5px;transition:all .15s;}
-.tab-btn:hover{background:var(--blush);border-color:var(--rose);}
-.tab-btn.active{background:var(--mauve);color:white;border-color:var(--mauve);}
-.pdf-btn{padding:7px 13px;border:1.5px solid var(--rose);background:var(--rose);color:white;font-family:'Jost',sans-serif;font-size:0.76rem;font-weight:600;cursor:pointer;border-radius:20px;}
-.pdf-btn:hover{background:var(--mauve);}
+/* TABS */
+.tab-bar{background:var(--surface);border-bottom:1px solid var(--line);position:sticky;top:57px;z-index:150;}
+.tab-bar-inner{max-width:900px;margin:0 auto;padding:0 24px;display:flex;overflow-x:auto;}
+.tab-btn{padding:13px 18px;font-family:inherit;font-size:12px;font-weight:600;cursor:pointer;border:none;background:transparent;color:var(--muted);border-bottom:2.5px solid transparent;margin-bottom:-1px;transition:all .15s;white-space:nowrap;}
+.tab-btn:hover{color:var(--ink);}
+.tab-btn.active{color:var(--ink);border-bottom-color:var(--accent-deep);}
 
-#paper{max-width:980px;margin:0 auto;background:var(--cream);box-shadow:0 4px 30px rgba(180,130,140,.18);border-radius:4px;padding:40px 50px 52px;}
-.header{text-align:center;margin-bottom:32px;padding-bottom:24px;border-bottom:1px solid var(--rule);}
-.header-title{font-family:'Cormorant Garamond',serif;font-size:3rem;font-weight:300;color:var(--ink);letter-spacing:2px;line-height:1.1;}
-.header-title em{font-style:italic;color:var(--mauve);}
-.header-sub{display:flex;justify-content:center;gap:24px;margin-top:12px;font-size:0.7rem;letter-spacing:2px;text-transform:uppercase;color:var(--muted);}
-.header-sub span{display:flex;align-items:center;gap:6px;}
-.header-sub span:before{content:'✦';color:var(--blush);}
-.week-field{border:none;background:transparent;font-family:'Jost',sans-serif;font-size:0.7rem;color:var(--muted);outline:none;letter-spacing:2px;text-transform:uppercase;border-bottom:1px solid var(--rule);padding-bottom:2px;width:160px;text-align:center;}
+/* MAIN */
+.hub{max-width:900px;margin:0 auto;padding:36px 24px 80px;}
 .page{display:none;}.page.active{display:block;}
-.sec-head{display:flex;align-items:center;gap:12px;margin-bottom:16px;}
-.sec-num{width:28px;height:28px;border-radius:50%;background:var(--blush);color:var(--ink);font-family:'Cormorant Garamond',serif;font-size:0.9rem;font-weight:600;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
-.sec-title{font-family:'Cormorant Garamond',serif;font-size:1.3rem;font-weight:400;letter-spacing:1px;}
-.sec-sub{font-size:0.72rem;color:var(--muted);margin-left:auto;font-style:italic;}
-hr.rule{border:none;border-top:1px solid var(--rule);margin:28px 0;}
-.ornament{text-align:center;color:var(--blush);font-size:1rem;letter-spacing:10px;margin-top:32px;}
-.write{background:var(--warm);border:1px solid var(--rule);border-radius:8px;padding:12px 14px;min-height:90px;font-family:'Jost',sans-serif;font-size:0.8rem;line-height:1.75;color:var(--ink);outline:none;transition:border-color .15s,box-shadow .15s;}
-.write:focus{border-color:var(--blush);box-shadow:0 0 0 3px rgba(242,196,206,.25);}
-.write[contenteditable]:empty:before{content:attr(data-ph);color:#c8aab0;font-style:italic;}
-.write.tall{min-height:130px;}
-.write.letter{min-height:200px;font-style:italic;line-height:1.95;font-family:'Cormorant Garamond',serif;font-size:0.95rem;}
-.two-col{display:grid;grid-template-columns:1fr 1fr;gap:24px;}
-.col-card{background:var(--warm);border:1px solid var(--rule);border-radius:10px;padding:18px 20px;}
-.col-card-title{font-family:'Cormorant Garamond',serif;font-size:1rem;font-weight:600;margin-bottom:4px;}
-.col-card-sub{font-size:0.7rem;color:var(--muted);font-style:italic;margin-bottom:10px;}
-.col-card .write{background:white;border-radius:6px;}
-.highlight-box{background:linear-gradient(135deg,#fce8ef,#f0e0f0);border:1px solid var(--blush);border-radius:12px;padding:20px 26px;text-align:center;margin-top:20px;}
-.highlight-icon{font-size:1.4rem;margin-bottom:6px;}
-.highlight-label{font-size:0.62rem;letter-spacing:3px;text-transform:uppercase;color:var(--muted);margin-bottom:8px;font-family:'Jost',sans-serif;}
-.highlight-write{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:1.15rem;color:var(--ink);outline:none;min-height:28px;display:block;}
-.highlight-write[contenteditable]:empty:before{content:"The single best thing that happened last week...";color:#c8aab0;}
-#wheel-wrap{display:grid;grid-template-columns:1fr 1fr;gap:32px;align-items:start;}
-.cat-row{display:flex;align-items:center;gap:8px;padding:7px 0;border-bottom:1px solid #f0e4e8;}
-.cat-swatch{width:12px;height:12px;border-radius:50%;flex-shrink:0;}
-.cat-name{font-size:0.78rem;flex:1;}
-.cat-score{font-family:'Cormorant Garamond',serif;font-weight:600;font-size:1rem;min-width:22px;text-align:right;}
-.score-btns{display:flex;gap:3px;}
-.sdot{width:14px;height:14px;border-radius:50%;border:1.5px solid #e0cec8;background:white;cursor:pointer;transition:all .1s;flex-shrink:0;}
-.focus-btn{font-size:0.6rem;padding:2px 9px;border:1.5px solid var(--rule);border-radius:12px;cursor:pointer;background:white;color:var(--muted);white-space:nowrap;font-family:'Jost',sans-serif;}
-.focus-btn.active{background:var(--mauve);color:white;border-color:var(--mauve);}
-#focus-panel{margin-top:16px;padding:16px 18px;background:linear-gradient(135deg,#fce8ef,#f0e0f0);border-radius:10px;border:1px solid var(--blush);}
-.focus-panel-title{font-size:0.62rem;letter-spacing:3px;text-transform:uppercase;color:var(--muted);margin-bottom:12px;}
-.focus-item{display:flex;gap:10px;align-items:flex-start;margin-bottom:12px;}
+
+/* AUDIT HEADER */
+.audit-header{text-align:center;margin-bottom:36px;padding-bottom:24px;border-bottom:1px solid var(--line);}
+.audit-title{font-family:'Fraunces',serif;font-size:2.8rem;font-weight:600;letter-spacing:-1px;line-height:1.1;color:var(--ink);}
+.audit-title em{font-style:italic;color:var(--accent-deep);}
+.audit-sub{display:flex;justify-content:center;align-items:center;gap:16px;margin-top:12px;flex-wrap:wrap;}
+.audit-sub-label{font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);font-weight:600;display:flex;align-items:center;gap:5px;}
+.audit-sub-label::before{content:'✦';color:var(--accent);}
+.week-input{border:none;background:transparent;font-family:inherit;font-size:10px;color:var(--muted);outline:none;letter-spacing:2px;text-transform:uppercase;border-bottom:1.5px solid var(--line);padding-bottom:2px;width:160px;text-align:center;transition:border .15s;}
+.week-input:focus{border-bottom-color:var(--accent-deep);}
+
+/* SECTION TITLES */
+.sec-title{font-family:'Fraunces',serif;font-size:28px;font-weight:600;letter-spacing:-0.5px;margin-bottom:6px;}
+.sec-sub{font-size:12px;color:var(--muted);font-style:italic;margin-bottom:20px;}
+hr.rule{border:none;border-top:1px solid var(--line);margin:28px 0;}
+.ornament{text-align:center;color:var(--accent);font-size:1rem;letter-spacing:10px;margin-top:36px;}
+
+/* WRITE FIELDS */
+.write{background:var(--warm);border:1.5px solid var(--line);border-radius:14px;padding:14px 16px;font-family:'Plus Jakarta Sans',system-ui,sans-serif;font-size:13.5px;line-height:1.8;color:var(--ink);outline:none;width:100%;resize:none;overflow:hidden;display:block;transition:border .15s;}
+.write:focus{border-color:var(--accent-deep);}
+.write::placeholder{color:#b8b0a8;font-style:italic;}
+.write.xl{min-height:280px;}
+.write.letter{min-height:220px;font-family:'Fraunces',serif;font-size:15px;font-style:italic;line-height:2;}
+.write.letter::placeholder{font-style:italic;color:#b8b0a8;}
+
+/* PROMPT CHIPS */
+.prompt-chips{display:flex;flex-wrap:wrap;gap:7px;margin-bottom:14px;}
+.prompt-chip{padding:6px 14px;border:1.5px solid var(--line);border-radius:20px;font-size:11.5px;font-weight:600;color:var(--muted);cursor:pointer;background:var(--surface);transition:all .15s;user-select:none;}
+.prompt-chip:hover{border-color:var(--accent-deep);color:var(--ink);background:var(--accent-soft);}
+
+/* QUICK-ADD LIST (Wins & Downfalls) */
+.wd-wrap{display:grid;grid-template-columns:1fr 1fr;gap:22px;}
+.wd-col{background:var(--warm);border:1px solid var(--line);border-radius:18px;padding:20px;display:flex;flex-direction:column;gap:10px;}
+.wd-col-header{display:flex;align-items:center;gap:10px;margin-bottom:4px;}
+.wd-col-title{font-family:'Fraunces',serif;font-size:20px;font-weight:600;letter-spacing:-.2px;}
+.wd-col-sub{font-size:11px;color:var(--muted);font-style:italic;}
+.wd-items{display:flex;flex-direction:column;gap:6px;min-height:40px;}
+.wd-item{display:flex;align-items:flex-start;gap:9px;padding:9px 12px;background:var(--surface);border:1px solid var(--line);border-radius:11px;font-size:13px;line-height:1.4;transition:all .15s;}
+.wd-item:hover{border-color:#d9d2bd;}
+.wd-item-text{flex:1;}
+.wd-item-del{background:none;border:none;font-size:11px;color:#ccc;cursor:pointer;flex-shrink:0;padding:1px 4px;border-radius:5px;line-height:1;transition:all .15s;margin-top:1px;}
+.wd-item-del:hover{color:#a0304a;background:#fce4ec;}
+.wd-add-row{display:flex;gap:8px;align-items:center;}
+.wd-input{flex:1;border:1.5px solid var(--line);border-radius:10px;padding:8px 12px;font-size:12.5px;font-family:inherit;color:var(--ink);background:var(--surface);outline:none;transition:border .15s;}
+.wd-input:focus{border-color:var(--accent-deep);}
+.wd-input::placeholder{color:#b8b0a8;font-style:italic;}
+.wd-add-btn{padding:8px 14px;background:var(--ink);color:#fff;border:none;border-radius:10px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit;transition:all .15s;flex-shrink:0;}
+.wd-add-btn:hover{background:#2a2218;}
+.wd-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;margin-top:4px;}
+
+/* LIFE WHEEL */
+.wheel-wrap{display:grid;grid-template-columns:1fr 1fr;gap:32px;align-items:start;}
+.wheel-how-to{background:var(--warm);border:1px solid var(--line);border-radius:14px;padding:14px 18px;margin-bottom:20px;font-size:12.5px;line-height:1.6;}
+.wheel-how-to strong{font-size:9.5px;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted);display:block;margin-bottom:5px;font-weight:700;}
+.cat-row{display:flex;align-items:center;gap:10px;padding:9px 0;border-bottom:1px solid var(--line);}
+.cat-row:last-child{border-bottom:none;}
+.cat-swatch{width:10px;height:10px;border-radius:50%;flex-shrink:0;}
+.cat-name{font-size:12.5px;font-weight:600;min-width:120px;}
+.cat-slider{flex:1;-webkit-appearance:none;appearance:none;height:5px;border-radius:3px;background:var(--line);outline:none;cursor:pointer;}
+.cat-slider::-webkit-slider-thumb{-webkit-appearance:none;appearance:none;width:17px;height:17px;border-radius:50%;cursor:pointer;border:2.5px solid #fff;box-shadow:0 2px 7px rgba(0,0,0,.18);}
+.cat-score-display{font-family:'Fraunces',serif;font-weight:600;font-size:17px;min-width:26px;text-align:right;flex-shrink:0;}
+.focus-btn{font-size:10px;padding:3px 9px;border:1.5px solid var(--line);border-radius:12px;cursor:pointer;background:var(--surface);color:var(--muted);font-family:inherit;font-weight:600;transition:all .15s;flex-shrink:0;}
+.focus-btn.active{background:var(--accent-deep);color:#fff;border-color:var(--accent-deep);}
+.last-week-note{font-size:10px;color:var(--muted);font-style:italic;margin-top:6px;text-align:center;}
+#focus-panel{margin-top:14px;padding:16px 18px;background:var(--accent-soft);border-radius:14px;border:1px solid var(--accent);}
+.focus-panel-title{font-size:9.5px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin-bottom:12px;font-weight:700;}
+.focus-item{display:flex;gap:10px;align-items:flex-start;margin-bottom:10px;}
 .focus-dot{width:10px;height:10px;border-radius:50%;margin-top:4px;flex-shrink:0;}
-.focus-name{font-weight:600;font-size:0.78rem;margin-bottom:4px;}
-.goal-card{padding:18px 20px;border:1px solid var(--rule);background:var(--warm);margin-bottom:14px;border-radius:10px;}
-.goal-pill{display:inline-block;background:var(--blush);color:var(--ink);font-size:0.62rem;letter-spacing:2px;text-transform:uppercase;padding:3px 12px;border-radius:12px;margin-bottom:12px;}
-.goal-grid{display:grid;grid-template-columns:80px 1fr;gap:8px 12px;align-items:start;}
-.goal-key{font-size:0.65rem;font-weight:600;text-transform:uppercase;letter-spacing:.5px;color:var(--muted);padding-top:3px;}
-.goal-val{outline:none;border-bottom:1px dashed var(--rule);min-height:22px;font-size:0.8rem;font-family:'Jost',sans-serif;color:var(--ink);padding-bottom:2px;}
-.goal-val[contenteditable]:empty:before{content:attr(data-ph);color:#c8aab0;font-style:italic;}
-.time-legend{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:16px;}
-.legend-chip{display:flex;align-items:center;gap:6px;font-size:0.72rem;cursor:pointer;padding:4px 12px;border-radius:16px;border:1.5px solid transparent;transition:all .15s;user-select:none;}
-.legend-chip.selected{border-color:var(--ink);font-weight:600;}
-.chip-dot{width:11px;height:11px;border-radius:50%;flex-shrink:0;}
-.cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:8px;}
-.cal-head{text-align:center;font-size:0.62rem;letter-spacing:2px;text-transform:uppercase;color:var(--muted);padding-bottom:6px;border-bottom:1px solid var(--rule);font-weight:600;}
-.cal-day{background:var(--warm);border:1.5px solid var(--rule);min-height:110px;border-radius:8px;overflow:hidden;display:flex;flex-direction:column;}
-.cal-day-blocks{flex:1;padding:4px;display:flex;flex-direction:column;gap:3px;}
-.time-block{border-radius:5px;padding:4px 7px;font-size:0.68rem;line-height:1.4;position:relative;min-height:26px;}
-.time-block-text{outline:none;display:block;width:100%;background:transparent;font-family:'Jost',sans-serif;}
-.time-block-text[contenteditable]:empty:before{content:"tap to edit";opacity:.5;font-style:italic;}
-.time-block-del{position:absolute;top:2px;right:4px;font-size:0.6rem;cursor:pointer;opacity:0;border:none;background:transparent;}
-.time-block:hover .time-block-del{opacity:.6;}
-.add-block-btn{width:100%;border:none;background:transparent;padding:4px;font-size:0.75rem;cursor:pointer;color:var(--muted);text-align:center;border-top:1px dashed var(--rule);}
-.add-block-btn:hover{background:rgba(242,196,206,.2);color:var(--ink);}
-.cal-hint{font-size:0.7rem;color:var(--muted);font-style:italic;margin-bottom:12px;}
-.C1{background:#fce4ec;color:#7a2a3a;-webkit-print-color-adjust:exact;print-color-adjust:exact;}
-.C2{background:#e8f5e9;color:#2a5a30;-webkit-print-color-adjust:exact;print-color-adjust:exact;}
-.C3{background:#e3f2fd;color:#1a3a5a;-webkit-print-color-adjust:exact;print-color-adjust:exact;}
-.C4{background:#f3e5f5;color:#4a2a6a;-webkit-print-color-adjust:exact;print-color-adjust:exact;}
-.C5{background:#fff8e1;color:#6a4a10;-webkit-print-color-adjust:exact;print-color-adjust:exact;}
-.C6{background:#fce8d8;color:#6a3010;-webkit-print-color-adjust:exact;print-color-adjust:exact;}
-.letter-wrap{border:1px solid var(--blush);background:linear-gradient(to bottom,#fef9f6,#fdf0f4);border-radius:12px;padding:28px 32px;}
-.letter-sal{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:1rem;color:var(--mauve);margin-bottom:14px;}
-.letter-sign{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:0.95rem;color:var(--mauve);margin-top:20px;text-align:right;}
-#chron-toolbar{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-bottom:16px;padding:10px 14px;background:linear-gradient(135deg,#fce8ef,#f0e0f0);border-radius:10px;border:1px solid var(--blush);}
-#chron-toolbar button{padding:6px 16px;border:1.5px solid var(--mauve);font-family:'Jost',sans-serif;font-size:0.76rem;font-weight:500;cursor:pointer;border-radius:20px;transition:all .15s;}
-#chron-edit-btn{background:var(--mauve);color:white;border-color:var(--mauve);}
-#chron-edit-btn:hover,#chron-edit-btn.active{background:#a06080;}
-.chron-sec-btn{background:var(--cream);color:var(--ink);}
-.chron-sec-btn:hover{background:var(--blush);}
-#chron-toolbar label{font-family:'Jost',sans-serif;font-size:0.72rem;color:var(--ink);font-weight:600;}
-#chron-toolbar input[type=color]{width:28px;height:28px;border:2px solid var(--mauve);cursor:pointer;padding:1px;border-radius:20px;}
-#chron-paper{background:var(--cream);border:1px solid var(--rule);border-radius:8px;padding:32px 38px 40px;}
-.chron-masthead{border-top:3px solid var(--mauve);border-bottom:3px solid var(--mauve);padding:10px 0;text-align:center;margin-bottom:6px;}
-.chron-name{font-family:'Cormorant Garamond',serif;font-size:2.6rem;font-weight:300;color:var(--ink);letter-spacing:3px;font-style:italic;}
-.chron-tagline-row{display:flex;justify-content:space-between;align-items:center;border-top:1px solid var(--mauve);border-bottom:1px solid var(--mauve);padding:4px 0;margin-bottom:20px;font-size:0.72rem;color:var(--mauve);font-style:italic;font-family:'Cormorant Garamond',serif;}
+.focus-name{font-weight:700;font-size:12.5px;margin-bottom:4px;}
+.focus-write{width:100%;border:1.5px solid var(--line);border-radius:9px;padding:6px 10px;font-family:inherit;font-size:12px;color:var(--ink);background:var(--surface);outline:none;resize:none;overflow:hidden;min-height:36px;transition:border .15s;}
+.focus-write:focus{border-color:var(--accent-deep);}
+.focus-write::placeholder{color:#b8b0a8;font-style:italic;}
+
+/* GOALS */
+.last-goals-section{background:var(--warm);border:1px solid var(--line);border-radius:16px;padding:18px 20px;margin-bottom:28px;}
+.last-goals-title{font-size:9.5px;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted);font-weight:700;margin-bottom:12px;}
+.last-goal-row{display:flex;align-items:flex-start;gap:10px;padding:8px 0;border-bottom:1px solid var(--line);}
+.last-goal-row:last-child{border-bottom:none;}
+.last-goal-check{width:20px;height:20px;border-radius:6px;border:1.5px solid var(--line);cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all .15s;font-size:10px;margin-top:1px;}
+.last-goal-check.done{background:var(--accent-deep);border-color:var(--accent-deep);color:#fff;}
+.last-goal-check.skipped{background:var(--warm);border-color:#f2c4ce;color:#c8a0a8;}
+.last-goal-text{flex:1;font-size:12.5px;line-height:1.4;}
+.last-goal-text.done{text-decoration:line-through;color:var(--muted);}
+.last-goal-meta{font-size:10px;color:var(--muted);margin-top:2px;}
+.no-last-goals{font-size:12px;color:var(--muted);font-style:italic;}
+.goal-card{padding:20px 22px;border:1px solid var(--line);background:var(--warm);margin-bottom:14px;border-radius:18px;}
+.goal-pill{display:inline-block;background:var(--accent-soft);color:var(--accent-deep);font-size:10px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;padding:4px 12px;border-radius:12px;margin-bottom:14px;border:1px solid var(--accent);}
+.goal-grid{display:grid;grid-template-columns:90px 1fr;gap:10px 14px;align-items:center;}
+.goal-key{font-size:9.5px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:var(--muted);}
+.goal-input{width:100%;border:none;border-bottom:1.5px solid var(--line);font-size:13px;font-family:inherit;color:var(--ink);padding:5px 2px;background:transparent;outline:none;transition:border .15s;}
+.goal-input:focus{border-bottom-color:var(--accent-deep);}
+.goal-input::placeholder{color:#b8b0a8;font-style:italic;}
+.goal-2min{width:100%;border:1.5px solid var(--line);border-radius:9px;padding:7px 10px;font-size:12.5px;font-family:inherit;color:var(--ink);background:var(--surface);outline:none;resize:none;overflow:hidden;min-height:36px;transition:border .15s;grid-column:2;}
+.goal-2min:focus{border-color:var(--accent-deep);}
+.goal-2min::placeholder{color:#b8b0a8;font-style:italic;}
+
+/* LETTER */
+.letter-wrap{border:1px solid var(--accent);background:linear-gradient(to bottom,var(--surface),#fdfaff);border-radius:18px;padding:28px 32px;}
+.letter-sal{font-family:'Fraunces',serif;font-style:italic;font-size:16px;color:var(--accent-deep);margin-bottom:14px;}
+.letter-sign{font-family:'Fraunces',serif;font-style:italic;font-size:15px;color:var(--accent-deep);margin-top:20px;text-align:right;}
+.letter-footer{display:flex;justify-content:flex-end;margin-top:8px;}
+.word-count{font-size:10.5px;color:var(--muted);font-weight:600;}
+
+/* CHRONICLE */
+#chron-toolbar{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-bottom:14px;padding:12px 16px;background:var(--accent-soft);border-radius:14px;border:1px solid var(--accent);}
+#chron-toolbar button{padding:6px 14px;border:1.5px solid var(--accent-deep);font-family:inherit;font-size:11.5px;font-weight:600;cursor:pointer;border-radius:14px;transition:all .15s;background:var(--surface);color:var(--ink);}
+#chron-toolbar button:hover{background:var(--accent-soft);}
+.chron-toolbar-label{font-size:9.5px;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted);font-weight:700;}
+#chron-toolbar input[type=color]{width:28px;height:28px;border:2px solid var(--accent-deep);cursor:pointer;padding:1px;border-radius:20px;}
+#chron-paper{background:var(--surface);border:1px solid var(--line);border-radius:18px;padding:32px 38px 40px;}
+.chron-edit{border-radius:3px;transition:background .15s;}
+.chron-edit:hover{background:rgba(201,182,238,.15);cursor:text;}
+.chron-edit:focus{background:rgba(201,182,238,.2);outline:none;}
+.chron-masthead{border-top:3px solid var(--accent-deep);border-bottom:3px solid var(--accent-deep);padding:10px 0;text-align:center;margin-bottom:6px;}
+.chron-name{font-family:'Fraunces',serif;font-size:2.6rem;font-weight:600;color:var(--accent-deep);letter-spacing:-0.5px;}
+.chron-tagline-row{display:flex;justify-content:space-between;align-items:center;border-top:1px solid var(--accent-deep);border-bottom:1px solid var(--accent-deep);padding:4px 0;margin-bottom:20px;font-size:12px;color:var(--accent-deep);font-style:italic;font-family:'Fraunces',serif;}
 .chron-main{display:grid;grid-template-columns:2fr 1fr;gap:24px;margin-bottom:16px;}
-.chron-sec-label{display:block;font-family:'Jost',sans-serif;font-size:0.58rem;letter-spacing:3px;text-transform:uppercase;color:var(--mauve);border-top:2px solid var(--mauve);border-bottom:1px solid var(--rule);padding:3px 0;margin:0 0 12px;}
-.chron-headline{font-family:'Cormorant Garamond',serif;font-size:1.5rem;font-weight:600;line-height:1.2;color:var(--ink);margin-bottom:4px;}
+.chron-sec-label{display:block;font-family:inherit;font-size:9.5px;letter-spacing:2.5px;text-transform:uppercase;color:var(--accent-deep);border-top:2px solid var(--accent-deep);border-bottom:1px solid var(--line);padding:3px 0;margin:0 0 12px;font-weight:700;}
+.chron-headline{font-family:'Fraunces',serif;font-size:1.5rem;font-weight:600;line-height:1.2;color:var(--ink);margin-bottom:4px;letter-spacing:-.3px;}
 .chron-headline.chron-sm{font-size:1.1rem;}
-.chron-byline{font-size:0.7rem;color:var(--mauve);font-style:italic;margin-bottom:8px;border-bottom:1px solid var(--rule);padding-bottom:4px;font-family:'Cormorant Garamond',serif;}
-.chron-body{font-size:0.8rem;line-height:1.7;text-align:justify;color:var(--ink);margin-bottom:8px;font-family:'Cormorant Garamond',serif;}
-.chron-pullquote{border-top:2px solid var(--mauve);border-bottom:2px solid var(--mauve);padding:10px 16px;margin:14px 0;font-family:'Cormorant Garamond',serif;font-size:1rem;font-style:italic;color:var(--mauve);text-align:center;}
+.chron-byline{font-size:11px;color:var(--accent-deep);font-style:italic;margin-bottom:8px;border-bottom:1px solid var(--line);padding-bottom:4px;font-family:'Fraunces',serif;}
+.chron-body{font-size:13px;line-height:1.7;text-align:justify;color:var(--ink);margin-bottom:8px;font-family:'Fraunces',serif;}
+.chron-pullquote{border-top:2px solid var(--accent-deep);border-bottom:2px solid var(--accent-deep);padding:10px 16px;margin:14px 0;font-family:'Fraunces',serif;font-size:1rem;font-style:italic;color:var(--accent-deep);text-align:center;}
 .chron-article{margin-bottom:16px;}
-.chron-col-rule{border-left:1px solid var(--rule);padding-left:22px;}
-.chron-two-col{display:grid;grid-template-columns:1fr 1fr;gap:24px;}
-.chron-rule{border:none;border-top:1px solid var(--rule);margin:18px 0;}
-.chron-ornament{text-align:center;color:var(--blush);font-size:1rem;letter-spacing:8px;margin-top:20px;}
-.chron-sidebar-box{background:var(--warm);border:1px solid var(--rule);border-radius:8px;padding:12px 14px;font-size:0.78rem;line-height:1.6;}
-.chron-sb-title{font-family:'Jost',sans-serif;font-weight:600;font-size:0.65rem;letter-spacing:2px;text-transform:uppercase;color:var(--mauve);border-bottom:1px solid var(--rule);padding-bottom:4px;margin-bottom:8px;}
-.chron-sb-list{padding-left:12px;font-family:'Cormorant Garamond',serif;font-size:0.8rem;}
+.chron-col-rule{border-left:1px solid var(--line);padding-left:22px;}
+.chron-two-col{display:flex;gap:24px;}.chron-two-col>.chron-deletable,.chron-two-col>.chron-article{flex:1;min-width:0;}
+.chron-rule{border:none;border-top:1px solid var(--line);margin:18px 0;}
+.chron-ornament{text-align:center;color:var(--accent);font-size:1rem;letter-spacing:8px;margin-top:20px;}
+.chron-sidebar-box{background:var(--warm);border:1px solid var(--line);border-radius:10px;padding:12px 14px;font-size:12.5px;line-height:1.6;margin-bottom:12px;}
+.chron-sb-title{font-weight:700;font-size:9.5px;letter-spacing:2px;text-transform:uppercase;color:var(--accent-deep);border-bottom:1px solid var(--line);padding-bottom:4px;margin-bottom:8px;}
+.chron-sb-list{padding-left:14px;font-family:'Fraunces',serif;font-size:13px;}
 .chron-sb-list li{margin-bottom:5px;}
-body.chron-edit-mode .chron-edit{background:rgba(255,220,230,.25);cursor:text;border-radius:3px;}
-body.chron-edit-mode .chron-edit:hover{background:rgba(255,200,220,.4);}
-body.chron-edit-mode .chron-edit:focus{background:rgba(255,190,210,.5);outline:2px dashed var(--rose);}
 
-.hub-wrap{max-width:980px;margin:0 auto;padding:0 0 60px;}
+/* BOTTOM */
+.new-week-wrap{text-align:center;margin-top:32px;padding-top:24px;border-top:1px solid var(--line);}
+.new-week-hint{font-size:11.5px;color:var(--muted);font-style:italic;margin-bottom:10px;}
+.new-week-btn{padding:9px 24px;border:1.5px solid var(--line);background:var(--warm);color:var(--muted);font-family:inherit;font-size:12px;font-weight:600;cursor:pointer;border-radius:20px;transition:all .15s;}
+.new-week-btn:hover{border-color:var(--accent-deep);color:var(--ink);}
 
-@media print{
-  .topbar,#toolbar,#chron-toolbar{display:none!important;}
-  body{background:white!important;padding:0;}
-  #paper{box-shadow:none!important;border-radius:0!important;padding:20px 28px!important;}
+@media(max-width:700px){
+  .wd-wrap,.wheel-wrap,.chron-main,.chron-two-col{grid-template-columns:1fr;}
+  .topbar{padding:14px 18px;}
+  .hub{padding:24px 14px 60px;}
+  .goal-grid{grid-template-columns:70px 1fr;}
 }
+@media print{
+  .topbar,.tab-bar,#chron-toolbar,.new-week-wrap,.pdf-btn{display:none!important;}
+  body{background:white!important;}
+  .page{display:block!important;page-break-before:always;}
+  .page:first-child{page-break-before:auto;}
+}
+
+/* Chronicle delete buttons */
+.chron-deletable{position:relative;}
+.chron-del-btn{position:absolute;top:6px;right:6px;width:22px;height:22px;border-radius:50%;background:rgba(255,255,255,.9);border:1.5px solid var(--line);font-size:10px;cursor:pointer;display:none;align-items:center;justify-content:center;color:var(--muted);transition:all .15s;z-index:10;line-height:1;}
+.chron-del-btn:hover{background:#fce4ec;border-color:#f2c4ce;color:#a0304a;}
+.chron-deletable:hover>.chron-del-btn{display:flex;}
+.chron-brief-del{background:none;border:none;font-size:9px;color:transparent;cursor:pointer;padding:0 2px;border-radius:3px;flex-shrink:0;transition:all .15s;line-height:1;}
+.chron-brief-item:hover .chron-brief-del{color:#ccc;}
+.chron-brief-del:hover{color:#a0304a!important;background:#fce4ec;}
 </style>
 </head>
 <body>
 
-<!-- TOPBAR -->
 <div class="topbar">
-  <div class="topbar-title">Weekly <em>Life Audit</em></div>
+  <div class="topbar-left">
+    <a href="../" class="back-btn">
+      <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"/></svg>
+      Brain 2.0
+    </a>
+    <div class="topbar-title">Weekly Life Audit</div>
+  </div>
   <div class="topbar-right">
-    <a href="../" class="back-btn">← Brain 2.0</a>
+    <span class="save-indicator" id="save-indicator">Saved ✓</span>
     <span class="topbar-date" id="today-date"></span>
+    <button class="pdf-btn" onclick="savePDF()">↓ PDF</button>
   </div>
 </div>
 
-<div class="hub-wrap">
-<div id="toolbar">
-  <button class="tab-btn active" onclick="goTab(0,this)">🧠 Brain Dump</button>
-  <button class="tab-btn" onclick="goTab(1,this)">🌸 Life Wheel</button>
-  <button class="tab-btn" onclick="goTab(2,this)">80/20 Review</button>
-  <button class="tab-btn" onclick="goTab(3,this)">Wins & Downfalls</button>
-  <button class="tab-btn" onclick="goTab(4,this)">Goals</button>
-  <button class="tab-btn" onclick="goTab(5,this)">Calendar</button>
-  <button class="tab-btn" onclick="goTab(6,this)">Letter to Self</button>
-  <button class="tab-btn" onclick="goTab(7,this)">📰 Weekly Chronicle</button>
-  <button class="pdf-btn" onclick="savePDF()" title="Save as PDF">⬇</button>
+<div class="tab-bar">
+  <div class="tab-bar-inner">
+    <button class="tab-btn active" onclick="goTab(0,this)">🧠 Brain Dump</button>
+    <button class="tab-btn" onclick="goTab(1,this)">🏆 Wins & Downfalls</button>
+    <button class="tab-btn" onclick="goTab(2,this)">🌸 Life Wheel</button>
+    <button class="tab-btn" onclick="goTab(3,this)">🎯 Goals</button>
+    <button class="tab-btn" onclick="goTab(4,this)">💌 Letter to Self</button>
+    <button class="tab-btn" onclick="goTab(5,this)">📰 Chronicle</button>
+  </div>
 </div>
 
-<div id="paper">
-  <div class="header">
-    <h1 class="header-title">Weekly <em>Life Audit</em></h1>
-    <div class="header-sub">
-      <span>Plan</span><span>Reflect</span><span>Grow</span>
-      <input class="week-field" type="text" placeholder="Week of ___________">
+<div class="hub">
+
+  <div class="audit-header">
+    <h1 class="audit-title">Weekly <em>Life Audit</em></h1>
+    <div class="audit-sub">
+      <span class="audit-sub-label">Plan</span>
+      <span class="audit-sub-label">Reflect</span>
+      <span class="audit-sub-label">Grow</span>
+      <input class="week-input" id="week-field" type="text" placeholder="Week of ___________" oninput="debouncedSave()">
     </div>
   </div>
 
-  <!-- I: BRAIN DUMP -->
+  <!-- 0: BRAIN DUMP -->
   <div class="page active" id="p0">
-    <div class="sec-head"><div class="sec-num">I</div><div class="sec-title">Brain Dump</div><div class="sec-sub">Get everything out of your head first</div></div>
-    <p style="font-size:.73rem;color:var(--muted);font-style:italic;margin-bottom:20px;">Before anything else — empty your mind. Worries, to-dos, random thoughts, feelings, things you're excited about. No filter, no structure. Just get it all out.</p>
-    <div class="write" contenteditable data-save-id="brain_dump" style="min-height:320px;line-height:1.9;" data-ph="Anything and everything on your mind right now..."></div>
+    <div class="sec-title">Brain Dump</div>
+    <div class="sec-sub">Get everything out of your head before anything else — no filter, no structure.</div>
+    <div class="prompt-chips" id="prompt-chips">
+      <div class="prompt-chip" onclick="addPrompt('What\'s sitting on my mind right now: ')">💭 What\'s on my mind</div>
+      <div class="prompt-chip" onclick="addPrompt('What I didn\'t do that I said I would: ')">😬 Unfinished business</div>
+      <div class="prompt-chip" onclick="addPrompt('What I\'m anxious about: ')">😰 What\'s worrying me</div>
+      <div class="prompt-chip" onclick="addPrompt('What I\'m genuinely excited about: ')">✨ What I\'m excited about</div>
+      <div class="prompt-chip" onclick="addPrompt('Something I\'ve been avoiding thinking about: ')">🙈 What I\'ve been avoiding</div>
+    </div>
+    <textarea class="write xl" id="brain-dump-field" data-save-id="brain_dump" placeholder="Anything and everything on your mind right now..." oninput="autoExpand(this);debouncedSave()"></textarea>
+    <div class="ornament">✦ ✿ ✦</div>
   </div>
 
-  <!-- II: LIFE WHEEL -->
+  <!-- 1: WINS & DOWNFALLS -->
   <div class="page" id="p1">
-    <div class="sec-head"><div class="sec-num">II</div><div class="sec-title">Life Wheel</div></div>
-    <div style="background:linear-gradient(135deg,#fce8ef,#f0e0f0);border:1px solid var(--blush);border-radius:10px;padding:10px 16px;margin-bottom:20px;font-size:0.74rem;line-height:1.6;color:var(--ink);">
-      <strong style="font-size:0.63rem;letter-spacing:2px;text-transform:uppercase;color:var(--muted);display:block;margin-bottom:5px;">How to rate ✦</strong>
-      Rate each area on <strong>how satisfied you feel right now.</strong><br>
-      <strong>1</strong> = neglected or painful · <strong>10</strong> = fully fulfilled.<br>
-      Then mark up to <strong>3 focus areas</strong> to intentionally nurture this week.
+    <div class="sec-title">Wins & Downfalls</div>
+    <div class="sec-sub">Both are data. Celebrate the wins, learn from the rest.</div>
+    <div class="wd-wrap">
+      <div class="wd-col" style="border-top:3px solid var(--accent);">
+        <div>
+          <div class="wd-col-title">🏆 Wins</div>
+          <div class="wd-col-sub">Goals hit, moments you're proud of, things that went right</div>
+        </div>
+        <div class="wd-items" id="wins-list"></div>
+        <div class="wd-add-row">
+          <input class="wd-input" id="wins-input" type="text" placeholder="Add a win..." onkeydown="if(event.key==='Enter'){event.preventDefault();addItem('wins');}">
+          <button class="wd-add-btn" onclick="addItem('wins')">+ Add</button>
+        </div>
+      </div>
+      <div class="wd-col" style="border-top:3px solid #f2c4ce;">
+        <div>
+          <div class="wd-col-title">🌱 Downfalls</div>
+          <div class="wd-col-sub">Things to learn from — not to shame yourself with</div>
+        </div>
+        <div class="wd-items" id="downfalls-list"></div>
+        <div class="wd-add-row">
+          <input class="wd-input" id="downfalls-input" type="text" placeholder="Add a downfall..." onkeydown="if(event.key==='Enter'){event.preventDefault();addItem('downfalls');}">
+          <button class="wd-add-btn" onclick="addItem('downfalls')">+ Add</button>
+        </div>
+      </div>
     </div>
-    <div id="wheel-wrap">
-      <div style="text-align:center;"><canvas id="radar" width="380" height="380" style="max-width:100%;display:block;margin:0 auto;"></canvas></div>
+    <div class="ornament">✦ ✿ ✦</div>
+  </div>
+
+  <!-- 2: LIFE WHEEL -->
+  <div class="page" id="p2">
+    <div class="sec-title">Life Wheel</div>
+    <div class="sec-sub">How satisfied do you feel right now in each area? 1 = neglected · 10 = fulfilled.</div>
+    <div class="wheel-how-to">
+      <strong>How to use ✦</strong>
+      Drag each slider to rate your satisfaction this week. Mark up to <strong>3 focus areas</strong> (☆) to intentionally nurture.
+      <span id="last-week-ghost-note"></span>
+    </div>
+    <div class="wheel-wrap">
+      <div style="text-align:center;">
+        <canvas id="radar" width="380" height="380" style="max-width:100%;display:block;margin:0 auto;"></canvas>
+      </div>
       <div>
         <div id="cat-list"></div>
         <div id="focus-panel" style="display:none;">
@@ -202,179 +308,130 @@ body.chron-edit-mode .chron-edit:focus{background:rgba(255,190,210,.5);outline:2
         </div>
       </div>
     </div>
+    <div class="ornament">✦ ✿ ✦</div>
   </div>
 
-  <!-- III: 80/20 -->
-  <div class="page" id="p2">
-    <div class="sec-head"><div class="sec-num">III</div><div class="sec-title">80 / 20 Review</div><div class="sec-sub">What worked vs. what didn't</div></div>
-    <p style="font-size:.73rem;color:var(--muted);font-style:italic;margin-bottom:16px;">This is a <strong style="font-style:normal;">pattern analysis</strong>, not a list of what happened. Look at your habits and behaviors from the week and ask: what was actually moving the needle, and what was just noise, friction, or avoidance? The 80% side is where most of your energy probably went — but didn't serve you. The 20% side is the small handful of things that genuinely moved you forward. Identify them so you can repeat them. This is separate from your wins and downfalls — it's less about outcomes and more about <strong style="font-style:normal;">what to cut and what to double down on.</strong></p>
-    <div class="two-col">
-      <div class="col-card" style="border-top:3px solid #f4b8c4;">
-        <div class="col-card-title">✗ 80% — What Didn't Help</div>
-        <div class="col-card-sub">Patterns, habits, choices that held you back</div>
-        <div class="write tall" contenteditable data-save-id="eighty_bad" data-ph="e.g. Scrolling at night → killed my sleep and morning energy&#10;e.g. Skipping meals → led to overeating later&#10;e.g. Saying yes to everything → felt drained and behind&#10;e.g. Taking too many naps → wasted time, poor quality rest"></div>
-      </div>
-      <div class="col-card" style="border-top:3px solid #b8cfb0;">
-        <div class="col-card-title">✓ 20% — What Worked</div>
-        <div class="col-card-sub">The small things that actually moved you forward</div>
-        <div class="write tall" contenteditable data-save-id="eighty_good" data-ph="e.g. Prepping meals Sunday → ate better all week&#10;e.g. Going to the office 3x → stayed focused and accountable&#10;e.g. Morning walks → set a better tone for the day&#10;e.g. Texting a friend → felt more connected and less in my head"></div>
-      </div>
-    </div>
-    <div class="highlight-box">
-      <div class="highlight-icon">✨</div>
-      <div class="highlight-label">Weekly Highlight</div>
-      <div class="highlight-write" contenteditable data-save-id="highlight"></div>
-    </div>
-  </div>
-
-  <!-- IV: WINS & DOWNFALLS -->
+  <!-- 3: GOALS -->
   <div class="page" id="p3">
-    <div class="sec-head"><div class="sec-num">IV</div><div class="sec-title">Wins & Downfalls</div><div class="sec-sub">Celebrate both — they're both data</div></div>
-    <div class="two-col">
-      <div class="col-card" style="border-top:3px solid #d4b8e0;">
-        <div class="col-card-title">🏆 Wins</div>
-        <div class="col-card-sub">Goals hit, habit streaks, proud moments</div>
-        <div class="write tall" contenteditable data-save-id="wins" data-ph="— Worked out 4x this week&#10;— Called a friend&#10;— Stayed within budget"></div>
-      </div>
-      <div class="col-card" style="border-top:3px solid #f2c4ce;">
-        <div class="col-card-title">🌱 Downfalls</div>
-        <div class="col-card-sub">Things to learn from — not to shame yourself with</div>
-        <div class="write tall" contenteditable data-save-id="downfalls" data-ph="— Skipped journaling 3 days&#10;— Overspent on eating out&#10;— Poor sleep habits"></div>
-      </div>
-    </div>
-  </div>
+    <div class="sec-title">Goals for Next Week</div>
+    <div class="sec-sub">1–3 specific goals. The 2-minute version is the smallest possible start — so you begin even on hard days.</div>
 
-  <!-- V: GOALS -->
-  <div class="page" id="p4">
-    <div class="sec-head"><div class="sec-num">V</div><div class="sec-title">Goals for Next Week</div><div class="sec-sub">1–3 achievable, specific goals only</div></div>
-    <p style="font-size:.73rem;color:var(--muted);font-style:italic;margin-bottom:20px;">Each goal needs a what, where, and when. The <strong style="font-style:normal;">2-minute version</strong> is the smallest possible action you could take toward that goal — so that on hard days, you still start. Starting is the habit; the rest follows.</p>
+    <div class="last-goals-section" id="last-goals-section" style="display:none;">
+      <div class="last-goals-title">Last Week's Goals — How Did You Do?</div>
+      <div id="last-goals-list"></div>
+    </div>
+
     <div class="goal-card">
       <div class="goal-pill">Goal 1</div>
       <div class="goal-grid">
-        <span class="goal-key">What</span><div class="goal-val" contenteditable data-save-id="g1_what" data-ph="What will you do?"></div>
-        <span class="goal-key">Where</span><div class="goal-val" contenteditable data-save-id="g1_where" data-ph="Where?"></div>
-        <span class="goal-key">When</span><div class="goal-val" contenteditable data-save-id="g1_when" data-ph="Day & time?"></div>
-        <span class="goal-key">2-min ver.</span><div class="goal-val" contenteditable data-save-id="g1_2min" data-ph="The smallest possible start..."></div>
+        <span class="goal-key">What</span><input class="goal-input" type="text" data-save-id="g1_what" placeholder="What will you do?" oninput="debouncedSave()">
+        <span class="goal-key">Where</span><input class="goal-input" type="text" data-save-id="g1_where" placeholder="Where?" oninput="debouncedSave()">
+        <span class="goal-key">When</span><input class="goal-input" type="text" data-save-id="g1_when" placeholder="Day & time?" oninput="debouncedSave()">
+        <span class="goal-key">2-min ver.</span><textarea class="goal-2min" data-save-id="g1_2min" placeholder="The smallest possible start..." rows="1" oninput="autoExpand(this);debouncedSave()"></textarea>
       </div>
     </div>
     <div class="goal-card">
       <div class="goal-pill">Goal 2</div>
       <div class="goal-grid">
-        <span class="goal-key">What</span><div class="goal-val" contenteditable data-save-id="g2_what" data-ph="What will you do?"></div>
-        <span class="goal-key">Where</span><div class="goal-val" contenteditable data-save-id="g2_where" data-ph="Where?"></div>
-        <span class="goal-key">When</span><div class="goal-val" contenteditable data-save-id="g2_when" data-ph="Day & time?"></div>
-        <span class="goal-key">2-min ver.</span><div class="goal-val" contenteditable data-save-id="g2_2min" data-ph="The smallest possible start..."></div>
+        <span class="goal-key">What</span><input class="goal-input" type="text" data-save-id="g2_what" placeholder="What will you do?" oninput="debouncedSave()">
+        <span class="goal-key">Where</span><input class="goal-input" type="text" data-save-id="g2_where" placeholder="Where?" oninput="debouncedSave()">
+        <span class="goal-key">When</span><input class="goal-input" type="text" data-save-id="g2_when" placeholder="Day & time?" oninput="debouncedSave()">
+        <span class="goal-key">2-min ver.</span><textarea class="goal-2min" data-save-id="g2_2min" placeholder="The smallest possible start..." rows="1" oninput="autoExpand(this);debouncedSave()"></textarea>
       </div>
     </div>
     <div class="goal-card">
       <div class="goal-pill">Goal 3</div>
       <div class="goal-grid">
-        <span class="goal-key">What</span><div class="goal-val" contenteditable data-save-id="g3_what" data-ph="What will you do?"></div>
-        <span class="goal-key">Where</span><div class="goal-val" contenteditable data-save-id="g3_where" data-ph="Where?"></div>
-        <span class="goal-key">When</span><div class="goal-val" contenteditable data-save-id="g3_when" data-ph="Day & time?"></div>
-        <span class="goal-key">2-min ver.</span><div class="goal-val" contenteditable data-save-id="g3_2min" data-ph="The smallest possible start..."></div>
+        <span class="goal-key">What</span><input class="goal-input" type="text" data-save-id="g3_what" placeholder="What will you do?" oninput="debouncedSave()">
+        <span class="goal-key">Where</span><input class="goal-input" type="text" data-save-id="g3_where" placeholder="Where?" oninput="debouncedSave()">
+        <span class="goal-key">When</span><input class="goal-input" type="text" data-save-id="g3_when" placeholder="Day & time?" oninput="debouncedSave()">
+        <span class="goal-key">2-min ver.</span><textarea class="goal-2min" data-save-id="g3_2min" placeholder="The smallest possible start..." rows="1" oninput="autoExpand(this);debouncedSave()"></textarea>
       </div>
     </div>
+    <div class="ornament">✦ ✿ ✦</div>
   </div>
 
-  <!-- VI: CALENDAR -->
-  <div class="page" id="p5">
-    <div class="sec-head"><div class="sec-num">VI</div><div class="sec-title">Time-Block Your Week</div><div class="sec-sub">Select a color, then click + to add a block</div></div>
-    <p class="cal-hint">① Pick a category → ② Click + to add a block → ③ Type your event → ④ Hover & click × to delete</p>
-    <div class="time-legend" id="legend">
-      <div class="legend-chip selected C1" onclick="selectColor(1,this)"><div class="chip-dot" style="background:#f4b8c4"></div>Work</div>
-      <div class="legend-chip C2" onclick="selectColor(2,this)"><div class="chip-dot" style="background:#b8cfb0"></div>Health</div>
-      <div class="legend-chip C3" onclick="selectColor(3,this)"><div class="chip-dot" style="background:#b8d4f0"></div>Social</div>
-      <div class="legend-chip C4" onclick="selectColor(4,this)"><div class="chip-dot" style="background:#d4b8e0"></div>Romance</div>
-      <div class="legend-chip C5" onclick="selectColor(5,this)"><div class="chip-dot" style="background:#f0dea0"></div>Learning</div>
-      <div class="legend-chip C6" onclick="selectColor(6,this)"><div class="chip-dot" style="background:#f0c8a8"></div>Self-Care</div>
-    </div>
-    <div class="cal-grid">
-      <div class="cal-head">Mon</div><div class="cal-head">Tue</div><div class="cal-head">Wed</div><div class="cal-head">Thu</div><div class="cal-head">Fri</div><div class="cal-head">Sat</div><div class="cal-head">Sun</div>
-      <div class="cal-day"><div class="cal-day-blocks" id="cb0"></div><button class="add-block-btn" onclick="addBlock(0)">+ add</button></div>
-      <div class="cal-day"><div class="cal-day-blocks" id="cb1"></div><button class="add-block-btn" onclick="addBlock(1)">+ add</button></div>
-      <div class="cal-day"><div class="cal-day-blocks" id="cb2"></div><button class="add-block-btn" onclick="addBlock(2)">+ add</button></div>
-      <div class="cal-day"><div class="cal-day-blocks" id="cb3"></div><button class="add-block-btn" onclick="addBlock(3)">+ add</button></div>
-      <div class="cal-day"><div class="cal-day-blocks" id="cb4"></div><button class="add-block-btn" onclick="addBlock(4)">+ add</button></div>
-      <div class="cal-day"><div class="cal-day-blocks" id="cb5"></div><button class="add-block-btn" onclick="addBlock(5)">+ add</button></div>
-      <div class="cal-day"><div class="cal-day-blocks" id="cb6"></div><button class="add-block-btn" onclick="addBlock(6)">+ add</button></div>
-    </div>
-  </div>
-
-  <!-- VII: LETTER -->
-  <div class="page" id="p6">
-    <div class="sec-head"><div class="sec-num">VII</div><div class="sec-title">Letter from Future You</div><div class="sec-sub">Next Sunday's perspective · past tense · specific · proud</div></div>
-    <p style="font-size:.73rem;color:var(--muted);font-style:italic;margin-bottom:14px;">Write as if it's already next Sunday and the week went exactly as you hoped. What happened? How did you show up?</p>
+  <!-- 4: LETTER TO SELF -->
+  <div class="page" id="p4">
+    <div class="sec-title">Letter from Future You</div>
+    <div class="sec-sub">Write as if it's already next Sunday and the week went exactly as you hoped. Past tense. Specific. Proud.</div>
     <div class="letter-wrap">
       <div class="letter-sal">Dear current me,</div>
-      <div class="write letter" contenteditable data-save-id="letter" data-ph="This week was everything I hoped it would be. On Monday I finally..."></div>
+      <textarea class="write letter" id="letter-field" data-save-id="letter" placeholder="This week was everything I hoped it would be. On Monday I finally..." oninput="autoExpand(this);updateWordCount();debouncedSave()"></textarea>
+      <div class="letter-footer">
+        <span class="word-count" id="word-count">0 words</span>
+      </div>
       <div class="letter-sign">With love, Future You 🌸</div>
     </div>
+    <div class="ornament">✦ ✿ ✦</div>
   </div>
 
-  <!-- VIII: WEEKLY CHRONICLE -->
-  <div class="page" id="p7">
+  <!-- 5: CHRONICLE -->
+  <div class="page" id="p5">
     <div id="chron-toolbar">
-      <button id="chron-edit-btn" onclick="toggleChron()">✏️ Edit Chronicle</button>
-      <label>Accent:</label>
-      <input type="color" id="chron-color" value="#c9a0b4" onchange="setChronAccent(this.value)">
-      <button class="chron-sec-btn" onclick="addChronSection()">＋ Section</button>
-      <button class="chron-sec-btn" onclick="addChronSidebar()">＋ Sidebar</button>
+      <span class="chron-toolbar-label">Chronicle</span>
+      <input type="color" id="chron-color" value="#b099e0" onchange="setChronAccent(this.value)" title="Accent color">
+      <button onclick="addChronSection()">＋ Add Story Column</button>
+      <button onclick="addChronSidebar()">＋ Add Sidebar Box</button>
+      <span style="font-size:11px;color:var(--muted);font-style:italic;">Click any text to edit</span>
     </div>
     <div id="chron-paper">
       <div class="chron-masthead">
-        <div class="chron-name chron-edit" contenteditable="false" data-save-id="ch_name">The Weekly Chronicle</div>
+        <div class="chron-name chron-edit" contenteditable="true" data-save-id="ch_name">The Weekly Chronicle</div>
       </div>
       <div class="chron-tagline-row">
-        <span class="chron-edit" contenteditable="false" data-save-id="ch_loc">Washington, D.C. · Est. 2025</span>
-        <span class="chron-edit" contenteditable="false" data-save-id="ch_tagline">"All the News That's Fit to Remember"</span>
-        <span class="chron-edit" contenteditable="false" data-save-id="ch_week">Week of ___________</span>
+        <span class="chron-edit" contenteditable="true" data-save-id="ch_loc">Washington, D.C. · Est. 2025</span>
+        <span class="chron-edit" contenteditable="true" data-save-id="ch_tagline">"All the News That's Fit to Remember"</span>
+        <span class="chron-edit" contenteditable="true" data-save-id="ch_week">Week of ___________</span>
       </div>
       <div class="chron-main">
-        <div>
-          <span class="chron-sec-label chron-edit" contenteditable="false" data-save-id="ch_sec1">Top Story</span>
-          <div class="chron-headline chron-edit" contenteditable="false" data-save-id="ch_headline1">Write Your Lead Headline Here</div>
-          <div class="chron-byline chron-edit" contenteditable="false" data-save-id="ch_byline1">By Your Name · This Week</div>
-          <p class="chron-body chron-edit" contenteditable="false" data-save-id="ch_body1">Click "Edit Chronicle" above, then click any text to start writing.</p>
-          <div class="chron-pullquote chron-edit" contenteditable="false" data-save-id="ch_pullquote">"A memorable quote or reflection from the week."</div>
-          <p class="chron-body chron-edit" contenteditable="false" data-save-id="ch_body2">Continue the story here with more detail, context, or reflection.</p>
+        <div class="chron-deletable"><button class="chron-del-btn" onclick="this.parentElement.remove();debouncedSave();" title="Remove top story">✕</button>
+          <span class="chron-sec-label chron-edit" contenteditable="true" data-save-id="ch_sec1">Top Story</span>
+          <div class="chron-headline chron-edit" contenteditable="true" data-save-id="ch_headline1">Write Your Lead Headline Here</div>
+          <div class="chron-byline chron-edit" contenteditable="true" data-save-id="ch_byline1">By Your Name · This Week</div>
+          <p class="chron-body chron-edit" contenteditable="true" data-save-id="ch_body1">Click any text to start writing. This is your top story from the week.</p>
+          <div class="chron-pullquote chron-edit" contenteditable="true" data-save-id="ch_pullquote">"A memorable quote or reflection from the week."</div>
+          <p class="chron-body chron-edit" contenteditable="true" data-save-id="ch_body2">Continue the story here with more detail, context, or reflection.</p>
         </div>
         <div>
-          <div class="chron-sidebar-box">
-            <div class="chron-sb-title chron-edit" contenteditable="false" data-save-id="ch_brief_title">Week in Brief</div>
-            <ul class="chron-sb-list">
-              <li class="chron-edit" contenteditable="false" data-save-id="ch_brief1">✦ Highlight one</li>
-              <li class="chron-edit" contenteditable="false" data-save-id="ch_brief2">✦ Highlight two</li>
-              <li class="chron-edit" contenteditable="false" data-save-id="ch_brief3">✦ Highlight three</li>
-              <li class="chron-edit" contenteditable="false" data-save-id="ch_brief4">✦ Highlight four</li>
-              <li class="chron-edit" contenteditable="false" data-save-id="ch_brief5">✦ Highlight five</li>
+          <div class="chron-deletable"><button class="chron-del-btn" onclick="this.parentElement.remove();debouncedSave();" title="Remove this block">✕</button><div class="chron-sidebar-box">
+            <div class="chron-sb-title chron-edit" contenteditable="true" data-save-id="ch_brief_title">Week in Brief</div>
+            <ul class="chron-sb-list" id="brief-list">
+              <li class="chron-brief-item" style="display:flex;align-items:baseline;gap:5px;margin-bottom:6px;"><span class="chron-edit" contenteditable="true" style="flex:1;">✦ Highlight one</span><button class="chron-brief-del" onclick="this.parentElement.remove();debouncedSave();" title="Remove">✕</button></li>
+              <li class="chron-brief-item" style="display:flex;align-items:baseline;gap:5px;margin-bottom:6px;"><span class="chron-edit" contenteditable="true" style="flex:1;">✦ Highlight two</span><button class="chron-brief-del" onclick="this.parentElement.remove();debouncedSave();" title="Remove">✕</button></li>
+              <li class="chron-brief-item" style="display:flex;align-items:baseline;gap:5px;margin-bottom:6px;"><span class="chron-edit" contenteditable="true" style="flex:1;">✦ Highlight three</span><button class="chron-brief-del" onclick="this.parentElement.remove();debouncedSave();" title="Remove">✕</button></li>
+              <li class="chron-brief-item" style="display:flex;align-items:baseline;gap:5px;margin-bottom:6px;"><span class="chron-edit" contenteditable="true" style="flex:1;">✦ Highlight four</span><button class="chron-brief-del" onclick="this.parentElement.remove();debouncedSave();" title="Remove">✕</button></li>
+              <li class="chron-brief-item" style="display:flex;align-items:baseline;gap:5px;margin-bottom:6px;"><span class="chron-edit" contenteditable="true" style="flex:1;">✦ Highlight five</span><button class="chron-brief-del" onclick="this.parentElement.remove();debouncedSave();" title="Remove">✕</button></li>
             </ul>
-          </div>
-          <div class="chron-sidebar-box" style="margin-top:12px">
-            <div class="chron-sb-title chron-edit" contenteditable="false" data-save-id="ch_ahead_title">Looking Ahead</div>
-            <p class="chron-edit" style="font-size:0.76rem;line-height:1.6;font-family:'Cormorant Garamond',serif;" contenteditable="false" data-save-id="ch_ahead">What's coming up next week.</p>
-          </div>
+            <button onclick="addBriefItem()" style="margin-top:4px;font-size:10.5px;font-weight:700;color:var(--accent-deep);background:transparent;border:none;cursor:pointer;font-family:inherit;padding:2px 0;transition:color .15s;" onmouseover="this.style.color='var(--accent)'" onmouseout="this.style.color='var(--accent-deep)'">+ Add highlight</button>
+          </div></div>
+          <div class="chron-deletable"><button class="chron-del-btn" onclick="this.parentElement.remove();debouncedSave();" title="Remove this block">✕</button><div class="chron-sidebar-box">
+            <div class="chron-sb-title chron-edit" contenteditable="true" data-save-id="ch_ahead_title">Looking Ahead</div>
+            <p class="chron-edit" style="font-size:13px;line-height:1.6;font-family:'Fraunces',serif;" contenteditable="true" data-save-id="ch_ahead">What's coming up next week.</p>
+          </div></div>
         </div>
       </div>
+      <div class="chron-deletable" style="position:relative;"><button class="chron-del-btn" onclick="this.parentElement.remove();debouncedSave();" title="Remove this section">✕</button>
       <hr class="chron-rule">
-      <span class="chron-sec-label chron-edit" contenteditable="false" data-save-id="ch_sec2">This Week's Stories</span>
+      <span class="chron-sec-label chron-edit" contenteditable="true" data-save-id="ch_sec2">This Week's Stories</span>
       <div class="chron-two-col">
-        <div class="chron-article">
-          <div class="chron-headline chron-sm chron-edit" contenteditable="false" data-save-id="ch_headline2">Second Story Headline</div>
-          <div class="chron-byline chron-edit" contenteditable="false" data-save-id="ch_byline2">By Your Name · This Week</div>
-          <p class="chron-body chron-edit" contenteditable="false" data-save-id="ch_body3">Your second story goes here.</p>
-        </div>
-        <div class="chron-article chron-col-rule">
-          <div class="chron-headline chron-sm chron-edit" contenteditable="false" data-save-id="ch_headline3">Third Story Headline</div>
-          <div class="chron-byline chron-edit" contenteditable="false" data-save-id="ch_byline3">By Your Name · This Week</div>
-          <p class="chron-body chron-edit" contenteditable="false" data-save-id="ch_body4">Your third story — something lighter.</p>
-        </div>
+        <div class="chron-deletable"><button class="chron-del-btn" onclick="this.parentElement.remove();debouncedSave();" title="Remove this column">✕</button><div class="chron-article">
+          <div class="chron-headline chron-sm chron-edit" contenteditable="true" data-save-id="ch_headline2">Second Story Headline</div>
+          <div class="chron-byline chron-edit" contenteditable="true" data-save-id="ch_byline2">By Your Name · This Week</div>
+          <p class="chron-body chron-edit" contenteditable="true" data-save-id="ch_body3">Your second story goes here.</p>
+        </div></div>
+        <div class="chron-deletable"><button class="chron-del-btn" onclick="this.parentElement.remove();debouncedSave();" title="Remove this column">✕</button><div class="chron-article chron-col-rule">
+          <div class="chron-headline chron-sm chron-edit" contenteditable="true" data-save-id="ch_headline3">Third Story Headline</div>
+          <div class="chron-byline chron-edit" contenteditable="true" data-save-id="ch_byline3">By Your Name · This Week</div>
+          <p class="chron-body chron-edit" contenteditable="true" data-save-id="ch_body4">Your third story — something lighter.</p>
+        </div></div>
       </div>
       <hr class="chron-rule">
-      <span class="chron-sec-label chron-edit" contenteditable="false" data-save-id="ch_sec3">Weekly Reflection</span>
+      <div class="chron-deletable" style="position:relative;"><button class="chron-del-btn" onclick="this.parentElement.remove();debouncedSave();" title="Remove this section">✕</button>
+      <span class="chron-sec-label chron-edit" contenteditable="true" data-save-id="ch_sec3">Weekly Reflection</span>
       <div class="chron-article">
-        <div class="chron-headline chron-sm chron-edit" contenteditable="false" data-save-id="ch_closing_head">Closing Thoughts</div>
-        <p class="chron-body chron-edit" contenteditable="false" data-save-id="ch_closing_body">Use this space for a weekly reflection — what you learned, what you're grateful for, what you'd do differently.</p>
+        <div class="chron-headline chron-sm chron-edit" contenteditable="true" data-save-id="ch_closing_head">Closing Thoughts</div>
+        <p class="chron-body chron-edit" contenteditable="true" data-save-id="ch_closing_body">Use this space for a weekly reflection — what you learned, what you're grateful for, what you'd do differently.</p>
       </div>
       <div id="chron-extra"></div>
       <div class="chron-ornament">✦ ✿ ✦</div>
@@ -382,192 +439,366 @@ body.chron-edit-mode .chron-edit:focus{background:rgba(255,190,210,.5);outline:2
   </div>
 
   <div class="ornament">✦ ✿ ✦</div>
-  <div style="text-align:center;margin-top:28px;padding-top:20px;border-top:1px solid var(--rule);">
-    <p style="font-size:0.68rem;color:var(--muted);font-style:italic;margin-bottom:10px;">Ready for a fresh week? This will clear all your entries.</p>
-    <button onclick="newWeek()" style="padding:9px 24px;border:1.5px solid var(--rule);background:var(--warm);color:var(--muted);font-family:'Jost',sans-serif;font-size:0.74rem;font-weight:500;cursor:pointer;border-radius:20px;" onmouseover="this.style.borderColor='var(--rose)';this.style.color='var(--ink)'" onmouseout="this.style.borderColor='var(--rule)';this.style.color='var(--muted)'">↺ Start New Week</button>
+  <div class="new-week-wrap">
+    <p class="new-week-hint">Ready for a fresh week? Your goals will carry over for review next Sunday.</p>
+    <button class="new-week-btn" onclick="newWeek()">↺ Start New Week</button>
   </div>
+
 </div>
-</div><!-- end hub-wrap -->
 
 <script>
-function goTab(n, btn) {
-  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-  document.getElementById('p' + n).classList.add('active');
-  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-  btn.classList.add('active');
-  if (n === 1) setTimeout(drawRadar, 50);
-  saveData();
-}
-
-const CATS = [
-  {label:'Career',            color:'#f2c4ce'},
-  {label:'Finances',          color:'#f7d9b0'},
-  {label:'Health & Fitness',  color:'#b8cfb0'},
-  {label:'Social Life',       color:'#b8d4f0'},
-  {label:'Romance',           color:'#d4b8e0'},
-  {label:'Learning & Growth', color:'#f0dea0'},
-  {label:'Creative Life',     color:'#f4b8d4'},
-  {label:'Self-Care',         color:'#a8d8d0'},
+/* ── LIFE WHEEL ── */
+var CATS=[
+  {label:'Career',           color:'#f2c4ce'},
+  {label:'Finances',         color:'#f7d9b0'},
+  {label:'Health & Fitness', color:'#b8cfb0'},
+  {label:'Social Life',      color:'#b8d4f0'},
+  {label:'Romance',          color:'#d4b8e0'},
+  {label:'Learning & Growth',color:'#f0dea0'},
+  {label:'Creative Life',    color:'#f4b8d4'},
+  {label:'Self-Care',        color:'#a8d8d0'},
 ];
-const scores = Array(8).fill(0);
-const focusAreas = [];
-const N=8, CX=190, CY=190, R=158;
-function ang(i){ return (2*Math.PI*i/N) - Math.PI/2; }
-function pt(i,s){ const r=(s/10)*R, a=ang(i); return [CX+r*Math.cos(a), CY+r*Math.sin(a)]; }
+var scores=Array(8).fill(0);
+var lastScores=Array(8).fill(0);
+var focusAreas=[];
+var N=8,CX=190,CY=190,R=158;
+function ang(i){return (2*Math.PI*i/N)-Math.PI/2;}
+function pt(i,s){var r=(s/10)*R,a=ang(i);return [CX+r*Math.cos(a),CY+r*Math.sin(a)];}
 
-function drawRadar() {
-  const cv = document.getElementById('radar'); if (!cv) return;
-  const ctx = cv.getContext('2d'); ctx.clearRect(0,0,380,380);
-  for (let r=1;r<=10;r++) { ctx.beginPath(); ctx.arc(CX,CY,(r/10)*R,0,2*Math.PI); ctx.strokeStyle=r%2===0?'#e8d8dc':'#f4ecee'; ctx.lineWidth=r%5===0?1.2:.6; ctx.stroke(); }
-  for (let i=0;i<N;i++) { const [x,y]=pt(i,10); ctx.beginPath(); ctx.moveTo(CX,CY); ctx.lineTo(x,y); ctx.strokeStyle='#e0cec8'; ctx.lineWidth=1; ctx.stroke(); }
-  for (let i=0;i<N;i++) { if (!scores[i]) continue; const ni=(i+1)%N; const [x1,y1]=pt(i,scores[i]), [x2,y2]=pt(ni,scores[ni]||0); ctx.beginPath(); ctx.moveTo(CX,CY); ctx.lineTo(x1,y1); ctx.lineTo(x2,y2); ctx.closePath(); ctx.fillStyle=CATS[i].color+'bb'; ctx.fill(); ctx.strokeStyle=CATS[i].color; ctx.lineWidth=1.5; ctx.stroke(); }
-  if (scores.some(s=>s>0)) { ctx.beginPath(); for (let i=0;i<N;i++) { const [x,y]=pt(i,scores[i]||0); i?ctx.lineTo(x,y):ctx.moveTo(x,y); } ctx.closePath(); ctx.strokeStyle='#c8a0a8'; ctx.lineWidth=1.8; ctx.stroke(); }
-  for (let i=0;i<N;i++) for (let s=1;s<=10;s++) { const [x,y]=pt(i,s); ctx.beginPath(); ctx.arc(x,y,scores[i]>=s?5:3.5,0,2*Math.PI); ctx.fillStyle=scores[i]>=s?CATS[i].color:'#fdf6f0'; ctx.strokeStyle=scores[i]>=s?'#a08090':'#e0cec8'; ctx.lineWidth=1.2; ctx.fill(); ctx.stroke(); }
-  focusAreas.forEach(fi => { const [x,y]=pt(fi,Math.max(scores[fi],1)); ctx.font='bold 13px serif'; ctx.fillStyle='#a06080'; ctx.textAlign='center'; ctx.textBaseline='middle'; ctx.fillText('★',x,y-11); });
-  for (let i=0;i<N;i++) { const a=ang(i), lx=CX+(R+22)*Math.cos(a), ly=CY+(R+22)*Math.sin(a); ctx.font=(focusAreas.includes(i)?'600 ':'')+'10.5px Jost,sans-serif'; ctx.fillStyle=focusAreas.includes(i)?'#7a2a4a':'#7a5060'; ctx.textAlign='center'; ctx.textBaseline='middle'; ctx.fillText(CATS[i].label,lx,ly); }
+function drawRadar(){
+  var cv=document.getElementById('radar');if(!cv)return;
+  var ctx=cv.getContext('2d');ctx.clearRect(0,0,380,380);
+  // Grid
+  for(var r=1;r<=10;r++){ctx.beginPath();ctx.arc(CX,CY,(r/10)*R,0,2*Math.PI);ctx.strokeStyle=r%2===0?'#e8d8dc':'#f4ecee';ctx.lineWidth=r%5===0?1.2:.6;ctx.stroke();}
+  for(var i=0;i<N;i++){var p=pt(i,10);ctx.beginPath();ctx.moveTo(CX,CY);ctx.lineTo(p[0],p[1]);ctx.strokeStyle='#e0cec8';ctx.lineWidth=1;ctx.stroke();}
+  // Ghost last week
+  var hasLast=lastScores.some(function(s){return s>0;});
+  if(hasLast){
+    ctx.beginPath();
+    for(var i=0;i<N;i++){var p=pt(i,lastScores[i]||0);i?ctx.lineTo(p[0],p[1]):ctx.moveTo(p[0],p[1]);}
+    ctx.closePath();ctx.strokeStyle='rgba(176,153,224,.3)';ctx.lineWidth=1.5;ctx.setLineDash([4,4]);ctx.stroke();ctx.setLineDash([]);
+  }
+  // Fill
+  for(var i=0;i<N;i++){
+    if(!scores[i])continue;
+    var ni=(i+1)%N,p1=pt(i,scores[i]),p2=pt(ni,scores[ni]||0);
+    ctx.beginPath();ctx.moveTo(CX,CY);ctx.lineTo(p1[0],p1[1]);ctx.lineTo(p2[0],p2[1]);ctx.closePath();
+    ctx.fillStyle=CATS[i].color+'bb';ctx.fill();ctx.strokeStyle=CATS[i].color;ctx.lineWidth=1.5;ctx.stroke();
+  }
+  if(scores.some(function(s){return s>0;})){
+    ctx.beginPath();
+    for(var i=0;i<N;i++){var p=pt(i,scores[i]||0);i?ctx.lineTo(p[0],p[1]):ctx.moveTo(p[0],p[1]);}
+    ctx.closePath();ctx.strokeStyle='#b099e0';ctx.lineWidth=1.8;ctx.stroke();
+  }
+  focusAreas.forEach(function(fi){var p=pt(fi,Math.max(scores[fi],1));ctx.font='bold 13px serif';ctx.fillStyle='#b099e0';ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText('★',p[0],p[1]-11);});
+  for(var i=0;i<N;i++){var a=ang(i),lx=CX+(R+22)*Math.cos(a),ly=CY+(R+22)*Math.sin(a);ctx.font=(focusAreas.includes(i)?'700 ':'')+'10.5px "Plus Jakarta Sans",sans-serif';ctx.fillStyle=focusAreas.includes(i)?'#b099e0':'#7a5060';ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText(CATS[i].label,lx,ly);}
 }
 
-document.getElementById('radar').addEventListener('click', function(e) {
-  const r=this.getBoundingClientRect(), sx=380/r.width, sy=380/r.height;
-  const mx=(e.clientX-r.left)*sx, my=(e.clientY-r.top)*sy;
-  let bc=-1, bs=0, bd=999;
-  for (let i=0;i<N;i++) for (let s=1;s<=10;s++) { const [x,y]=pt(i,s), d=Math.hypot(mx-x,my-y); if (d<bd) { bd=d; bc=i; bs=s; } }
-  if (bd<20 && bc>=0) { scores[bc]=scores[bc]===bs?0:bs; updateRow(bc); drawRadar(); saveData(); }
-});
-
-function buildCatList() {
-  const el = document.getElementById('cat-list'); el.innerHTML='';
-  CATS.forEach((c,i) => {
-    const row=document.createElement('div'); row.className='cat-row';
-    row.innerHTML=`<div class="cat-swatch" style="background:${c.color}"></div><span class="cat-name">${c.label}</span><div class="score-btns" id="sd-${i}"></div><span class="cat-score" id="cs-${i}" style="color:#c8a0a8">—</span><button class="focus-btn" id="fb-${i}" onclick="toggleFocus(${i})">☆</button>`;
-    el.appendChild(row); buildDots(i);
+function buildCatList(){
+  var el=document.getElementById('cat-list');el.innerHTML='';
+  CATS.forEach(function(c,i){
+    var row=document.createElement('div');row.className='cat-row';
+    row.innerHTML=
+      '<div class="cat-swatch" style="background:'+c.color+'"></div>'+
+      '<span class="cat-name">'+c.label+'</span>'+
+      '<input type="range" min="0" max="10" value="'+scores[i]+'" class="cat-slider" id="sl-'+i+'" style="accent-color:'+c.color+'">'+
+      '<span class="cat-score-display" id="cs-'+i+'" style="color:'+(scores[i]?c.color:'#ccc')+'">'+(scores[i]||'—')+'</span>'+
+      '<button class="focus-btn'+(focusAreas.includes(i)?' active':'')+'" id="fb-'+i+'" onclick="toggleFocus('+i+')">'+(focusAreas.includes(i)?'★':'☆')+'</button>';
+    el.appendChild(row);
+    row.querySelector('.cat-slider').addEventListener('input',(function(idx,col){return function(){
+      scores[idx]=parseInt(this.value);
+      var d=document.getElementById('cs-'+idx);d.textContent=scores[idx]||'—';d.style.color=scores[idx]?col:'#ccc';
+      drawRadar();debouncedSave();
+    };})(i,c.color));
   });
+  var n=document.getElementById('last-week-ghost-note');
+  if(n){n.innerHTML=lastScores.some(function(s){return s>0;})?'<span style="font-size:10.5px;color:var(--muted);"> · Dashed line = last week\'s scores.</span>':'';}
 }
 
-function buildDots(i) {
-  const w=document.getElementById('sd-'+i); w.innerHTML='';
-  for (let s=1;s<=10;s++) { const d=document.createElement('div'); d.className='sdot'; if (scores[i]>=s) { d.style.background=CATS[i].color; d.style.borderColor=CATS[i].color; } d.onclick=(()=>{ const si=s,ci=i; return ()=>{ scores[ci]=scores[ci]===si?0:si; updateRow(ci); drawRadar(); saveData(); }; })(); w.appendChild(d); }
+function toggleFocus(i){
+  var idx=focusAreas.indexOf(i);if(idx>=0)focusAreas.splice(idx,1);else{if(focusAreas.length>=3)return;focusAreas.push(i);}
+  document.getElementById('fb-'+i).textContent=focusAreas.includes(i)?'★':'☆';
+  document.getElementById('fb-'+i).classList.toggle('active',focusAreas.includes(i));
+  renderFocusPanel();drawRadar();debouncedSave();
 }
 
-function updateRow(i) {
-  buildDots(i);
-  const sc=document.getElementById('cs-'+i); sc.textContent=scores[i]||'—';
-  sc.style.color=scores[i]>=7?'#6a9a60':scores[i]>=4?'#c06080':scores[i]>0?'#a03050':'#c8a0a8';
-}
-
-function toggleFocus(i) {
-  const idx=focusAreas.indexOf(i); if (idx>=0) focusAreas.splice(idx,1); else { if (focusAreas.length>=3) return; focusAreas.push(i); }
-  const btn=document.getElementById('fb-'+i); btn.textContent=focusAreas.includes(i)?'★':'☆'; btn.classList.toggle('active',focusAreas.includes(i));
-  renderFocusPanel(); drawRadar(); saveData();
-}
-
-function renderFocusPanel() {
-  const panel=document.getElementById('focus-panel'), items=document.getElementById('focus-items');
-  if (!focusAreas.length) { panel.style.display='none'; return; }
+function renderFocusPanel(){
+  var panel=document.getElementById('focus-panel'),items=document.getElementById('focus-items');
+  if(!focusAreas.length){panel.style.display='none';return;}
   panel.style.display='block';
-  const saved={}; panel.querySelectorAll('.focus-item').forEach(fi=>{ const w=fi.querySelector('[data-save-id]'); if(w) saved[fi.dataset.idx]=w.innerHTML; });
+  var saved={};panel.querySelectorAll('[data-focus-idx]').forEach(function(el){saved[el.dataset.focusIdx]=el.value;});
   items.innerHTML='';
-  focusAreas.forEach(fi => {
-    const div=document.createElement('div'); div.className='focus-item'; div.dataset.idx=fi;
-    div.innerHTML=`<div class="focus-dot" style="background:${CATS[fi].color}"></div><div style="flex:1"><div class="focus-name">${CATS[fi].label}</div><div class="write" contenteditable data-save-id="focus_${fi}" style="min-height:34px;font-size:.75rem;margin-top:3px;border-radius:6px;" data-ph="What will you focus on?">${saved[fi]||''}</div></div>`;
+  focusAreas.forEach(function(fi){
+    var div=document.createElement('div');div.className='focus-item';
+    div.innerHTML='<div class="focus-dot" style="background:'+CATS[fi].color+'"></div><div style="flex:1"><div class="focus-name">'+CATS[fi].label+'</div><textarea class="focus-write" data-save-id="focus_'+fi+'" data-focus-idx="'+fi+'" placeholder="What will you focus on?" oninput="autoExpand(this);debouncedSave()">'+(saved[fi]||'')+'</textarea></div>';
     items.appendChild(div);
   });
 }
 
-let activeColor = 1;
-function selectColor(n, el) { activeColor=n; document.querySelectorAll('.legend-chip').forEach(c=>c.classList.remove('selected')); el.classList.add('selected'); }
-function addBlock(day) {
-  const container=document.getElementById('cb'+day); const block=document.createElement('div');
-  block.className='time-block C'+activeColor; block.dataset.color=activeColor;
-  block.innerHTML=`<button class="time-block-del" onclick="this.parentElement.remove();saveData()">×</button><div class="time-block-text" contenteditable data-ph="event..."></div>`;
-  container.appendChild(block); block.querySelector('.time-block-text').focus();
-  block.querySelector('.time-block-text').addEventListener('input', saveData);
+/* ── WINS & DOWNFALLS ── */
+var wdData={wins:[],downfalls:[]};
+
+function addItem(type){
+  var input=document.getElementById(type+'-input');
+  var text=input.value.trim();if(!text)return;
+  wdData[type].push({id:'i_'+Date.now(),text:text});
+  input.value='';
+  renderItems(type);debouncedSave();
+}
+function removeItem(type,id){
+  wdData[type]=wdData[type].filter(function(x){return x.id!==id;});
+  renderItems(type);debouncedSave();
+}
+function renderItems(type){
+  var list=document.getElementById(type+'-list');list.innerHTML='';
+  var color=type==='wins'?'var(--accent-deep)':'#e8a0b0';
+  wdData[type].forEach(function(item){
+    var row=document.createElement('div');row.className='wd-item';
+    row.innerHTML='<div class="wd-dot" style="background:'+color+';margin-top:5px;"></div><span class="wd-item-text">'+escHtml(item.text)+'</span><button class="wd-item-del" onclick="removeItem(\''+type+'\',\''+item.id+'\')">✕</button>';
+    list.appendChild(row);
+  });
 }
 
-let chronEdit = false;
-function toggleChron() {
-  chronEdit=!chronEdit; document.body.classList.toggle('chron-edit-mode', chronEdit);
-  const btn=document.getElementById('chron-edit-btn'); btn.textContent=chronEdit?'🔒 Lock Chronicle':'✏️ Edit Chronicle'; btn.classList.toggle('active', chronEdit);
-  document.querySelectorAll('.chron-edit').forEach(el=>{ el.contentEditable=chronEdit?'true':'false'; });
+/* ── GOALS LAST WEEK ── */
+var lastGoals=[];
+var lastGoalsDone={};
+
+function renderLastGoals(){
+  var section=document.getElementById('last-goals-section');
+  var list=document.getElementById('last-goals-list');
+  if(!lastGoals||!lastGoals.length){section.style.display='none';return;}
+  var filled=lastGoals.filter(function(g){return g.what;});
+  if(!filled.length){section.style.display='none';return;}
+  section.style.display='block';list.innerHTML='';
+  filled.forEach(function(g,i){
+    var status=lastGoalsDone[i]||'none';
+    var row=document.createElement('div');row.className='last-goal-row';
+    row.innerHTML=
+      '<div class="last-goal-check'+(status==='done'?' done':status==='skipped'?' skipped':'')+'" onclick="cycleGoalStatus('+i+',this)" title="Click to mark done/skipped">'+
+        (status==='done'?'✓':status==='skipped'?'✗':'')+'</div>'+
+      '<div class="last-goal-text'+(status==='done'?' done':'')+'">'+escHtml(g.what)+
+        (g.when?'<div class="last-goal-meta">'+escHtml(g.when)+'</div>':'')+
+      '</div>';
+    list.appendChild(row);
+  });
 }
-function setChronAccent(hex) {
-  document.querySelectorAll('.chron-sec-label,.chron-byline,.chron-pullquote,.chron-sb-title').forEach(el=>el.style.color=hex);
-  document.querySelectorAll('.chron-masthead').forEach(el=>{ el.style.borderTopColor=hex; el.style.borderBottomColor=hex; });
-  document.querySelectorAll('.chron-pullquote').forEach(el=>{ el.style.borderTopColor=hex; el.style.borderBottomColor=hex; });
-  document.querySelectorAll('.chron-tagline-row').forEach(el=>{ el.style.borderTopColor=hex; el.style.borderBottomColor=hex; el.style.color=hex; });
-  document.querySelectorAll('.chron-sec-label').forEach(el=>el.style.borderTopColor=hex);
-  document.querySelectorAll('.chron-name').forEach(el=>el.style.color=hex);
-}
-function addChronSection() {
-  const container=document.getElementById('chron-extra'); const e=chronEdit?'true':'false'; const id=Date.now();
-  const sec=document.createElement('div');
-  sec.innerHTML=`<hr class="chron-rule"><span class="chron-sec-label chron-edit" contenteditable="${e}" data-save-id="cx_sec_${id}">New Section</span><div class="chron-two-col"><div class="chron-article"><div class="chron-headline chron-sm chron-edit" contenteditable="${e}" data-save-id="cx_h1_${id}">Story Headline</div><div class="chron-byline chron-edit" contenteditable="${e}" data-save-id="cx_b1_${id}">By Your Name · This Week</div><p class="chron-body chron-edit" contenteditable="${e}" data-save-id="cx_p1_${id}">Write your story here...</p></div><div class="chron-article chron-col-rule"><div class="chron-headline chron-sm chron-edit" contenteditable="${e}" data-save-id="cx_h2_${id}">Story Headline</div><div class="chron-byline chron-edit" contenteditable="${e}" data-save-id="cx_b2_${id}">By Your Name · This Week</div><p class="chron-body chron-edit" contenteditable="${e}" data-save-id="cx_p2_${id}">Write your story here...</p></div></div>`;
-  container.appendChild(sec); if (!chronEdit) toggleChron();
-}
-function addChronSidebar() {
-  const container=document.getElementById('chron-extra'); const e=chronEdit?'true':'false'; const id=Date.now();
-  const box=document.createElement('div'); box.style.margin='16px 0';
-  box.innerHTML=`<div class="chron-sidebar-box"><div class="chron-sb-title chron-edit" contenteditable="${e}" data-save-id="cx_st_${id}">Sidebar Title</div><p class="chron-edit" style="font-size:0.78rem;line-height:1.6;font-family:'Cormorant Garamond',serif;" contenteditable="${e}" data-save-id="cx_sp_${id}">Add your sidebar content here.</p></div>`;
-  container.appendChild(box); if (!chronEdit) toggleChron();
+function cycleGoalStatus(i,el){
+  var cur=lastGoalsDone[i]||'none';
+  lastGoalsDone[i]=cur==='none'?'done':cur==='done'?'skipped':'none';
+  debouncedSave();renderLastGoals();
 }
 
-function saveData() {
-  const data = {};
-  document.querySelectorAll('[contenteditable][data-save-id]').forEach(el => { data[el.dataset.saveId] = el.innerHTML; });
-  const weekField = document.querySelector('.week-field'); if (weekField) data['week_field'] = weekField.value;
-  data['scores'] = JSON.stringify(scores); data['focusAreas'] = JSON.stringify(focusAreas);
-  const activeTab = document.querySelector('.page.active'); if (activeTab) data['activeTab'] = activeTab.id;
-  const calBlocks = [];
-  for (let d=0;d<7;d++) { const container = document.getElementById('cb'+d); if (container) { container.querySelectorAll('.time-block').forEach(b => { calBlocks.push({ day:d, color:b.dataset.color, text:b.querySelector('.time-block-text').innerHTML }); }); } }
-  data['calBlocks'] = JSON.stringify(calBlocks);
-  localStorage.setItem('weeklyAudit', JSON.stringify(data));
+/* ── BRAIN DUMP PROMPTS ── */
+function addPrompt(text){
+  var ta=document.getElementById('brain-dump-field');
+  var v=ta.value;
+  ta.value=(v&&!v.endsWith('\n')&&v.length>0?v+'\n\n':v)+text;
+  autoExpand(ta);ta.focus();
+  ta.setSelectionRange(ta.value.length,ta.value.length);
+  debouncedSave();
 }
 
-function restoreData() {
-  const raw = localStorage.getItem('weeklyAudit'); if (!raw) return;
-  const data = JSON.parse(raw);
-  const weekField = document.querySelector('.week-field'); if (weekField && data['week_field']) weekField.value = data['week_field'];
-  if (data['scores']) JSON.parse(data['scores']).forEach((s,i) => { scores[i]=s; });
-  if (data['focusAreas']) JSON.parse(data['focusAreas']).forEach(fi => { if (!focusAreas.includes(fi)) focusAreas.push(fi); });
-  if (data['activeTab']) {
-    const tabIndex = parseInt(data['activeTab'].replace('p',''));
-    const tabBtn = document.querySelectorAll('.tab-btn')[tabIndex];
-    if (tabBtn) { document.querySelectorAll('.page').forEach(p=>p.classList.remove('active')); document.getElementById('p'+tabIndex).classList.add('active'); document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active')); tabBtn.classList.add('active'); }
+/* ── WORD COUNT ── */
+function updateWordCount(){
+  var ta=document.getElementById('letter-field');
+  var wc=document.getElementById('word-count');
+  if(!ta||!wc)return;
+  var words=ta.value.trim()?ta.value.trim().split(/\s+/).length:0;
+  wc.textContent=words+' word'+(words!==1?'s':'');
+}
+
+/* ── TAB SWITCHING ── */
+function goTab(n,btn){
+  document.querySelectorAll('.page').forEach(function(p){p.classList.remove('active');});
+  document.getElementById('p'+n).classList.add('active');
+  document.querySelectorAll('.tab-btn').forEach(function(b){b.classList.remove('active');});
+  btn.classList.add('active');
+  if(n===2)setTimeout(drawRadar,50);
+  saveData();
+}
+
+/* ── UTILS ── */
+function autoExpand(el){if(!el||el.tagName!=='TEXTAREA')return;el.style.height='auto';el.style.height=el.scrollHeight+'px';}
+function escHtml(s){return String(s||'').replace(/[&<>"']/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];});}
+
+var saveTimer=null;
+function debouncedSave(){
+  clearTimeout(saveTimer);
+  saveTimer=setTimeout(function(){
+    saveData();
+    var ind=document.getElementById('save-indicator');
+    if(ind){ind.classList.add('show');setTimeout(function(){ind.classList.remove('show');},2000);}
+  },750);
+}
+
+/* ── SAVE / RESTORE ── */
+function addBriefItem(){
+  var list=document.getElementById('brief-list');
+  if(!list)return;
+  var li=document.createElement('li');
+  li.className='chron-brief-item';
+  li.style.cssText='display:flex;align-items:baseline;gap:5px;margin-bottom:6px;';
+  li.innerHTML='<span class="chron-edit" contenteditable="true" style="flex:1;">✦ </span><button class="chron-brief-del" onclick="this.parentElement.remove();debouncedSave();" title="Remove">✕</button>';
+  list.appendChild(li);
+  var span=li.querySelector('span');span.focus();
+  // place cursor at end
+  var range=document.createRange();var sel=window.getSelection();
+  range.setStart(span,span.childNodes.length);range.collapse(true);
+  sel.removeAllRanges();sel.addRange(range);
+  debouncedSave();
+}
+function saveData(){
+  var data={};
+  document.querySelectorAll('textarea[data-save-id],input[data-save-id]').forEach(function(el){
+    if(el.type!=='color'&&el.type!=='range') data[el.dataset.saveId]=el.value;
+  });
+  document.querySelectorAll('.chron-edit[data-save-id]').forEach(function(el){data[el.dataset.saveId]=el.innerHTML;});
+  // Save brief list dynamically
+  var briefList=document.getElementById('brief-list');
+  if(briefList){
+    var items=[];
+    briefList.querySelectorAll('.chron-brief-item span').forEach(function(s){items.push(s.innerHTML);});
+    data.brief_items=JSON.stringify(items);
   }
-  if (data['calBlocks']) {
-    JSON.parse(data['calBlocks']).forEach(b => {
-      const container = document.getElementById('cb'+b.day); if (!container) return;
-      const block = document.createElement('div'); block.className='time-block C'+b.color; block.dataset.color=b.color;
-      block.innerHTML=`<button class="time-block-del" onclick="this.parentElement.remove();saveData()">×</button><div class="time-block-text" contenteditable data-ph="event...">${b.text}</div>`;
-      container.appendChild(block); block.querySelector('.time-block-text').addEventListener('input', saveData);
+  var wf=document.getElementById('week-field');if(wf)data.week_field=wf.value;
+  data.scores=JSON.stringify(scores);
+  data.lastScores=JSON.stringify(lastScores);
+  data.focusAreas=JSON.stringify(focusAreas);
+  data.wdData=JSON.stringify(wdData);
+  data.lastGoals=JSON.stringify(lastGoals);
+  data.lastGoalsDone=JSON.stringify(lastGoalsDone);
+  var ap=document.querySelector('.page.active');if(ap)data.activeTab=ap.id;
+  data.chronAccent=document.getElementById('chron-color').value;
+  localStorage.setItem('weeklyAudit',JSON.stringify(data));
+}
+
+function restoreData(){
+  var raw=localStorage.getItem('weeklyAudit');if(!raw)return;
+  var data=JSON.parse(raw);
+  var wf=document.getElementById('week-field');if(wf&&data.week_field)wf.value=data.week_field;
+  if(data.scores)JSON.parse(data.scores).forEach(function(s,i){scores[i]=s;});
+  if(data.lastScores)JSON.parse(data.lastScores).forEach(function(s,i){lastScores[i]=s;});
+  if(data.focusAreas)JSON.parse(data.focusAreas).forEach(function(fi){if(!focusAreas.includes(fi))focusAreas.push(fi);});
+  if(data.wdData){var wd=JSON.parse(data.wdData);wdData.wins=wd.wins||[];wdData.downfalls=wd.downfalls||[];}
+  if(data.lastGoals)lastGoals=JSON.parse(data.lastGoals);
+  if(data.lastGoalsDone)lastGoalsDone=JSON.parse(data.lastGoalsDone);
+  if(data.activeTab){
+    var idx=parseInt(data.activeTab.replace('p',''));
+    var btns=document.querySelectorAll('.tab-btn');
+    if(btns[idx]){
+      document.querySelectorAll('.page').forEach(function(p){p.classList.remove('active');});
+      document.getElementById('p'+idx).classList.add('active');
+      btns.forEach(function(b){b.classList.remove('active');});
+      btns[idx].classList.add('active');
+    }
+  }
+  // Restore textareas and inputs
+  document.querySelectorAll('textarea[data-save-id],input[data-save-id]').forEach(function(el){
+    if(el.type!=='color'&&el.type!=='range'&&data[el.dataset.saveId]!==undefined){
+      el.value=data[el.dataset.saveId];
+      if(el.tagName==='TEXTAREA')autoExpand(el);
+    }
+  });
+  // Restore chronicle
+  document.querySelectorAll('.chron-edit[data-save-id]').forEach(function(el){
+    if(data[el.dataset.saveId]!==undefined)el.innerHTML=data[el.dataset.saveId];
+  });
+  // Restore brief list
+  if(data.brief_items){
+    var briefList=document.getElementById('brief-list');
+    if(briefList){
+      var items=JSON.parse(data.brief_items);
+      briefList.innerHTML='';
+      items.forEach(function(html){
+        var li=document.createElement('li');li.className='chron-brief-item';
+        li.style.cssText='display:flex;align-items:baseline;gap:5px;margin-bottom:6px;';
+        li.innerHTML='<span class="chron-edit" contenteditable="true" style="flex:1;">'+html+'</span><button class="chron-brief-del" onclick="this.parentElement.remove();debouncedSave();" title="Remove">✕</button>';
+        briefList.appendChild(li);
+      });
+    }
+  }
+  if(data.chronAccent){document.getElementById('chron-color').value=data.chronAccent;setChronAccent(data.chronAccent);}
+  // Rebuild dynamic sections
+  renderItems('wins');renderItems('downfalls');
+  renderLastGoals();
+  buildCatList();
+  scores.forEach(function(s,i){
+    var sl=document.getElementById('sl-'+i);if(sl)sl.value=s;
+    var cs=document.getElementById('cs-'+i);if(cs){cs.textContent=s||'—';cs.style.color=s?CATS[i].color:'#ccc';}
+  });
+  renderFocusPanel();
+  setTimeout(function(){
+    document.querySelectorAll('textarea[data-save-id]').forEach(function(el){autoExpand(el);});
+    updateWordCount();
+  },100);
+  drawRadar();
+}
+
+/* ── CHRONICLE ── */
+function setChronAccent(hex){
+  document.querySelectorAll('.chron-sec-label,.chron-byline,.chron-pullquote,.chron-sb-title,.chron-name').forEach(function(el){el.style.color=hex;});
+  document.querySelectorAll('.chron-masthead').forEach(function(el){el.style.borderTopColor=hex;el.style.borderBottomColor=hex;});
+  document.querySelectorAll('.chron-pullquote').forEach(function(el){el.style.borderTopColor=hex;el.style.borderBottomColor=hex;});
+  document.querySelectorAll('.chron-tagline-row').forEach(function(el){el.style.borderTopColor=hex;el.style.borderBottomColor=hex;el.style.color=hex;});
+  document.querySelectorAll('.chron-sec-label').forEach(function(el){el.style.borderTopColor=hex;});
+  debouncedSave();
+}
+function addChronSection(){
+  var container=document.getElementById('chron-extra');var id=Date.now();
+  var sec=document.createElement('div');sec.className='chron-deletable';sec.style.position='relative';
+  sec.innerHTML='<button class="chron-del-btn" onclick="this.parentElement.remove();debouncedSave();" title="Remove this section">✕</button><hr class="chron-rule"><span class="chron-sec-label chron-edit" contenteditable="true" data-save-id="cx_sec_'+id+'">New Section</span>'+
+    '<div class="chron-two-col">'+
+      '<div class="chron-article"><div class="chron-headline chron-sm chron-edit" contenteditable="true" data-save-id="cx_h1_'+id+'">Story Headline</div>'+
+      '<div class="chron-byline chron-edit" contenteditable="true" data-save-id="cx_b1_'+id+'">By Your Name · This Week</div>'+
+      '<p class="chron-body chron-edit" contenteditable="true" data-save-id="cx_p1_'+id+'">Write your story here...</p></div>'+
+      '<div class="chron-article chron-col-rule"><div class="chron-headline chron-sm chron-edit" contenteditable="true" data-save-id="cx_h2_'+id+'">Story Headline</div>'+
+      '<div class="chron-byline chron-edit" contenteditable="true" data-save-id="cx_b2_'+id+'">By Your Name · This Week</div>'+
+      '<p class="chron-body chron-edit" contenteditable="true" data-save-id="cx_p2_'+id+'">Write your story here...</p></div>'+
+    '</div>';
+  container.appendChild(sec);
+}
+function addChronSidebar(){
+  var container=document.getElementById('chron-extra');var id=Date.now();
+  var box=document.createElement('div');box.className='chron-deletable';box.style.cssText='margin:16px 0;position:relative;';
+  box.innerHTML='<button class="chron-del-btn" onclick="this.parentElement.remove();debouncedSave();" title="Remove this sidebar">✕</button><div class="chron-sidebar-box"><div class="chron-sb-title chron-edit" contenteditable="true" data-save-id="cx_st_'+id+'">Sidebar Title</div>'+
+    '<p class="chron-edit" style="font-size:13px;line-height:1.6;font-family:\'Fraunces\',serif;" contenteditable="true" data-save-id="cx_sp_'+id+'">Add your sidebar content here.</p></div>';
+  container.appendChild(box);
+}
+
+/* ── PDF ── */
+function savePDF(){
+  for(var i=0;i<=5;i++){var p=document.getElementById('p'+i);if(p)p.style.cssText='display:block!important;'+(i>0?'page-break-before:always!important;':'');}
+  setTimeout(function(){window.print();for(var i=0;i<=5;i++){var p=document.getElementById('p'+i);if(p)p.style.cssText=p.classList.contains('active')?'display:block;':'display:none;';}},300);
+}
+
+/* ── NEW WEEK ── */
+function newWeek(){
+  if(!confirm('Start a new week? Your current goals will carry over for review next Sunday.'))return;
+  var raw=localStorage.getItem('weeklyAudit');
+  var carryGoals=[];
+  if(raw){
+    var d=JSON.parse(raw);
+    ['g1','g2','g3'].forEach(function(g){
+      carryGoals.push({what:d[g+'_what']||'',when:d[g+'_when']||'',where:d[g+'_where']||''});
     });
   }
-  buildCatList(); scores.forEach((s, i) => { if (s > 0) updateRow(i); }); drawRadar(); renderFocusPanel();
-  setTimeout(() => { document.querySelectorAll('[contenteditable][data-save-id]').forEach(el => { if (data[el.dataset.saveId] !== undefined) el.innerHTML = data[el.dataset.saveId]; }); }, 150);
+  localStorage.removeItem('weeklyAudit');
+  // Seed new week with last goals
+  var seed={lastGoals:JSON.stringify(carryGoals),lastGoalsDone:'{}',lastScores:JSON.stringify(scores)};
+  localStorage.setItem('weeklyAudit',JSON.stringify(seed));
+  location.reload();
 }
 
-function savePDF() {
-  for (let i=0;i<=7;i++) { const p=document.getElementById('p'+i); if (p) p.style.cssText='display:block!important;'+(i>0?'page-break-before:always!important;':''); }
-  setTimeout(()=>{
-    window.print();
-    for (let i=0;i<=7;i++) { const p=document.getElementById('p'+i); if (p) p.style.cssText=p.classList.contains('active')?'display:block;':'display:none;'; }
-  }, 300);
-}
+/* ── INIT ── */
+document.getElementById('chron-paper').addEventListener('input',debouncedSave);
+var DS=['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+var MF=['January','February','March','April','May','June','July','August','September','October','November','December'];
+var n=new Date();
+document.getElementById('today-date').textContent=DS[n.getDay()]+', '+MF[n.getMonth()]+' '+n.getDate()+', '+n.getFullYear();
 
-function newWeek() {
-  if (!confirm('Start a new week? This will clear all your entries.')) return;
-  localStorage.removeItem('weeklyAudit'); location.reload();
-}
-
-// Date
-const DAYS=['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
-const MONTHS=['January','February','March','April','May','June','July','August','September','October','November','December'];
-const now = new Date();
-document.getElementById('today-date').textContent = DAYS[now.getDay()]+', '+MONTHS[now.getMonth()]+' '+now.getDate()+', '+now.getFullYear();
-
+buildCatList();
 restoreData();
-document.getElementById('paper').addEventListener('input', saveData);
-document.querySelector('.week-field').addEventListener('input', saveData);
+setTimeout(drawRadar,100);
 </script>
 </body>
 </html>
