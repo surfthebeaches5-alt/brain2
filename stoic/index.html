@@ -4,197 +4,277 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Stoic Girl Workbook</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
-@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Jost:wght@300;400;500;600&display=swap');
-:root{
-  --blush:#f2c4ce;--rose:#e8a0b0;--mauve:#c9a0b4;--lavender:#d4b8e0;
-  --sage:#b8cfb0;--cream:#fdf6f0;--warm:#f7ece4;--ink:#3a2a2e;--muted:#9a8088;--rule:#e0cec8;
-}
 *{box-sizing:border-box;margin:0;padding:0;}
-body{background:#f0e8e4;font-family:'Jost',sans-serif;color:var(--ink);min-height:100vh;}
+:root{
+  --bg:#f3ecd8;--surface:#fff;--sidebar:#f8f1dd;--sidebar-line:#e6dec5;
+  --ink:#1a1612;--muted:#7a7468;--line:#ececec;--warm:#faf6ec;
+  --accent:#c9b6ee;--accent-deep:#b099e0;--accent-soft:#ede5fb;
+}
+html,body{background:var(--bg);font-family:'Plus Jakarta Sans',system-ui,sans-serif;color:var(--ink);min-height:100vh;-webkit-font-smoothing:antialiased;}
 
-.topbar{background:var(--cream);border-bottom:1px solid var(--rule);padding:14px 32px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:200;}
-.topbar-title{font-family:'Cormorant Garamond',serif;font-size:1.5rem;font-weight:300;letter-spacing:2px;}
-.topbar-title em{font-style:italic;color:var(--mauve);}
-.topbar-right{display:flex;align-items:center;gap:10px;}
-.back-btn{display:inline-flex;align-items:center;gap:6px;padding:6px 14px;border:1.5px solid var(--rule);border-radius:20px;font-size:0.72rem;color:var(--muted);cursor:pointer;background:transparent;font-family:'Jost',sans-serif;text-decoration:none;transition:all .15s;}
-.back-btn:hover{border-color:var(--rose);color:var(--ink);}
-.topbar-date{font-size:0.66rem;letter-spacing:2px;text-transform:uppercase;color:var(--muted);}
+/* TOPBAR */
+.topbar{background:var(--sidebar);border-bottom:1px solid var(--sidebar-line);padding:16px 32px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:300;}
+.topbar-left{display:flex;align-items:center;gap:14px;}
+.back-btn{display:inline-flex;align-items:center;gap:6px;padding:7px 14px;border:1.5px solid #d9d2bd;border-radius:20px;font-size:12px;color:var(--muted);cursor:pointer;background:transparent;font-family:inherit;text-decoration:none;transition:all .15s;}
+.back-btn:hover{border-color:var(--accent-deep);color:var(--ink);}
+.topbar-title{font-family:'Fraunces',serif;font-size:22px;font-weight:600;letter-spacing:-0.4px;}
+.topbar-date{font-size:11px;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted);font-weight:500;}
 
-.view{display:none;} .view.active{display:block;}
+/* DAILY TOOLKIT BAR */
+.toolkit-bar{background:var(--surface);border-bottom:1px solid var(--line);padding:10px 32px;display:flex;align-items:center;gap:8px;position:sticky;top:57px;z-index:200;}
+.toolkit-label{font-size:9.5px;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted);font-weight:700;flex-shrink:0;margin-right:4px;}
+.toolkit-btn{display:inline-flex;align-items:center;gap:5px;padding:6px 13px;border:1.5px solid var(--line);border-radius:14px;font-family:inherit;font-size:11.5px;font-weight:600;cursor:pointer;background:var(--surface);color:var(--muted);transition:all .15s;white-space:nowrap;}
+.toolkit-btn:hover{border-color:var(--accent-deep);color:var(--ink);background:var(--accent-soft);}
+
+/* VIEWS */
+.view{display:none;}.view.active{display:block;}
 
 /* OVERVIEW */
-.overview{max-width:980px;margin:0 auto;padding:28px 24px 60px;}
-.ov-header{text-align:center;margin-bottom:36px;}
-.ov-eyebrow{font-size:0.62rem;letter-spacing:4px;text-transform:uppercase;color:var(--muted);margin-bottom:8px;}
-.ov-title{font-family:'Cormorant Garamond',serif;font-size:3rem;font-weight:300;letter-spacing:2px;line-height:1.1;}
-.ov-title em{font-style:italic;color:var(--mauve);}
-.ov-quote{font-family:'Cormorant Garamond',serif;font-size:0.95rem;font-style:italic;color:var(--muted);margin-top:10px;}
+.overview{max-width:1020px;margin:0 auto;padding:28px 24px 60px;}
+
+/* MOOD ROUTER */
+.mood-router{background:var(--surface);border:1px solid var(--line);border-radius:20px;padding:22px 26px;margin-bottom:24px;}
+.mood-router-title{font-family:'Fraunces',serif;font-size:20px;font-weight:600;letter-spacing:-.3px;margin-bottom:5px;}
+.mood-router-sub{font-size:12px;color:var(--muted);margin-bottom:16px;}
+.mood-chips{display:flex;flex-wrap:wrap;gap:8px;}
+.mood-chip{display:inline-flex;align-items:center;gap:6px;padding:9px 16px;border:1.5px solid var(--line);border-radius:20px;font-family:inherit;font-size:12.5px;font-weight:600;cursor:pointer;background:var(--warm);color:var(--ink);transition:all .18s;}
+.mood-chip:hover{border-color:var(--accent-deep);background:var(--accent-soft);transform:translateY(-1px);}
+
+/* JUMP BACK IN */
+.jump-banner{background:var(--accent-soft);border:1.5px solid var(--accent);border-radius:16px;padding:14px 20px;margin-bottom:22px;display:flex;align-items:center;gap:14px;}
+.jump-icon{font-size:20px;flex-shrink:0;}
+.jump-text{flex:1;}
+.jump-label{font-size:9.5px;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted);font-weight:700;margin-bottom:2px;}
+.jump-title{font-family:'Fraunces',serif;font-size:16px;font-weight:600;color:var(--accent-deep);letter-spacing:-.2px;}
+.jump-sub{font-size:11px;color:var(--muted);margin-top:2px;}
+.jump-btn{padding:9px 18px;background:var(--ink);color:#fff;border:none;border-radius:16px;font-family:inherit;font-size:12px;font-weight:700;cursor:pointer;flex-shrink:0;transition:all .15s;}
+.jump-btn:hover{background:#2a2218;transform:translateY(-1px);}
+
+/* OVERVIEW HEADER */
+.ov-header{text-align:center;margin-bottom:28px;}
+.ov-eyebrow{font-size:9.5px;letter-spacing:3px;text-transform:uppercase;color:var(--muted);font-weight:700;margin-bottom:8px;}
+.ov-title{font-family:'Fraunces',serif;font-size:2.8rem;font-weight:600;letter-spacing:-1px;line-height:1.1;}
+.ov-title em{font-style:italic;color:var(--accent-deep);}
+.ov-quote{font-family:'Fraunces',serif;font-size:14px;font-style:italic;color:var(--muted);margin-top:10px;}
+
+/* MODULE GRID */
 .module-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;}
-.module-card{background:var(--cream);border:1px solid var(--rule);border-radius:14px;padding:20px 18px;cursor:pointer;transition:all .2s;position:relative;overflow:hidden;}
-.module-card::before{content:'';position:absolute;left:0;top:0;bottom:0;width:4px;}
+.module-card{background:var(--surface);border:1px solid var(--line);border-radius:18px;padding:20px 18px;cursor:pointer;transition:all .2s;position:relative;overflow:hidden;}
+.module-card::before{content:'';position:absolute;left:0;top:0;bottom:0;width:4px;border-radius:4px 0 0 4px;}
 .module-card:nth-child(1)::before{background:#f2c4ce;}
 .module-card:nth-child(2)::before{background:#d4b8e0;}
 .module-card:nth-child(3)::before{background:#b8cfb0;}
 .module-card:nth-child(4)::before{background:#e8a0b0;}
-.module-card:nth-child(5)::before{background:#c9a0b4;}
+.module-card:nth-child(5)::before{background:#c9b6ee;}
 .module-card:nth-child(6)::before{background:#b8d4f0;}
 .module-card:nth-child(7)::before{background:#f7d9b0;}
 .module-card:nth-child(8)::before{background:#a8d8d0;}
-.module-card:hover{transform:translateY(-3px);box-shadow:0 8px 24px rgba(180,130,140,.14);border-color:var(--mauve);}
-.mc-num{font-size:0.58rem;letter-spacing:3px;text-transform:uppercase;color:var(--muted);font-weight:600;margin-bottom:6px;}
-.mc-title{font-family:'Cormorant Garamond',serif;font-size:1.05rem;font-weight:600;line-height:1.3;margin-bottom:3px;}
-.mc-sub{font-size:0.68rem;color:var(--muted);font-style:italic;margin-bottom:10px;}
-.mc-ex-count{font-size:0.62rem;color:var(--mauve);font-weight:600;margin-bottom:6px;}
-.mc-prog{height:3px;background:var(--rule);border-radius:2px;overflow:hidden;}
-.mc-prog-fill{height:100%;border-radius:2px;background:linear-gradient(90deg,var(--blush),var(--mauve));}
-.mc-entries{font-size:0.6rem;color:var(--muted);margin-top:4px;}
+.module-card:hover{transform:translateY(-3px);box-shadow:0 10px 28px rgba(0,0,0,.1);border-color:#d9d2bd;}
+.mc-num{font-size:9.5px;letter-spacing:2.5px;text-transform:uppercase;color:var(--muted);font-weight:700;margin-bottom:6px;}
+.mc-title{font-family:'Fraunces',serif;font-size:16px;font-weight:600;line-height:1.3;margin-bottom:3px;letter-spacing:-.2px;}
+.mc-sub{font-size:11px;color:var(--muted);font-style:italic;margin-bottom:10px;}
+.mc-ex-count{font-size:10.5px;color:var(--accent-deep);font-weight:600;margin-bottom:7px;}
+.mc-prog{height:4px;background:var(--line);border-radius:3px;overflow:hidden;}
+.mc-prog-fill{height:100%;border-radius:3px;background:linear-gradient(90deg,var(--accent),var(--accent-deep));}
+.mc-entries{font-size:10px;color:var(--muted);margin-top:4px;}
 
 /* MODULE VIEW */
-.mod-view{max-width:900px;margin:0 auto;padding:0 24px 60px;}
-.mod-nav{display:flex;align-items:center;gap:12px;padding:16px 0 20px;}
-.mod-back{padding:6px 14px;border:1.5px solid var(--rule);border-radius:20px;font-size:0.72rem;color:var(--muted);cursor:pointer;background:var(--cream);font-family:'Jost',sans-serif;transition:all .15s;}
-.mod-back:hover{border-color:var(--rose);color:var(--ink);}
-.mod-badge{font-size:0.58rem;letter-spacing:3px;text-transform:uppercase;color:var(--muted);font-weight:600;}
-.mod-heading{font-family:'Cormorant Garamond',serif;font-size:1.8rem;font-weight:400;font-style:italic;flex:1;}
-.mod-intro{background:linear-gradient(135deg,#fce8ef,#f7f0f9);border:1px solid var(--blush);border-radius:12px;padding:16px 20px;margin-bottom:22px;}
-.mod-intro-quote{font-family:'Cormorant Garamond',serif;font-size:1rem;font-style:italic;color:var(--mauve);margin-bottom:8px;}
-.mod-intro-desc{font-size:0.76rem;color:var(--muted);line-height:1.7;}
+.mod-view{max-width:860px;margin:0 auto;padding:0 24px 60px;}
+.mod-nav{display:flex;align-items:center;gap:12px;padding:18px 0 20px;}
+.mod-back{display:inline-flex;align-items:center;gap:5px;padding:7px 14px;border:1.5px solid var(--line);border-radius:20px;font-size:12px;color:var(--muted);cursor:pointer;background:var(--surface);font-family:inherit;transition:all .15s;}
+.mod-back:hover{border-color:var(--accent-deep);color:var(--ink);}
+.mod-badge{font-size:9.5px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);font-weight:700;}
+.mod-heading{font-family:'Fraunces',serif;font-size:20px;font-weight:600;flex:1;letter-spacing:-.3px;}
+.pdf-btn{padding:7px 14px;border:1.5px solid var(--line);border-radius:16px;font-size:11.5px;font-weight:600;color:var(--muted);cursor:pointer;background:transparent;font-family:inherit;transition:all .15s;}
+.pdf-btn:hover{border-color:var(--accent-deep);color:var(--ink);}
 
-/* Exercise tabs */
-.ex-tabs{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:20px;}
-.ex-tab{padding:6px 16px;border:1.5px solid var(--rule);border-radius:20px;font-family:'Jost',sans-serif;font-size:0.7rem;font-weight:500;cursor:pointer;background:var(--cream);color:var(--muted);transition:all .15s;}
-.ex-tab:hover{border-color:var(--mauve);}
-.ex-tab.active{background:var(--mauve);border-color:var(--mauve);color:white;}
-.ex-tab.has-entries{border-color:var(--sage);color:#2a6a30;}
-.ex-tab.active.has-entries{background:var(--sage);border-color:var(--sage);color:white;}
+/* Module intro */
+.mod-intro{background:var(--accent-soft);border:1px solid var(--accent);border-radius:16px;padding:16px 20px;margin-bottom:22px;}
+.mod-intro-quote{font-family:'Fraunces',serif;font-size:15px;font-style:italic;color:var(--accent-deep);margin-bottom:7px;}
+.mod-intro-desc{font-size:12.5px;color:var(--muted);line-height:1.7;}
 
-/* Exercise page */
-.ex-page{display:none;} .ex-page.active{display:block;}
-.ex-hdr{margin-bottom:18px;}
-.ex-eyebrow{font-size:0.6rem;letter-spacing:3px;text-transform:uppercase;color:var(--muted);font-weight:600;margin-bottom:4px;}
-.ex-title{font-family:'Cormorant Garamond',serif;font-size:1.5rem;font-weight:400;font-style:italic;}
-.ex-purpose{font-size:0.74rem;color:var(--muted);line-height:1.6;margin-top:5px;}
-.ex-time{display:inline-block;background:var(--warm);border:1px solid var(--rule);border-radius:10px;padding:3px 10px;font-size:0.62rem;color:var(--muted);margin-top:5px;}
+/* EXERCISE TABS */
+.ex-tabs{display:flex;gap:7px;flex-wrap:wrap;margin-bottom:22px;}
+.ex-tab{display:inline-flex;align-items:center;gap:5px;padding:7px 14px;border:1.5px solid var(--line);border-radius:16px;font-family:inherit;font-size:11.5px;font-weight:600;cursor:pointer;background:var(--surface);color:var(--muted);transition:all .15s;}
+.ex-tab:hover{border-color:var(--accent-deep);color:var(--ink);}
+.ex-tab.active{background:var(--ink);border-color:var(--ink);color:#fff;}
+.ex-tab.has-entries{border-color:#a8d8d0;color:#1a4a44;}
+.ex-tab.active.has-entries{background:var(--ink);border-color:var(--ink);color:#fff;}
+.ex-recur-icon{font-size:9px;opacity:.7;}
 
-/* Entries */
+/* EXERCISE PAGE */
+.ex-page{display:none;}.ex-page.active{display:block;}
+.ex-hdr{margin-bottom:20px;}
+.ex-eyebrow{font-size:9.5px;letter-spacing:2.5px;text-transform:uppercase;color:var(--muted);font-weight:700;margin-bottom:4px;}
+.ex-title{font-family:'Fraunces',serif;font-size:22px;font-weight:600;letter-spacing:-.3px;}
+.ex-purpose{font-size:12.5px;color:var(--muted);line-height:1.6;margin-top:6px;}
+.ex-meta{display:flex;align-items:center;gap:8px;margin-top:8px;}
+.ex-time{display:inline-flex;align-items:center;gap:4px;background:var(--warm);border:1px solid var(--line);border-radius:10px;padding:4px 11px;font-size:11px;color:var(--muted);}
+.ex-recur-badge{display:inline-flex;align-items:center;gap:4px;background:var(--accent-soft);border:1px solid var(--accent);border-radius:10px;padding:4px 11px;font-size:11px;color:var(--accent-deep);font-weight:600;}
+
+/* ENTRIES */
 .entries-sec{margin-bottom:22px;}
-.entries-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;}
-.entries-lbl{font-size:0.62rem;letter-spacing:2px;text-transform:uppercase;color:var(--muted);font-weight:600;}
-.new-btn{padding:7px 18px;border:none;border-radius:20px;background:var(--mauve);color:white;font-family:'Jost',sans-serif;font-size:0.72rem;font-weight:600;cursor:pointer;transition:all .15s;}
-.new-btn:hover{background:var(--rose);}
+.entries-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;}
+.entries-lbl{font-size:9.5px;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted);font-weight:700;}
+.new-btn{padding:8px 18px;border:none;border-radius:20px;background:var(--ink);color:#fff;font-family:inherit;font-size:12px;font-weight:700;cursor:pointer;transition:all .15s;}
+.new-btn:hover{background:#2a2218;transform:translateY(-1px);}
 .entry-list{display:flex;flex-direction:column;gap:7px;margin-bottom:14px;}
-.entry-chip{display:flex;align-items:center;gap:10px;padding:8px 14px;background:var(--cream);border:1px solid var(--rule);border-radius:10px;cursor:pointer;transition:all .15s;}
-.entry-chip:hover{border-color:var(--mauve);}
-.entry-chip.active-entry{background:linear-gradient(135deg,#fce8ef,#f0e0f0);border-color:var(--blush);}
-.entry-date{font-family:'Cormorant Garamond',serif;font-size:0.9rem;font-weight:600;color:var(--mauve);white-space:nowrap;}
-.entry-preview{font-size:0.7rem;color:var(--muted);font-style:italic;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
-.entry-del{background:none;border:none;font-size:0.62rem;color:#ccc;cursor:pointer;padding:2px 5px;transition:color .15s;flex-shrink:0;}
+.entry-chip{display:flex;align-items:center;gap:10px;padding:10px 14px;background:var(--surface);border:1px solid var(--line);border-radius:12px;cursor:pointer;transition:all .15s;}
+.entry-chip:hover{border-color:#d9d2bd;box-shadow:0 2px 8px rgba(0,0,0,.06);}
+.entry-chip.active-entry{background:var(--accent-soft);border-color:var(--accent);}
+.entry-date{font-family:'Fraunces',serif;font-size:14px;font-weight:600;color:var(--accent-deep);white-space:nowrap;}
+.entry-preview{font-size:11.5px;color:var(--muted);font-style:italic;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.entry-del{background:none;border:none;font-size:11px;color:#ccc;cursor:pointer;padding:2px 5px;transition:color .15s;flex-shrink:0;}
 .entry-del:hover{color:#a0304a;}
-.chip-edit-btn{padding:3px 9px;border:1.5px solid var(--rule);border-radius:9px;font-family:'Jost',sans-serif;font-size:0.62rem;cursor:pointer;background:transparent;color:var(--muted);transition:all .15s;flex-shrink:0;}
-.chip-edit-btn:hover{border-color:var(--mauve);color:var(--ink);}
-.complete-btn{padding:6px 16px;border:none;border-radius:14px;background:var(--sage);color:white;font-family:'Jost',sans-serif;font-size:0.72rem;font-weight:600;cursor:pointer;transition:all .15s;}
-.complete-btn:hover{background:#5a9e6e;}
-.empty-state{text-align:center;padding:28px 20px;color:var(--muted);background:var(--warm);border:1px dashed var(--rule);border-radius:12px;}
-.empty-icon{font-size:1.8rem;margin-bottom:6px;}
-.empty-text{font-family:'Cormorant Garamond',serif;font-size:0.95rem;font-style:italic;}
+.chip-edit-btn{padding:4px 10px;border:1.5px solid var(--line);border-radius:9px;font-family:inherit;font-size:11px;cursor:pointer;background:transparent;color:var(--muted);transition:all .15s;flex-shrink:0;}
+.chip-edit-btn:hover{border-color:var(--accent-deep);color:var(--ink);}
+.empty-state{text-align:center;padding:28px 20px;color:var(--muted);background:var(--warm);border:1.5px dashed var(--line);border-radius:14px;}
+.empty-icon{font-size:1.8rem;margin-bottom:7px;}
+.empty-text{font-family:'Fraunces',serif;font-size:15px;font-style:italic;}
 
-/* Entry form */
-.entry-form{background:var(--cream);border:1px solid var(--rule);border-radius:14px;padding:22px 26px;}
-.entry-form-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:18px;padding-bottom:12px;border-bottom:1px solid var(--rule);}
-.entry-form-date{font-family:'Cormorant Garamond',serif;font-size:1rem;font-style:italic;color:var(--mauve);}
-.saved-indicator{font-size:0.7rem;color:var(--sage);font-weight:600;}
+/* ENTRY FORM */
+.entry-form{background:var(--surface);border:1px solid var(--line);border-radius:18px;padding:24px 28px;}
+.entry-form-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;padding-bottom:14px;border-bottom:1px solid var(--line);}
+.entry-form-date{font-family:'Fraunces',serif;font-size:15px;font-style:italic;color:var(--accent-deep);}
+.saved-indicator{font-size:11px;color:#1a4a44;font-weight:600;}
+.complete-btn{padding:7px 16px;border:none;border-radius:14px;background:#d8eee8;color:#1a4a44;font-family:inherit;font-size:12px;font-weight:700;cursor:pointer;transition:all .15s;border:1px solid #a8d8d0;}
+.complete-btn:hover{background:#a8d8d0;}
 
-/* Form elements */
+/* FORM FIELDS */
 .f-group{margin-bottom:16px;}
-.f-label{font-size:0.62rem;letter-spacing:2px;text-transform:uppercase;color:var(--muted);font-weight:600;margin-bottom:5px;display:block;}
-.f-sub{font-size:0.7rem;color:var(--muted);font-style:italic;margin-bottom:7px;}
-.write{background:var(--warm);border:1px solid var(--rule);border-radius:8px;padding:10px 13px;min-height:72px;font-family:'Jost',sans-serif;font-size:0.8rem;line-height:1.75;color:var(--ink);outline:none;width:100%;transition:border-color .15s;}
-.write:focus{border-color:var(--blush);box-shadow:0 0 0 3px rgba(242,196,206,.18);}
-.write[contenteditable]:empty:before{content:attr(data-ph);color:#c8aab0;font-style:italic;}
-.write.sh{min-height:50px;}
+.f-label{font-size:9.5px;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted);font-weight:700;margin-bottom:5px;display:block;}
+.f-sub{font-size:11.5px;color:var(--muted);font-style:italic;margin-bottom:8px;line-height:1.5;}
+.write{background:var(--warm);border:1.5px solid var(--line);border-radius:12px;padding:12px 14px;font-family:'Plus Jakarta Sans',system-ui,sans-serif;font-size:13px;line-height:1.75;color:var(--ink);outline:none;width:100%;resize:none;overflow:hidden;display:block;transition:border .15s;}
+.write:focus{border-color:var(--accent-deep);}
+.write::placeholder{color:#b8b0a8;font-style:italic;}
+.write.sh{min-height:54px;}
 .write.ta{min-height:110px;}
 .two-col{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
 .three-col{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;}
-hr.r{border:none;border-top:1px solid var(--rule);margin:18px 0;}
-.sec-lbl{font-size:0.62rem;letter-spacing:2px;text-transform:uppercase;color:var(--muted);font-weight:600;margin:14px 0 6px;display:block;}
-.sec-sub{font-size:0.7rem;color:var(--muted);font-style:italic;margin-bottom:10px;}
+hr.r{border:none;border-top:1px solid var(--line);margin:20px 0;}
+.sec-lbl{font-size:9.5px;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted);font-weight:700;margin:14px 0 4px;display:block;}
+.sec-sub{font-size:11.5px;color:var(--muted);font-style:italic;margin-bottom:10px;line-height:1.5;}
 
-/* Colored boxes */
-.box{border-radius:10px;padding:14px 16px;margin-bottom:10px;}
-.box-pink{background:#fce8ef;border:1.5px solid var(--blush);}
-.box-purple{background:#f0e0f0;border:1.5px solid var(--lavender);}
-.box-green{background:#e8f5e9;border:1.5px solid var(--sage);}
+/* COLORED BOXES */
+.box{border-radius:12px;padding:14px 16px;margin-bottom:10px;}
+.box-pink{background:#fce8ef;border:1.5px solid #f2c4ce;}
+.box-purple{background:#f0e0f0;border:1.5px solid var(--accent);}
+.box-green{background:#e8f5e9;border:1.5px solid #b8cfb0;}
 .box-amber{background:#fff8e1;border:1.5px solid #e0c870;}
 .box-blue{background:#e3f0ff;border:1.5px solid #b8d4f0;}
 .box-teal{background:#e0f4f2;border:1.5px solid #a8d8d0;}
-.box-title{font-size:0.68rem;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;margin-bottom:6px;}
-.box-sub{font-size:0.67rem;color:var(--muted);font-style:italic;margin-bottom:8px;line-height:1.5;}
+.box-title{font-size:10px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;margin-bottom:7px;color:var(--ink);}
 
-/* Distortions checklist */
+/* DISTORTIONS */
 .distortion-grid{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:14px;}
-.distortion-item{display:flex;align-items:flex-start;gap:8px;padding:6px 10px;background:var(--warm);border:1px solid var(--rule);border-radius:8px;cursor:pointer;transition:all .15s;}
-.distortion-item:hover{border-color:var(--mauve);}
-.distortion-item.checked{background:#fce8ef;border-color:var(--blush);}
-.di-check{width:14px;height:14px;border-radius:3px;border:1.5px solid var(--rule);flex-shrink:0;margin-top:1px;transition:all .15s;}
-.distortion-item.checked .di-check{background:var(--rose);border-color:var(--rose);}
-.di-label{font-size:0.72rem;color:var(--ink);line-height:1.4;}
+.distortion-item{display:flex;align-items:flex-start;gap:8px;padding:7px 10px;background:var(--warm);border:1.5px solid var(--line);border-radius:10px;cursor:pointer;transition:all .15s;}
+.distortion-item:hover{border-color:var(--accent-deep);}
+.distortion-item.checked{background:var(--accent-soft);border-color:var(--accent);}
+.di-check{width:14px;height:14px;border-radius:3px;border:1.5px solid var(--line);flex-shrink:0;margin-top:1px;transition:all .15s;}
+.distortion-item.checked .di-check{background:var(--accent-deep);border-color:var(--accent-deep);}
+.di-label{font-size:12px;color:var(--ink);line-height:1.4;}
 
-/* Weather tracking */
-.weather-table{width:100%;border-collapse:collapse;margin-bottom:14px;font-size:0.74rem;}
-.weather-table th{font-size:0.6rem;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted);font-weight:600;padding:6px 10px;text-align:left;border-bottom:1px solid var(--rule);}
-.weather-table td{padding:8px 10px;border-bottom:1px solid var(--rule);vertical-align:top;}
+/* WEATHER TABLE */
+.weather-table{width:100%;border-collapse:collapse;margin-bottom:14px;font-size:12px;}
+.weather-table th{font-size:9.5px;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted);font-weight:700;padding:7px 10px;text-align:left;border-bottom:1px solid var(--line);}
+.weather-table td{padding:8px 10px;border-bottom:1px solid var(--line);vertical-align:top;}
 .weather-table tr:last-child td{border-bottom:none;}
-.weather-day{font-weight:600;font-size:0.72rem;width:40px;}
+.weather-day{font-weight:700;font-size:11.5px;width:36px;color:var(--muted);}
+.weather-cell{width:100%;border:none;background:transparent;font-family:inherit;font-size:12px;outline:none;resize:none;overflow:hidden;min-height:24px;color:var(--ink);line-height:1.4;}
+.weather-cell::placeholder{color:#b8b0a8;}
 
-/* Intensity slider */
-.intensity-row{display:flex;align-items:center;gap:10px;margin-bottom:10px;}
-.intensity-label{font-size:0.72rem;color:var(--muted);min-width:80px;}
-.intensity-input{flex:1;accent-color:var(--mauve);}
-.intensity-val{font-family:'Cormorant Garamond',serif;font-size:1rem;font-weight:600;color:var(--mauve);min-width:20px;text-align:right;}
+/* ORNAMENT */
+.ornament{text-align:center;color:var(--accent);font-size:1rem;letter-spacing:10px;margin:24px 0 0;}
 
-/* Ornament */
-.ornament{text-align:center;color:var(--blush);font-size:0.9rem;letter-spacing:10px;margin:22px 0 0;}
-
-@media(max-width:700px){.module-grid{grid-template-columns:1fr 1fr;}.two-col,.three-col{grid-template-columns:1fr;}}
-.pdf-btn{padding:6px 14px;border:none;border-radius:20px;background:var(--rose);color:white;font-family:'Jost',sans-serif;font-size:0.7rem;font-weight:600;cursor:pointer;transition:all .15s;white-space:nowrap;}
-.pdf-btn:hover{background:var(--mauve);}
-
+@media(max-width:700px){
+  .module-grid{grid-template-columns:1fr 1fr;}
+  .two-col,.three-col{grid-template-columns:1fr;}
+  .topbar,.toolkit-bar{padding:14px 16px;}
+  .overview,.mod-view{padding-left:14px;padding-right:14px;}
+  .mood-chips{gap:6px;}
+}
 @media print{
-  .topbar,.mod-nav,.ex-tabs,.new-btn,.entry-del,.pdf-btn,.chip-edit-btn,.complete-btn{display:none!important;}
+  .topbar,.toolkit-bar,.mod-nav,.ex-tabs,.new-btn,.entry-del,.pdf-btn,.chip-edit-btn,.complete-btn{display:none!important;}
   body{background:white!important;}
-  #pdf-print-area{display:block!important;padding:20px;}
 }
 </style>
 </head>
 <body>
 
 <div class="topbar">
-  <div class="topbar-title">Stoic Girl <em>Workbook</em></div>
-  <div class="topbar-right">
-    <a href="../" class="back-btn">← Brain 2.0</a>
-    <span class="topbar-date" id="today-date"></span>
+  <div class="topbar-left">
+    <a href="../" class="back-btn">
+      <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"/></svg>
+      Brain 2.0
+    </a>
+    <div class="topbar-title">Stoic Girl Workbook</div>
   </div>
+  <div class="topbar-date" id="today-date"></div>
 </div>
 
+<!-- DAILY TOOLKIT BAR -->
+<div class="toolkit-bar">
+  <span class="toolkit-label">Daily</span>
+  <button class="toolkit-btn" onclick="openDailyTool(5,'morning_intention')">☀️ Morning Intention</button>
+  <button class="toolkit-btn" onclick="openDailyTool(5,'evening_reflection')">🌙 Evening Reflection</button>
+  <button class="toolkit-btn" onclick="openDailyTool(3,'gap_pause')">⏸ Gap Pause Log</button>
+  <button class="toolkit-btn" onclick="openDailyTool(3,'weather_report')">🌤 Weather Report</button>
+</div>
+
+<!-- OVERVIEW -->
 <div class="view active" id="view-overview">
   <div class="overview">
+
+    <!-- MOOD ROUTER -->
+    <div class="mood-router">
+      <div class="mood-router-title">What do you need right now?</div>
+      <div class="mood-router-sub">Go straight to the right exercise — no browsing required.</div>
+      <div class="mood-chips">
+        <button class="mood-chip" onclick="routeToExercise(3,'gap_pause')">🌪️ I'm spiraling or anxious</button>
+        <button class="mood-chip" onclick="routeToExercise(6,'rejection_reframe')">💔 I'm dealing with rejection</button>
+        <button class="mood-chip" onclick="routeToExercise(1,'decision_framework')">⚖️ I'm stuck on a hard decision</button>
+        <button class="mood-chip" onclick="routeToExercise(4,'boundary_clarity')">🛑 Someone is draining me</button>
+        <button class="mood-chip" onclick="routeToExercise(3,'distress_menu')">😤 I'm angry or resentful</button>
+        <button class="mood-chip" onclick="routeToExercise(0,'observer')">🤔 I need to clear my head</button>
+      </div>
+    </div>
+
+    <!-- JUMP BACK IN -->
+    <div class="jump-banner" id="jump-banner" style="display:none;">
+      <div class="jump-icon">↩</div>
+      <div class="jump-text">
+        <div class="jump-label">Pick Up Where You Left Off</div>
+        <div class="jump-title" id="jump-title"></div>
+        <div class="jump-sub" id="jump-sub"></div>
+      </div>
+      <button class="jump-btn" id="jump-btn">Continue →</button>
+    </div>
+
     <div class="ov-header">
       <div class="ov-eyebrow">Stoicism · Psychology · Self-Compassion</div>
       <div class="ov-title">The <em>Living</em> Workbook</div>
       <div class="ov-quote">"Harness inner strength, embrace outer peace."</div>
     </div>
+
     <div class="module-grid" id="module-grid"></div>
   </div>
 </div>
 
+<!-- MODULE VIEW -->
 <div class="view" id="view-module">
   <div class="mod-view">
     <div class="mod-nav">
-      <button class="mod-back" onclick="goOverview()">← All Modules</button>
+      <button class="mod-back" onclick="goOverview()">
+        <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"/></svg>
+        All Modules
+      </button>
       <span class="mod-badge" id="mod-badge"></span>
       <span class="mod-heading" id="mod-heading"></span>
-      <button class="pdf-btn" onclick="saveModulePDF()">⬇ Save PDF</button>
+      <button class="pdf-btn" onclick="saveModulePDF()">↓ PDF</button>
     </div>
     <div class="mod-intro" id="mod-intro"></div>
     <div class="ex-tabs" id="ex-tabs"></div>
@@ -207,25 +287,29 @@ var SK = 'stoicWorkbook2';
 var activeModIdx = null;
 var activeExIdx  = 0;
 var activeEntryId = null;
+var lastVisited = null; // {mi, exId, exLabel, modTitle}
 
 var DAYS_FULL   = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
 var MONTHS_FULL = ['January','February','March','April','May','June','July','August','September','October','November','December'];
 var MONTHS_S    = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
 
-// ─────────────────────────────────────────────────────────────
-// MODULE & EXERCISE DEFINITIONS — faithful to PDF
-// ─────────────────────────────────────────────────────────────
-var MODULES = [
+var DISTORTIONS = [
+  'All-or-Nothing Thinking','Overgeneralization','Mental Filtering',
+  'Discounting the Positive','Mind Reading','Fortune Telling',
+  'Catastrophizing','Emotional Reasoning','Should Statements',
+  'Labeling & Mislabeling','Personalization','Blaming',
+  'Magnification & Minimization','Control Fallacies','Owning the Truth',
+];
 
-// ── MODULE 1 ─────────────────────────────────────────────────
+var MODULES = [
 {num:'01',title:'The Foundation',sub:'Who You Are Beneath the Chaos',
  quote:'"Your mind is your most intimate space."',
  desc:'These three exercises transform you from someone who experiences thoughts and feelings to someone who can also observe and understand them. That shift changes everything.',
  exercises:[
-  {id:'tfb',label:'Ex 1.1',title:'Thought-Feeling-Behavior Tracker',
+  {id:'tfb',label:'Ex 1.1',title:'Thought-Feeling-Behavior Tracker',recurring:false,
    purpose:'Learn to identify the connection between your thoughts, emotions, and actions by analyzing a specific situation step-by-step.',time:'10–15 minutes',
    fields:[
-    {t:'sec',label:'Think of a recent moment when you felt a strong emotion — overwhelmed, anxious, or upset. Break it down step by step. Stay curious, not judgmental.'},
+    {t:'sec',label:'Think of a recent moment when you felt a strong emotion. Break it down step by step. Stay curious, not judgmental.'},
     {t:'write',id:'situation',label:'1. The Situation — What Actually Happened',sub:'Describe what happened as if you were a neutral observer. What would a security camera have recorded?',ph:'Just the facts — no story, no interpretation. What literally happened?'},
     {t:'write',id:'thought',label:'2. The Thought — What Went Through Your Mind',sub:'What was your first thought? What story did your brain create about this situation?',ph:'My first thought was... The story I told myself was...'},
     {t:'write',id:'feeling',label:'3. The Feeling — What Emotion Showed Up',sub:'What emotion(s) did you experience? Where did you feel it in your body?',ph:'I felt... I noticed it in my body as...'},
@@ -241,839 +325,421 @@ var MODULES = [
      {id:'further',label:'How has your behavior influenced further thoughts about the situation?',ph:''},
     ]},
    ]},
-
-  {id:'observer',label:'Ex 1.2',title:'Observer Mode Journal',
+  {id:'observer',label:'Ex 1.2',title:'Observer Mode Journal',recurring:false,
    purpose:'Practice stepping back from intense emotions and observing your thoughts with gentle curiosity rather than being consumed by them.',time:'15–20 minutes',
    fields:[
     {t:'sec',label:'Think of yourself as a kind, curious scientist studying your own mind.'},
-    {t:'sec',label:'Current Moment Check-In'},
-    {t:'two',fields:[
-     {id:'feeling_now',label:'Right now, what am I feeling?',ph:''},
-     {id:'body_sensation',label:'Where do I feel this in my body?',ph:''},
-    ]},
-    {t:'sec',label:'The Trigger Hunt'},
-    {t:'two',fields:[
-     {id:'trigger_recent',label:'What happened recently that might have stirred this up?',ph:''},
-     {id:'when_noticed',label:'When did I first notice this feeling today?',ph:''},
-    ]},
+    {t:'two',fields:[{id:'feeling_now',label:'Right now, what am I feeling?',ph:''},{id:'body_sensation',label:'Where do I feel this in my body?',ph:''}]},
     {t:'sec',label:'The Story Detective'},
-    {t:'two',fields:[
-     {id:'story_telling',label:'What story am I telling myself about this situation?',ph:''},
-     {id:'meaning_making',label:'What meaning am I making of what happened?',ph:''},
-    ]},
+    {t:'two',fields:[{id:'story_telling',label:'What story am I telling myself about this situation?',ph:''},{id:'meaning_making',label:'What meaning am I making of what happened?',ph:''}]},
     {t:'sec',label:'The Gentle Inquiry'},
-    {t:'two',fields:[
-     {id:'is_true',label:'Is this story definitely true, or is it one possible interpretation?',ph:''},
-     {id:'friend_advice',label:'What would I tell a friend who was having this same thought?',ph:''},
-    ]},
+    {t:'two',fields:[{id:'is_true',label:'Is this story definitely true, or is it one possible interpretation?',ph:''},{id:'friend_advice',label:'What would I tell a friend who was having this same thought?',ph:''}]},
     {t:'sec',label:'The Wise Observer'},
-    {t:'two',fields:[
-     {id:'wise_observe',label:'If I could step outside this feeling and observe it with compassion, what would I notice?',ph:''},
-     {id:'emotion_needs',label:'What does this emotion need from me right now?',ph:''},
-    ]},
+    {t:'two',fields:[{id:'wise_observe',label:'If I could step outside this feeling and observe it with compassion, what would I notice?',ph:''},{id:'emotion_needs',label:'What does this emotion need from me right now?',ph:''}]},
    ]},
-
-  {id:'distortions',label:'Ex 1.3',title:'Cognitive Distortions Bingo',
+  {id:'distortions',label:'Ex 1.3',title:'Cognitive Distortions Bingo',recurring:false,
    purpose:'Recognize common thinking patterns that create unnecessary emotional drama, and learn to reframe them with more balanced perspectives.',time:'10–15 minutes',
    fields:[
-    {t:'sec',label:'Step 1 — Circle any distortions that showed up for you this week.',sub:'Tap each one to mark it.'},
+    {t:'sec',label:'Step 1 — Tap any distortions that showed up for you this week.',sub:''},
     {t:'distortions',id:'dist_checked'},
     {t:'hr'},
-    {t:'sec',label:'Step 2 — Now pick your top 2–3 to reflect on.'},
-    {t:'box3',
-     items:[
-      {id:'dist1_which',label:'Distortion 1 — Which one?',ph:'e.g. Catastrophizing'},
-      {id:'dist1_how',label:'How it showed up:',ph:'What happened, what you thought...'},
-      {id:'dist1_balanced',label:'A more balanced thought might be:',ph:''},
-     ]},
-    {t:'box3',
-     items:[
-      {id:'dist2_which',label:'Distortion 2 — Which one?',ph:''},
-      {id:'dist2_how',label:'How it showed up:',ph:''},
-      {id:'dist2_balanced',label:'A more balanced thought might be:',ph:''},
-     ]},
-    {t:'box3',
-     items:[
-      {id:'dist3_which',label:'Distortion 3 — Which one?',ph:''},
-      {id:'dist3_how',label:'How it showed up:',ph:''},
-      {id:'dist3_balanced',label:'A more balanced thought might be:',ph:''},
-     ]},
+    {t:'sec',label:'Step 2 — Pick your top 2–3 to reflect on.'},
+    {t:'box3',items:[{id:'dist1_which',label:'Distortion 1 — Which one?',ph:'e.g. Catastrophizing'},{id:'dist1_how',label:'How it showed up:',ph:'What happened, what you thought...'},{id:'dist1_balanced',label:'A more balanced thought might be:',ph:''}]},
+    {t:'box3',items:[{id:'dist2_which',label:'Distortion 2 — Which one?',ph:''},{id:'dist2_how',label:'How it showed up:',ph:''},{id:'dist2_balanced',label:'A more balanced thought might be:',ph:''}]},
    ]},
  ]},
-
-// ── MODULE 2 ─────────────────────────────────────────────────
 {num:'02',title:'The Dichotomy of Control',sub:'But Make It Relatable',
  quote:'"Control your controllables, release the rest."',
- desc:'Most suffering comes from trying to control things that were never ours to control. These four exercises retrain your brain from "I need to control this" to "where can I best invest my energy?"',
+ desc:'Most suffering comes from trying to control things that were never ours to control. These exercises retrain your brain from "I need to control this" to "where can I best invest my energy?"',
  exercises:[
-  {id:'circle_control',label:'Ex 2.1',title:'Circle of Control Diagram',
-   purpose:'Visually categorize your current worries to see clearly what deserves your energy and what doesn\'t.',time:'10–15 minutes',
+  {id:'circle_control',label:'Ex 2.1',title:'Circle of Control Diagram',recurring:false,
+   purpose:'Visually categorize your current worries to see clearly what deserves your energy and what does not.',time:'10–15 minutes',
    fields:[
-    {t:'write',id:'brain_dump',label:'Brain Dump — What\'s currently on your mind?',sub:'List everything that\'s been worrying, frustrating, or occupying you lately. Get it all out.',ph:'Everything taking up space: the relationship thing, the work situation, the what-ifs, the regrets, the fears...', ta:true},
+    {t:'write',id:'brain_dump',label:'Brain Dump — What\'s currently on your mind?',sub:'List everything that\'s been worrying, frustrating, or occupying you lately.',ph:'Everything taking up space: the relationship thing, the work situation, the what-ifs, the regrets, the fears...',ta:true},
     {t:'hr'},
-    {t:'sec',label:'Now sort each item from your brain dump into its circle.'},
-    {t:'three',fields:[
-     {id:'full_control',label:'🟢 Full Control',sub:'Your thoughts, responses, actions, effort, words',ph:'What from your brain dump sits here?'},
-     {id:'influence',label:'🟡 Influence',sub:'Relationships through your behavior, outcomes through prep',ph:'What can you affect but not fully control?'},
-     {id:'no_control',label:'🔴 No Control',sub:'Other people\'s choices, the past, future, timing',ph:'What needs to be released?'},
-    ]},
+    {t:'sec',label:'Now sort each item into its circle.'},
+    {t:'three',fields:[{id:'full_control',label:'🟢 Full Control',sub:'Your thoughts, responses, actions, effort, words',ph:'What from your brain dump sits here?'},{id:'influence',label:'🟡 Influence',sub:'Relationships through your behavior, outcomes through prep',ph:'What can you affect but not fully control?'},{id:'no_control',label:'🔴 No Control',sub:'Other people\'s choices, the past, future, timing',ph:'What needs to be released?'}]},
     {t:'hr'},
-    {t:'sec',label:'Reflection Questions'},
-    {t:'two',fields:[
-     {id:'energy_going',label:'What do you notice about where most of your mental energy has been going?',ph:''},
-     {id:'no_control_headspace',label:'Which items in the "No Control" circle have been taking up the most headspace?',ph:''},
-    ]},
-    {t:'two',fields:[
-     {id:'redirect_energy',label:'What would change if you redirected that energy to your "Full Control" circle?',ph:''},
-     {id:'focus_this_week',label:'Pick one item from Full Control to focus extra energy on this week:',ph:''},
-    ]},
+    {t:'two',fields:[{id:'energy_going',label:'What do you notice about where most of your mental energy has been going?',ph:''},{id:'redirect_energy',label:'What would change if you redirected that energy to your "Full Control" circle?',ph:''}]},
    ]},
-
-  {id:'control_inventory',label:'Ex 2.2',title:'Control Inventory Journal',
+  {id:'control_inventory',label:'Ex 2.2',title:'Control Inventory Journal',recurring:false,
    purpose:'Transform a specific frustrating situation into an empowered action plan by identifying what you can actually do next.',time:'15–20 minutes',
    fields:[
-    {t:'sec',label:'Think of a recent situation that left you feeling powerless or frustrated.'},
-    {t:'three',fields:[
-     {id:'what_happened',label:'What Happened',sub:'Describe the situation objectively — just the facts.',ph:'What would a neutral observer have seen?'},
-     {id:'what_wanted',label:'What I Wanted to Happen',sub:'What were you hoping for or expecting instead?',ph:'What outcome were you attached to?'},
-     {id:'what_can_do',label:'What I Can Do Next',sub:'Given reality, what actions are available now?',ph:'Focus only on your choices and responses moving forward.'},
-    ]},
+    {t:'three',fields:[{id:'what_happened',label:'What Happened',sub:'Describe the situation objectively.',ph:'What would a neutral observer have seen?'},{id:'what_wanted',label:'What I Wanted to Happen',sub:'What were you hoping for or expecting instead?',ph:'What outcome were you attached to?'},{id:'what_can_do',label:'What I Can Do Next',sub:'Given reality, what actions are available now?',ph:'Focus only on your choices and responses moving forward.'}]},
     {t:'hr'},
-    {t:'sec',label:'Deeper Reflection'},
-    {t:'two',fields:[
-     {id:'outside_control',label:'What parts of this situation were genuinely outside your control?',ph:''},
-     {id:'could_influence',label:'What parts could you influence through your actions/responses?',ph:''},
-    ]},
-    {t:'two',fields:[
-     {id:'story_shift',label:'What story were you telling yourself? How could you reframe it to give you more agency?',ph:''},
-     {id:'next_time',label:'How do you want to respond if something similar happens again?',ph:''},
-    ]},
+    {t:'two',fields:[{id:'outside_control',label:'What parts were genuinely outside your control?',ph:''},{id:'could_influence',label:'What parts could you influence through your actions/responses?',ph:''}]},
     {t:'write',id:'one_action',label:'One specific action you will take this week:',ph:'',sh:true},
    ]},
-
-  {id:'decision_framework',label:'Ex 2.3',title:'Decision-Making Framework',
+  {id:'decision_framework',label:'Ex 2.3',title:'Decision-Making Framework',recurring:false,
    purpose:'Make clearer decisions by filtering choices through what you can control and your core values rather than anxiety and fear.',time:'15–20 minutes',
    fields:[
-    {t:'write',id:'decision',label:'1. Current Decision — What decision are you currently facing?',sub:'It can be big OR small.',ph:'',sh:true},
+    {t:'write',id:'decision',label:'Current Decision — What decision are you currently facing?',sub:'It can be big OR small.',ph:'',sh:true},
     {t:'hr'},
-    {t:'sec',label:'2. The Four Filter Questions'},
-    {t:'two',fields:[
-     {id:'can_control',label:'What aspects of this situation can I actually control?',sub:'Focus on your actions, responses, and choices.',ph:''},
-     {id:'cannot_control',label:'What aspects are completely outside my control?',sub:'Other people\'s reactions, timing, external circumstances...',ph:''},
-    ]},
-    {t:'two',fields:[
-     {id:'from_values',label:'If I was acting from my values rather than my fears, what would I choose?',sub:'Think about who you want to be, not what you want to avoid.',ph:''},
-     {id:'can_handle',label:'Can I handle the uncertainty and potential challenges of either path?',sub:'Build confidence in your ability to adapt.',ph:''},
-    ]},
+    {t:'two',fields:[{id:'can_control',label:'What aspects of this situation can I actually control?',sub:'Focus on your actions, responses, and choices.',ph:''},{id:'cannot_control',label:'What aspects are completely outside my control?',sub:'Other people\'s reactions, timing, external circumstances...',ph:''}]},
+    {t:'two',fields:[{id:'from_values',label:'If I was acting from my values rather than my fears, what would I choose?',ph:''},{id:'can_handle',label:'Can I handle the uncertainty and potential challenges of either path?',ph:''}]},
     {t:'hr'},
-    {t:'sec',label:'3. Values Check — What are your top 3 values that should guide this decision?'},
-    {t:'three',fields:[
-     {id:'value1',label:'Value 1',ph:''},
-     {id:'value2',label:'Value 2',ph:''},
-     {id:'value3',label:'Value 3',ph:''},
-    ]},
+    {t:'three',fields:[{id:'value1',label:'Value 1',ph:''},{id:'value2',label:'Value 2',ph:''},{id:'value3',label:'Value 3',ph:''}]},
     {t:'hr'},
-    {t:'write',id:'aligned_choice',label:'4. Your Aligned Choice — Based on these reflections, what feels like the most values-aligned decision?',ph:''},
-    {t:'write',id:'acceptance',label:'5. The Acceptance Practice — Complete this statement:',sub:'"I\'m choosing [your decision] and I accept that I cannot control [specific outcome/response]."',ph:'I\'m choosing... and I accept that I cannot control...',sh:true},
+    {t:'write',id:'aligned_choice',label:'Your Aligned Choice — What feels like the most values-aligned decision?',ph:''},
+    {t:'write',id:'acceptance',label:'The Acceptance Practice — Complete this statement:',sub:'"I\'m choosing [your decision] and I accept that I cannot control [specific outcome/response]."',ph:'I\'m choosing... and I accept that I cannot control...',sh:true},
    ]},
-
-  {id:'energy_audit',label:'Ex 2.4',title:'Energy Audit',
+  {id:'energy_audit',label:'Ex 2.4',title:'Energy Audit',recurring:false,
    purpose:'Identify exactly where your mental energy is going and consciously redirect it toward what actually serves your peace and goals.',time:'15–20 minutes',
    fields:[
-    {t:'sec',label:'1. This Week\'s Energy Drains',sub:'Where has your mental energy been going? Be honest — this is just information.'},
-    {t:'two',fields:[
-     {id:'drain_relationship',label:'Relationship Concerns',sub:'Overthinking texts, replaying arguments, managing others\' emotions, worrying what people think...',ph:'Which ones hit closest to home?'},
-     {id:'drain_future',label:'Future Anxiety',sub:'Planning for worst-case scenarios, worrying about things that might never happen, catastrophizing...',ph:''},
-    ]},
-    {t:'two',fields:[
-     {id:'drain_past',label:'Past Rumination',sub:'Regretting what you said/did, replaying embarrassing moments, "what if" spirals...',ph:''},
-     {id:'drain_external',label:'External Control Attempts',sub:'Trying to influence things through worry, needing everything to go according to plan, seeking constant validation...',ph:''},
-    ]},
+    {t:'two',fields:[{id:'drain_relationship',label:'Relationship Concerns',sub:'Overthinking texts, replaying arguments, managing others\' emotions...',ph:'Which ones hit closest to home?'},{id:'drain_future',label:'Future Anxiety',sub:'Planning for worst-case scenarios, catastrophizing...',ph:''}]},
+    {t:'two',fields:[{id:'drain_past',label:'Past Rumination',sub:'Regretting what you said/did, replaying embarrassing moments...',ph:''},{id:'drain_external',label:'External Control Attempts',sub:'Trying to influence things through worry, needing validation...',ph:''}]},
     {t:'hr'},
-    {t:'sec',label:'2. Energy Reclaim Strategy'},
-    {t:'two',fields:[
-     {id:'biggest_drain',label:'Biggest Energy Drain — What\'s been consuming the most mental energy lately?',ph:'Choose your top 1-2.'},
-     {id:'reality_check',label:'Reality Check — On a scale of 1–10, how much actual control do I have over this?',ph:'1 = none, 10 = full. What would I do with this energy if I wasn\'t spending it here?'},
-    ]},
-    {t:'two',fields:[
-     {id:'redirect_plan',label:'The Redirect Plan — When I catch myself going down this mental path, I will instead:',ph:'Be specific. What will you do instead?'},
-     {id:'positive_investment',label:'Positive Energy Investment — This week, I want to spend more mental energy on:',ph:'Because this aligns with my value of / focus on:'},
-    ]},
+    {t:'two',fields:[{id:'biggest_drain',label:'Biggest Energy Drain — What\'s been consuming the most mental energy?',ph:'Choose your top 1-2.'},{id:'redirect_plan',label:'The Redirect Plan — When I catch myself going down this path, I will instead:',ph:'Be specific. What will you do instead?'}]},
    ]},
  ]},
-
-// ── MODULE 3 ─────────────────────────────────────────────────
 {num:'03',title:'The Four Virtues',sub:'Character Building, Soft Girl Edition',
  quote:'"Be the person your younger self needed."',
- desc:'The four virtues — Wisdom, Courage, Justice, Temperance — are your inner GPS with 2,000 years of field testing. These five exercises make them personal and practical in your life.',
+ desc:'The four virtues — Wisdom, Courage, Justice, Temperance — are your inner GPS with 2,000 years of field testing. These exercises make them personal and practical in your life.',
  exercises:[
-  {id:'perspective_shifter',label:'Ex 3.1',title:'Perspective Shifter (Wisdom)',
-   purpose:'Break out of limited thinking patterns by exploring challenges from multiple viewpoints to build broader understanding and intellectual humility.',time:'15–20 minutes',
+  {id:'perspective_shifter',label:'Ex 3.1',title:'Perspective Shifter (Wisdom)',recurring:false,
+   purpose:'Break out of limited thinking patterns by exploring challenges from multiple viewpoints.',time:'15–20 minutes',
    fields:[
-    {t:'write',id:'challenge',label:'1. Current Challenge — What situation or decision are you currently struggling with?',ph:''},
-    {t:'two',fields:[
-     {id:'initial_reaction',label:'Your first instinct / immediate reaction',ph:''},
-     {id:'emotions_present',label:'What emotions are coming up for you around this?',ph:''},
-    ]},
+    {t:'write',id:'challenge',label:'Current Challenge — What situation or decision are you currently struggling with?',ph:''},
+    {t:'two',fields:[{id:'initial_reaction',label:'Your first instinct / immediate reaction',ph:''},{id:'emotions_present',label:'What emotions are coming up for you around this?',ph:''}]},
     {t:'hr'},
-    {t:'sec',label:'3. The Wisdom Lenses — Multiple Perspective Exploration'},
-    {t:'two',fields:[
-     {id:'time_lens',label:'The Time Lens',sub:'How might you view this in 5 years? What would your 80-year-old self advise you?',ph:''},
-     {id:'assumption_detective',label:'The Assumption Detective',sub:'What am I assuming that might not be true? What information am I missing?',ph:''},
-    ]},
-    {t:'two',fields:[
-     {id:'compassionate_observer',label:'The Compassionate Observer',sub:'If my best friend was facing this, what would I tell them? What would someone who loves me want me to know?',ph:''},
-     {id:'learning_lens',label:'The Learning Lens',sub:'What is this situation trying to teach me? How might this challenge be preparing me for something important?',ph:''},
-    ]},
+    {t:'two',fields:[{id:'time_lens',label:'The Time Lens',sub:'How might you view this in 5 years? What would your 80-year-old self advise?',ph:''},{id:'assumption_detective',label:'The Assumption Detective',sub:'What am I assuming that might not be true? What information am I missing?',ph:''}]},
+    {t:'two',fields:[{id:'compassionate_observer',label:'The Compassionate Observer',sub:'If my best friend was facing this, what would I tell them?',ph:''},{id:'learning_lens',label:'The Learning Lens',sub:'What is this situation trying to teach me?',ph:''}]},
     {t:'hr'},
-    {t:'two',fields:[
-     {id:'wiser_perspective',label:'After considering these viewpoints, how do you see the situation now?',ph:''},
-     {id:'wisest_next_step',label:'What feels like the wisest next step?',ph:''},
-    ]},
+    {t:'two',fields:[{id:'wiser_perspective',label:'After considering these viewpoints, how do you see the situation now?',ph:''},{id:'wisest_next_step',label:'What feels like the wisest next step?',ph:''}]},
    ]},
-
-  {id:'comfort_zone',label:'Ex 3.2',title:'Comfort Zone Challenge (Courage)',
-   purpose:'Identify where fear is keeping you small and create a manageable plan for taking brave action aligned with your values.',time:'15–20 minutes',
+  {id:'comfort_zone',label:'Ex 3.2',title:'Comfort Zone Challenge (Courage)',recurring:false,
+   purpose:'Identify where fear is keeping you small and create a manageable plan for taking brave action.',time:'15–20 minutes',
    fields:[
-    {t:'write',id:'avoidance',label:'1. Avoidance Inventory — What have you been avoiding or putting off due to fear or discomfort?',ph:'List whatever comes to mind — conversations, decisions, attempts, vulnerability...', ta:true},
-    {t:'write',id:'chosen_challenge',label:'2. Choose Your Challenge — Pick one item that feels important but manageable. What is it?',ph:'',sh:true},
+    {t:'write',id:'avoidance',label:'Avoidance Inventory — What have you been avoiding or putting off due to fear or discomfort?',ph:'List whatever comes to mind — conversations, decisions, attempts, vulnerability...',ta:true},
+    {t:'write',id:'chosen_challenge',label:'Choose Your Challenge — Pick one item that feels important but manageable. What is it?',ph:'',sh:true},
     {t:'hr'},
-    {t:'sec',label:'3. Fear Investigation'},
-    {t:'two',fields:[
-     {id:'specific_fears',label:'Name Your Fears — What specifically are you afraid might happen?',sub:'Judgment? Failure? Rejection? Embarrassment? Making the wrong choice?',ph:''},
-     {id:'worst_realistic',label:'Reality Check — What\'s the worst realistic outcome if you take this action?',sub:'How likely is it actually? If the worst happened, how would you handle it?',ph:''},
-    ]},
-    {t:'write',id:'values_connection',label:'4. Values Connection — Why does this action matter to you? What values does it represent?',ph:'What would it mean about you as a person if you took this brave step?'},
+    {t:'two',fields:[{id:'specific_fears',label:'Name Your Fears — What specifically are you afraid might happen?',ph:''},{id:'worst_realistic',label:'Reality Check — What\'s the worst realistic outcome if you take this action?',ph:''}]},
+    {t:'write',id:'values_connection',label:'Values Connection — Why does this action matter to you?',ph:'What would it mean about you as a person if you took this brave step?'},
     {t:'hr'},
-    {t:'sec',label:'5. The Courage Ladder — Build up in steps.'},
-    {t:'three',fields:[
-     {id:'step1',label:'Step 1 — Easiest',sub:'The smallest possible step toward this goal.',ph:''},
-     {id:'step2',label:'Step 2 — Medium',sub:'The next slightly braver action.',ph:''},
-     {id:'step3',label:'Step 3 — Full Action',sub:'What taking complete action looks like.',ph:''},
-    ]},
+    {t:'three',fields:[{id:'step1',label:'Step 1 — Easiest',sub:'The smallest possible step.',ph:''},{id:'step2',label:'Step 2 — Medium',sub:'The next slightly braver action.',ph:''},{id:'step3',label:'Step 3 — Full Action',sub:'What taking complete action looks like.',ph:''}]},
     {t:'write',id:'courage_when',label:'When specifically will you take Step 1?',ph:'I will ___ on ___ at ___.',sh:true},
    ]},
-
-  {id:'boundary_blueprint',label:'Ex 3.3',title:'Boundary Blueprint (Justice)',
-   purpose:'Examine your relationships through the lens of fairness and design healthier boundaries that honor both your needs and others\'.',time:'20–25 minutes',
+  {id:'boundary_blueprint',label:'Ex 3.3',title:'Boundary Blueprint (Justice)',recurring:false,
+   purpose:'Examine your relationships through the lens of fairness and design healthier boundaries.',time:'20–25 minutes',
    fields:[
-    {t:'sec',label:'1. Relationship Energy Assessment'},
-    {t:'write',id:'energy_balance',label:'Rate your key relationships — who gives you energy vs. drains it?',sub:'Think about Partner, Family, Close Friends, Colleagues. Note the energy exchange honestly.',ph:'Partner: gives ___ / receives ___  — overall: draining / neutral / energizing\nFamily: ...\nFriend 1: ...\nFriend 2: ...', ta:true},
+    {t:'write',id:'energy_balance',label:'Rate your key relationships — who gives you energy vs. drains it?',ph:'Partner: energizing / neutral / draining\nFamily: ...\nFriend 1: ...',ta:true},
     {t:'hr'},
-    {t:'sec',label:'2. Boundary Needs Assessment'},
-    {t:'two',fields:[
-     {id:'over_give',label:'Where I Give Too Much — In which relationships do I consistently over-give?',ph:''},
-     {id:'afraid_of',label:'What am I afraid will happen if I give less or ask for more?',ph:'Rejection? Conflict? Losing the relationship? Being seen as difficult?'},
-    ]},
-    {t:'two',fields:[
-     {id:'under_receive',label:'Where I Receive Too Little — Where am I not getting my needs met?',ph:''},
-     {id:'need_more',label:'What do I need more of in my relationships?',ph:''},
-    ]},
-    {t:'write',id:'self_justice',label:'Justice to Self Check — How do I treat myself compared to how I treat my friends? What would change if I applied the same kindness to myself?',ph:''},
+    {t:'two',fields:[{id:'over_give',label:'Where do I consistently over-give?',ph:''},{id:'afraid_of',label:'What am I afraid will happen if I give less or ask for more?',ph:''}]},
+    {t:'two',fields:[{id:'under_receive',label:'Where am I not getting my needs met?',ph:''},{id:'need_more',label:'What do I need more of in my relationships?',ph:''}]},
+    {t:'write',id:'self_justice',label:'Justice to Self Check — How do I treat myself compared to how I treat my friends?',ph:''},
     {t:'hr'},
-    {t:'sec',label:'3. Boundary Design'},
-    {t:'two',fields:[
-     {id:'which_relationship',label:'Which relationship needs a boundary adjustment? What specifically needs to change?',ph:''},
-     {id:'say_no',label:'What will you say no to?',ph:''},
-    ]},
-    {t:'two',fields:[
-     {id:'how_communicate',label:'How will you communicate this change? (Write the actual words if you can)',ph:'"When ___, I feel ___. I need ___."'},
-     {id:'say_yes',label:'What will you say yes to? When will you implement this?',ph:''},
-    ]},
+    {t:'two',fields:[{id:'which_relationship',label:'Which relationship needs a boundary adjustment?',ph:''},{id:'say_no',label:'What will you say no to?',ph:''}]},
+    {t:'two',fields:[{id:'how_communicate',label:'How will you communicate this change?',ph:'"When ___, I feel ___. I need ___."'},{id:'say_yes',label:'What will you say yes to?',ph:''}]},
    ]},
-
-  {id:'balance_check',label:'Ex 3.4',title:'Balance Check (Temperance)',
-   purpose:'Audit different areas of your life to identify where you\'re living in extremes and find your personal "sweet spot" for sustainable balance.',time:'15–20 minutes',
+  {id:'balance_check',label:'Ex 3.4',title:'Balance Check (Temperance)',recurring:false,
+   purpose:'Audit different areas of your life to identify where you\'re living in extremes and find your personal sweet spot for sustainable balance.',time:'15–20 minutes',
    fields:[
-    {t:'sec',label:'1. Life Area Assessment — For each area, note where you are now and where you want to be.'},
     {t:'write',id:'area_work',label:'Work / Productivity',sub:'1 = underachieving → 10 = burnout',ph:'Where I am now: _/10\nWhere sustainable feels like: _/10\nWhat I notice: '},
     {t:'write',id:'area_social',label:'Social Connection',sub:'1 = isolated → 10 = overscheduled',ph:'Where I am now: _/10\nWhere nourishing feels like: _/10\nWhat I notice: '},
     {t:'write',id:'area_tech',label:'Social Media / Technology',sub:'1 = completely offline → 10 = constantly scrolling',ph:'Where I am now: _/10\nWhere intentional feels like: _/10\nWhat I notice: '},
-    {t:'write',id:'area_emotions',label:'Emotions / Processing',sub:'1 = suppressing → 10 = overwhelmed',ph:'Where I am now: _/10\nWhere healthy feels like: _/10\nWhat I notice: '},
     {t:'hr'},
-    {t:'sec',label:'2. Deep Dive — Choose Your Biggest Imbalance'},
-    {t:'two',fields:[
-     {id:'biggest_gap',label:'Which life area has the biggest gap? When do you tend to go to extremes here?',ph:''},
-     {id:'triggers_extreme',label:'What triggers your "all or nothing" thinking in this area?',ph:''},
-    ]},
-    {t:'write',id:'just_enough',label:'What would "just enough" look like in this area?',ph:''},
-    {t:'hr'},
-    {t:'sec',label:'3. Finding Your Sweet Spot'},
-    {t:'two',fields:[
-     {id:'sustainable_daily',label:'What would sustainable balance look like day-to-day?',ph:''},
-     {id:'env_support',label:'What changes in your environment would make balance easier?',ph:''},
-    ]},
-    {t:'write',id:'balance_experiment',label:'This Week\'s Balance Experiment — One small way you\'ll practice temperance in this area:',ph:'',sh:true},
+    {t:'two',fields:[{id:'biggest_gap',label:'Which life area has the biggest gap?',ph:''},{id:'triggers_extreme',label:'What triggers your "all or nothing" thinking in this area?',ph:''}]},
+    {t:'write',id:'balance_experiment',label:'This Week\'s Balance Experiment — One small way you\'ll practice temperance:',ph:'',sh:true},
    ]},
-
-  {id:'virtue_compass',label:'Ex 3.5',title:'Your Personal Virtue Compass',
+  {id:'virtue_compass',label:'Ex 3.5',title:'Your Personal Virtue Compass',recurring:false,
    purpose:'Define what each virtue means specifically to you and create a personalized framework for virtue-based decision making.',time:'25–30 minutes',
    fields:[
-    {t:'sec',label:'1. Personal Virtue Definitions — What do these virtues actually look like in your life?'},
-    {t:'box-write',color:'pink',title:'Wisdom',fields:[
-     {id:'wisdom_looks',label:'In my life, wisdom looks like:',ph:''},
-     {id:'wisdom_when',label:'I know I\'m acting wisely when I:',ph:''},
-     {id:'wisdom_challenge',label:'My biggest wisdom challenge is:',ph:''},
-    ]},
-    {t:'box-write',color:'green',title:'Courage',fields:[
-     {id:'courage_looks',label:'In my life, courage looks like:',ph:''},
-     {id:'courage_when',label:'I know I\'m acting courageously when I:',ph:''},
-     {id:'courage_challenge',label:'My biggest courage challenge is:',ph:''},
-    ]},
-    {t:'box-write',color:'purple',title:'Justice',fields:[
-     {id:'justice_looks',label:'In my life, justice looks like:',ph:''},
-     {id:'justice_when',label:'I know I\'m acting justly when I:',ph:''},
-     {id:'justice_challenge',label:'My biggest justice challenge is:',ph:''},
-    ]},
-    {t:'box-write',color:'amber',title:'Temperance',fields:[
-     {id:'temp_looks',label:'In my life, temperance looks like:',ph:''},
-     {id:'temp_when',label:'I know I\'m acting with temperance when I:',ph:''},
-     {id:'temp_challenge',label:'My biggest temperance challenge is:',ph:''},
-    ]},
+    {t:'box-write',color:'pink',title:'Wisdom',fields:[{id:'wisdom_looks',label:'In my life, wisdom looks like:',ph:''},{id:'wisdom_when',label:'I know I\'m acting wisely when I:',ph:''},{id:'wisdom_challenge',label:'My biggest wisdom challenge is:',ph:''}]},
+    {t:'box-write',color:'green',title:'Courage',fields:[{id:'courage_looks',label:'In my life, courage looks like:',ph:''},{id:'courage_when',label:'I know I\'m acting courageously when I:',ph:''},{id:'courage_challenge',label:'My biggest courage challenge is:',ph:''}]},
+    {t:'box-write',color:'purple',title:'Justice',fields:[{id:'justice_looks',label:'In my life, justice looks like:',ph:''},{id:'justice_when',label:'I know I\'m acting justly when I:',ph:''},{id:'justice_challenge',label:'My biggest justice challenge is:',ph:''}]},
+    {t:'box-write',color:'amber',title:'Temperance',fields:[{id:'temp_looks',label:'In my life, temperance looks like:',ph:''},{id:'temp_when',label:'I know I\'m acting with temperance when I:',ph:''},{id:'temp_challenge',label:'My biggest temperance challenge is:',ph:''}]},
     {t:'hr'},
-    {t:'sec',label:'2. Your Virtue Compass in Action'},
-    {t:'write',id:'current_challenge_vc',label:'What situation in your life could benefit from virtue-based guidance?',ph:''},
-    {t:'two',fields:[
-     {id:'wisdom_consider',label:'What would wisdom ask me to consider?',ph:''},
-     {id:'courage_do',label:'What would courage have me do?',ph:''},
-    ]},
-    {t:'two',fields:[
-     {id:'justice_here',label:'What would justice look like in this situation?',ph:''},
-     {id:'temp_guide',label:'How would temperance guide my approach?',ph:''},
-    ]},
-    {t:'write',id:'virtue_decision',label:'Based on these reflections, what feels like the most character-aligned choice?',ph:''},
-    {t:'hr'},
-    {t:'sec',label:'3. Your Virtue Mantras — Create personal reminders.'},
-    {t:'two',fields:[
-     {id:'mantra_wisdom',label:'My Wisdom mantra:',ph:'e.g. "Pause before I assume."'},
-     {id:'mantra_courage',label:'My Courage mantra:',ph:'e.g. "I can do hard things."'},
-    ]},
-    {t:'two',fields:[
-     {id:'mantra_justice',label:'My Justice mantra:',ph:'e.g. "I deserve what I give to others."'},
-     {id:'mantra_temp',label:'My Temperance mantra:',ph:'e.g. "Enough is enough."'},
-    ]},
+    {t:'two',fields:[{id:'mantra_wisdom',label:'My Wisdom mantra:',ph:'e.g. "Pause before I assume."'},{id:'mantra_courage',label:'My Courage mantra:',ph:'e.g. "I can do hard things."'}]},
+    {t:'two',fields:[{id:'mantra_justice',label:'My Justice mantra:',ph:'e.g. "I deserve what I give to others."'},{id:'mantra_temp',label:'My Temperance mantra:',ph:'e.g. "Enough is enough."'}]},
    ]},
  ]},
-
-// ── MODULE 4 ─────────────────────────────────────────────────
 {num:'04',title:'Emotional Regulation',sub:'For Sensitive Souls',
  quote:'"Feel deeply, respond wisely."',
- desc:'You don\'t have to choose between feeling deeply and thinking clearly. Between stimulus and response, there is a space. These four exercises help you find that space and make it bigger.',
+ desc:'You don\'t have to choose between feeling deeply and thinking clearly. Between stimulus and response, there is a space. These exercises help you find that space and make it bigger.',
  exercises:[
-  {id:'gap_pause',label:'Ex 4.1',title:'The Gap Pause Practice',
+  {id:'gap_pause',label:'Ex 4.1',title:'The Gap Pause Practice',recurring:true,
    purpose:'Learn to identify and expand the space between emotional triggers and your responses, building the skill of conscious choice over automatic reaction.',time:'10–15 min daily + 5 min reflection',
    fields:[
-    {t:'sec',label:'1. Understanding Your Current Patterns'},
-    {t:'two',fields:[
-     {id:'regret_moment',label:'Think of a time this week when you reacted emotionally in a way you later regretted. What happened?',ph:''},
-     {id:'trigger_was',label:'What was the trigger that set you off?',ph:''},
-    ]},
-    {t:'two',fields:[
-     {id:'how_quickly',label:'How quickly did you react? (Instantly / Seconds / A minute / Had time to think)',ph:''},
-     {id:'different_pause',label:'What would you have done differently if you\'d had more time to pause?',ph:''},
-    ]},
+    {t:'two',fields:[{id:'regret_moment',label:'Think of a time this week when you reacted emotionally in a way you later regretted. What happened?',ph:''},{id:'trigger_was',label:'What was the trigger that set you off?',ph:''}]},
+    {t:'two',fields:[{id:'how_quickly',label:'How quickly did you react?',ph:'Instantly / Seconds / A minute / Had time to think'},{id:'different_pause',label:'What would you have done differently if you\'d had more time to pause?',ph:''}]},
     {t:'hr'},
-    {t:'sec',label:'2. The Gap Practice — Choose your technique.'},
-    {t:'write',id:'technique_choice',label:'Which pause technique will you practice this week?',sub:'4-7-8 Breathing (inhale 4, hold 7, exhale 8) · Box Breathing (4-4-4-4) · 5-4-3-2-1 Grounding · Body Scan · Count to 10',ph:'I choose ___ because it works for me when...'},
-    {t:'write',id:'choice_point',label:'When I feel the urge to react, I will ask myself:',sub:'"What would my wisest self do?" / "How do I want to feel about this later?" / "What response aligns with my values?"',ph:'My go-to pause question is...',sh:true},
+    {t:'write',id:'technique_choice',label:'Which pause technique will you practice this week?',sub:'4-7-8 Breathing · Box Breathing · 5-4-3-2-1 Grounding · Body Scan · Count to 10',ph:'I choose ___ because it works for me when...'},
     {t:'hr'},
-    {t:'sec',label:'3. Weekly Practice Log — Note key moments from each day.'},
-    {t:'weather',id:'gap_log',days:['Mon','Tue','Wed','Thu','Fri','Sat','Sun'],
-     cols:['Trigger','Intensity (1-10)','Pause Used','Chosen Response','How It Felt']},
+    {t:'weather',id:'gap_log',days:['Mon','Tue','Wed','Thu','Fri','Sat','Sun'],cols:['Trigger','Intensity (1-10)','Pause Used','Chosen Response','How It Felt']},
     {t:'hr'},
-    {t:'sec',label:'4. Weekly Reflection'},
-    {t:'two',fields:[
-     {id:'trigger_patterns',label:'What patterns do you notice in your triggers?',ph:''},
-     {id:'pause_feeling',label:'How did it feel to choose your response rather than react automatically?',ph:''},
-    ]},
-    {t:'two',fields:[
-     {id:'best_technique',label:'Which pause technique worked best for you?',ph:''},
-     {id:'hardest_gap',label:'What made it hardest to find the gap?',ph:''},
-    ]},
+    {t:'two',fields:[{id:'trigger_patterns',label:'What patterns do you notice in your triggers?',ph:''},{id:'pause_feeling',label:'How did it feel to choose your response rather than react automatically?',ph:''}]},
    ]},
-
-  {id:'wise_mind',label:'Ex 4.2',title:'Wise Mind Worksheet',
+  {id:'wise_mind',label:'Ex 4.2',title:'Wise Mind Worksheet',recurring:false,
    purpose:'Learn to integrate emotional wisdom and logical thinking to make balanced decisions that honor both your feelings and your reasoning.',time:'15–20 minutes',
    fields:[
-    {t:'write',id:'wise_challenge',label:'1. Current Challenge or Decision — What situation could benefit from a Wise Mind perspective?',ph:''},
+    {t:'write',id:'wise_challenge',label:'Current Challenge or Decision',ph:'What situation could benefit from a Wise Mind perspective?'},
     {t:'hr'},
-    {t:'sec',label:'2. The Three Minds Analysis'},
-    {t:'box-write',color:'pink',title:'Emotion Mind — What Your Feelings Are Telling You',fields:[
-     {id:'emotions_present_wm',label:'What emotions are present in this situation?',ph:''},
-     {id:'if_followed_emotions',label:'If you followed your emotions completely, what would you do?',ph:''},
-     {id:'emotion_fear_hope',label:'What is your emotional mind most afraid of or hoping for?',ph:''},
-     {id:'valid_info',label:'What valid information are these emotions giving you?',ph:''},
-    ]},
-    {t:'box-write',color:'blue',title:'Rational Mind — What Logic and Facts Suggest',fields:[
-     {id:'objective_facts',label:'What are the objective facts of this situation?',ph:''},
-     {id:'pure_logic',label:'If you removed all emotions, what would pure logic suggest?',ph:''},
-     {id:'pros_cons',label:'What are the practical pros and cons of different options?',ph:''},
-     {id:'friend_advice_wm',label:'What would you advise a friend in this exact situation?',ph:''},
-    ]},
-    {t:'box-write',color:'teal',title:'Finding Your Wise Mind — Integration',fields:[
-     {id:'both_agree',label:'What do both your emotions AND logic agree on?',ph:''},
-     {id:'balanced_response',label:'What would the most balanced response look like?',ph:''},
-     {id:'proud_in_future',label:'In 5 years, looking back, what would you be proud of doing?',ph:''},
-     {id:'honors_both',label:'What choice honors both your feelings and your wisdom?',ph:''},
-    ]},
+    {t:'box-write',color:'pink',title:'Emotion Mind — What Your Feelings Are Telling You',fields:[{id:'emotions_present_wm',label:'What emotions are present?',ph:''},{id:'if_followed_emotions',label:'If you followed your emotions completely, what would you do?',ph:''},{id:'valid_info',label:'What valid information are these emotions giving you?',ph:''}]},
+    {t:'box-write',color:'blue',title:'Rational Mind — What Logic and Facts Suggest',fields:[{id:'objective_facts',label:'What are the objective facts of this situation?',ph:''},{id:'pure_logic',label:'If you removed all emotions, what would pure logic suggest?',ph:''},{id:'friend_advice_wm',label:'What would you advise a friend in this exact situation?',ph:''}]},
+    {t:'box-write',color:'teal',title:'Finding Your Wise Mind — Integration',fields:[{id:'both_agree',label:'What do both your emotions AND logic agree on?',ph:''},{id:'balanced_response',label:'What would the most balanced response look like?',ph:''},{id:'honors_both',label:'What choice honors both your feelings and your wisdom?',ph:''}]},
     {t:'hr'},
-    {t:'two',fields:[
-     {id:'wise_decision',label:'3. Your Wise Mind Decision — What feels like the most balanced path forward?',ph:''},
-     {id:'wise_step',label:'What\'s one small step you can take this week aligned with this wisdom?',ph:''},
-    ]},
-    {t:'two',fields:[
-     {id:'wise_reflection',label:'How does this decision feel different from choices made purely from emotion or logic?',ph:''},
-     {id:'wise_challenge',label:'What makes it challenging to access your Wise Mind?',ph:''},
-    ]},
+    {t:'two',fields:[{id:'wise_decision',label:'Your Wise Mind Decision — What feels like the most balanced path forward?',ph:''},{id:'wise_step',label:'What\'s one small step you can take this week?',ph:''}]},
    ]},
-
-  {id:'distress_menu',label:'Ex 4.3',title:'Distress Tolerance Menu',
-   purpose:'Create a personalized toolkit of healthy strategies for managing intense emotions without making the situation worse.',time:'20–25 min to create, ongoing reference',
+  {id:'distress_menu',label:'Ex 4.3',title:'Distress Tolerance Menu',recurring:false,
+   purpose:'Create a personalized toolkit of healthy strategies for managing intense emotions without making the situation worse.',time:'20–25 minutes',
    fields:[
-    {t:'sec',label:'1. Current Coping Assessment — How do you currently handle intense emotions?'},
-    {t:'two',fields:[
-     {id:'helpful_current',label:'Helpful Strategies I already use:',ph:'Talk to a friend, exercise, journal, music, breathe, hot shower...'},
-     {id:'unhelpful_current',label:'Unhelpful Strategies I reach for (no judgment — just awareness):',ph:'Scroll social media, isolate, eat emotionally, send impulsive texts, make big decisions while upset...'},
-    ]},
+    {t:'two',fields:[{id:'helpful_current',label:'Helpful strategies I already use:',ph:'Talk to a friend, exercise, journal, breathe, hot shower...'},{id:'unhelpful_current',label:'Unhelpful strategies I reach for (no judgment):',ph:'Scroll social media, isolate, send impulsive texts...'}]},
     {t:'hr'},
-    {t:'sec',label:'2. Building Your Personal Menu — Customize each category with what actually works for YOU.'},
-    {t:'box-write',color:'blue',title:'♦ DISTRACT — Healthy ways to shift focus temporarily',fields:[
-     {id:'distract_activities',label:'Activities (what you\'ll do):',ph:'Clean, puzzle, funny videos, creative work, exercise, call a friend and focus on their life...'},
-     {id:'distract_others',label:'Contributing to Others:',ph:'Encouraging text, small favor, help with household tasks...'},
-    ]},
-    {t:'box-write',color:'pink',title:'♦ SOOTHE — Ways to comfort yourself with kindness',fields:[
-     {id:'soothe_physical',label:'Physical Soothing:',ph:'Warm bath, soft clothes, warm tea, pleasant scents, gentle stretching...'},
-     {id:'soothe_emotional',label:'Emotional Soothing:',ph:'Self-compassion phrases, good-memory photos, calming music, imagining a safe place...'},
-    ]},
-    {t:'box-write',color:'green',title:'♦ GROUND — Ways to reconnect with the present moment',fields:[
-     {id:'ground_sensory',label:'Sensory Grounding:',ph:'5-4-3-2-1, cold water on face, breath counting, body scan, name objects in the room...'},
-     {id:'ground_mental',label:'Mental Grounding:',ph:'Song lyrics, count backwards from 100 by 7s, name categories, plan something positive tomorrow...'},
-    ]},
+    {t:'box-write',color:'blue',title:'♦ DISTRACT — Healthy ways to shift focus temporarily',fields:[{id:'distract_activities',label:'Activities (what you\'ll do):',ph:'Clean, puzzle, funny videos, creative work, exercise, call a friend...'},{id:'distract_others',label:'Contributing to Others:',ph:'Encouraging text, small favor, help with household tasks...'}]},
+    {t:'box-write',color:'pink',title:'♦ SOOTHE — Ways to comfort yourself with kindness',fields:[{id:'soothe_physical',label:'Physical Soothing:',ph:'Warm bath, soft clothes, warm tea, pleasant scents...'},{id:'soothe_emotional',label:'Emotional Soothing:',ph:'Self-compassion phrases, calming music, imagining a safe place...'}]},
+    {t:'box-write',color:'green',title:'♦ GROUND — Ways to reconnect with the present moment',fields:[{id:'ground_sensory',label:'Sensory Grounding:',ph:'5-4-3-2-1, cold water on face, breath counting, body scan...'},{id:'ground_mental',label:'Mental Grounding:',ph:'Name categories, plan something positive tomorrow...'}]},
     {t:'hr'},
-    {t:'sec',label:'3. Emergency Toolkit — For when intensity is at 8, 9, or 10.'},
-    {t:'write',id:'emergency_when8',label:'When I\'m at 8–10 intensity, I will:',ph:'First: \nThen: \nIf still struggling: '},
-    {t:'two',fields:[
-     {id:'support_emotional',label:'My support people — for emotional support:',ph:''},
-     {id:'support_crisis',label:'For crisis situations / professional help:',ph:''},
-    ]},
     {t:'write',id:'redirect_from',label:'The unhelpful strategy I most often reach for vs. what I\'ll try instead:',ph:'When I\'m tempted to ___, I will try ___ instead.',sh:true},
    ]},
-
-  {id:'weather_report',label:'Ex 4.4',title:'Daily Weather Report',
+  {id:'weather_report',label:'Ex 4.4',title:'Daily Weather Report',recurring:true,
    purpose:'Build emotional awareness through gentle tracking and pattern recognition — become an expert on your own emotional climate.',time:'5 min daily + 10 min weekly reflection',
    fields:[
-    {t:'sec',label:'1. Daily Emotion Tracking — Complete once daily. Focus on observation, not fixing.'},
-    {t:'weather',id:'weather_log',days:['Mon','Tue','Wed','Thu','Fri','Sat','Sun'],
-     cols:['Weather Today (Stormy/Cloudy/Partly Cloudy/Sunny/Calm)','Primary Emotions','Intensity (1-10)','Triggers Noticed','What Helped']},
+    {t:'weather',id:'weather_log',days:['Mon','Tue','Wed','Thu','Fri','Sat','Sun'],cols:['Weather Today','Primary Emotions','Intensity (1-10)','Triggers Noticed','What Helped']},
     {t:'hr'},
-    {t:'sec',label:'2. Weekly Reflection & Pattern Recognition'},
-    {t:'two',fields:[
-     {id:'frequent_emotions',label:'What emotions showed up most frequently this week?',ph:''},
-     {id:'time_of_day',label:'What time of day do you feel most / least regulated?',ph:''},
-    ]},
-    {t:'two',fields:[
-     {id:'consistent_triggers',label:'What consistent triggers are you noticing?',ph:''},
-     {id:'sleep_effect',label:'How did sleep and social interaction affect your emotional weather this week?',ph:'Poor sleep = ...\nGood sleep = ...\nIsolation = ...\nConnection = ...'},
-    ]},
-    {t:'two',fields:[
-     {id:'strategies_helpful',label:'Which regulation strategies were most helpful?',ph:''},
-     {id:'still_struggle',label:'What emotions do you still struggle to be with? What patterns would you like to shift?',ph:''},
-    ]},
-    {t:'write',id:'next_week_intention',label:'Next Week\'s Intention — Based on this week\'s observations, one small thing I\'ll try differently:',ph:'',sh:true},
+    {t:'two',fields:[{id:'frequent_emotions',label:'What emotions showed up most frequently this week?',ph:''},{id:'time_of_day',label:'What time of day do you feel most / least regulated?',ph:''}]},
+    {t:'two',fields:[{id:'consistent_triggers',label:'What consistent triggers are you noticing?',ph:''},{id:'strategies_helpful',label:'Which regulation strategies were most helpful?',ph:''}]},
+    {t:'write',id:'next_week_intention',label:'Next Week\'s Intention — one small thing I\'ll try differently:',ph:'',sh:true},
    ]},
  ]},
-
-// ── MODULE 5 ─────────────────────────────────────────────────
 {num:'05',title:'Relationships & Boundaries',sub:'The Hardest Part',
  quote:'"Attachment creates suffering, love creates freedom."',
- desc:'Relationships are where all inner work gets tested. These three exercises help you understand your patterns, set boundaries with clarity, and love without losing yourself.',
+ desc:'Relationships are where all inner work gets tested. These exercises help you understand your patterns, set boundaries with clarity, and love without losing yourself.',
  exercises:[
-  {id:'boundary_clarity',label:'Ex 5.1',title:'Boundary Clarification',
-   purpose:'Define your limits, needs, and non-negotiables across different relationship types to build clarity and confidence in maintaining healthy boundaries.',time:'20–25 minutes',
+  {id:'boundary_clarity',label:'Ex 5.1',title:'Boundary Clarification',recurring:false,
+   purpose:'Define your limits, needs, and non-negotiables across different relationship types to build clarity and confidence.',time:'20–25 minutes',
    fields:[
-    {t:'sec',label:'1. What Are Your Boundaries? — Define what you actually need.'},
-    {t:'two',fields:[
-     {id:'b_consistently_cross',label:'Where do people consistently cross a line with you?',ph:'Think about recurring situations where you feel drained, resentful, or violated...'},
-     {id:'b_currently_allow',label:'What behaviors are you currently allowing that you don\'t actually want to?',ph:'What have you been tolerating out of fear, guilt, habit, or not wanting to rock the boat?'},
-    ]},
-    {t:'two',fields:[
-     {id:'b_afraid',label:'What are you afraid will happen if you enforce a boundary?',ph:'Rejection? Conflict? Losing the relationship? Being seen as difficult or selfish?'},
-     {id:'b_self_boundary',label:'What boundary do you need to set with YOURSELF?',ph:'An internal limit — a thought pattern, a habit, how you spend time...'},
-    ]},
+    {t:'two',fields:[{id:'b_consistently_cross',label:'Where do people consistently cross a line with you?',ph:'Think about recurring situations where you feel drained, resentful, or violated...'},{id:'b_currently_allow',label:'What behaviors are you currently allowing that you don\'t actually want to?',ph:'What have you been tolerating out of fear, guilt, or habit?'}]},
+    {t:'two',fields:[{id:'b_afraid',label:'What are you afraid will happen if you enforce a boundary?',ph:'Rejection? Conflict? Losing the relationship?'},{id:'b_self_boundary',label:'What boundary do you need to set with YOURSELF?',ph:'An internal limit — a thought pattern, a habit, how you spend time...'}]},
     {t:'hr'},
-    {t:'sec',label:'2. Boundary Scripts — Practice the actual words.'},
-    {t:'write',id:'b_script1',label:'For a situation where you over-give:',sub:'Use this template: "I care about you and I also need to take care of myself. I\'m not available for ___ but I can ___."',ph:'Write your specific version here...'},
+    {t:'write',id:'b_script1',label:'For a situation where you over-give:',sub:'"I care about you and I also need to take care of myself. I\'m not available for ___ but I can ___."',ph:'Write your specific version here...'},
     {t:'write',id:'b_script2',label:'For a situation where you under-receive:',sub:'"I need [specific thing] to feel supported. It would mean a lot to me if you could ___."',ph:'Write your specific version here...'},
     {t:'hr'},
     {t:'write',id:'b_one_action',label:'One boundary I will communicate or enforce this week:',ph:'What, with whom, and how?',sh:true},
    ]},
-
-  {id:'attachment',label:'Ex 5.2',title:'Attachment Style Reflection',
-   purpose:'Reflect on your relationship patterns, triggers, and needs to bring unconscious dynamics into awareness so you can choose more intentional responses.',time:'20–25 minutes',
+  {id:'attachment',label:'Ex 5.2',title:'Attachment Style Reflection',recurring:false,
+   purpose:'Reflect on your relationship patterns and triggers to bring unconscious dynamics into awareness so you can choose more intentional responses.',time:'20–25 minutes',
    fields:[
-    {t:'sec',label:'1. Understanding Your Patterns'},
-    {t:'write',id:'att_distance',label:'How do you tend to behave when you feel close to someone and then sense distance or disconnection?',sub:'Do you chase? Pull away? Get anxious? Shut down? Become hypervigilant to their moods?',ph:'', ta:true},
-    {t:'two',fields:[
-     {id:'att_fear',label:'What is your deepest fear in close relationships?',ph:'Abandonment? Being too much? Being trapped? Not being chosen? Being truly seen?'},
-     {id:'att_childhood',label:'How did the important people in your early life respond to your needs and emotions?',ph:'Were your needs generally met? Were you soothed, dismissed, inconsistently responded to, overwhelmed?'},
-    ]},
+    {t:'write',id:'att_distance',label:'How do you tend to behave when you feel close to someone and then sense distance or disconnection?',sub:'Do you chase? Pull away? Get anxious? Shut down?',ph:'',ta:true},
+    {t:'two',fields:[{id:'att_fear',label:'What is your deepest fear in close relationships?',ph:'Abandonment? Being too much? Being trapped? Not being chosen?'},{id:'att_childhood',label:'How did the important people in your early life respond to your needs and emotions?',ph:'Were your needs generally met? Were you soothed, dismissed, inconsistently responded to?'}]},
     {t:'hr'},
-    {t:'sec',label:'2. Your Relationship Patterns'},
-    {t:'two',fields:[
-     {id:'att_gives_energy',label:'What does a relationship look and feel like when it\'s going well for you?',ph:'What do you feel? What\'s the dynamic?'},
-     {id:'att_drains',label:'What patterns do you notice in relationships that drain you?',ph:'What keeps coming up? What are you reacting to?'},
-    ]},
-    {t:'write',id:'att_secure',label:'What does a SECURE relationship feel like to you — even if you\'ve only glimpsed it?',sub:'What would it feel like to give and receive love without fear driving the interaction?',ph:''},
+    {t:'two',fields:[{id:'att_gives_energy',label:'What does a relationship look and feel like when it\'s going well for you?',ph:''},{id:'att_drains',label:'What patterns do you notice in relationships that drain you?',ph:''}]},
+    {t:'write',id:'att_secure',label:'What does a SECURE relationship feel like to you — even if you\'ve only glimpsed it?',ph:'What would it feel like to give and receive love without fear driving the interaction?'},
     {t:'hr'},
     {t:'write',id:'att_practice',label:'One thing you can practice this week to move toward more security in your relationships:',ph:'',sh:true},
    ]},
-
-  {id:'hard_conversations',label:'Ex 5.3',title:'Hard Conversations',
+  {id:'hard_conversations',label:'Ex 5.3',title:'Hard Conversations',recurring:false,
    purpose:'Prepare for difficult but necessary conversations using assertive communication to build courage and communication skills.',time:'20–25 minutes',
    fields:[
-    {t:'sec',label:'1. The Conversation You\'ve Been Avoiding'},
-    {t:'write',id:'hc_what',label:'What conversation do you need to have that you\'ve been avoiding?',ph:'Who is it with? What does it need to address?', sh:true},
-    {t:'two',fields:[
-     {id:'hc_why_avoiding',label:'Why have you been avoiding it?',ph:'Fear of their reaction? Not knowing what to say? Afraid of conflict?'},
-     {id:'hc_cost',label:'What is the cost of not having it?',ph:'To the relationship, to yourself, to your self-respect?'},
-    ]},
+    {t:'write',id:'hc_what',label:'What conversation do you need to have that you\'ve been avoiding?',ph:'Who is it with? What does it need to address?',sh:true},
+    {t:'two',fields:[{id:'hc_why_avoiding',label:'Why have you been avoiding it?',ph:'Fear of their reaction? Not knowing what to say?'},{id:'hc_cost',label:'What is the cost of not having it?',ph:'To the relationship, to yourself, to your self-respect?'}]},
     {t:'hr'},
-    {t:'sec',label:'2. Preparing the Conversation'},
-    {t:'two',fields:[
-     {id:'hc_my_truth',label:'What is the truth I need to express?',sub:'Strip away the fear-story. What is actually true for you?',ph:''},
-     {id:'hc_need',label:'What do I need from this conversation?',sub:'Understanding? A change? To be heard? To set a boundary?',ph:''},
-    ]},
+    {t:'two',fields:[{id:'hc_my_truth',label:'What is the truth I need to express?',sub:'Strip away the fear-story. What is actually true for you?',ph:''},{id:'hc_need',label:'What do I need from this conversation?',sub:'Understanding? A change? To be heard?',ph:''}]},
     {t:'write',id:'hc_their_world',label:'What might be going on for the other person?',sub:'Can you hold their perspective with some compassion, even if you\'re hurt?',ph:''},
     {t:'hr'},
-    {t:'sec',label:'3. The Script — Write out what you want to say.'},
-    {t:'write',id:'hc_opening',label:'Opening line (how you\'ll begin):',sub:'"I want to talk about something that\'s been on my mind..." / "I care about us, and I need to be honest about something..."',ph:''},
-    {t:'write',id:'hc_core',label:'The core of what you need to say:',sub:'I feel ___ when ___. What I need is ___.',ph:'', ta:true},
+    {t:'write',id:'hc_opening',label:'Opening line (how you\'ll begin):',sub:'"I want to talk about something that\'s been on my mind..." or "I care about us, and I need to be honest about something..."',ph:''},
+    {t:'write',id:'hc_core',label:'The core of what you need to say:',sub:'I feel ___ when ___. What I need is ___.',ph:'',ta:true},
     {t:'write',id:'hc_what_if',label:'What if they respond defensively or badly? How will you handle it?',ph:''},
-    {t:'write',id:'hc_after',label:'After the conversation (or after reflecting), what do you want to remember?',ph:''},
    ]},
  ]},
-
-// ── MODULE 6 ─────────────────────────────────────────────────
 {num:'06',title:'Daily Practices',sub:'For Inner Peace',
  quote:'"Consistency is the mother of mastery."',
  desc:'Small, consistent daily practices compound into something profound. These aren\'t grand gestures — they\'re the quiet rituals that build the inner life you\'re growing into.',
  exercises:[
-  {id:'morning_intention',label:'Ex 6.1',title:'Morning Intention Practice',
+  {id:'morning_intention',label:'Ex 6.1',title:'Morning Intention Practice',recurring:true,
    purpose:'Start each day with purpose by choosing one virtue or quality to embody, setting your inner compass before external demands take over.',time:'5–10 minutes',
    fields:[
-    {t:'sec',label:'Set your inner compass before the world gets loud.'},
-    {t:'two',fields:[
-     {id:'m_todays_virtue',label:'Today I want to embody: (choose one — Wisdom / Courage / Justice / Temperance / other)',ph:'I choose ___ because today I\'ll need it when...'},
-     {id:'m_word',label:'My one word for today:',sub:'An anchor — patience, presence, courage, warmth, clarity...',ph:''},
-    ]},
-    {t:'write',id:'m_who_be',label:'What kind of person do I want to be today — not what I want to do, but who I want to be?',ph:'Today I want to show up as someone who...'},
-    {t:'two',fields:[
-     {id:'m_obstacle',label:'What might challenge me today? How do I want to respond?',sub:'Premeditate obstacles — what might test your patience, wisdom, or courage?',ph:''},
-     {id:'m_stoic_apply',label:'Any Stoic principle that feels relevant today?',ph:'e.g. "I cannot control their reaction, only my response."'},
-    ]},
+    {t:'two',fields:[{id:'m_todays_virtue',label:'Today I want to embody:',sub:'Wisdom / Courage / Justice / Temperance / other',ph:'I choose ___ because today I\'ll need it when...'},{id:'m_word',label:'My one word for today:',sub:'An anchor — patience, presence, courage, warmth, clarity...',ph:''}]},
+    {t:'write',id:'m_who_be',label:'What kind of person do I want to BE today — not what I want to do, but who I want to be?',ph:'Today I want to show up as someone who...'},
+    {t:'two',fields:[{id:'m_obstacle',label:'What might challenge me today? How do I want to respond?',sub:'Premeditate obstacles.',ph:''},{id:'m_stoic_apply',label:'Any Stoic principle that feels relevant today?',ph:'e.g. "I cannot control their reaction, only my response."'}]},
    ]},
-
-  {id:'evening_reflection',label:'Ex 6.2',title:'Evening Reflection Journal',
+  {id:'evening_reflection',label:'Ex 6.2',title:'Evening Reflection Journal',recurring:true,
    purpose:'Process your day with compassion, celebrating successes, learning from challenges, and cultivating gratitude for a peaceful transition to rest.',time:'10 minutes',
    fields:[
-    {t:'sec',label:'Close the day with intention instead of falling into sleep.'},
-    {t:'two',fields:[
-     {id:'ev_highlight',label:'Today\'s highlight — one thing that was good',sub:'Even on hard days there\'s something. Even tiny things count.',ph:''},
-     {id:'ev_proud',label:'One thing I\'m proud of today (even if no one else saw it)',ph:''},
-    ]},
+    {t:'two',fields:[{id:'ev_highlight',label:'Today\'s highlight — one thing that was good',sub:'Even on hard days there\'s something.',ph:''},{id:'ev_proud',label:'One thing I\'m proud of today (even if no one else saw it)',ph:''}]},
     {t:'write',id:'ev_hard',label:'What was difficult today and what did I learn from it?',ph:''},
-    {t:'two',fields:[
-     {id:'ev_virtue_embodied',label:'Which virtue did I embody today?',ph:'Wisdom / Courage / Justice / Temperance — how did it show up?'},
-     {id:'ev_virtue_struggled',label:'Which virtue struggled today? What happened?',ph:''},
-    ]},
+    {t:'two',fields:[{id:'ev_virtue_embodied',label:'Which virtue did I embody today?',ph:'Wisdom / Courage / Justice / Temperance — how did it show up?'},{id:'ev_virtue_struggled',label:'Which virtue struggled today?',ph:''}]},
     {t:'write',id:'ev_gratitude',label:'Three things I\'m genuinely grateful for today:',ph:'1. \n2. \n3. ',sh:true},
     {t:'write',id:'ev_tomorrow',label:'One intention for tomorrow — not a to-do, but a way of showing up:',ph:'Tomorrow I want to feel / act / be...',sh:true},
    ]},
-
-  {id:'micro_habit',label:'Ex 6.3',title:'Micro-Habit Builder',
+  {id:'micro_habit',label:'Ex 6.3',title:'Micro-Habit Builder',recurring:false,
    purpose:'Use neuroscience principles to build one small habit at a time until it becomes automatic, creating lasting change without overwhelming yourself.',time:'15–20 minutes to design, ongoing',
    fields:[
-    {t:'sec',label:'Tiny is the point. Sustainable is the goal.'},
-    {t:'write',id:'mh_choose',label:'What one small habit would most support your wellbeing right now?',ph:'e.g. 5 minutes of stillness each morning, one grateful thought before sleep, phone down at 9pm, 5-minute walk after lunch...'},
-    {t:'two',fields:[
-     {id:'mh_why',label:'Why does this habit matter to you?',sub:'Connect it to your values, not just productivity.',ph:''},
-     {id:'mh_tiny',label:'What is the SMALLEST possible version of this habit?',sub:'The version so small you genuinely can\'t fail at it.',ph:''},
-    ]},
-    {t:'two',fields:[
-     {id:'mh_when',label:'When exactly will you do it? (specific time + trigger)',sub:'After I brush my teeth / Before I open my phone / When I sit down with coffee...',ph:''},
-     {id:'mh_stack',label:'What existing habit can you stack it onto?',ph:'I already ___, so I\'ll do ___ immediately after/before.'},
-    ]},
+    {t:'write',id:'mh_choose',label:'What one small habit would most support your wellbeing right now?',ph:'e.g. 5 minutes of stillness each morning, phone down at 9pm, 5-minute walk after lunch...'},
+    {t:'two',fields:[{id:'mh_why',label:'Why does this habit matter to you?',sub:'Connect it to your values, not just productivity.',ph:''},{id:'mh_tiny',label:'What is the SMALLEST possible version of this habit?',sub:'The version so small you genuinely can\'t fail at it.',ph:''}]},
+    {t:'two',fields:[{id:'mh_when',label:'When exactly will you do it?',sub:'After I brush my teeth / Before I open my phone / When I sit down with coffee...',ph:''},{id:'mh_stack',label:'What existing habit can you stack it onto?',ph:'I already ___, so I\'ll do ___ immediately after/before.'}]},
     {t:'hr'},
     {t:'write',id:'mh_week1',label:'After 1 week: How did it go? What did you notice?',ph:''},
     {t:'write',id:'mh_week2',label:'After 2 weeks: What\'s shifted? What needs adjusting?',ph:''},
    ]},
-
-  {id:'mood_menu',label:'Ex 6.4',title:'Mood & Energy Menu',
-   purpose:'Create a personalized menu of practices you can turn to based on your current emotional state, building a customized toolkit for your inner peace.',time:'20–25 minutes',
+  {id:'mood_menu',label:'Ex 6.4',title:'Mood & Energy Menu',recurring:false,
+   purpose:'Create a personalized menu of practices you can turn to based on your current emotional state.',time:'20–25 minutes',
    fields:[
-    {t:'sec',label:'Different moods need different medicine. Build a menu for each emotional state.'},
-    {t:'box-write',color:'pink',title:'When I\'m Anxious or Overwhelmed, I will:',fields:[
-     {id:'mood_anxious_body',label:'Body-based (physical)',ph:'Walk, breathe, cold water, stretch, shake it out...'},
-     {id:'mood_anxious_mind',label:'Mind-based (cognitive)',ph:'Write it out, name the emotion, "will this matter in 5 years?", journal...'},
-     {id:'mood_anxious_avoid',label:'What I\'ll avoid (that makes it worse):',ph:'Doomscrolling, isolating, reassurance-seeking obsessively...'},
-    ]},
-    {t:'box-write',color:'purple',title:'When I\'m Sad or Grieving, I will:',fields:[
-     {id:'mood_sad_allow',label:'How I\'ll allow the sadness (instead of bypassing):',ph:''},
-     {id:'mood_sad_support',label:'Who and what support me:',ph:''},
-    ]},
-    {t:'box-write',color:'amber',title:'When I\'m Angry or Resentful, I will:',fields:[
-     {id:'mood_angry_pause',label:'How I\'ll create space before responding:',ph:''},
-     {id:'mood_angry_channel',label:'How I\'ll channel the energy constructively:',ph:''},
-    ]},
-    {t:'box-write',color:'green',title:'When I\'m Low Energy or Disconnected, I will:',fields:[
-     {id:'mood_low_minimum',label:'The minimum I\'ll do for myself on hard days:',ph:''},
-     {id:'mood_low_restore',label:'What genuinely restores me:',ph:''},
-    ]},
-    {t:'box-write',color:'teal',title:'When I\'m Happy and Energized, I will:',fields:[
-     {id:'mood_good_anchor',label:'How I\'ll anchor and appreciate this state:',ph:''},
-     {id:'mood_good_invest',label:'How I\'ll invest this energy wisely:',ph:''},
-    ]},
+    {t:'box-write',color:'pink',title:'When I\'m Anxious or Overwhelmed, I will:',fields:[{id:'mood_anxious_body',label:'Body-based (physical)',ph:'Walk, breathe, cold water, stretch, shake it out...'},{id:'mood_anxious_mind',label:'Mind-based (cognitive)',ph:'Write it out, name the emotion, "will this matter in 5 years?"...'},{id:'mood_anxious_avoid',label:'What I\'ll avoid (that makes it worse):',ph:'Doomscrolling, isolating, reassurance-seeking...'}]},
+    {t:'box-write',color:'purple',title:'When I\'m Sad or Grieving, I will:',fields:[{id:'mood_sad_allow',label:'How I\'ll allow the sadness (instead of bypassing):',ph:''},{id:'mood_sad_support',label:'Who and what support me:',ph:''}]},
+    {t:'box-write',color:'amber',title:'When I\'m Angry or Resentful, I will:',fields:[{id:'mood_angry_pause',label:'How I\'ll create space before responding:',ph:''},{id:'mood_angry_channel',label:'How I\'ll channel the energy constructively:',ph:''}]},
+    {t:'box-write',color:'green',title:'When I\'m Low Energy or Disconnected, I will:',fields:[{id:'mood_low_minimum',label:'The minimum I\'ll do for myself on hard days:',ph:''},{id:'mood_low_restore',label:'What genuinely restores me:',ph:''}]},
+    {t:'box-write',color:'teal',title:'When I\'m Happy and Energized, I will:',fields:[{id:'mood_good_anchor',label:'How I\'ll anchor and appreciate this state:',ph:''},{id:'mood_good_invest',label:'How I\'ll invest this energy wisely:',ph:''}]},
    ]},
  ]},
-
-// ── MODULE 7 ─────────────────────────────────────────────────
 {num:'07',title:'Navigating Modern Life',sub:'With Ancient Wisdom',
  quote:'"The mind may race, but the wisdom stays still."',
- desc:'Marcus Aurelius would definitely have thoughts about your Instagram feed. These four exercises apply Stoic principles to the specific modern struggles that drain your peace.',
+ desc:'Marcus Aurelius would definitely have thoughts about your Instagram feed. These exercises apply Stoic principles to the specific modern struggles that drain your peace.',
  exercises:[
-  {id:'digital_compass',label:'Ex 7.1',title:'Digital Comparison Compass',
-   purpose:'Transform social media comparison triggers into opportunities for self-awareness and growth, using Stoic principles to find freedom from the highlight reel.',time:'15–20 minutes',
+  {id:'digital_compass',label:'Ex 7.1',title:'Digital Comparison Compass',recurring:false,
+   purpose:'Transform social media comparison triggers into opportunities for self-awareness and growth.',time:'15–20 minutes',
    fields:[
-    {t:'sec',label:'1. Identify Your Comparison Triggers'},
-    {t:'write',id:'dc_triggers',label:'Who or what on social media most consistently triggers comparison or inadequacy in you?',ph:'Whose life, body, success, or relationship makes you feel like you\'re lacking?', ta:true},
-    {t:'two',fields:[
-     {id:'dc_story',label:'What story does the comparison trigger?',ph:'What do you decide it means about you?'},
-     {id:'dc_feel',label:'How does your body feel when you\'re in a comparison spiral?',ph:'Tight chest? Sinking feeling? Restless? Numb?'},
-    ]},
+    {t:'write',id:'dc_triggers',label:'Who or what on social media most consistently triggers comparison or inadequacy in you?',ph:'Whose life, body, success, or relationship makes you feel like you\'re lacking?',ta:true},
+    {t:'two',fields:[{id:'dc_story',label:'What story does the comparison trigger?',ph:'What do you decide it means about you?'},{id:'dc_feel',label:'How does your body feel when you\'re in a comparison spiral?',ph:'Tight chest? Sinking feeling? Restless?'}]},
     {t:'hr'},
-    {t:'sec',label:'2. The Stoic Reframe'},
-    {t:'two',fields:[
-     {id:'dc_control',label:'What is actually in your control in this situation?',ph:'Your choices, your path, your effort...'},
-     {id:'dc_what_real',label:'What do you actually know is real vs. what you\'re projecting?',ph:'The highlight reel vs. reality...'},
-    ]},
+    {t:'two',fields:[{id:'dc_control',label:'What is actually in your control in this situation?',ph:'Your choices, your path, your effort...'},{id:'dc_what_real',label:'What do you actually know is real vs. what you\'re projecting?',ph:'The highlight reel vs. reality...'}]},
     {t:'write',id:'dc_seneca',label:'Seneca said: "How much pain have the evils that have never happened cost us." — What future inadequacy are you currently living in your head?',ph:''},
-    {t:'hr'},
-    {t:'sec',label:'3. Your Digital Boundaries'},
-    {t:'two',fields:[
-     {id:'dc_phone_honest',label:'What would Marcus Aurelius say about your relationship with your phone? (Be honest.)',ph:''},
-     {id:'dc_one_change',label:'One concrete change you will make this week to protect your attention:',ph:''},
-    ]},
+    {t:'two',fields:[{id:'dc_phone_honest',label:'What would Marcus Aurelius say about your relationship with your phone? (Be honest.)',ph:''},{id:'dc_one_change',label:'One concrete change you will make this week to protect your attention:',ph:''}]},
    ]},
-
-  {id:'career_values',label:'Ex 7.2',title:'Career & Ambition Values Compass',
+  {id:'career_values',label:'Ex 7.2',title:'Career & Ambition Values Compass',recurring:false,
    purpose:'Separate your professional goals into intrinsic versus extrinsic motivations to anchor your ambition in virtue rather than external validation.',time:'15–20 minutes',
    fields:[
-    {t:'sec',label:'1. What\'s Driving Your Ambition?'},
-    {t:'two',fields:[
-     {id:'cv_wants',label:'What do you genuinely want from your career/work?',sub:'Not what you think you should want — what actually motivates you?',ph:''},
-     {id:'cv_fear_driving',label:'What fear is also driving some of your ambition?',sub:'Fear of failure? Of being ordinary? Of disappointing people? Of poverty?',ph:''},
-    ]},
-    {t:'two',fields:[
-     {id:'cv_intrinsic',label:'Intrinsic Goals — What matters because it\'s meaningful to YOU?',ph:'Growth, craft, contribution, curiosity, making a difference...'},
-     {id:'cv_extrinsic',label:'Extrinsic Goals — What matters because of external validation?',ph:'Status, salary, title, others\' approval, proving people wrong...'},
-    ]},
+    {t:'two',fields:[{id:'cv_wants',label:'What do you genuinely want from your career/work?',sub:'Not what you think you should want — what actually motivates you?',ph:''},{id:'cv_fear_driving',label:'What fear is also driving some of your ambition?',sub:'Fear of failure? Of being ordinary? Of disappointing people?',ph:''}]},
+    {t:'two',fields:[{id:'cv_intrinsic',label:'Intrinsic Goals — What matters because it\'s meaningful to YOU?',ph:'Growth, craft, contribution, curiosity...'},{id:'cv_extrinsic',label:'Extrinsic Goals — What matters because of external validation?',ph:'Status, salary, title, others\' approval...'}]},
     {t:'hr'},
-    {t:'sec',label:'2. The Virtue Lens'},
-    {t:'two',fields:[
-     {id:'cv_wisdom_career',label:'What would wisdom say about your current career direction?',ph:'Are you seeing your path clearly? Or through the lens of fear or ego?'},
-     {id:'cv_values_aligned',label:'Are your daily work actions aligned with what you say you value? Where is the gap?',ph:''},
-    ]},
+    {t:'two',fields:[{id:'cv_wisdom_career',label:'What would wisdom say about your current career direction?',ph:''},{id:'cv_values_aligned',label:'Are your daily work actions aligned with what you say you value? Where is the gap?',ph:''}]},
     {t:'write',id:'cv_success_def',label:'How do YOU define success — not how your industry, parents, or LinkedIn defines it?',ph:'Success for me looks like... I will know I\'ve succeeded when...'},
-    {t:'write',id:'cv_one_shift',label:'One shift you could make this week to align your work with your values more:',ph:'',sh:true},
    ]},
-
-  {id:'rejection_reframe',label:'Ex 7.3',title:'Rejection Reframe',
+  {id:'rejection_reframe',label:'Ex 7.3',title:'Rejection Reframe',recurring:false,
    purpose:'Process any type of rejection using Stoic principles to see it as information about compatibility rather than judgment on your worth.',time:'15–20 minutes',
    fields:[
-    {t:'sec',label:'Rejection is redirection. It is information, not identity.'},
     {t:'write',id:'rr_what',label:'What rejection are you processing right now?',sub:'Job, relationship, friendship, opportunity — any type.',ph:'',sh:true},
-    {t:'two',fields:[
-     {id:'rr_felt',label:'What did it feel like? What story did it create?',ph:''},
-     {id:'rr_body',label:'Where are you carrying this in your body?',ph:''},
-    ]},
+    {t:'two',fields:[{id:'rr_felt',label:'What did it feel like? What story did it create?',ph:''},{id:'rr_body',label:'Where are you carrying this in your body?',ph:''}]},
     {t:'hr'},
-    {t:'sec',label:'The Stoic Reframe'},
-    {t:'two',fields:[
-     {id:'rr_in_control',label:'What was genuinely in your control in this situation?',ph:''},
-     {id:'rr_not_control',label:'What was outside your control?',ph:''},
-    ]},
-    {t:'two',fields:[
-     {id:'rr_compatibility',label:'What might this rejection say about COMPATIBILITY rather than your worth?',ph:'Not every door is meant for you. What might this be protecting you from or redirecting you toward?'},
-     {id:'rr_information',label:'What information is this giving you that you can actually use?',ph:''},
-    ]},
-    {t:'write',id:'rr_survived',label:'You have survived rejection before. What did you draw on then? What do you know about yourself from having gotten through hard things?',ph:''},
+    {t:'two',fields:[{id:'rr_in_control',label:'What was genuinely in your control in this situation?',ph:''},{id:'rr_not_control',label:'What was outside your control?',ph:''}]},
+    {t:'two',fields:[{id:'rr_compatibility',label:'What might this rejection say about COMPATIBILITY rather than your worth?',ph:'Not every door is meant for you. What might this be protecting you from?'},{id:'rr_information',label:'What information is this giving you that you can actually use?',ph:''}]},
+    {t:'write',id:'rr_survived',label:'You have survived rejection before. What did you draw on then?',ph:''},
     {t:'write',id:'rr_forward',label:'What is one step forward that is within your control?',ph:'',sh:true},
    ]},
-
-  {id:'preferred_indifferents',label:'Ex 7.4',title:'Preferred Indifferents',
+  {id:'preferred_indifferents',label:'Ex 7.4',title:'Preferred Indifferents',recurring:false,
    purpose:'Create a personal list of things that are nice to have but not necessary for your happiness or worth, loosening your grip on external outcomes.',time:'15–20 minutes',
    fields:[
-    {t:'sec',label:'The Stoics called things like money, beauty, status, success, and others\' approval "preferred indifferents" — nice to have, but not necessary for a good life. This loosens the grip.'},
-    {t:'write',id:'pi_grip',label:'What external outcomes are you most attached to right now?',sub:'Things whose presence or absence significantly affects your sense of peace or worth.',ph:'If I get/keep/achieve ___, I\'ll feel okay. If I don\'t, I won\'t...', ta:true},
+    {t:'write',id:'pi_grip',label:'What external outcomes are you most attached to right now?',sub:'Things whose presence or absence significantly affects your sense of peace or worth.',ph:'If I get/keep/achieve ___, I\'ll feel okay. If I don\'t, I won\'t...',ta:true},
     {t:'hr'},
-    {t:'sec',label:'The Indifference Practice'},
-    {t:'two',fields:[
-     {id:'pi_nice_not_necessary',label:'Reframe: "It would be nice to have ___, but my worth and peace don\'t depend on it."',ph:'Write the reframes for your items above.'},
-     {id:'pi_what_remains',label:'If you stripped away the outcomes you\'re attached to, what remains that is fully yours?',ph:'Your character, your effort, your capacity to love and create...'},
-    ]},
-    {t:'write',id:'pi_inner_citadel',label:'The Stoics spoke of an "inner citadel" — the self that cannot be touched by external circumstances. What lives in YOUR inner citadel?',ph:'What can no one take from you? What is unshakeable?', ta:true},
+    {t:'two',fields:[{id:'pi_nice_not_necessary',label:'Reframe: "It would be nice to have ___, but my worth and peace don\'t depend on it."',ph:'Write the reframes for your items above.'},{id:'pi_what_remains',label:'If you stripped away the outcomes you\'re attached to, what remains that is fully yours?',ph:'Your character, your effort, your capacity to love and create...'}]},
+    {t:'write',id:'pi_inner_citadel',label:'The Stoics spoke of an "inner citadel" — the self that cannot be touched by external circumstances. What lives in YOUR inner citadel?',ph:'What can no one take from you? What is unshakeable?',ta:true},
     {t:'write',id:'pi_practice',label:'This week, I will practice holding ___ more lightly:',ph:'And I will remind myself that my worth / peace / goodness is not contingent on this.',sh:true},
    ]},
  ]},
-
-// ── MODULE 8 ─────────────────────────────────────────────────
 {num:'08',title:'Your Integrated Self',sub:'Identity Beyond Circumstance',
  quote:'"Strength grows in the spaces between storms."',
- desc:'This is where it all comes together — not into a finished person, but into someone who knows themselves well enough to keep becoming. These four exercises draw threads across your whole journey.',
+ desc:'This is where it all comes together — not into a finished person, but into someone who knows themselves well enough to keep becoming.',
  exercises:[
-  {id:'future_self',label:'Ex 8.1',title:'Future Self Visualization',
+  {id:'future_self',label:'Ex 8.1',title:'Future Self Visualization',recurring:false,
    purpose:'Create a detailed vision of your emotionally resilient self to anchor ongoing growth in a clear identity rather than vague goals.',time:'25–30 minutes',
    fields:[
-    {t:'sec',label:'Imagine yourself one year from now — after consistently practicing everything in this workbook.'},
-    {t:'write',id:'fs_looks',label:'What does your future self look like on a typical Tuesday?',sub:'How do they start their day? How do they handle stress? How do they relate to others?',ph:'She wakes up and...', ta:true},
-    {t:'two',fields:[
-     {id:'fs_emotion',label:'How does your future self feel in their body and mind day-to-day?',ph:'Calmer? More grounded? Less reactive? More at peace?'},
-     {id:'fs_others',label:'How do others experience your future self?',ph:'What do the people who love you notice about how you\'ve changed?'},
-    ]},
+    {t:'write',id:'fs_looks',label:'What does your future self look like on a typical Tuesday?',sub:'How do they start their day? How do they handle stress? How do they relate to others?',ph:'She wakes up and...',ta:true},
+    {t:'two',fields:[{id:'fs_emotion',label:'How does your future self feel in their body and mind day-to-day?',ph:'Calmer? More grounded? Less reactive?'},{id:'fs_others',label:'How do others experience your future self?',ph:'What do the people who love you notice about how you\'ve changed?'}]},
     {t:'hr'},
-    {t:'two',fields:[
-     {id:'fs_beliefs',label:'What does your future self believe about themselves?',ph:'(That current you is still working on believing)'},
-     {id:'fs_no_longer',label:'What does your future self no longer tolerate, accept, or participate in?',ph:''},
-    ]},
-    {t:'write',id:'fs_virtue',label:'Which virtue does your future self embody most consistently?',ph:'How does it show up in their relationships, work, and inner life?'},
-    {t:'hr'},
-    {t:'write',id:'fs_letter',label:'Write a letter from your future self to your current self:',ph:'"Dear [name], I want you to know that..."', ta:true},
+    {t:'two',fields:[{id:'fs_beliefs',label:'What does your future self believe about themselves?',ph:'(That current you is still working on believing)'},{id:'fs_no_longer',label:'What does your future self no longer tolerate, accept, or participate in?',ph:''}]},
+    {t:'write',id:'fs_letter',label:'Write a letter from your future self to your current self:',ph:'"Dear [name], I want you to know that..."',ta:true},
    ]},
-
-  {id:'before_after',label:'Ex 8.2',title:'Before & After Self-Reflection',
+  {id:'before_after',label:'Ex 8.2',title:'Before & After Self-Reflection',recurring:false,
    purpose:'Recognize and celebrate the progress you\'ve made by explicitly comparing who you were before this workbook to who you\'re becoming.',time:'20–25 minutes',
    fields:[
-    {t:'sec',label:'A personal archaeology — seeing the distance you\'ve traveled.'},
-    {t:'two',fields:[
-     {id:'ba_self_talk_before',label:'Before: How did you used to talk to yourself?',ph:'The inner critic\'s voice, the default story...'},
-     {id:'ba_self_talk_after',label:'Now: How do you talk to yourself?',ph:'What\'s shifted, even a little?'},
-    ]},
-    {t:'two',fields:[
-     {id:'ba_react_before',label:'Before: How did you tend to react to difficulty?',ph:''},
-     {id:'ba_react_after',label:'Now: How do you tend to respond?',ph:''},
-    ]},
-    {t:'two',fields:[
-     {id:'ba_beliefs_before',label:'Before: What did you believe about your own needs and worthiness?',ph:''},
-     {id:'ba_beliefs_after',label:'Now: What do you believe?',ph:''},
-    ]},
+    {t:'two',fields:[{id:'ba_self_talk_before',label:'Before: How did you used to talk to yourself?',ph:'The inner critic\'s voice, the default story...'},{id:'ba_self_talk_after',label:'Now: How do you talk to yourself?',ph:'What\'s shifted, even a little?'}]},
+    {t:'two',fields:[{id:'ba_react_before',label:'Before: How did you tend to react to difficulty?',ph:''},{id:'ba_react_after',label:'Now: How do you tend to respond?',ph:''}]},
     {t:'hr'},
-    {t:'write',id:'ba_still_working',label:'What are you still working with — the patterns, fears, or tendencies that keep showing up despite your awareness?',ph:'(This is not failure. This is just where the work continues.)'},
+    {t:'write',id:'ba_still_working',label:'What are you still working with — the patterns, fears, or tendencies that keep showing up?',ph:'(This is not failure. This is just where the work continues.)'},
     {t:'write',id:'ba_proud',label:'What are you most proud of in your growth?',ph:'Even the small shifts. Especially the small shifts.'},
-    {t:'write',id:'ba_letter',label:'A letter to yourself: "What I know now that I didn\'t before..."',ph:'Write freely. This is just for you.', ta:true},
+    {t:'write',id:'ba_letter',label:'A letter to yourself: "What I know now that I didn\'t before..."',ph:'Write freely. This is just for you.',ta:true},
    ]},
-
-  {id:'virtue_action',label:'Ex 8.3',title:'Virtue-Driven Action Plan',
+  {id:'virtue_action',label:'Ex 8.3',title:'Virtue-Driven Action Plan',recurring:false,
    purpose:'Choose one area of life and create specific next steps based on the four Stoic virtues, bridging insights into practical implementation.',time:'20–25 minutes',
    fields:[
-    {t:'sec',label:'Pick one area of your life you want to transform using the virtues as your guide.'},
     {t:'write',id:'va_area',label:'The area of my life I\'m focusing on:',ph:'Relationships / Career / Health / Creative work / Family / Dating / Self-care...',sh:true},
-    {t:'write',id:'va_current',label:'Where is this area of your life right now? (Be honest.)',ph:'What\'s actually happening? What\'s not working?'},
-    {t:'write',id:'va_desired',label:'Where do you want it to be?',ph:'What would this area of your life look like if it were aligned with your values?'},
+    {t:'two',fields:[{id:'va_current',label:'Where is this area of your life right now? (Be honest.)',ph:'What\'s actually happening? What\'s not working?'},{id:'va_desired',label:'Where do you want it to be?',ph:'What would this look like if it were aligned with your values?'}]},
     {t:'hr'},
-    {t:'sec',label:'The Virtue Analysis — Apply each virtue to this area.'},
-    {t:'two',fields:[
-     {id:'va_wisdom_action',label:'WISDOM — What do I need to see clearly here that I\'ve been avoiding?',ph:''},
-     {id:'va_courage_action',label:'COURAGE — What brave step have I been putting off?',ph:''},
-    ]},
-    {t:'two',fields:[
-     {id:'va_justice_action',label:'JUSTICE — Where am I not being fair to myself or others in this area?',ph:''},
-     {id:'va_temp_action',label:'TEMPERANCE — Where am I going to extremes? What would balance look like?',ph:''},
-    ]},
+    {t:'two',fields:[{id:'va_wisdom_action',label:'WISDOM — What do I need to see clearly here that I\'ve been avoiding?',ph:''},{id:'va_courage_action',label:'COURAGE — What brave step have I been putting off?',ph:''}]},
+    {t:'two',fields:[{id:'va_justice_action',label:'JUSTICE — Where am I not being fair to myself or others?',ph:''},{id:'va_temp_action',label:'TEMPERANCE — Where am I going to extremes? What would balance look like?',ph:''}]},
     {t:'hr'},
     {t:'write',id:'va_next_steps',label:'Based on the four virtue lenses, your three most important next steps:',ph:'1. \n2. \n3. '},
     {t:'write',id:'va_first_step',label:'The first step I will take this week — specifically:',ph:'I will ___ on ___ at ___.',sh:true},
    ]},
-
-  {id:'integration_map',label:'Ex 8.4',title:'Integration Map',
+  {id:'integration_map',label:'Ex 8.4',title:'Integration Map',recurring:false,
    purpose:'Create a visual overview of how different modules have influenced your growth and identity — providing both celebration and reference for your ongoing journey.',time:'25–30 minutes',
    fields:[
-    {t:'sec',label:'Reflect on each module and what it opened up for you.'},
-    {t:'two',fields:[
-     {id:'im_m1',label:'Module 1 (The Foundation) — How has your ability to observe your thoughts changed?',ph:''},
-     {id:'im_m2',label:'Module 2 (Dichotomy of Control) — What have you genuinely released?',ph:''},
-    ]},
-    {t:'two',fields:[
-     {id:'im_m3',label:'Module 3 (Four Virtues) — Which virtue has grown most? How do you see it in your daily life?',ph:''},
-     {id:'im_m4',label:'Module 4 (Emotional Regulation) — How has your relationship with your feelings shifted?',ph:''},
-    ]},
-    {t:'two',fields:[
-     {id:'im_m5',label:'Module 5 (Relationships) — What has clarified in how you love and connect?',ph:''},
-     {id:'im_m6',label:'Module 6 (Daily Practices) — What has actually stuck in your daily life?',ph:''},
-    ]},
-    {t:'two',fields:[
-     {id:'im_m7',label:'Module 7 (Modern Life) — What have you protected? What have you let go of?',ph:''},
-     {id:'im_m8',label:'Module 8 (Integrated Self) — What feels most true about who you\'re becoming?',ph:''},
-    ]},
+    {t:'two',fields:[{id:'im_m1',label:'Module 1 (The Foundation) — How has your ability to observe your thoughts changed?',ph:''},{id:'im_m2',label:'Module 2 (Dichotomy of Control) — What have you genuinely released?',ph:''}]},
+    {t:'two',fields:[{id:'im_m3',label:'Module 3 (Four Virtues) — Which virtue has grown most?',ph:''},{id:'im_m4',label:'Module 4 (Emotional Regulation) — How has your relationship with your feelings shifted?',ph:''}]},
+    {t:'two',fields:[{id:'im_m5',label:'Module 5 (Relationships) — What has clarified in how you love and connect?',ph:''},{id:'im_m6',label:'Module 6 (Daily Practices) — What has actually stuck in your daily life?',ph:''}]},
+    {t:'two',fields:[{id:'im_m7',label:'Module 7 (Modern Life) — What have you protected? What have you let go of?',ph:''},{id:'im_m8',label:'Module 8 (Integrated Self) — What feels most true about who you\'re becoming?',ph:''}]},
     {t:'hr'},
-    {t:'two',fields:[
-     {id:'im_thread',label:'What is the single biggest thread running through all eight modules for you?',ph:'The theme that keeps appearing...'},
-     {id:'im_ongoing',label:'This work isn\'t finished. What do you want to keep practicing?',ph:''},
-    ]},
-    {t:'write',id:'im_connections',label:'Draw 2–3 connections between different modules — how have they reinforced or built on each other?',ph:'e.g. Module 1 (observing thoughts) made Module 4 (the gap pause) possible because...\nModule 2 (control) and Module 5 (boundaries) connect through...', ta:true},
-    {t:'write',id:'im_manifesto',label:'In your own words: who are you now, after this work?',ph:'Not a finished person. But who are you becoming?', ta:true},
+    {t:'two',fields:[{id:'im_thread',label:'What is the single biggest thread running through all eight modules for you?',ph:''},{id:'im_ongoing',label:'This work isn\'t finished. What do you want to keep practicing?',ph:''}]},
+    {t:'write',id:'im_manifesto',label:'In your own words: who are you now, after this work?',ph:'Not a finished person. But who are you becoming?',ta:true},
    ]},
  ]},
-
-]; // end MODULES
-
-// ─────────────────────────────────────────────────────────────
-// DISTORTIONS LIST
-// ─────────────────────────────────────────────────────────────
-var DISTORTIONS = [
-  'All-or-Nothing Thinking','Overgeneralization','Mental Filtering',
-  'Discounting the Positive','Mind Reading','Fortune Telling',
-  'Catastrophizing','Emotional Reasoning','Should Statements',
-  'Labeling & Mislabeling','Personalization','Blaming',
-  'Magnification & Minimization','Control Fallacies','Owning the Truth',
 ];
 
-// ─────────────────────────────────────────────────────────────
-// STORAGE
-// ─────────────────────────────────────────────────────────────
-function entryKey(mi,ei){ return SK+'_m'+mi+'_e_'+ei; }
-function getEntries(mi,ei){ var r=localStorage.getItem(entryKey(mi,ei)); try{return r?JSON.parse(r):[]}catch(e){return [];} }
-function saveEntries(mi,ei,arr){ localStorage.setItem(entryKey(mi,ei),JSON.stringify(arr)); }
 
-function todayLabel(){
-  var d=new Date();
-  return DAYS_FULL[d.getDay()].slice(0,3)+' '+MONTHS_S[d.getMonth()]+' '+d.getDate()+', '+d.getFullYear();
+// ── STORAGE ──
+function entryKey(mi,ei){ return SK+'_m'+mi+'_e_'+ei; }
+function getEntries(mi,ei){ var r=localStorage.getItem(entryKey(mi,ei));try{return r?JSON.parse(r):[]}catch(e){return[];} }
+function saveEntries(mi,ei,arr){ localStorage.setItem(entryKey(mi,ei),JSON.stringify(arr)); }
+function todayLabel(){ var d=new Date();return DAYS_FULL[d.getDay()].slice(0,3)+' '+MONTHS_S[d.getMonth()]+' '+d.getDate()+', '+d.getFullYear(); }
+
+// ── LAST VISITED tracking ──
+function saveLastVisited(mi,exId){ localStorage.setItem(SK+'_last',JSON.stringify({mi:mi,exId:exId,ts:Date.now()})); }
+function loadLastVisited(){ var r=localStorage.getItem(SK+'_last');try{return r?JSON.parse(r):null;}catch(e){return null;} }
+
+// ── JUMP BANNER ──
+function renderJumpBanner(){
+  var lv=loadLastVisited();
+  if(!lv)return;
+  var m=MODULES[lv.mi];if(!m)return;
+  var ex=m.exercises.find(function(e){return e.id===lv.exId;});if(!ex)return;
+  var banner=document.getElementById('jump-banner');
+  document.getElementById('jump-title').textContent=ex.title;
+  document.getElementById('jump-sub').textContent='Module '+m.num+' — '+m.title;
+  document.getElementById('jump-btn').onclick=function(){routeToExercise(lv.mi,lv.exId);};
+  banner.style.display='flex';
 }
 
-// ─────────────────────────────────────────────────────────────
-// OVERVIEW
-// ─────────────────────────────────────────────────────────────
+// ── MOOD ROUTER ──
+function routeToExercise(mi,exId){
+  var m=MODULES[mi];if(!m)return;
+  var ei=m.exercises.findIndex(function(e){return e.id===exId;});
+  if(ei<0)return;
+  openModule(mi,ei);
+}
+
+function openDailyTool(mi,exId){ routeToExercise(mi,exId); }
+
+// ── PROGRESS (fixed: unique exercises with entries / total) ──
+function modulePct(mi){
+  var m=MODULES[mi];
+  var withEntries=m.exercises.filter(function(ex){ return getEntries(mi,ex.id).length>0; }).length;
+  return Math.round(withEntries/m.exercises.length*100);
+}
+
+// ── OVERVIEW ──
 function renderOverview(){
-  var g=document.getElementById('module-grid'); g.innerHTML='';
+  var g=document.getElementById('module-grid');g.innerHTML='';
   MODULES.forEach(function(m,mi){
-    var total=m.exercises.reduce(function(s,ex){return s+getEntries(mi,ex.id).length;},0);
-    var tile=document.createElement('div'); tile.className='module-card';
+    var pct=modulePct(mi);
+    var totalEntries=m.exercises.reduce(function(s,ex){return s+getEntries(mi,ex.id).length;},0);
+    var tile=document.createElement('div');tile.className='module-card';
     tile.innerHTML=
       '<div class="mc-num">Module '+m.num+'</div>'+
       '<div class="mc-title">'+m.title+'</div>'+
       '<div class="mc-sub">'+m.sub+'</div>'+
       '<div class="mc-ex-count">'+m.exercises.length+' exercises</div>'+
-      '<div class="mc-prog"><div class="mc-prog-fill" style="width:'+Math.min(100,total*10)+'%"></div></div>'+
-      '<div class="mc-entries">'+(total>0?total+' entr'+(total===1?'y':'ies')+' saved':'No entries yet')+'</div>';
-    tile.onclick=(function(i){return function(){openModule(i);};})(mi);
+      '<div class="mc-prog"><div class="mc-prog-fill" style="width:'+pct+'%"></div></div>'+
+      '<div class="mc-entries">'+(totalEntries>0?totalEntries+' entr'+(totalEntries===1?'y':'ies')+' saved':'No entries yet')+'</div>';
+    tile.onclick=(function(i){return function(){openModule(i,0);};})(mi);
     g.appendChild(tile);
   });
+  renderJumpBanner();
 }
 
-// ─────────────────────────────────────────────────────────────
-// OPEN MODULE
-// ─────────────────────────────────────────────────────────────
-function openModule(mi){
-  activeModIdx=mi; activeExIdx=0; activeEntryId=null;
+// ── OPEN MODULE ──
+function openModule(mi, ei_start){
+  activeModIdx=mi;
+  activeExIdx=typeof ei_start==='number'?ei_start:0;
+  activeEntryId=null;
   var m=MODULES[mi];
   document.getElementById('mod-badge').textContent='Module '+m.num;
   document.getElementById('mod-heading').textContent=m.title+' — '+m.sub;
@@ -1081,7 +747,7 @@ function openModule(mi){
     '<div class="mod-intro-quote">'+m.quote+'</div>'+
     '<div class="mod-intro-desc">'+m.desc+'</div>';
   buildExTabs(mi);
-  renderExPage(mi,0);
+  renderExPage(mi,activeExIdx);
   document.getElementById('view-overview').classList.remove('active');
   document.getElementById('view-module').classList.add('active');
 }
@@ -1092,436 +758,314 @@ function goOverview(){
   renderOverview();
 }
 
-// ─────────────────────────────────────────────────────────────
-// EXERCISE TABS
-// ─────────────────────────────────────────────────────────────
+// ── EX TABS ──
 function buildExTabs(mi){
   var m=MODULES[mi];
-  var c=document.getElementById('ex-tabs'); c.innerHTML='';
+  var c=document.getElementById('ex-tabs');c.innerHTML='';
   m.exercises.forEach(function(ex,ei){
     var entries=getEntries(mi,ex.id);
     var btn=document.createElement('button');
-    btn.className='ex-tab'+(ei===0?' active':'')+(entries.length?' has-entries':'');
+    btn.className='ex-tab'+(ei===activeExIdx?' active':'')+(entries.length?' has-entries':'');
     btn.id='extab-'+ei;
-    btn.textContent=ex.label+(entries.length?' ('+entries.length+')':'');
+    var recurHtml=ex.recurring?'<span class="ex-recur-icon">↻</span>':'';
+    btn.innerHTML=ex.label+recurHtml+(entries.length?' ('+entries.length+')':'');
+    btn.title=ex.title+(ex.recurring?' — Recurring practice':'');
     btn.onclick=(function(i){return function(){
       document.querySelectorAll('.ex-tab').forEach(function(b){b.classList.remove('active');});
       document.getElementById('extab-'+i).classList.add('active');
-      activeEntryId=null;
+      activeExIdx=i;activeEntryId=null;
       renderExPage(mi,i);
     };})(ei);
     c.appendChild(btn);
   });
 }
 
-// ─────────────────────────────────────────────────────────────
-// RENDER EXERCISE PAGE
-// ─────────────────────────────────────────────────────────────
+// ── RENDER EXERCISE PAGE ──
 function renderExPage(mi,ei){
   activeExIdx=ei;
   var ex=MODULES[mi].exercises[ei];
   var entries=getEntries(mi,ex.id);
-  var c=document.getElementById('ex-pages'); c.innerHTML='';
-  var page=document.createElement('div'); page.className='ex-page active';
+  var c=document.getElementById('ex-pages');c.innerHTML='';
+  var page=document.createElement('div');page.className='ex-page active';
 
   // Header
-  var hdr=document.createElement('div'); hdr.className='ex-hdr';
+  var hdr=document.createElement('div');hdr.className='ex-hdr';
+  var recurBadge=ex.recurring?'<span class="ex-recur-badge">↻ Recurring Practice</span>':'';
   hdr.innerHTML=
     '<div class="ex-eyebrow">'+ex.label+'</div>'+
     '<div class="ex-title">'+ex.title+'</div>'+
     '<div class="ex-purpose">'+ex.purpose+'</div>'+
-    '<span class="ex-time">⏱ '+ex.time+'</span>';
+    '<div class="ex-meta"><span class="ex-time">⏱ '+ex.time+'</span>'+recurBadge+'</div>';
   page.appendChild(hdr);
 
-  // Entries section
-  var sec=document.createElement('div'); sec.className='entries-sec';
-  var hd=document.createElement('div'); hd.className='entries-hdr';
-  var lbl=document.createElement('div'); lbl.className='entries-lbl';
+  // Entries
+  var sec=document.createElement('div');sec.className='entries-sec';
+  var hd=document.createElement('div');hd.className='entries-hdr';
+  var lbl=document.createElement('div');lbl.className='entries-lbl';
   lbl.textContent='Your Entries'+(entries.length?' ('+entries.length+')':'');
-  var nb=document.createElement('button'); nb.className='new-btn'; nb.textContent='＋ New Entry';
-  nb.onclick=function(){ createEntry(mi,ei); };
-  hd.appendChild(lbl); hd.appendChild(nb); sec.appendChild(hd);
+  var nb=document.createElement('button');nb.className='new-btn';nb.textContent='+ New Entry';
+  nb.onclick=function(){createEntry(mi,ei);};
+  hd.appendChild(lbl);hd.appendChild(nb);sec.appendChild(hd);
 
   if(entries.length){
-    var list=document.createElement('div'); list.className='entry-list';
-    entries.slice().reverse().forEach(function(en){
-      list.appendChild(buildChip(en,mi,ei));
-    });
+    var list=document.createElement('div');list.className='entry-list';
+    entries.slice().reverse().forEach(function(en){list.appendChild(buildChip(en,mi,ei));});
     sec.appendChild(list);
   } else {
-    var empty=document.createElement('div'); empty.className='empty-state';
+    var empty=document.createElement('div');empty.className='empty-state';
     empty.innerHTML='<div class="empty-icon">✦</div><div class="empty-text">No entries yet — start your first one.</div>';
     sec.appendChild(empty);
   }
   page.appendChild(sec);
 
-  // Form area
-  var formWrap=document.createElement('div'); formWrap.id='entry-form-area'; page.appendChild(formWrap);
+  var formWrap=document.createElement('div');formWrap.id='entry-form-area';page.appendChild(formWrap);
   c.appendChild(page);
 
-  // Only render form if activeEntryId is set
   if(activeEntryId){
-    var entryExists=entries.some(function(e){return e.id===activeEntryId;});
-    if(entryExists){
+    var exists=entries.some(function(e){return e.id===activeEntryId;});
+    if(exists){
       renderEntryForm(mi,ei,activeEntryId);
-      document.querySelectorAll('.entry-chip').forEach(function(ch){
-        ch.classList.toggle('active-entry', ch.dataset.id===activeEntryId);
-      });
-    } else {
-      activeEntryId=null;
-    }
+      document.querySelectorAll('.entry-chip').forEach(function(ch){ch.classList.toggle('active-entry',ch.dataset.id===activeEntryId);});
+    } else {activeEntryId=null;}
   }
 }
 
-
 function buildChip(en,mi,ei){
   var exId=MODULES[mi].exercises[ei].id;
-  var chip=document.createElement('div'); chip.className='entry-chip'; chip.dataset.id=en.id;
+  var chip=document.createElement('div');chip.className='entry-chip';chip.dataset.id=en.id;
   var preview=getFirstText(en);
+  chip.innerHTML=
+    '<span class="entry-date">'+en.date+'</span>'+
+    '<span class="entry-preview">'+(preview||'(no content yet)')+'</span>';
 
-  var dateSpan=document.createElement('span'); dateSpan.className='entry-date'; dateSpan.textContent=en.date;
-  var prevSpan=document.createElement('span'); prevSpan.className='entry-preview'; prevSpan.textContent=(preview||'(no content yet)');
-
-  var editBtn=document.createElement('button'); editBtn.className='chip-edit-btn'; editBtn.textContent='Edit';
+  var editBtn=document.createElement('button');editBtn.className='chip-edit-btn';editBtn.textContent='Edit';
   editBtn.onclick=function(e){
     e.stopPropagation();
     document.querySelectorAll('.entry-chip').forEach(function(c){c.classList.remove('active-entry');});
     chip.classList.add('active-entry');
     activeEntryId=en.id;
     renderEntryForm(mi,ei,en.id);
-    setTimeout(function(){
-      var f=document.getElementById('entry-form-area');
-      if(f) f.scrollIntoView({behavior:'smooth',block:'start'});
-    },80);
+    setTimeout(function(){var f=document.getElementById('entry-form-area');if(f)f.scrollIntoView({behavior:'smooth',block:'start'});},80);
   };
 
-  var del=document.createElement('button'); del.className='entry-del'; del.textContent='✕';
+  var del=document.createElement('button');del.className='entry-del';del.textContent='✕';
   del.onclick=function(e){
     e.stopPropagation();
-    if(!confirm('Delete this entry?')) return;
+    if(!confirm('Delete this entry?'))return;
     var arr=getEntries(mi,exId).filter(function(x){return x.id!==en.id;});
     saveEntries(mi,exId,arr);
-    if(activeEntryId===en.id){
-      activeEntryId=null;
-      var fw=document.getElementById('entry-form-area');
-      if(fw) fw.innerHTML='';
-    }
-    renderExPage(mi,ei);
-    buildExTabs(mi);
-    renderOverview();
+    if(activeEntryId===en.id){activeEntryId=null;var fw=document.getElementById('entry-form-area');if(fw)fw.innerHTML='';}
+    renderExPage(mi,ei);buildExTabs(mi);renderOverview();
   };
 
-  chip.appendChild(dateSpan);
-  chip.appendChild(prevSpan);
-  chip.appendChild(editBtn);
-  chip.appendChild(del);
-
-  // clicking the chip row itself also opens edit
-  chip.onclick=function(e){
-    if(e.target===editBtn||e.target===del) return;
-    editBtn.click();
-  };
+  chip.appendChild(editBtn);chip.appendChild(del);
+  chip.onclick=function(e){if(e.target===editBtn||e.target===del)return;editBtn.click();};
   return chip;
 }
 
 function getFirstText(en){
   var f=en.fields||{};
-  for(var k in f){ if(f[k]&&typeof f[k]==='string'&&f[k].trim()) return f[k].replace(/<[^>]+>/g,'').slice(0,60); }
+  for(var k in f){if(f[k]&&typeof f[k]==='string'&&f[k].trim())return f[k].slice(0,60);}
   return '';
 }
 
 function createEntry(mi,ei){
   var exId=MODULES[mi].exercises[ei].id;
-  var en={id:'e_'+Date.now(), date:todayLabel(), fields:{}};
-  var arr=getEntries(mi,exId); arr.push(en);
+  var en={id:'e_'+Date.now(),date:todayLabel(),fields:{}};
+  var arr=getEntries(mi,exId);arr.push(en);
   saveEntries(mi,exId,arr);
   activeEntryId=en.id;
-  renderExPage(mi,ei);
-  buildExTabs(mi);
-  renderOverview();
-  // auto-scroll to form after render
-  setTimeout(function(){
-    var f=document.getElementById('entry-form-area');
-    if(f) f.scrollIntoView({behavior:'smooth',block:'start'});
-  },80);
+  saveLastVisited(mi,exId);
+  renderExPage(mi,ei);buildExTabs(mi);renderOverview();
+  setTimeout(function(){var f=document.getElementById('entry-form-area');if(f)f.scrollIntoView({behavior:'smooth',block:'start'});},80);
 }
 
-// ─────────────────────────────────────────────────────────────
-// RENDER ENTRY FORM
-// ─────────────────────────────────────────────────────────────
+// ── RENDER ENTRY FORM ──
 function renderEntryForm(mi,ei,entryId){
   var exId=MODULES[mi].exercises[ei].id;
   var arr=getEntries(mi,exId);
-  var en=arr.find(function(x){return x.id===entryId;});
-  if(!en) return;
+  var en=arr.find(function(x){return x.id===entryId;});if(!en)return;
   var ex=MODULES[mi].exercises[ei];
-  var wrap=document.getElementById('entry-form-area');
-  if(!wrap) return;
+  var wrap=document.getElementById('entry-form-area');if(!wrap)return;
   wrap.innerHTML='';
-  var form=document.createElement('div'); form.className='entry-form';
-  var fhdr=document.createElement('div'); fhdr.className='entry-form-hdr';
-
-  var dateSpan=document.createElement('span'); dateSpan.className='entry-form-date'; dateSpan.textContent=en.date;
-  var savedSpan=document.createElement('span'); savedSpan.className='saved-indicator'; savedSpan.id='saved-ind'; savedSpan.textContent='✓ Auto-saved';
-
-  var completeBtn=document.createElement('button'); completeBtn.className='complete-btn';
+  var form=document.createElement('div');form.className='entry-form';
+  var fhdr=document.createElement('div');fhdr.className='entry-form-hdr';
+  var dateSpan=document.createElement('span');dateSpan.className='entry-form-date';dateSpan.textContent=en.date;
+  var savedSpan=document.createElement('span');savedSpan.className='saved-indicator';savedSpan.id='saved-ind';savedSpan.textContent='✓ Auto-saved';
+  var completeBtn=document.createElement('button');completeBtn.className='complete-btn';
   completeBtn.textContent='✓ Complete';
   completeBtn.onclick=function(){
-    activeEntryId=null;
-    wrap.innerHTML='';
-    // refresh chips to update preview text
-    renderExPage(mi,ei);
-    buildExTabs(mi);
-    renderOverview();
+    activeEntryId=null;wrap.innerHTML='';
+    renderExPage(mi,ei);buildExTabs(mi);renderOverview();
   };
-
-  fhdr.appendChild(dateSpan);
-  fhdr.appendChild(savedSpan);
-  fhdr.appendChild(completeBtn);
+  fhdr.appendChild(dateSpan);fhdr.appendChild(savedSpan);fhdr.appendChild(completeBtn);
   form.appendChild(fhdr);
-  buildFields(form, ex.fields, en, mi, ei);
-  var orn=document.createElement('div'); orn.className='ornament'; orn.textContent='✦ ✿ ✦';
+  buildFields(form,ex.fields,en,mi,ei);
+  var orn=document.createElement('div');orn.className='ornament';orn.textContent='✦ ✿ ✦';
   form.appendChild(orn);
-
-  // Bottom complete button too
-  var bottomBtn=document.createElement('button'); bottomBtn.className='complete-btn'; bottomBtn.style.marginTop='16px';
-  bottomBtn.textContent='✓ Complete & Collapse';
-  bottomBtn.onclick=completeBtn.onclick;
-  form.appendChild(bottomBtn);
-
   wrap.appendChild(form);
 }
 
 function autoSave(mi,ei,entryId,fieldId,val){
   var exId=MODULES[mi].exercises[ei].id;
   var arr=getEntries(mi,exId);
-  var en=arr.find(function(x){return x.id===entryId;});
-  if(!en) return;
-  if(!en.fields) en.fields={};
+  var en=arr.find(function(x){return x.id===entryId;});if(!en)return;
+  if(!en.fields)en.fields={};
   en.fields[fieldId]=val;
   saveEntries(mi,exId,arr);
-  var ind=document.getElementById('saved-ind');
-  if(ind) ind.textContent='✓ Saved';
+  saveLastVisited(mi,exId);
+  var ind=document.getElementById('saved-ind');if(ind)ind.textContent='✓ Saved';
 }
 
-function buildFields(parent, fields, en, mi, ei){
+// ── BUILD FIELDS (textarea-based) ──
+function buildFields(parent,fields,en,mi,ei){
   fields.forEach(function(f){
-    if(f.t==='hr'){
-      var hr=document.createElement('hr'); hr.className='r'; parent.appendChild(hr);
-    } else if(f.t==='sec'){
+    if(f.t==='hr'){var hr=document.createElement('hr');hr.className='r';parent.appendChild(hr);}
+    else if(f.t==='sec'){
       var s=document.createElement('div');
       s.innerHTML='<span class="sec-lbl">'+f.label+'</span>'+(f.sub?'<span class="sec-sub">'+f.sub+'</span>':'');
       parent.appendChild(s);
-    } else if(f.t==='write'){
-      var g=makeWriteGroup(f,en,mi,ei);
-      parent.appendChild(g);
-    } else if(f.t==='two'){
-      var row=document.createElement('div'); row.className='two-col';
-      f.fields.forEach(function(ff){row.appendChild(makeWriteGroup(ff,en,mi,ei));});
-      parent.appendChild(row);
-    } else if(f.t==='three'){
-      var row=document.createElement('div'); row.className='three-col';
-      f.fields.forEach(function(ff){row.appendChild(makeWriteGroup(ff,en,mi,ei));});
-      parent.appendChild(row);
-    } else if(f.t==='distortions'){
-      parent.appendChild(buildDistortions(f,en,mi,ei));
-    } else if(f.t==='box3'){
-      var box=document.createElement('div'); box.className='box box-pink';
-      box.style.marginBottom='12px';
-      f.items.forEach(function(item){
-        var g=makeWriteGroup(item,en,mi,ei); g.style.marginBottom='10px'; box.appendChild(g);
-      });
-      parent.appendChild(box);
-    } else if(f.t==='box-write'){
-      var colors={'pink':'box-pink','purple':'box-purple','green':'box-green','amber':'box-amber','blue':'box-blue','teal':'box-teal'};
-      var box=document.createElement('div'); box.className='box '+(colors[f.color]||'box-pink');
-      box.style.marginBottom='12px';
-      if(f.title){var ttl=document.createElement('div');ttl.className='box-title';ttl.textContent=f.title;box.appendChild(ttl);}
-      f.fields.forEach(function(ff){
-        var g=makeWriteGroup(ff,en,mi,ei); g.style.marginBottom='10px'; box.appendChild(g);
-      });
-      parent.appendChild(box);
-    } else if(f.t==='weather'){
-      parent.appendChild(buildWeatherTable(f,en,mi,ei));
     }
+    else if(f.t==='write'){parent.appendChild(makeWriteGroup(f,en,mi,ei));}
+    else if(f.t==='two'){var row=document.createElement('div');row.className='two-col';f.fields.forEach(function(ff){row.appendChild(makeWriteGroup(ff,en,mi,ei));});parent.appendChild(row);}
+    else if(f.t==='three'){var row=document.createElement('div');row.className='three-col';f.fields.forEach(function(ff){row.appendChild(makeWriteGroup(ff,en,mi,ei));});parent.appendChild(row);}
+    else if(f.t==='distortions'){parent.appendChild(buildDistortions(f,en,mi,ei));}
+    else if(f.t==='box3'){
+      var box=document.createElement('div');box.className='box box-pink';box.style.marginBottom='12px';
+      f.items.forEach(function(item){var g=makeWriteGroup(item,en,mi,ei);g.style.marginBottom='10px';box.appendChild(g);});
+      parent.appendChild(box);
+    }
+    else if(f.t==='box-write'){
+      var colors={pink:'box-pink',purple:'box-purple',green:'box-green',amber:'box-amber',blue:'box-blue',teal:'box-teal'};
+      var box=document.createElement('div');box.className='box '+(colors[f.color]||'box-pink');box.style.marginBottom='12px';
+      if(f.title){var ttl=document.createElement('div');ttl.className='box-title';ttl.textContent=f.title;box.appendChild(ttl);}
+      f.fields.forEach(function(ff){var g=makeWriteGroup(ff,en,mi,ei);g.style.marginBottom='10px';box.appendChild(g);});
+      parent.appendChild(box);
+    }
+    else if(f.t==='weather'){parent.appendChild(buildWeatherTable(f,en,mi,ei));}
   });
 }
 
 function makeWriteGroup(f,en,mi,ei){
-  var g=document.createElement('div'); g.className='f-group';
-  var lbl=document.createElement('label'); lbl.className='f-label'; lbl.textContent=f.label;
+  var g=document.createElement('div');g.className='f-group';
+  var lbl=document.createElement('label');lbl.className='f-label';lbl.textContent=f.label;
   g.appendChild(lbl);
   if(f.sub){var sub=document.createElement('div');sub.className='f-sub';sub.textContent=f.sub;g.appendChild(sub);}
-  var w=document.createElement('div');
-  w.className='write'+(f.sh?' sh':f.ta?' ta':'');
-  w.contentEditable='true';
-  w.setAttribute('data-ph',f.ph||'');
-  var val=(en.fields[f.id]||'');
-  if(val) w.innerHTML=val;
-  w.oninput=(function(fid){return function(){
-    autoSave(mi,ei,en.id,fid,this.innerHTML);
-  };})(f.id);
-  g.appendChild(w);
+  var ta=document.createElement('textarea');
+  ta.className='write'+(f.sh?' sh':f.ta?' ta':'');
+  ta.placeholder=f.ph||'';
+  ta.value=(en.fields[f.id]||'');
+  ta.oninput=function(){
+    this.style.height='auto';this.style.height=this.scrollHeight+'px';
+    autoSave(mi,ei,en.id,f.id,this.value);
+  };
+  // auto-expand on load
+  setTimeout(function(){if(ta.value){ta.style.height='auto';ta.style.height=ta.scrollHeight+'px';}},50);
+  g.appendChild(ta);
   return g;
 }
 
 function buildDistortions(f,en,mi,ei){
   var exId=MODULES[mi].exercises[ei].id;
   var wrap=document.createElement('div');
-  var grid=document.createElement('div'); grid.className='distortion-grid';
+  var grid=document.createElement('div');grid.className='distortion-grid';
   var checked=(en.fields[f.id]||[]);
   DISTORTIONS.forEach(function(d){
-    var item=document.createElement('div'); item.className='distortion-item'+(checked.indexOf(d)>=0?' checked':'');
+    var item=document.createElement('div');item.className='distortion-item'+(checked.indexOf(d)>=0?' checked':'');
     item.innerHTML='<div class="di-check"></div><div class="di-label">'+d+'</div>';
     item.onclick=function(){
-      var arr=getEntries(mi,exId);
-      var entry=arr.find(function(x){return x.id===en.id;});
-      if(!entry) return;
-      if(!entry.fields[f.id]) entry.fields[f.id]=[];
+      var arr=getEntries(mi,exId);var entry=arr.find(function(x){return x.id===en.id;});if(!entry)return;
+      if(!entry.fields[f.id])entry.fields[f.id]=[];
       var idx=entry.fields[f.id].indexOf(d);
-      if(idx>=0) entry.fields[f.id].splice(idx,1); else entry.fields[f.id].push(d);
+      if(idx>=0)entry.fields[f.id].splice(idx,1);else entry.fields[f.id].push(d);
       saveEntries(mi,exId,arr);
-      item.classList.toggle('checked', entry.fields[f.id].indexOf(d)>=0);
+      item.classList.toggle('checked',entry.fields[f.id].indexOf(d)>=0);
     };
     grid.appendChild(item);
   });
-  wrap.appendChild(grid);
-  return wrap;
+  wrap.appendChild(grid);return wrap;
 }
 
 function buildWeatherTable(f,en,mi,ei){
+  var exId=MODULES[mi].exercises[ei].id;
   var wrap=document.createElement('div');
   var tableData=(en.fields[f.id]||{});
-  var table=document.createElement('table'); table.className='weather-table';
-  // Header
-  var thead=document.createElement('thead');
-  var hr=document.createElement('tr');
-  var th0=document.createElement('th'); th0.textContent='Day'; hr.appendChild(th0);
+  var table=document.createElement('table');table.className='weather-table';
+  var thead=document.createElement('thead');var hr=document.createElement('tr');
+  var th0=document.createElement('th');th0.textContent='Day';hr.appendChild(th0);
   f.cols.forEach(function(col){var th=document.createElement('th');th.textContent=col;hr.appendChild(th);});
-  thead.appendChild(hr); table.appendChild(thead);
-  // Rows
+  thead.appendChild(hr);table.appendChild(thead);
   var tbody=document.createElement('tbody');
   f.days.forEach(function(day){
     var tr=document.createElement('tr');
-    var td0=document.createElement('td'); td0.className='weather-day'; td0.textContent=day; tr.appendChild(td0);
+    var td0=document.createElement('td');td0.className='weather-day';td0.textContent=day;tr.appendChild(td0);
     f.cols.forEach(function(col,ci){
       var td=document.createElement('td');
       var cellId=f.id+'_'+day+'_'+ci;
       var val=(tableData[cellId]||'');
-      var input=document.createElement('div'); input.contentEditable='true';
-      input.style.cssText='min-width:60px;outline:none;font-size:0.74rem;line-height:1.4;';
-      if(val) input.innerHTML=val;
-      else { input.setAttribute('data-ph','—'); }
-      input.oninput=(function(cid){return function(){
-        var exId=MODULES[mi].exercises[ei].id;
-        var arr=getEntries(mi,exId); var entry=arr.find(function(x){return x.id===en.id;});
-        if(!entry) return;
-        if(!entry.fields[f.id]) entry.fields[f.id]={};
-        entry.fields[f.id][cid]=this.innerHTML;
+      var ta=document.createElement('textarea');ta.className='weather-cell';
+      ta.placeholder='—';ta.value=val;ta.rows=1;
+      ta.oninput=function(){
+        this.style.height='auto';this.style.height=this.scrollHeight+'px';
+        var arr=getEntries(mi,exId);var entry=arr.find(function(x){return x.id===en.id;});if(!entry)return;
+        if(!entry.fields[f.id])entry.fields[f.id]={};
+        entry.fields[f.id][cellId]=this.value;
         saveEntries(mi,exId,arr);
-      };})(cellId);
-      td.appendChild(input); tr.appendChild(td);
+      };
+      setTimeout(function(){if(ta.value){ta.style.height='auto';ta.style.height=ta.scrollHeight+'px';}},50);
+      td.appendChild(ta);tr.appendChild(td);
     });
     tbody.appendChild(tr);
   });
-  table.appendChild(tbody);
-  wrap.appendChild(table);
-  return wrap;
+  table.appendChild(tbody);wrap.appendChild(table);return wrap;
 }
 
-
-// ─────────────────────────────────────────────────────────────
-// PDF
-// ─────────────────────────────────────────────────────────────
-
+// ── PDF ──
 function saveModulePDF(){
-  var mi=activeModIdx; var m=MODULES[mi];
-  var pc=document.createElement('div'); pc.id='pdf-print-area';
-  // Header
+  var mi=activeModIdx;var m=MODULES[mi];
+  var pc=document.createElement('div');pc.id='pdf-print-area';
+  pc.style.cssText='display:none;font-family:Plus Jakarta Sans,sans-serif;padding:20px;';
   var mh=document.createElement('div');
-  mh.style.cssText='text-align:center;margin-bottom:28px;padding-bottom:16px;border-bottom:2px solid #e0cec8;';
-  mh.innerHTML='<div style="font-size:0.6rem;letter-spacing:3px;text-transform:uppercase;color:#9a8088;margin-bottom:4px;">Module '+m.num+'</div>'+
-    '<div style="font-family:\'Cormorant Garamond\',serif;font-size:2rem;font-weight:300;font-style:italic;color:#3a2a2e;">'+m.title+'</div>'+
-    '<div style="font-size:0.72rem;color:#9a8088;margin-top:4px;">'+m.sub+'</div>'+
-    '<div style="font-family:\'Cormorant Garamond\',serif;font-style:italic;color:#c9a0b4;margin-top:8px;">'+m.quote+'</div>';
+  mh.style.cssText='text-align:center;margin-bottom:28px;padding-bottom:16px;border-bottom:2px solid var(--line);';
+  mh.innerHTML='<div style="font-size:10px;letter-spacing:3px;text-transform:uppercase;color:var(--muted);margin-bottom:4px;">Module '+m.num+'</div>'+
+    '<div style="font-family:Fraunces,serif;font-size:2rem;font-weight:600;color:var(--ink);">'+m.title+'</div>'+
+    '<div style="font-size:11px;color:var(--muted);margin-top:4px;">'+m.sub+'</div>'+
+    '<div style="font-family:Fraunces,serif;font-style:italic;color:var(--accent-deep);margin-top:8px;">'+m.quote+'</div>';
   pc.appendChild(mh);
 
-  // Recursively extract all written field values from an entry
-  function extractFields(fieldDefs, fd, parent){
-    fieldDefs.forEach(function(f){
-      if(f.t==='hr'||f.t==='sec') return;
-      var subs=null;
-      if(f.t==='write') subs=[f];
-      else if(f.t==='two'||f.t==='three') subs=f.fields;
-      else if(f.t==='box-write') subs=f.fields;
-      else if(f.t==='box3') subs=f.items;
-      else if(f.t==='distortions'){
-        var checked=fd[f.id];
-        if(checked&&checked.length){
-          var r=document.createElement('div');r.style.cssText='margin-bottom:10px;';
-          r.innerHTML='<div style="font-size:0.58rem;letter-spacing:1.5px;text-transform:uppercase;color:#9a8088;font-weight:600;margin-bottom:3px;">Distortions Checked</div>'+
-            '<div style="font-size:0.8rem;line-height:1.7;color:#3a2a2e;">'+checked.join(' · ')+'</div>';
-          parent.appendChild(r);
-        }
-        return;
-      } else if(f.t==='weather'){
-        var td=fd[f.id];
-        if(td&&Object.keys(td).length){
-          var tbl=document.createElement('div');tbl.style.marginBottom='10px';
-          tbl.innerHTML='<div style="font-size:0.58rem;letter-spacing:1.5px;text-transform:uppercase;color:#9a8088;font-weight:600;margin-bottom:4px;">Weekly Log</div>';
-          f.days.forEach(function(day){
-            var parts=[];
-            f.cols.forEach(function(col,ci){var cv=td[f.id+'_'+day+'_'+ci];if(cv){var clean=(cv+'').replace(/<[^>]+>/g,'').trim();if(clean)parts.push(clean);}});
-            if(parts.length) tbl.innerHTML+='<div style="font-size:0.74rem;color:#3a2a2e;padding:2px 0;"><strong>'+day+':</strong> '+parts.join(' | ')+'</div>';
-          });
-          parent.appendChild(tbl);
-        }
-        return;
-      }
-      if(!subs) return;
-      subs.forEach(function(ff){
-        if(!ff||!ff.id) return;
-        var val=fd[ff.id];
-        if(!val) return;
-        var clean=(val+'').replace(/<[^>]+>/g,'').trim();
-        if(!clean) return;
-        var r=document.createElement('div');r.style.cssText='margin-bottom:10px;';
-        r.innerHTML='<div style="font-size:0.58rem;letter-spacing:1.5px;text-transform:uppercase;color:#9a8088;font-weight:600;margin-bottom:2px;">'+ff.label+'</div>'+
-          '<div style="font-size:0.8rem;line-height:1.75;color:#3a2a2e;">'+val+'</div>';
-        parent.appendChild(r);
-      });
-    });
-  }
-
   m.exercises.forEach(function(ex){
-    var entries=getEntries(mi,ex.id);
-    if(!entries.length) return;
+    var entries=getEntries(mi,ex.id);if(!entries.length)return;
     var xs=document.createElement('div');xs.style.cssText='margin-bottom:36px;';
-    xs.innerHTML='<div style="font-size:0.6rem;letter-spacing:2px;text-transform:uppercase;color:#9a8088;font-weight:600;margin-bottom:3px;">'+ex.label+'</div>'+
-      '<div style="font-family:\'Cormorant Garamond\',serif;font-size:1.3rem;font-style:italic;margin-bottom:14px;border-bottom:1px solid #e0cec8;padding-bottom:8px;">'+ex.title+'</div>';
+    xs.innerHTML='<div style="font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);font-weight:700;margin-bottom:3px;">'+ex.label+'</div>'+
+      '<div style="font-family:Fraunces,serif;font-size:1.3rem;font-style:italic;margin-bottom:14px;border-bottom:1px solid var(--line);padding-bottom:8px;">'+ex.title+'</div>';
     entries.forEach(function(en){
-      if(!en.fields||!Object.keys(en.fields).length) return;
-      var ed=document.createElement('div');ed.style.cssText='margin-bottom:18px;padding:14px 18px;background:#f7ece4;border-radius:8px;page-break-inside:avoid;';
-      var dl=document.createElement('div');dl.style.cssText='font-family:\'Cormorant Garamond\',serif;font-style:italic;color:#c9a0b4;font-size:0.9rem;margin-bottom:10px;border-bottom:1px dashed #e0cec8;padding-bottom:6px;';
-      dl.textContent=en.date; ed.appendChild(dl);
-      extractFields(ex.fields,en.fields,ed);
+      if(!en.fields||!Object.keys(en.fields).length)return;
+      var ed=document.createElement('div');ed.style.cssText='margin-bottom:18px;padding:14px 18px;background:var(--warm);border-radius:8px;page-break-inside:avoid;';
+      var dl=document.createElement('div');dl.style.cssText='font-family:Fraunces,serif;font-style:italic;color:var(--accent-deep);font-size:13px;margin-bottom:10px;border-bottom:1px dashed var(--line);padding-bottom:6px;';
+      dl.textContent=en.date;ed.appendChild(dl);
+      var fields=en.fields;
+      Object.keys(fields).forEach(function(k){
+        var val=fields[k];if(!val||typeof val!=='string'||!val.trim())return;
+        var r=document.createElement('div');r.style.cssText='margin-bottom:8px;';
+        r.innerHTML='<div style="font-size:9px;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted);font-weight:700;margin-bottom:2px;">'+k.replace(/_/g,' ')+'</div>'+
+          '<div style="font-size:13px;line-height:1.7;color:var(--ink);">'+val+'</div>';
+        ed.appendChild(r);
+      });
       xs.appendChild(ed);
     });
     pc.appendChild(xs);
   });
 
   document.body.appendChild(pc);
-  var mv=document.getElementById('view-module');
-  var ov=document.getElementById('view-overview');
-  mv.style.display='none'; ov.style.display='none';
+  pc.style.display='block';
+  var mv=document.getElementById('view-module');var ov=document.getElementById('view-overview');
+  mv.style.display='none';ov.style.display='none';
   window.print();
-  mv.style.display='block'; ov.style.display='';
+  mv.style.display='block';ov.style.display='';
   document.body.removeChild(pc);
 }
 
-// ─────────────────────────────────────────────────────────────
-// INIT
-// ─────────────────────────────────────────────────────────────
+// ── INIT ──
 var now=new Date();
 document.getElementById('today-date').textContent=DAYS_FULL[now.getDay()]+', '+MONTHS_FULL[now.getMonth()]+' '+now.getDate()+', '+now.getFullYear();
 renderOverview();
