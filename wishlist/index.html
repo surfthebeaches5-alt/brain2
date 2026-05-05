@@ -4,109 +4,137 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Wishlist</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
-@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,400&family=Jost:wght@300;400;500;600&display=swap');
-:root{
-  --blush:#f2c4ce;--rose:#e8a0b0;--mauve:#c9a0b4;--lavender:#d4b8e0;
-  --sage:#b8cfb0;--cream:#fdf6f0;--warm:#f7ece4;--ink:#3a2a2e;--muted:#9a8088;--rule:#e0cec8;
-}
 *{box-sizing:border-box;margin:0;padding:0;}
-body{background:#f0e8e4;font-family:'Jost',sans-serif;color:var(--ink);min-height:100vh;}
+:root{
+  --bg:#f3ecd8;--surface:#fff;--sidebar:#f8f1dd;--sidebar-line:#e6dec5;
+  --ink:#1a1612;--muted:#7a7468;--line:#ececec;--warm:#faf6ec;
+  --accent:#c9b6ee;--accent-deep:#b099e0;--accent-soft:#ede5fb;
+}
+html,body{background:var(--bg);font-family:'Plus Jakarta Sans',system-ui,sans-serif;color:var(--ink);min-height:100vh;-webkit-font-smoothing:antialiased;}
 
-.topbar{background:var(--cream);border-bottom:1px solid var(--rule);padding:14px 32px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:200;}
-.topbar-title{font-family:'Cormorant Garamond',serif;font-size:1.6rem;font-weight:300;letter-spacing:2px;}
-.topbar-title em{font-style:italic;color:var(--mauve);}
-.topbar-right{display:flex;align-items:center;gap:10px;}
-.back-btn{display:inline-flex;align-items:center;gap:6px;padding:6px 14px;border:1.5px solid var(--rule);border-radius:20px;font-size:0.72rem;color:var(--muted);cursor:pointer;background:transparent;font-family:'Jost',sans-serif;text-decoration:none;transition:all .15s;}
-.back-btn:hover{border-color:var(--rose);color:var(--ink);}
-.topbar-date{font-size:0.68rem;letter-spacing:2px;text-transform:uppercase;color:var(--muted);}
+/* TOPBAR */
+.topbar{background:var(--sidebar);border-bottom:1px solid var(--sidebar-line);padding:16px 32px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:200;}
+.topbar-left{display:flex;align-items:center;gap:14px;}
+.back-btn{display:inline-flex;align-items:center;gap:6px;padding:7px 14px;border:1.5px solid #d9d2bd;border-radius:20px;font-size:12px;color:var(--muted);cursor:pointer;background:transparent;font-family:inherit;text-decoration:none;transition:all .15s;}
+.back-btn:hover{border-color:var(--accent-deep);color:var(--ink);}
+.topbar-title{font-family:'Fraunces',serif;font-size:22px;font-weight:600;letter-spacing:-0.4px;}
+.topbar-right{display:flex;align-items:center;gap:12px;}
+.topbar-date{font-size:11px;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted);font-weight:500;}
+.add-btn-top{padding:8px 18px;border:none;border-radius:20px;background:var(--ink);color:#fff;font-family:inherit;font-size:12px;font-weight:700;cursor:pointer;transition:all .15s;}
+.add-btn-top:hover{background:#2a2218;transform:translateY(-1px);}
 
-.hub{max-width:1000px;margin:0 auto;padding:24px 24px 80px;}
+.hub{max-width:1000px;margin:0 auto;padding:28px 24px 80px;}
 
-/* ── SUMMARY CARDS ── */
+/* SUMMARY */
 .summary-row{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:24px;}
-.sum-card{background:var(--cream);border:1px solid var(--rule);border-radius:12px;padding:14px 18px;text-align:center;}
-.sum-card:nth-child(1){border-top:3px solid var(--blush);}
-.sum-card:nth-child(2){border-top:3px solid var(--lavender);}
-.sum-card:nth-child(3){border-top:3px solid var(--sage);}
-.sum-card:nth-child(4){border-top:3px solid var(--mauve);}
-.sum-num{font-family:'Cormorant Garamond',serif;font-size:1.8rem;font-weight:600;line-height:1;color:var(--ink);}
-.sum-label{font-size:0.6rem;letter-spacing:2.5px;text-transform:uppercase;color:var(--muted);margin-top:4px;}
+.sum-card{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:16px 20px;text-align:center;}
+.sum-card:nth-child(1){border-top:3px solid #f2c4ce;}
+.sum-card:nth-child(2){border-top:3px solid var(--accent);}
+.sum-card:nth-child(3){border-top:3px solid #b8cfb0;}
+.sum-card:nth-child(4){border-top:3px solid #f7d9b0;}
+.sum-num{font-family:'Fraunces',serif;font-size:28px;font-weight:600;line-height:1;letter-spacing:-.5px;}
+.sum-label{font-size:9.5px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin-top:5px;font-weight:700;}
 
-/* ── CONTROLS ── */
-.controls-row{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:20px;}
-.filter-btn{padding:5px 14px;border:1.5px solid var(--rule);border-radius:16px;background:var(--cream);font-family:'Jost',sans-serif;font-size:0.7rem;font-weight:500;cursor:pointer;color:var(--muted);transition:all .15s;white-space:nowrap;}
-.filter-btn:hover{border-color:var(--mauve);color:var(--ink);}
-.filter-btn.active{background:var(--mauve);border-color:var(--mauve);color:white;}
-.filter-sep{width:1px;height:20px;background:var(--rule);flex-shrink:0;}
-.search-input{padding:6px 14px;border:1.5px solid var(--rule);border-radius:16px;font-family:'Jost',sans-serif;font-size:0.72rem;color:var(--ink);background:var(--cream);outline:none;transition:border .15s;min-width:160px;}
-.search-input:focus{border-color:var(--mauve);}
-.add-btn{margin-left:auto;padding:7px 18px;border:none;border-radius:20px;background:var(--mauve);color:white;font-family:'Jost',sans-serif;font-size:0.73rem;font-weight:600;cursor:pointer;transition:all .15s;}
-.add-btn:hover{background:var(--rose);}
+/* CONTROLS */
+.controls-wrap{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:14px 16px;margin-bottom:22px;}
+.controls-row{display:flex;align-items:center;gap:7px;flex-wrap:wrap;}
+.filter-pill{padding:5px 13px;border:1.5px solid var(--line);border-radius:14px;background:transparent;font-family:inherit;font-size:11.5px;font-weight:600;cursor:pointer;color:var(--muted);transition:all .15s;white-space:nowrap;}
+.filter-pill:hover{border-color:var(--accent-deep);color:var(--ink);}
+.filter-pill.active{background:var(--ink);border-color:var(--ink);color:#fff;}
+.filter-pill.p-active{background:var(--accent-deep);border-color:var(--accent-deep);color:#fff;}
+.filter-sep{width:1px;height:18px;background:var(--line);flex-shrink:0;margin:0 2px;}
+.search-input{padding:7px 14px;border:1.5px solid var(--line);border-radius:14px;font-family:inherit;font-size:12px;color:var(--ink);background:var(--warm);outline:none;transition:border .15s;min-width:150px;}
+.search-input:focus{border-color:var(--accent-deep);}
+.view-toggle{display:flex;border:1.5px solid var(--line);border-radius:12px;overflow:hidden;margin-left:auto;}
+.view-btn{padding:5px 12px;border:none;background:transparent;font-family:inherit;font-size:11px;font-weight:700;cursor:pointer;color:var(--muted);transition:all .15s;}
+.view-btn.active{background:var(--ink);color:#fff;}
 
-/* ── CATEGORY SECTION ── */
-.cat-section{margin-bottom:28px;}
-.cat-header{display:flex;align-items:center;gap:12px;margin-bottom:12px;}
-.cat-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0;}
-.cat-title{font-family:'Cormorant Garamond',serif;font-size:1.1rem;font-weight:600;letter-spacing:.5px;}
-.cat-count{font-size:0.65rem;color:var(--muted);font-weight:500;}
-.cat-total{margin-left:auto;font-family:'Cormorant Garamond',serif;font-size:1rem;font-weight:600;color:var(--muted);}
+/* PRIORITY SECTION HEADERS */
+.priority-section{margin-bottom:28px;}
+.priority-header{display:flex;align-items:center;gap:10px;margin-bottom:12px;padding:8px 0;}
+.priority-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0;}
+.priority-title{font-family:'Fraunces',serif;font-size:18px;font-weight:600;letter-spacing:-.2px;}
+.priority-count{font-size:10.5px;color:var(--muted);font-weight:600;}
+.priority-total{margin-left:auto;font-family:'Fraunces',serif;font-size:16px;font-weight:600;color:var(--muted);}
 
-/* ── ITEM ROWS ── */
-.item-row{display:flex;align-items:center;gap:12px;padding:11px 16px;background:var(--cream);border:1px solid var(--rule);border-radius:10px;margin-bottom:7px;transition:opacity .2s;}
-.item-row.purchased{opacity:0.5;}
-.item-row.purchased .item-name{text-decoration:line-through;}
+/* CATEGORY SECTION */
+.cat-section{margin-bottom:26px;}
+.cat-header{display:flex;align-items:center;gap:10px;margin-bottom:11px;}
+.cat-dot{width:9px;height:9px;border-radius:50%;flex-shrink:0;}
+.cat-title{font-family:'Fraunces',serif;font-size:17px;font-weight:600;letter-spacing:-.2px;}
+.cat-count{font-size:10.5px;color:var(--muted);font-weight:600;}
+.cat-total{margin-left:auto;font-family:'Fraunces',serif;font-size:15px;font-weight:600;color:var(--muted);}
+
+/* ITEM ROWS */
+.item-row{display:flex;align-items:center;gap:12px;padding:11px 14px;background:var(--surface);border:1px solid var(--line);border-radius:14px;margin-bottom:7px;transition:all .18s;}
+.item-row:hover{border-color:#d9d2bd;box-shadow:0 2px 8px rgba(0,0,0,.06);}
+.item-row.purchased{opacity:0.45;}
+.item-row.purchased .item-name{text-decoration:line-through;color:var(--muted);}
+
+/* Thumbnail */
+.item-thumb{width:46px;height:46px;border-radius:10px;object-fit:cover;border:1px solid var(--line);flex-shrink:0;background:var(--warm);}
+.item-thumb-placeholder{width:46px;height:46px;border-radius:10px;border:1.5px dashed var(--line);flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:18px;background:var(--warm);cursor:pointer;transition:all .15s;}
+.item-thumb-placeholder:hover{border-color:var(--accent-deep);}
+
 .item-priority-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;}
-.item-name{font-size:0.82rem;font-weight:500;flex:1;min-width:0;}
-.item-note{font-size:0.7rem;color:var(--muted);font-style:italic;margin-top:1px;}
-.item-price{font-family:'Cormorant Garamond',serif;font-size:1.05rem;font-weight:600;color:var(--ink);flex-shrink:0;min-width:60px;text-align:right;}
-.item-price.no-price{color:var(--muted);font-size:0.72rem;font-family:'Jost',sans-serif;font-style:italic;}
+.item-info{flex:1;min-width:0;}
+.item-name{font-size:13px;font-weight:700;line-height:1.3;}
+.item-note{font-size:11px;color:var(--muted);font-style:italic;margin-top:2px;}
+.item-cat-badge{display:inline-block;font-size:9.5px;font-weight:700;letter-spacing:.5px;text-transform:uppercase;color:var(--muted);margin-top:3px;}
+
+.item-price{font-family:'Fraunces',serif;font-size:16px;font-weight:600;color:var(--ink);flex-shrink:0;min-width:50px;text-align:right;}
+
 .item-actions{display:flex;align-items:center;gap:5px;flex-shrink:0;}
-.item-link-btn{display:inline-flex;align-items:center;padding:3px 9px;border:1.5px solid var(--rule);border-radius:10px;font-size:0.62rem;font-weight:500;color:var(--muted);text-decoration:none;transition:all .15s;font-family:'Jost',sans-serif;}
-.item-link-btn:hover{border-color:var(--mauve);color:var(--ink);}
-.item-bought-btn{padding:3px 9px;border:1.5px solid var(--rule);border-radius:10px;font-size:0.62rem;font-weight:600;cursor:pointer;font-family:'Jost',sans-serif;transition:all .15s;background:transparent;color:var(--muted);}
-.item-bought-btn:hover{border-color:var(--sage);color:#2a6a30;}
-.item-bought-btn.is-bought{background:#e8f5e9;border-color:#b8cfb0;color:#2a6a30;}
-.item-edit-btn{padding:3px 8px;border:1.5px solid var(--rule);border-radius:10px;font-size:0.62rem;cursor:pointer;background:transparent;color:var(--muted);font-family:'Jost',sans-serif;transition:all .15s;}
-.item-edit-btn:hover{border-color:var(--mauve);color:var(--ink);}
-.item-del-btn{padding:3px 7px;border:none;background:transparent;font-size:0.65rem;color:#ccc;cursor:pointer;transition:color .15s;}
+.item-link-btn{display:inline-flex;align-items:center;padding:4px 10px;border:1.5px solid var(--line);border-radius:10px;font-size:11px;font-weight:600;color:var(--muted);text-decoration:none;transition:all .15s;font-family:inherit;}
+.item-link-btn:hover{border-color:var(--accent-deep);color:var(--ink);}
+.item-bought-btn{padding:4px 10px;border:1.5px solid var(--line);border-radius:10px;font-size:11px;font-weight:700;cursor:pointer;font-family:inherit;transition:all .15s;background:transparent;color:var(--muted);}
+.item-bought-btn:hover{border-color:#a8d8d0;color:#1a4a44;}
+.item-bought-btn.is-bought{background:#d8eee8;border-color:#a8d8d0;color:#1a4a44;}
+.item-edit-btn{padding:4px 9px;border:1.5px solid var(--line);border-radius:10px;font-size:11px;cursor:pointer;background:transparent;color:var(--muted);font-family:inherit;transition:all .15s;}
+.item-edit-btn:hover{border-color:var(--accent-deep);color:var(--ink);}
+.item-del-btn{padding:3px 6px;border:none;background:transparent;font-size:11px;color:#ddd;cursor:pointer;transition:color .15s;}
 .item-del-btn:hover{color:#a0304a;}
+.item-date{font-size:10.5px;color:var(--accent-deep);font-weight:600;flex-shrink:0;}
 
-/* ── PRIORITY BADGE ── */
-.priority-badge{font-size:0.58rem;font-weight:600;letter-spacing:1px;text-transform:uppercase;padding:2px 7px;border-radius:8px;flex-shrink:0;}
-.p-high{background:#fce4ec;color:#a0304a;}
-.p-medium{background:#fff8e1;color:#8a5a10;}
-.p-someday{background:var(--warm);color:var(--muted);}
+/* EMPTY */
+.empty-state{text-align:center;padding:60px 20px;color:var(--muted);}
+.empty-icon{font-size:2.5rem;margin-bottom:12px;}
+.empty-text{font-family:'Fraunces',serif;font-size:17px;font-style:italic;}
 
-/* ── TARGET DATE ── */
-.item-date{font-size:0.64rem;color:var(--mauve);font-weight:500;flex-shrink:0;}
-
-/* ── EMPTY ── */
-.empty-state{text-align:center;padding:50px 20px;color:var(--muted);}
-.empty-icon{font-size:2.5rem;margin-bottom:10px;}
-.empty-text{font-family:'Cormorant Garamond',serif;font-size:1.1rem;font-style:italic;}
-
-/* ── MODAL ── */
-.modal-overlay{display:none;position:fixed;inset:0;background:rgba(58,42,46,.35);z-index:300;align-items:center;justify-content:center;}
-.modal-overlay.open{display:flex;}
-.modal{background:var(--cream);border-radius:18px;border:1px solid var(--rule);padding:28px 32px;width:90%;max-width:500px;max-height:90vh;overflow-y:auto;box-shadow:0 20px 60px rgba(58,42,46,.15);}
-.modal-title{font-family:'Cormorant Garamond',serif;font-size:1.4rem;font-weight:600;margin-bottom:20px;}
-.f-field{margin-bottom:12px;}
-.f-label{font-size:0.62rem;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin-bottom:5px;display:block;}
-.f-input{width:100%;border:1.5px solid var(--rule);border-radius:10px;padding:9px 12px;font-size:0.82rem;font-family:'Jost',sans-serif;color:var(--ink);background:var(--warm);outline:none;transition:border .15s;}
-.f-input:focus{border-color:var(--mauve);}
+/* MODAL */
+.modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.4);backdrop-filter:blur(4px);z-index:300;align-items:center;justify-content:center;padding:20px;}
+.modal-overlay.open{display:flex;animation:fadeIn .2s;}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+.modal{background:var(--surface);border-radius:22px;border:1px solid var(--line);padding:26px 28px;width:100%;max-width:520px;max-height:90vh;overflow-y:auto;box-shadow:0 30px 60px -20px rgba(0,0,0,.25);animation:popIn .2s;}
+@keyframes popIn{from{transform:scale(.96);opacity:0}to{transform:scale(1);opacity:1}}
+.modal-title{font-family:'Fraunces',serif;font-size:22px;font-weight:600;margin-bottom:20px;letter-spacing:-.3px;}
+.f-field{margin-bottom:13px;}
+.f-label{font-size:9.5px;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted);margin-bottom:5px;display:block;font-weight:700;}
+.f-input{width:100%;border:1.5px solid var(--line);border-radius:10px;padding:9px 12px;font-size:13px;font-family:inherit;color:var(--ink);background:var(--warm);outline:none;transition:border .15s;}
+.f-input:focus{border-color:var(--accent-deep);}
 .f-row{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
-.m-actions{display:flex;gap:10px;justify-content:flex-end;margin-top:18px;}
-.m-btn{padding:8px 20px;border-radius:20px;font-family:'Jost',sans-serif;font-size:0.78rem;font-weight:600;cursor:pointer;border:1.5px solid;transition:all .15s;}
-.m-cancel{background:var(--warm);border-color:var(--rule);color:var(--muted);}
-.m-save{background:var(--mauve);border-color:var(--mauve);color:white;}
-.m-save:hover{background:var(--rose);}
+/* Image preview in modal */
+.img-preview-wrap{display:none;margin-top:6px;}
+.img-preview-wrap img{width:72px;height:72px;border-radius:12px;object-fit:cover;border:1.5px solid var(--line);}
+.m-actions{display:flex;gap:10px;justify-content:flex-end;margin-top:20px;}
+.m-btn{padding:10px 22px;border-radius:22px;font-family:inherit;font-size:13px;font-weight:600;cursor:pointer;border:1.5px solid;transition:all .15s;}
+.m-cancel{background:var(--warm);border-color:var(--line);color:var(--muted);}
+.m-save{background:var(--ink);border-color:var(--ink);color:#fff;}
+.m-save:hover{transform:translateY(-1px);}
 .m-delete{background:#fce4ec;border-color:#f2c4ce;color:#a0304a;}
+
+.recur-badge{font-size:10px;font-weight:700;color:var(--accent-deep);background:var(--accent-soft);border:1px solid var(--accent);border-radius:6px;padding:2px 6px;flex-shrink:0;}
+.aging-badge{font-size:10px;font-weight:600;color:var(--muted);background:var(--warm);border:1px solid var(--line);border-radius:6px;padding:2px 7px;flex-shrink:0;}
+.aging-badge.stale{color:#a06020;background:#fff5d6;border-color:#f6d6a0;}
 </style>
 </head>
 <body>
 
-<!-- ADD/EDIT MODAL -->
+<!-- MODAL -->
 <div class="modal-overlay" id="modal">
   <div class="modal">
     <div class="modal-title" id="modal-title">Add to Wishlist</div>
@@ -118,23 +146,21 @@ body{background:#f0e8e4;font-family:'Jost',sans-serif;color:var(--ink);min-heigh
       <div class="f-field">
         <label class="f-label">Category</label>
         <select class="f-input" id="m-category">
-          <option value="Beauty">💄 Beauty</option>
-          <option value="Hair">💇 Hair</option>
-          <option value="Clothing">👗 Clothing & Style</option>
-          <option value="Home">🏠 Home & Lifestyle</option>
+          <option value="BeautyCare">💆 Beauty & Care</option>
+          <option value="Style">🪞 Style & Wardrobe</option>
+          <option value="Home">🏡 Home</option>
           <option value="Art">🎨 Art & Creative</option>
           <option value="Tech">💻 Tech & Gadgets</option>
-          <option value="Books">📚 Books & Media</option>
+          <option value="Books">📖 Books & Media</option>
           <option value="Health">🌿 Health & Wellness</option>
-          <option value="Other">✨ Other</option>
         </select>
       </div>
       <div class="f-field">
         <label class="f-label">Priority</label>
         <select class="f-input" id="m-priority">
-          <option value="high">High — Need it soon</option>
-          <option value="medium" selected>Medium — Want it</option>
-          <option value="someday">Someday — Nice to have</option>
+          <option value="high">🔴 High — Need it soon</option>
+          <option value="medium" selected>🟡 Medium — Want it</option>
+          <option value="someday">⚪ Someday — Nice to have</option>
         </select>
       </div>
     </div>
@@ -145,7 +171,14 @@ body{background:#f0e8e4;font-family:'Jost',sans-serif;color:var(--ink);min-heigh
       </div>
       <div class="f-field">
         <label class="f-label">Target Date (optional)</label>
-        <input class="f-input" id="m-date" type="month" placeholder="mm/yyyy">
+        <input class="f-input" id="m-date" type="month">
+      </div>
+    </div>
+    <div class="f-field">
+      <label class="f-label">Image URL (optional)</label>
+      <input class="f-input" id="m-image" type="text" placeholder="Paste image URL for thumbnail..." oninput="previewModalImage(this.value)">
+      <div class="img-preview-wrap" id="img-preview-wrap">
+        <img id="img-preview" src="" alt="preview" onerror="this.parentElement.style.display='none'">
       </div>
     </div>
     <div class="f-field">
@@ -156,258 +189,336 @@ body{background:#f0e8e4;font-family:'Jost',sans-serif;color:var(--ink);min-heigh
       <label class="f-label">Note (optional)</label>
       <input class="f-input" id="m-note" type="text" placeholder="Size, color, why you want it...">
     </div>
+    <div class="f-field" style="display:flex;align-items:center;gap:10px;padding:10px 14px;background:var(--warm);border-radius:10px;border:1.5px solid var(--line);">
+      <input type="checkbox" id="m-recurring" style="width:16px;height:16px;accent-color:var(--accent-deep);cursor:pointer;flex-shrink:0;">
+      <div>
+        <label for="m-recurring" style="font-size:13px;font-weight:600;cursor:pointer;">Recurring / Subscription</label>
+        <div style="font-size:10.5px;color:var(--muted);margin-top:2px;">Check if this is a monthly or yearly charge</div>
+      </div>
+      <select id="m-recur-period" style="margin-left:auto;border:1.5px solid var(--line);border-radius:8px;padding:5px 10px;font-family:inherit;font-size:12px;color:var(--ink);background:var(--surface);outline:none;">
+        <option value="mo">/ month</option>
+        <option value="yr">/ year</option>
+      </select>
+    </div>
     <div class="m-actions">
       <button class="m-btn m-cancel" onclick="closeModal()">Cancel</button>
       <button class="m-btn m-delete" id="m-delete-btn" style="display:none;" onclick="deleteFromModal()">Delete</button>
-      <button class="m-btn m-save" onclick="saveItem()">Save ✦</button>
+      <button class="m-btn m-save" onclick="saveItem()">Save</button>
     </div>
   </div>
 </div>
 
 <!-- TOPBAR -->
 <div class="topbar">
-  <div class="topbar-title">My <em>Wishlist</em></div>
+  <div class="topbar-left">
+    <a href="../" class="back-btn">
+      <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"/></svg>
+      Brain 2.0
+    </a>
+    <div class="topbar-title">Wishlist</div>
+  </div>
   <div class="topbar-right">
-    <a href="../" class="back-btn">← Brain 2.0</a>
     <span class="topbar-date" id="today-date"></span>
+    <button class="add-btn-top" onclick="openAddModal()">+ Add Item</button>
   </div>
 </div>
 
 <div class="hub">
-
-  <!-- SUMMARY -->
   <div class="summary-row" id="summary-row"></div>
-
-  <!-- CONTROLS -->
-  <div class="controls-row" id="controls-row"></div>
-
-  <!-- LIST -->
+  <div class="controls-wrap">
+    <div class="controls-row" id="controls-row"></div>
+  </div>
   <div id="wishlist-content"></div>
-
 </div>
 
 <script>
-var SK = 'wishlist1';
+var SK='wishlist1';
 
-var CATEGORIES = [
-  {val:'Beauty',   label:'Beauty',           emoji:'💄', color:'#f2c4ce'},
-  {val:'Hair',     label:'Hair',              emoji:'💇', color:'#f7d9b0'},
-  {val:'Clothing', label:'Clothing & Style',  emoji:'👗', color:'#d4b8e0'},
-  {val:'Home',     label:'Home & Lifestyle',  emoji:'🏠', color:'#b8cfb0'},
-  {val:'Art',      label:'Art & Creative',    emoji:'🎨', color:'#b8d4f0'},
-  {val:'Tech',     label:'Tech & Gadgets',    emoji:'💻', color:'#c9a0b4'},
-  {val:'Books',    label:'Books & Media',     emoji:'📚', color:'#f0dea0'},
-  {val:'Health',   label:'Health & Wellness', emoji:'🌿', color:'#a8d8d0'},
-  {val:'Other',    label:'Other',             emoji:'✨', color:'#e0cec8'},
+var CATS=[
+  {val:'BeautyCare', label:'Beauty & Care',    emoji:'💆',color:'#f2c4ce'},
+  {val:'Style',      label:'Style & Wardrobe', emoji:'🪞',color:'#d4b8e0'},
+  {val:'Home',       label:'Home',             emoji:'🏡',color:'#b8cfb0'},
+  {val:'Art',        label:'Art & Creative',   emoji:'🎨',color:'#b8d4f0'},
+  {val:'Tech',       label:'Tech & Gadgets',   emoji:'💻',color:'#c9b6ee'},
+  {val:'Books',      label:'Books & Media',    emoji:'📖',color:'#f0dea0'},
+  {val:'Health',     label:'Health & Wellness', emoji:'🌿',color:'#a8d8d0'},
 ];
 
-var PRIORITY_COLORS = {high:'#f2c4ce', medium:'#f0dea0', someday:'#e0cec8'};
-
-var DEFAULT_ITEMS = [
-  {id:'w1',name:'Dusting Powder (puff + crystal jar)',category:'Beauty',priority:'medium',price:0,date:'',link:'',note:'Lush sticky dates or super milk',purchased:false},
-  {id:'w2',name:'Scented Body Oil',category:'Beauty',priority:'medium',price:0,date:'',link:'',note:'Step 2 of body care routine',purchased:false},
-  {id:'w3',name:'CoverGirl Lip Stain — Natural Blush',category:'Beauty',priority:'medium',price:0,date:'',link:'',note:'',purchased:false},
-  {id:'w4',name:'Rimmel London Lipliner — Brownie Pie',category:'Beauty',priority:'medium',price:0,date:'',link:'',note:'',purchased:false},
-  {id:'w5',name:'NYX Lip IV Hydrating Glossy Lip Stain — Water Bout Wine',category:'Beauty',priority:'medium',price:0,date:'',link:'',note:'Red',purchased:false},
-  {id:'w6',name:'Maybelline Serum Lipstick 004 Wildcard',category:'Beauty',priority:'high',price:0,date:'',link:'',note:'',purchased:false},
-  {id:'w7',name:'Color Wow Style on Steroids Texturizing Spray',category:'Hair',priority:'medium',price:0,date:'',link:'',note:'',purchased:false},
-  {id:'w8',name:'Kérastase Absolu Glaze Drops',category:'Hair',priority:'medium',price:0,date:'',link:'',note:'',purchased:false},
-  {id:'w9',name:'L\'Oréal Paris Glycolic Gloss Serum',category:'Hair',priority:'medium',price:0,date:'',link:'',note:'',purchased:false},
-  {id:'w10',name:'Hair Diffuser Brush',category:'Hair',priority:'medium',price:0,date:'',link:'',note:'',purchased:false},
-  {id:'w11',name:'Micellar Water',category:'Beauty',priority:'medium',price:0,date:'',link:'',note:'',purchased:false},
-  {id:'w12',name:'Cute cup for bathroom perfumes',category:'Home',priority:'someday',price:0,date:'',link:'',note:'',purchased:false},
-  {id:'w13',name:'Bedroom Vanity',category:'Home',priority:'someday',price:0,date:'',link:'',note:'Plush chair + circular mirror table',purchased:false},
-  {id:'w14',name:'Record Player',category:'Home',priority:'someday',price:0,date:'',link:'',note:'',purchased:false},
-  {id:'w15',name:'New Paint Brushes',category:'Art',priority:'medium',price:0,date:'',link:'',note:'',purchased:false},
-  {id:'w16',name:'Coloring Books',category:'Art',priority:'medium',price:0,date:'',link:'',note:'',purchased:false},
-  {id:'w17',name:'Larger Bag Charm',category:'Clothing',priority:'someday',price:0,date:'',link:'',note:'',purchased:false},
+var PRIORITIES=[
+  {val:'high',   label:'High — Need it soon', dot:'#f2c4ce', badge:'#a0304a'},
+  {val:'medium', label:'Medium — Want it',    dot:'#f0dea0', badge:'#8a5a10'},
+  {val:'someday',label:'Someday',             dot:'#d9d2bd', badge:'#7a7468'},
 ];
 
-var items = [];
-var currentFilter = 'all';
-var currentPriority = 'all';
-var searchQuery = '';
-var editingId = null;
+var DEFAULT_ITEMS=[
+  {id:'w1', name:'Dusting Powder (puff + crystal jar)',category:'BeautyCare',priority:'medium',price:0,date:'',link:'',note:'Lush sticky dates or super milk',image:'',purchased:false,recurring:false,recurPeriod:'mo',addedOn:''},
+  {id:'w2', name:'Scented Body Oil',category:'BeautyCare',priority:'medium',price:0,date:'',link:'',note:'Step 2 of body care routine',image:'',purchased:false,recurring:false,recurPeriod:'mo',addedOn:''},
+  {id:'w3', name:'CoverGirl Lip Stain — Natural Blush',category:'BeautyCare',priority:'medium',price:0,date:'',link:'',note:'',image:'',purchased:false,recurring:false,recurPeriod:'mo',addedOn:''},
+  {id:'w4', name:'Rimmel London Lipliner — Brownie Pie',category:'BeautyCare',priority:'medium',price:0,date:'',link:'',note:'',image:'',purchased:false,recurring:false,recurPeriod:'mo',addedOn:''},
+  {id:'w5', name:'NYX Lip IV Hydrating Glossy Lip Stain — Water Bout Wine',category:'BeautyCare',priority:'medium',price:0,date:'',link:'',note:'Red',image:'',purchased:false,recurring:false,recurPeriod:'mo',addedOn:''},
+  {id:'w6', name:'Maybelline Serum Lipstick 004 Wildcard',category:'BeautyCare',priority:'high',price:0,date:'',link:'',note:'',image:'',purchased:false,recurring:false,recurPeriod:'mo',addedOn:''},
+  {id:'w7', name:'Color Wow Style on Steroids Texturizing Spray',category:'BeautyCare',priority:'medium',price:0,date:'',link:'',note:'',image:'',purchased:false,recurring:false,recurPeriod:'mo',addedOn:''},
+  {id:'w8', name:'Kérastase Absolu Glaze Drops',category:'BeautyCare',priority:'medium',price:0,date:'',link:'',note:'',image:'',purchased:false,recurring:false,recurPeriod:'mo',addedOn:''},
+  {id:'w9', name:"L'Oréal Paris Glycolic Gloss Serum",category:'BeautyCare',priority:'medium',price:0,date:'',link:'',note:'',image:'',purchased:false,recurring:false,recurPeriod:'mo',addedOn:''},
+  {id:'w10',name:'Hair Diffuser Brush',category:'BeautyCare',priority:'medium',price:0,date:'',link:'',note:'',image:'',purchased:false,recurring:false,recurPeriod:'mo',addedOn:''},
+  {id:'w11',name:'Micellar Water',category:'BeautyCare',priority:'medium',price:0,date:'',link:'',note:'',image:'',purchased:false,recurring:false,recurPeriod:'mo',addedOn:''},
+  {id:'w12',name:'Cute cup for bathroom perfumes',category:'Home',priority:'someday',price:0,date:'',link:'',note:'',image:'',purchased:false,recurring:false,recurPeriod:'mo',addedOn:''},
+  {id:'w13',name:'Bedroom Vanity',category:'Home',priority:'someday',price:0,date:'',link:'',note:'Plush chair + circular mirror table',image:'',purchased:false,recurring:false,recurPeriod:'mo',addedOn:''},
+  {id:'w14',name:'Record Player',category:'Home',priority:'someday',price:0,date:'',link:'',note:'',image:'',purchased:false,recurring:false,recurPeriod:'mo',addedOn:''},
+  {id:'w15',name:'New Paint Brushes',category:'Art',priority:'medium',price:0,date:'',link:'',note:'',image:'',purchased:false,recurring:false,recurPeriod:'mo',addedOn:''},
+  {id:'w16',name:'Coloring Books',category:'Art',priority:'medium',price:0,date:'',link:'',note:'',image:'',purchased:false,recurring:false,recurPeriod:'mo',addedOn:''},
+  {id:'w17',name:'Larger Bag Charm',category:'Style',priority:'someday',price:0,date:'',link:'',note:'',image:'',purchased:false,recurring:false,recurPeriod:'mo',addedOn:''},
+];
 
-function save() { localStorage.setItem(SK, JSON.stringify(items)); }
-function load() {
-  var raw = localStorage.getItem(SK);
-  if (raw) { try { items = JSON.parse(raw); } catch(e) {} }
-  else { items = JSON.parse(JSON.stringify(DEFAULT_ITEMS)); save(); }
+var items=[];
+var currentFilter='all';
+var currentPriority='all';
+var searchQuery='';
+var viewMode='priority'; // 'priority' or 'category'
+var editingId=null;
+
+/* ── STORAGE ── */
+function save(){localStorage.setItem(SK,JSON.stringify(items));}
+function load(){
+  var raw=localStorage.getItem(SK);
+  if(raw){
+    try{
+      items=JSON.parse(raw);
+      // Migrate: add image field if missing
+      items.forEach(function(i){
+      if(i.image===undefined)i.image='';
+      if(i.recurring===undefined)i.recurring=false;
+      if(i.recurPeriod===undefined)i.recurPeriod='mo';
+      if(i.addedOn===undefined)i.addedOn=new Date().toISOString().slice(0,10);
+      // migrate old category names
+      if(i.category==='Beauty'||i.category==='Hair')i.category='BeautyCare';
+      if(i.category==='Health')i.category='Health';
+      if(i.category==='Clothing')i.category='Style';
+      if(i.category==='Home & Lifestyle')i.category='Home';
+      if(i.category==='Other')i.category='Art';
+    });
+    }catch(e){}
+  } else {
+    items=JSON.parse(JSON.stringify(DEFAULT_ITEMS));save();
+  }
 }
 
-function getCat(val) { return CATEGORIES.find(function(c){return c.val===val;}) || CATEGORIES[CATEGORIES.length-1]; }
-
-function formatPrice(p) {
-  if (!p || p<=0) return null;
-  return '$'+parseFloat(p).toFixed(2).replace(/\.00$/,'');
+function getCat(val){return CATS.find(function(c){return c.val===val;})||CATS[CATS.length-1];}
+function getPri(val){return PRIORITIES.find(function(p){return p.val===val;})||PRIORITIES[1];}
+function formatPrice(p){if(!p||p<=0)return null;return '$'+parseFloat(p).toFixed(2).replace(/\.00$/,'');}
+function formatMonth(m){
+  if(!m)return null;
+  var parts=m.split('-');
+  return ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'][parseInt(parts[1])-1]+' '+parts[0];
 }
+function escHtml(s){return String(s||'').replace(/[&<>"']/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];});}
 
-function formatMonth(m) {
-  if (!m) return null;
-  var parts = m.split('-');
-  var MONTHS = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
-  return MONTHS[parseInt(parts[1])-1]+' '+parts[0];
-}
-
-// ── SUMMARY ──
-function renderSummary() {
-  var total = items.length;
-  var pending = items.filter(function(i){return !i.purchased;}).length;
-  var bought  = items.filter(function(i){return i.purchased;}).length;
-  var totalVal = items.filter(function(i){return !i.purchased&&i.price>0;}).reduce(function(s,i){return s+(parseFloat(i.price)||0);},0);
-  document.getElementById('summary-row').innerHTML =
+/* ── SUMMARY ── */
+function renderSummary(){
+  var total=items.length;
+  var pending=items.filter(function(i){return !i.purchased;}).length;
+  var bought=items.filter(function(i){return i.purchased;}).length;
+  var oneTimeVal=items.filter(function(i){return !i.purchased&&i.price>0&&!i.recurring;}).reduce(function(s,i){return s+(parseFloat(i.price)||0);},0);
+  var recurVal=items.filter(function(i){return !i.purchased&&i.price>0&&i.recurring&&i.recurPeriod==='mo';}).reduce(function(s,i){return s+(parseFloat(i.price)||0);},0);
+  document.getElementById('summary-row').innerHTML=
     '<div class="sum-card"><div class="sum-num">'+total+'</div><div class="sum-label">Total Items</div></div>'+
     '<div class="sum-card"><div class="sum-num">'+pending+'</div><div class="sum-label">Still Wanting</div></div>'+
-    '<div class="sum-card"><div class="sum-num">'+bought+'</div><div class="sum-label">Purchased</div></div>'+
-    '<div class="sum-card"><div class="sum-num">'+(totalVal>0?'$'+totalVal.toFixed(0):'—')+'</div><div class="sum-label">Pending Total</div></div>';
+    '<div class="sum-card"><div class="sum-num">'+(oneTimeVal>0?'$'+oneTimeVal.toFixed(0):'—')+'</div><div class="sum-label">One-Time Pending</div></div>'+
+    '<div class="sum-card"><div class="sum-num">'+(recurVal>0?'$'+recurVal.toFixed(0)+'/mo':'—')+'</div><div class="sum-label">Monthly Recurring</div></div>';
 }
 
-// ── CONTROLS ──
-function renderControls() {
-  var html = '';
-  html += '<button class="filter-btn'+(currentFilter==='all'?' active':'')+'" onclick="setFilter(\'all\')">All</button>';
-  CATEGORIES.forEach(function(c){
-    var cnt = items.filter(function(i){return i.category===c.val;}).length;
-    if (cnt>0) html += '<button class="filter-btn'+(currentFilter===c.val?' active':'')+'" onclick="setFilter(\''+c.val+'\')">'+c.emoji+' '+c.label+'</button>';
+/* ── CONTROLS ── */
+function renderControls(){
+  var html='';
+  html+='<button class="filter-pill'+(currentFilter==='all'?' active':'')+'" onclick="setFilter(\'all\')">All</button>';
+  CATS.forEach(function(c){
+    if(items.some(function(i){return i.category===c.val;}))
+      html+='<button class="filter-pill'+(currentFilter===c.val?' active':'')+'" onclick="setFilter(\''+c.val+'\')">'+c.emoji+' '+c.label+'</button>';
   });
-  html += '<div class="filter-sep"></div>';
-  html += '<button class="filter-btn'+(currentPriority==='all'?' active':'')+'" onclick="setPriority(\'all\')">All Priority</button>';
-  html += '<button class="filter-btn'+(currentPriority==='high'?' active':'')+'" onclick="setPriority(\'high\')">High</button>';
-  html += '<button class="filter-btn'+(currentPriority==='medium'?' active':'')+'" onclick="setPriority(\'medium\')">Medium</button>';
-  html += '<button class="filter-btn'+(currentPriority==='someday'?' active':'')+'" onclick="setPriority(\'someday\')">Someday</button>';
-  html += '<div class="filter-sep"></div>';
-  html += '<input class="search-input" type="text" placeholder="Search..." value="'+searchQuery+'" oninput="setSearch(this.value)">';
-  html += '<button class="add-btn" onclick="openAddModal()">＋ Add Item</button>';
-  document.getElementById('controls-row').innerHTML = html;
+  html+='<div class="filter-sep"></div>';
+  html+='<button class="filter-pill'+(currentPriority==='all'?' active':'')+'" onclick="setPriority(\'all\')">All</button>';
+  html+='<button class="filter-pill'+(currentPriority==='high'?' p-active':'')+'" onclick="setPriority(\'high\')">🔴 High</button>';
+  html+='<button class="filter-pill'+(currentPriority==='medium'?' p-active':'')+'" onclick="setPriority(\'medium\')">🟡 Medium</button>';
+  html+='<button class="filter-pill'+(currentPriority==='someday'?' p-active':'')+'" onclick="setPriority(\'someday\')">⚪ Someday</button>';
+  html+='<div class="filter-sep"></div>';
+  html+='<input class="search-input" type="text" placeholder="Search..." value="'+escHtml(searchQuery)+'" oninput="setSearch(this.value)">';
+  html+='<div class="view-toggle">'+
+    '<button class="view-btn'+(viewMode==='priority'?' active':'')+'" onclick="setView(\'priority\')">By Priority</button>'+
+    '<button class="view-btn'+(viewMode==='category'?' active':'')+'" onclick="setView(\'category\')">By Category</button>'+
+  '</div>';
+  document.getElementById('controls-row').innerHTML=html;
 }
 
-function setFilter(val){ currentFilter=val; render(); }
-function setPriority(val){ currentPriority=val; render(); }
-function setSearch(val){ searchQuery=val; render(); }
+function setFilter(v){currentFilter=v;render();}
+function setPriority(v){currentPriority=v;render();}
+function setSearch(v){searchQuery=v;render();}
+function setView(v){viewMode=v;render();}
 
-// ── LIST ──
-function renderList() {
-  var content = document.getElementById('wishlist-content'); content.innerHTML = '';
-
-  var filtered = items.filter(function(i){
-    if (currentFilter!=='all' && i.category!==currentFilter) return false;
-    if (currentPriority!=='all' && i.priority!==currentPriority) return false;
-    if (searchQuery) { var q=searchQuery.toLowerCase(); return (i.name||'').toLowerCase().includes(q)||(i.note||'').toLowerCase().includes(q); }
+/* ── FILTER ── */
+function getFiltered(){
+  return items.filter(function(i){
+    if(currentFilter!=='all'&&i.category!==currentFilter)return false;
+    if(currentPriority!=='all'&&i.priority!==currentPriority)return false;
+    if(searchQuery){var q=searchQuery.toLowerCase();return(i.name||'').toLowerCase().includes(q)||(i.note||'').toLowerCase().includes(q);}
     return true;
   });
-
-  if (!filtered.length) {
-    content.innerHTML = '<div class="empty-state"><div class="empty-icon">✨</div><div class="empty-text">Nothing here yet — add something you\'re dreaming of.</div></div>';
-    return;
-  }
-
-  // Group by category (only cats that appear in filtered)
-  var catsInView = [];
-  CATEGORIES.forEach(function(c){
-    if (filtered.some(function(i){return i.category===c.val;})) catsInView.push(c);
-  });
-
-  // If filtering by single category or searching, just show flat list
-  if (currentFilter!=='all' || searchQuery) {
-    var section = document.createElement('div'); section.className='cat-section';
-    filtered.forEach(function(item){ section.appendChild(buildItemRow(item)); });
-    content.appendChild(section);
-    return;
-  }
-
-  catsInView.forEach(function(cat){
-    var catItems = filtered.filter(function(i){return i.category===cat.val;});
-    if (!catItems.length) return;
-    var catTotal = catItems.filter(function(i){return !i.purchased&&i.price>0;}).reduce(function(s,i){return s+(parseFloat(i.price)||0);},0);
-
-    var section = document.createElement('div'); section.className='cat-section';
-    var hdr = document.createElement('div'); hdr.className='cat-header';
-    hdr.innerHTML =
-      '<div class="cat-dot" style="background:'+cat.color+'"></div>'+
-      '<span class="cat-title">'+cat.emoji+' '+cat.label+'</span>'+
-      '<span class="cat-count">('+catItems.length+')</span>'+
-      (catTotal>0?'<span class="cat-total">$'+catTotal.toFixed(0)+'</span>':'');
-    section.appendChild(hdr);
-    // Sort: high → medium → someday, purchased last
-    catItems.sort(function(a,b){
-      if(a.purchased!==b.purchased) return a.purchased?1:-1;
-      var order={high:0,medium:1,someday:2};
-      return (order[a.priority]||1)-(order[b.priority]||1);
-    });
-    catItems.forEach(function(item){ section.appendChild(buildItemRow(item)); });
-    content.appendChild(section);
-  });
 }
 
-function buildItemRow(item) {
-  var cat = getCat(item.category);
-  var row = document.createElement('div');
-  row.className = 'item-row' + (item.purchased?' purchased':'');
+/* ── RENDER LIST ── */
+function renderList(){
+  var content=document.getElementById('wishlist-content');content.innerHTML='';
+  var filtered=getFiltered();
+  if(!filtered.length){
+    content.innerHTML='<div class="empty-state"><div class="empty-icon">✨</div><div class="empty-text">Nothing here yet — add something you\'re dreaming of.</div></div>';
+    return;
+  }
 
-  var dot = document.createElement('div');
-  dot.className='item-priority-dot';
-  dot.style.background = PRIORITY_COLORS[item.priority]||'#e0cec8';
-  dot.title = item.priority.charAt(0).toUpperCase()+item.priority.slice(1)+' priority';
+  // Flat if filtering by single cat or searching
+  if(currentFilter!=='all'||searchQuery){
+    var sec=document.createElement('div');sec.className='cat-section';
+    filtered.sort(function(a,b){
+      if(a.purchased!==b.purchased)return a.purchased?1:-1;
+      var o={high:0,medium:1,someday:2};return(o[a.priority]||1)-(o[b.priority]||1);
+    });
+    filtered.forEach(function(item){sec.appendChild(buildRow(item));});
+    content.appendChild(sec);
+    return;
+  }
 
-  var info = document.createElement('div'); info.style.flex='1'; info.style.minWidth='0';
-  var name = document.createElement('div'); name.className='item-name'; name.textContent=item.name;
+  if(viewMode==='priority'){
+    PRIORITIES.forEach(function(pri){
+      var priItems=filtered.filter(function(i){return i.priority===pri.val;});
+      if(!priItems.length)return;
+      // separate purchased
+      priItems.sort(function(a,b){return a.purchased?1:b.purchased?-1:0;});
+      var priTotal=priItems.filter(function(i){return !i.purchased&&i.price>0;}).reduce(function(s,i){return s+(parseFloat(i.price)||0);},0);
+      var sec=document.createElement('div');sec.className='priority-section';
+      var hdr=document.createElement('div');hdr.className='priority-header';
+      hdr.innerHTML=
+        '<div class="priority-dot" style="background:'+pri.dot+'"></div>'+
+        '<span class="priority-title">'+pri.label+'</span>'+
+        '<span class="priority-count">('+priItems.length+')</span>'+
+        (priTotal>0?'<span class="priority-total">$'+priTotal.toFixed(0)+'</span>':'');
+      sec.appendChild(hdr);
+      priItems.forEach(function(item){sec.appendChild(buildRow(item,true));});
+      content.appendChild(sec);
+    });
+  } else {
+    CATS.forEach(function(cat){
+      var catItems=filtered.filter(function(i){return i.category===cat.val;});
+      if(!catItems.length)return;
+      catItems.sort(function(a,b){
+        if(a.purchased!==b.purchased)return a.purchased?1:-1;
+        var o={high:0,medium:1,someday:2};return(o[a.priority]||1)-(o[b.priority]||1);
+      });
+      var catTotal=catItems.filter(function(i){return !i.purchased&&i.price>0;}).reduce(function(s,i){return s+(parseFloat(i.price)||0);},0);
+      var sec=document.createElement('div');sec.className='cat-section';
+      var hdr=document.createElement('div');hdr.className='cat-header';
+      hdr.innerHTML=
+        '<div class="cat-dot" style="background:'+cat.color+'"></div>'+
+        '<span class="cat-title">'+cat.emoji+' '+cat.label+'</span>'+
+        '<span class="cat-count">('+catItems.length+')</span>'+
+        (catTotal>0?'<span class="cat-total">$'+catTotal.toFixed(0)+'</span>':'');
+      sec.appendChild(hdr);
+      catItems.forEach(function(item){sec.appendChild(buildRow(item));});
+      content.appendChild(sec);
+    });
+  }
+}
+
+/* ── BUILD ROW ── */
+function buildRow(item, showCat){
+  var cat=getCat(item.category);
+  var pri=getPri(item.priority);
+  var row=document.createElement('div');
+  row.className='item-row'+(item.purchased?' purchased':'');
+
+  // Thumbnail
+  if(item.image&&item.image.trim()){
+    var img=document.createElement('img');
+    img.className='item-thumb';img.src=item.image;img.alt='';
+    img.onerror=function(){this.style.display='none';};
+    row.appendChild(img);
+  } else {
+    var ph=document.createElement('div');ph.className='item-thumb-placeholder';
+    ph.textContent=cat.emoji;ph.title='Add image URL in Edit';
+    ph.onclick=(function(id){return function(){openEditModal(id);};})(item.id);
+    row.appendChild(ph);
+  }
+
+  // Priority dot
+  var dot=document.createElement('div');dot.className='item-priority-dot';
+  dot.style.background=pri.dot;dot.title=item.priority+' priority';
+  row.appendChild(dot);
+
+  // Info
+  var info=document.createElement('div');info.className='item-info';
+  var name=document.createElement('div');name.className='item-name';name.textContent=item.name;
   info.appendChild(name);
-  if (item.note) { var note=document.createElement('div');note.className='item-note';note.textContent=item.note;info.appendChild(note); }
+  if(item.note){var note=document.createElement('div');note.className='item-note';note.textContent=item.note;info.appendChild(note);}
+  if(showCat){var cb=document.createElement('span');cb.className='item-cat-badge';cb.textContent=cat.emoji+' '+cat.label;info.appendChild(cb);}
+  row.appendChild(info);
 
-  var priceStr = formatPrice(item.price);
-  var price = document.createElement('div');
-  price.className = priceStr ? 'item-price' : 'item-price no-price';
-  price.textContent = priceStr || 'no price';
-
-  var dateStr = formatMonth(item.date);
-  var actions = document.createElement('div'); actions.className='item-actions';
-
-  if (dateStr) {
-    var dateEl=document.createElement('span');dateEl.className='item-date';dateEl.textContent='by '+dateStr;actions.appendChild(dateEl);
+  // Price + recurring badge
+  var priceStr=formatPrice(item.price);
+  if(priceStr){
+    var priceWrap=document.createElement('div');priceWrap.style.cssText='display:flex;flex-direction:column;align-items:flex-end;gap:3px;flex-shrink:0;';
+    var price=document.createElement('div');price.className='item-price';price.textContent=priceStr;priceWrap.appendChild(price);
+    if(item.recurring){var rb=document.createElement('span');rb.className='recur-badge';rb.textContent='/'+( item.recurPeriod||'mo');priceWrap.appendChild(rb);}
+    row.appendChild(priceWrap);
   }
-  if (item.link) {
-    var lk=document.createElement('a');lk.className='item-link-btn';lk.textContent='Link ↗';lk.href=item.link;lk.target='_blank';lk.style.textDecoration='none';actions.appendChild(lk);
+  // Aging badge for Someday items
+  if(item.priority==='someday'&&item.addedOn&&!item.purchased){
+    var added=new Date(item.addedOn);var days=Math.floor((Date.now()-added.getTime())/(1000*60*60*24));
+    if(days>0){var ab=document.createElement('span');ab.className='aging-badge'+(days>=60?' stale':'');ab.textContent=days+'d';ab.title='Added '+days+' days ago';row.appendChild(ab);}
   }
-  var boughtBtn=document.createElement('button');boughtBtn.className='item-bought-btn'+(item.purchased?' is-bought':'');
-  boughtBtn.textContent=item.purchased?'✓ Bought':'Mark Bought';
-  boughtBtn.onclick=(function(id){return function(){togglePurchased(id);};})(item.id);
-  actions.appendChild(boughtBtn);
 
-  var editBtn=document.createElement('button');editBtn.className='item-edit-btn';editBtn.textContent='Edit';
-  editBtn.onclick=(function(id){return function(){openEditModal(id);};})(item.id);actions.appendChild(editBtn);
-
-  var delBtn=document.createElement('button');delBtn.className='item-del-btn';delBtn.textContent='✕';
-  delBtn.onclick=(function(id){return function(){if(confirm('Remove this item?'))deleteItem(id);};})(item.id);actions.appendChild(delBtn);
-
-  row.appendChild(dot); row.appendChild(info); row.appendChild(price); row.appendChild(actions);
+  // Actions
+  var acts=document.createElement('div');acts.className='item-actions';
+  var dateStr=formatMonth(item.date);
+  if(dateStr){var de=document.createElement('span');de.className='item-date';de.textContent='by '+dateStr;acts.appendChild(de);}
+  if(item.link){var lk=document.createElement('a');lk.className='item-link-btn';lk.textContent='Link ↗';lk.href=item.link;lk.target='_blank';lk.style.textDecoration='none';acts.appendChild(lk);}
+  var bb=document.createElement('button');bb.className='item-bought-btn'+(item.purchased?' is-bought':'');
+  bb.textContent=item.purchased?'✓ Got it':'Mark Bought';
+  bb.onclick=(function(id){return function(){togglePurchased(id);};})(item.id);acts.appendChild(bb);
+  var eb=document.createElement('button');eb.className='item-edit-btn';eb.textContent='Edit';
+  eb.onclick=(function(id){return function(){openEditModal(id);};})(item.id);acts.appendChild(eb);
+  var db=document.createElement('button');db.className='item-del-btn';db.textContent='✕';
+  db.onclick=(function(id){return function(){if(confirm('Remove this item?'))deleteItem(id);};})(item.id);acts.appendChild(db);
+  row.appendChild(acts);
   return row;
 }
 
-function togglePurchased(id){
-  var item=items.find(function(i){return i.id===id;});if(!item)return;
-  item.purchased=!item.purchased;save();render();
-}
-function deleteItem(id){
-  items=items.filter(function(i){return i.id!==id;});save();render();
+function togglePurchased(id){var item=items.find(function(i){return i.id===id;});if(!item)return;item.purchased=!item.purchased;save();render();}
+function deleteItem(id){items=items.filter(function(i){return i.id!==id;});save();render();}
+
+/* ── IMAGE PREVIEW ── */
+function previewModalImage(url){
+  var wrap=document.getElementById('img-preview-wrap');
+  var img=document.getElementById('img-preview');
+  if(url&&url.trim()){
+    img.src=url.trim();
+    img.onload=function(){wrap.style.display='block';};
+    img.onerror=function(){wrap.style.display='none';};
+  } else {
+    wrap.style.display='none';
+  }
 }
 
-// ── MODAL ──
+/* ── MODAL ── */
 function openAddModal(){
   editingId=null;
   document.getElementById('modal-title').textContent='Add to Wishlist';
-  document.getElementById('m-name').value='';
-  document.getElementById('m-category').value='Beauty';
+  ['m-name','m-price','m-date','m-link','m-note','m-image'].forEach(function(id){document.getElementById(id).value='';});
+  document.getElementById('m-recurring').checked=false;
+  document.getElementById('m-recur-period').value='mo';
+  document.getElementById('m-category').value='BeautyCare';
   document.getElementById('m-priority').value='medium';
-  document.getElementById('m-price').value='';
-  document.getElementById('m-date').value='';
-  document.getElementById('m-link').value='';
-  document.getElementById('m-note').value='';
   document.getElementById('m-delete-btn').style.display='none';
+  document.getElementById('img-preview-wrap').style.display='none';
   document.getElementById('modal').classList.add('open');
   setTimeout(function(){document.getElementById('m-name').focus();},100);
 }
-
 function openEditModal(id){
   var item=items.find(function(i){return i.id===id;});if(!item)return;
   editingId=id;
@@ -419,15 +530,18 @@ function openEditModal(id){
   document.getElementById('m-date').value=item.date||'';
   document.getElementById('m-link').value=item.link||'';
   document.getElementById('m-note').value=item.note||'';
+  document.getElementById('m-recurring').checked=!!item.recurring;
+  document.getElementById('m-recur-period').value=item.recurPeriod||'mo';
+  document.getElementById('m-image').value=item.image||'';
   document.getElementById('m-delete-btn').style.display='inline-flex';
+  previewModalImage(item.image||'');
   document.getElementById('modal').classList.add('open');
 }
-
 function closeModal(){document.getElementById('modal').classList.remove('open');editingId=null;}
-
 function saveItem(){
   var name=document.getElementById('m-name').value.trim();
   if(!name){document.getElementById('m-name').focus();return;}
+  var old=editingId?items.find(function(i){return i.id===editingId;})||{}:{};
   var item={
     id:editingId||'w_'+Date.now(),
     name:name,
@@ -437,27 +551,27 @@ function saveItem(){
     date:document.getElementById('m-date').value,
     link:document.getElementById('m-link').value.trim(),
     note:document.getElementById('m-note').value.trim(),
-    purchased:editingId?(items.find(function(i){return i.id===editingId;})||{}).purchased||false:false,
+    image:document.getElementById('m-image').value.trim(),
+    recurring:document.getElementById('m-recurring').checked,
+    recurPeriod:document.getElementById('m-recur-period').value,
+    purchased:old.purchased||false,
+    addedOn:old.addedOn||(new Date().toISOString().slice(0,10)),
   };
   if(editingId){var idx=items.findIndex(function(i){return i.id===editingId;});if(idx>=0)items[idx]=item;}
   else items.push(item);
   save();closeModal();render();
 }
-
-function deleteFromModal(){
-  if(!editingId)return;if(!confirm('Delete this item?'))return;
-  deleteItem(editingId);closeModal();
-}
+function deleteFromModal(){if(!editingId)return;if(!confirm('Delete this item?'))return;deleteItem(editingId);closeModal();}
 
 document.getElementById('modal').addEventListener('click',function(e){if(e.target===this)closeModal();});
 document.addEventListener('keydown',function(e){if(e.key==='Escape')closeModal();});
 
 function render(){renderSummary();renderControls();renderList();}
 
+var DS=['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+var MF=['January','February','March','April','May','June','July','August','September','October','November','December'];
 var now=new Date();
-var DAYS=['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
-var MONTHS=['January','February','March','April','May','June','July','August','September','October','November','December'];
-document.getElementById('today-date').textContent=DAYS[now.getDay()]+', '+MONTHS[now.getMonth()]+' '+now.getDate()+', '+now.getFullYear();
+document.getElementById('today-date').textContent=DS[now.getDay()]+', '+MF[now.getMonth()]+' '+now.getDate()+', '+now.getFullYear();
 
 load();render();
 </script>
