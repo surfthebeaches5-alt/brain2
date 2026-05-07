@@ -261,10 +261,15 @@ hr.r{border:none;border-top:1px solid var(--line);margin:9px 0;}
 .cat-picker{display:flex;gap:6px;flex-wrap:wrap;}
 .cat-opt{padding:5px 11px;border-radius:12px;font-size:11px;font-weight:700;cursor:pointer;border:1.5px solid transparent;transition:all .15s;}
 .cat-opt.c-work{background:#eaf0fb;color:#2a3a5a;}
-.cat-opt.c-personal{background:#fde7ef;color:#7a2a4a;}
+.cat-opt.c-social{background:#fde7ef;color:#7a2a4a;}
+.cat-opt.c-travel{background:#ecf5e8;color:#2a5a38;}
+.cat-opt.c-learning{background:#fffac9;color:#5a4a08;}
+.cat-opt.c-tasks{background:var(--accent-soft);color:#4a3a8a;}
 .cat-opt.c-health{background:#ecf2dd;color:#3a4a18;}
-.cat-opt.c-growth{background:var(--accent-soft);color:#4a3a8a;}
+.cat-opt.c-selfcare{background:#fde7ef;color:#7a2a4a;}
+.cat-opt.c-personal{background:#fdf0d8;color:#6a4010;}
 .cat-opt.c-idea{background:#fffac9;color:#5a4a08;}
+.cat-opt.c-growth{background:var(--accent-soft);color:#4a3a8a;}
 .cat-opt.selected{border-color:var(--ink);transform:scale(1.05);}
 .modal-actions{display:flex;gap:10px;margin-top:20px;}
 .m-btn{flex:1;padding:10px;border-radius:22px;border:none;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;transition:all .15s;}
@@ -276,6 +281,20 @@ hr.r{border:none;border-top:1px solid var(--line);margin:9px 0;}
 /* ── TOAST ── */
 .toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(80px);background:var(--ink);color:#fff;padding:9px 18px;border-radius:22px;font-size:12.5px;font-weight:600;transition:transform .3s;z-index:500;}
 .toast.show{transform:translateX(-50%) translateY(0);}
+
+/* ── MEDIA SPLIT ── */
+.media-split{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+.media-col-hdr{font-size:9.5px;font-weight:800;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted);margin-bottom:7px;display:flex;align-items:center;gap:5px;}
+.media-item-row{display:flex;align-items:flex-start;gap:8px;padding:7px 9px;border-radius:11px;background:var(--warm);border:1px solid var(--line);margin-bottom:5px;}
+.media-thumb{width:28px;height:38px;border-radius:4px;background:var(--bg);flex-shrink:0;overflow:hidden;display:flex;align-items:center;justify-content:center;font-size:13px;box-shadow:0 1px 3px rgba(0,0,0,.1);}
+.media-thumb img{width:100%;height:100%;object-fit:cover;display:block;}
+.media-item-info{flex:1;min-width:0;}
+.media-item-title{font-size:11.5px;font-weight:700;line-height:1.3;overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;}
+.media-item-auth{font-size:10px;color:var(--muted);font-weight:600;margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.media-item-tag{font-size:9px;font-weight:800;padding:2px 6px;border-radius:6px;white-space:nowrap;margin-top:3px;display:inline-block;}
+.tag-reading{background:var(--blue-bg);color:var(--blue);}
+.tag-upnext{background:var(--amber-bg);color:var(--amber);}
+.media-empty{font-size:11px;color:var(--muted);font-style:italic;padding:8px 0;}
 </style>
 </head>
 <body>
@@ -301,11 +320,14 @@ hr.r{border:none;border-top:1px solid var(--line);margin:9px 0;}
     <div class="f-group">
       <label>Category</label>
       <div class="cat-picker" id="cat-picker">
-        <div class="cat-opt c-work" data-cat="work">Work</div>
-        <div class="cat-opt c-personal selected" data-cat="personal">Personal</div>
-        <div class="cat-opt c-health" data-cat="health">Health</div>
-        <div class="cat-opt c-growth" data-cat="growth">Growth</div>
-        <div class="cat-opt c-idea" data-cat="idea">Idea</div>
+        <div class="cat-opt c-work" data-cat="work">💼 Work</div>
+        <div class="cat-opt c-social" data-cat="social">👥 Social</div>
+        <div class="cat-opt c-travel" data-cat="travel">✈️ Travel</div>
+        <div class="cat-opt c-learning" data-cat="learning">📖 Learning</div>
+        <div class="cat-opt c-tasks" data-cat="tasks">✅ Tasks</div>
+        <div class="cat-opt c-health" data-cat="health">💚 Health</div>
+        <div class="cat-opt c-selfcare" data-cat="selfcare">🌸 Self-Care</div>
+        <div class="cat-opt c-personal selected" data-cat="personal">🌟 Personal</div>
       </div>
     </div>
     <div class="modal-actions">
@@ -399,14 +421,8 @@ hr.r{border:none;border-top:1px solid var(--line);margin:9px 0;}
     <!-- Media -->
     <div class="tile t-ink c6">
       <div class="ey"><span class="ey-dot" style="background:var(--ink)"></span>Media Tracker</div>
-      <div class="ttl">Reading Life</div>
-      <div class="m-stats" id="m-stats"></div>
-      <div id="book-list"></div>
-      <hr class="r">
-      <div style="display:flex;justify-content:space-between;align-items:center;font-size:12px;font-weight:600;padding:2px 0;">
-        <span style="color:var(--muted);">📚 Books read in 2026</span>
-        <span style="font-family:Fraunces,serif;font-size:14px;font-weight:600;" id="rs-books">—</span>
-      </div>
+      <div class="ttl">Currently Reading & Up Next</div>
+      <div class="media-split" id="media-split"></div>
       <hr class="r">
       <a href="media/" class="btn">Open Tracker →</a>
     </div>
@@ -593,21 +609,40 @@ document.getElementById('wo-focus').textContent=WF[d];
 // ── MEDIA ──
 (function(){
   var raw=localStorage.getItem('mediaTracker3');
-  var books=[],articles=[];if(raw){try{var x=JSON.parse(raw);books=x.books||[];articles=x.articles||[];}catch(e){}}
-  var done=books.filter(function(b){return b.status==='done';});
-  var reading=books.filter(function(b){return b.status==='progress';});
-  var want=books.filter(function(b){return b.status==='want';});
-  document.getElementById('m-stats').innerHTML='<div class="m-stat"><div class="m-num">'+done.length+'</div><div class="m-lbl">Read</div></div><div class="m-stat"><div class="m-num">'+reading.length+'</div><div class="m-lbl">Reading</div></div><div class="m-stat"><div class="m-num">'+want.length+'</div><div class="m-lbl">Want</div></div><div class="m-stat"><div class="m-num">'+books.length+'</div><div class="m-lbl">Total</div></div>';
-  document.getElementById('rs-books').textContent=done.length+' of '+books.length;
-  var shown=reading.slice(0,2);if(shown.length<2)shown=shown.concat(want.slice(0,2-shown.length));
-  var bl=document.getElementById('book-list');
-  if(!shown.length){bl.innerHTML='<div class="empty">Nothing in progress.</div>';return;}
-  shown.forEach(function(b){
-    var cover=b.cover?'<img src="'+b.cover+'" alt="">':'📖';
-    var row=document.createElement('div');row.className='book-row';
-    row.innerHTML='<div class="bcover">'+cover+'</div><div style="flex:1;min-width:0;"><div class="btitle">'+b.title+'</div><div class="bauth">'+(b.creator||'')+'</div></div><span class="b-tag '+(b.status==='progress'?'b-reading':'b-want')+'">'+(b.status==='progress'?'Reading':'Up Next')+'</span>';
-    bl.appendChild(row);
-  });
+  var books=[],articles=[];
+  if(raw){try{var x=JSON.parse(raw);books=x.books||[];articles=x.articles||[];}catch(e){}}
+
+  function makeItem(item,icon){
+    var isReading=item.status==='progress';
+    var thumb=item.cover?'<img src="'+esc(item.cover)+'" alt="">':icon;
+    return '<div class="media-item-row">'+
+      '<div class="media-thumb">'+thumb+'</div>'+
+      '<div class="media-item-info">'+
+        '<div class="media-item-title">'+esc(item.title)+'</div>'+
+        '<div class="media-item-auth">'+esc(item.creator||item.author||'')+'</div>'+
+        '<span class="media-item-tag '+(isReading?'tag-reading':'tag-upnext')+'">'+(isReading?'Reading':'Up Next')+'</span>'+
+      '</div>'+
+    '</div>';
+  }
+
+  // Books: reading first, then want, max 2
+  var bReading=books.filter(function(b){return b.status==='progress';});
+  var bWant=books.filter(function(b){return b.status==='want';});
+  var shownBooks=bReading.slice(0,2);
+  if(shownBooks.length<2)shownBooks=shownBooks.concat(bWant.slice(0,2-shownBooks.length));
+
+  // Articles: reading first, then want, max 2
+  var aReading=articles.filter(function(a){return a.status==='progress';});
+  var aWant=articles.filter(function(a){return a.status==='want';});
+  var shownArts=aReading.slice(0,2);
+  if(shownArts.length<2)shownArts=shownArts.concat(aWant.slice(0,2-shownArts.length));
+
+  var booksHtml=shownBooks.length?shownBooks.map(function(b){return makeItem(b,'📖');}).join(''):'<div class="media-empty">Nothing in progress.</div>';
+  var artsHtml=shownArts.length?shownArts.map(function(a){return makeItem(a,'📰');}).join(''):'<div class="media-empty">Nothing queued.</div>';
+
+  document.getElementById('media-split').innerHTML=
+    '<div><div class="media-col-hdr">📚 Books</div>'+booksHtml+'</div>'+
+    '<div><div class="media-col-hdr">📰 Articles</div>'+artsHtml+'</div>';
 })();
 
 // ── MEALS ──
@@ -770,7 +805,7 @@ function openEventModal(){
   document.getElementById('ev-end').value='10:00';
   document.getElementById('ev-loc').value='';
   calState.selectedCat='personal';
-  document.querySelectorAll('.cat-opt').forEach(function(o){o.classList.toggle('selected',o.dataset.cat==='personal');});
+  calState.selectedCat='personal';document.querySelectorAll('.cat-opt').forEach(function(o){o.classList.toggle('selected',o.dataset.cat==='personal');});
   document.getElementById('event-modal').classList.add('open');
   setTimeout(function(){document.getElementById('ev-title').focus();},100);
 }
