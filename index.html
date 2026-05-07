@@ -216,14 +216,24 @@ hr.r{border:none;border-top:1px solid var(--line);margin:9px 0;}
 .rp-tl-card{border-radius:11px;padding:8px 10px;display:flex;align-items:flex-start;gap:7px;border:1px solid var(--line);transition:all .2s;}
 .rp-tl-card:hover{opacity:.85;}
 .rp-tl-card.cat-work{background:#eaf0fb;border-color:#d6e0f3;}
-.rp-tl-card.cat-personal{background:#fde7ef;border-color:#f4cdd9;}
+.rp-tl-card.cat-social{background:#fde7ef;border-color:#f4cdd9;}
+.rp-tl-card.cat-travel{background:#ecf5e8;border-color:#c8e0c0;}
+.rp-tl-card.cat-learning{background:#fffac9;border-color:#efe28b;}
+.rp-tl-card.cat-tasks{background:var(--accent-soft);border-color:#d6c8f0;}
 .rp-tl-card.cat-health{background:#ecf2dd;border-color:#d6e0bd;}
+.rp-tl-card.cat-selfcare{background:#fde7ef;border-color:#f4cdd9;}
+.rp-tl-card.cat-personal{background:#fdf0d8;border-color:#e0c870;}
 .rp-tl-card.cat-idea{background:#fffac9;border-color:#efe28b;}
 .rp-tl-card.cat-growth{background:var(--accent-soft);border-color:#d6c8f0;}
-.rp-tl-dot{width:20px;height:20px;border-radius:50%;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:9px;}
-.rp-tl-dot.cat-work{background:var(--blue-bg);}
-.rp-tl-dot.cat-personal{background:#fde7ef;}
-.rp-tl-dot.cat-health{background:var(--green-bg);}
+.rp-tl-dot{width:20px;height:20px;border-radius:50%;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:10px;}
+.rp-tl-dot.cat-work{background:#d4eaf7;}
+.rp-tl-dot.cat-social{background:#fde7ef;}
+.rp-tl-dot.cat-travel{background:#d8f0e4;}
+.rp-tl-dot.cat-learning{background:#fffac9;}
+.rp-tl-dot.cat-tasks{background:var(--accent-soft);}
+.rp-tl-dot.cat-health{background:#d8f0e4;}
+.rp-tl-dot.cat-selfcare{background:#fde7ef;}
+.rp-tl-dot.cat-personal{background:#fdf0d8;}
 .rp-tl-dot.cat-idea{background:#fffac9;}
 .rp-tl-dot.cat-growth{background:var(--accent-soft);}
 .rp-tl-info{flex:1;min-width:0;}
@@ -649,6 +659,7 @@ function saveCalEvents(events){
   localStorage.setItem(CAL_KEY,JSON.stringify(cal));
 }
 
+function parseLocalDate(s){var p=s.split('-');return new Date(parseInt(p[0]),parseInt(p[1])-1,parseInt(p[2]));}
 function getWeekNum(d){
   var target=new Date(d.valueOf());
   var dayNr=(d.getDay()+6)%7;
@@ -701,7 +712,7 @@ function renderCalendar(){
     var wn=getWeekNum(week[0].date);
     wkEl.textContent='W'+wn;
     // Highlight if this week contains selected date
-    var selD=new Date(calState.selectedDate);
+    var selD=parseLocalDate(calState.selectedDate);
     if(getWeekNum(selD)===wn&&selD.getFullYear()===week[0].date.getFullYear())wkEl.classList.add('this-week');
     grid.appendChild(wkEl);
   }
@@ -710,10 +721,10 @@ function renderCalendar(){
 function renderTimeline(){
   var tl=document.getElementById('rp-timeline');
   tl.innerHTML='';
-  var selD=new Date(calState.selectedDate);
+  var selD=parseLocalDate(calState.selectedDate);
   document.getElementById('rp-tl-date').textContent=MS[selD.getMonth()]+' '+selD.getDate();
   var todayStr=dateKey(now);
-  var sub=calState.selectedDate===todayStr?"Today's timeline":calState.selectedDate>todayStr?"Upcoming":"Past timeline";
+  var sub=calState.selectedDate===todayStr?"Today's timeline":calState.selectedDate>todayStr?"Upcoming timeline":"Past timeline";
   document.getElementById('rp-tl-sub').textContent=sub;
   var events=loadCalEvents().filter(function(e){return e.date===calState.selectedDate&&!e.done;}).sort(function(a,b){return (a.time||'').localeCompare(b.time||'');});
   if(!events.length){tl.innerHTML='<div class="rp-tl-empty">Nothing scheduled — tap "+ Add event" to plan your day.</div>';return;}
@@ -726,7 +737,7 @@ function renderTimeline(){
     if(calState.selectedDate===todayStr&&evt.time&&evt.time<=nowStr&&(endTime>=nowStr||!endTime))timeEl.classList.add('active-now');
     var card=document.createElement('div');card.className='rp-tl-card cat-'+(evt.cat||'personal');
     var dot=document.createElement('div');dot.className='rp-tl-dot cat-'+(evt.cat||'personal');
-    dot.textContent=({work:'💼',personal:'👤',health:'💚',idea:'💡',growth:'📈'})[evt.cat]||'•';
+    dot.textContent=({work:'💼',social:'👥',travel:'✈️',learning:'📖',tasks:'✅',health:'💚',selfcare:'🌸',personal:'🌟',idea:'💡',growth:'📈'})[evt.cat]||'•';
     dot.style.fontSize='10px';
     var info=document.createElement('div');info.className='rp-tl-info';
     info.innerHTML='<div class="rp-tl-title">'+esc(evt.title)+'</div>'+
@@ -778,7 +789,7 @@ function saveEvent(){
   events.push({id:'ev_'+Date.now(),title:title,date:date,time:start,endTime:end,location:loc,cat:calState.selectedCat,done:false});
   saveCalEvents(events);
   calState.selectedDate=date;
-  var selD=new Date(date);calState.year=selD.getFullYear();calState.month=selD.getMonth();
+  var selD=parseLocalDate(date);calState.year=selD.getFullYear();calState.month=selD.getMonth();
   closeEventModal();renderCalendar();renderTimeline();showToast('Event saved ✓');
 }
 
