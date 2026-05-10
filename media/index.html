@@ -490,6 +490,16 @@ function renderControls(){
   var r2=document.createElement('div');r2.className='controls-row2';
   var si=document.createElement('input');si.className='search-input';si.type='text';si.placeholder='Search title, author, notes...';si.value=searchQuery;si.oninput=function(){searchQuery=this.value;renderGrid();};r2.appendChild(si);
   var addB=document.createElement('button');addB.className='add-btn';addB.textContent='+ Add';addB.onclick=openAddModal;r2.appendChild(addB);
+  if(currentSection==='screen'){
+    var ecLink=document.createElement('a');
+    ecLink.href='https://episodecalendar.com/en/calendar';
+    ecLink.target='_blank';
+    ecLink.innerHTML='&#128197; Episode Calendar &#8599;';
+    ecLink.style.cssText='display:inline-flex;align-items:center;gap:5px;padding:7px 14px;border:1.5px solid #d9d2bd;border-radius:20px;font-family:inherit;font-size:11.5px;font-weight:600;color:var(--muted);text-decoration:none;transition:all .15s;white-space:nowrap;flex-shrink:0;';
+    ecLink.addEventListener("mouseover",function(){this.style.borderColor="var(--accent-deep)";this.style.color="var(--ink)";});
+    ecLink.addEventListener("mouseout",function(){this.style.borderColor="#d9d2bd";this.style.color="var(--muted)";});
+    r2.appendChild(ecLink);
+  }
   wrap.appendChild(r2);
 }
 
