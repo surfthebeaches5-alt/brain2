@@ -1,0 +1,682 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DC Guide</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,ital,wght@9..144,0,500;9..144,0,600;9..144,0,700;9..144,1,400&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+:root{
+  --bg:#f3ecd8;--surface:#fff;--sidebar:#f8f1dd;--sidebar-line:#e6dec5;
+  --ink:#1a1612;--muted:#7a7468;--line:#ececec;--warm:#faf6ec;
+  --accent:#c9b6ee;--accent-deep:#b099e0;--accent-soft:#ede5fb;
+}
+html,body{background:var(--bg);font-family:'Plus Jakarta Sans',system-ui,sans-serif;color:var(--ink);min-height:100vh;-webkit-font-smoothing:antialiased;}
+
+/* ── TOPBAR ── */
+.topbar{background:var(--sidebar);border-bottom:1px solid var(--sidebar-line);padding:16px 32px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:300;}
+.topbar-left{display:flex;align-items:center;gap:14px;}
+.back-btn{display:inline-flex;align-items:center;gap:6px;padding:7px 14px;border:1.5px solid #d9d2bd;border-radius:20px;font-size:12px;color:var(--muted);cursor:pointer;background:transparent;font-family:inherit;text-decoration:none;transition:all .15s;}
+.back-btn:hover{border-color:var(--accent-deep);color:var(--ink);}
+.topbar-title{font-family:'Fraunces',serif;font-size:22px;font-weight:600;letter-spacing:-0.4px;}
+.topbar-date{font-size:11px;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted);font-weight:500;}
+
+/* ── MONTH STRIP ── */
+.month-strip-wrap{background:var(--surface);border-bottom:1px solid var(--line);position:sticky;top:57px;z-index:200;overflow-x:auto;}
+.month-strip{display:flex;padding:0 24px;min-width:max-content;}
+.month-tab{padding:12px 14px;font-family:inherit;font-size:12px;font-weight:700;cursor:pointer;border:none;background:transparent;color:var(--muted);border-bottom:2.5px solid transparent;margin-bottom:-1px;transition:all .15s;white-space:nowrap;display:inline-flex;align-items:center;gap:6px;}
+.month-tab:hover{color:var(--ink);}
+.month-tab.active{color:var(--ink);border-bottom-color:var(--accent-deep);}
+.month-tab-count{font-size:9.5px;font-weight:800;background:var(--accent-soft);color:var(--accent-deep);padding:1px 7px;border-radius:10px;line-height:1.6;}
+.month-tab.active .month-tab-count{background:var(--accent-deep);color:#fff;}
+.month-tab-count.empty{display:none;}
+.month-tab.evergreen.active{border-bottom-color:#30a060;}
+.month-tab.evergreen .month-tab-count{background:#d8eee8;color:#1a4a2a;}
+.month-tab.evergreen.active .month-tab-count{background:#30a060;color:#fff;}
+
+/* ── MAIN ── */
+.hub{max-width:1200px;margin:0 auto;padding:24px 24px 60px;}
+
+/* ── RESOURCES PANEL ── */
+.resources-panel{background:var(--surface);border:1px solid var(--line);border-radius:18px;padding:16px 20px;margin-bottom:22px;}
+.resources-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;}
+.resources-title{font-size:9.5px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);font-weight:800;display:flex;align-items:center;gap:7px;}
+.resources-title::before{content:'🔗';font-size:12px;}
+.resources-links{display:flex;gap:8px;flex-wrap:wrap;align-items:center;}
+.resource-link{display:inline-flex;align-items:center;gap:6px;padding:7px 14px;border:1.5px solid var(--line);border-radius:14px;font-size:12px;font-weight:600;color:var(--ink);text-decoration:none;background:var(--warm);transition:all .15s;cursor:pointer;}
+.resource-link:hover{border-color:var(--accent-deep);background:var(--accent-soft);color:var(--accent-deep);}
+.resource-link-del{background:none;border:none;color:#ccc;cursor:pointer;font-size:10px;padding:0 0 0 4px;line-height:1;transition:color .15s;flex-shrink:0;}
+.resource-link-del:hover{color:#c44;}
+.resources-empty{font-size:12px;color:var(--muted);font-style:italic;}
+.add-resource-btn{display:inline-flex;align-items:center;gap:5px;padding:6px 13px;border:1.5px dashed var(--line);border-radius:14px;font-size:11.5px;font-weight:600;color:var(--muted);background:transparent;cursor:pointer;font-family:inherit;transition:all .15s;}
+.add-resource-btn:hover{border-color:var(--accent-deep);color:var(--accent-deep);}
+.resource-add-inline{display:none;gap:7px;align-items:center;margin-top:10px;padding-top:10px;border-top:1px solid var(--line);}
+.resource-add-inline.open{display:flex;}
+.res-inp{border:1.5px solid var(--line);border-radius:10px;padding:7px 11px;font-size:12.5px;font-family:inherit;color:var(--ink);background:var(--warm);outline:none;transition:border .15s;}
+.res-inp:focus{border-color:var(--accent-deep);}
+.res-inp.wide{flex:1;min-width:160px;}
+.res-save-btn{padding:7px 14px;background:var(--ink);color:#fff;border:none;border-radius:10px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit;flex-shrink:0;}
+.res-cancel-btn{padding:7px 10px;background:transparent;color:var(--muted);border:none;font-size:12px;cursor:pointer;font-family:inherit;}
+
+/* ── PAGE HERO ── */
+.page-hero{margin-bottom:22px;display:flex;align-items:flex-end;justify-content:space-between;gap:20px;}
+.hero-month{font-family:'Fraunces',serif;font-size:3rem;font-weight:600;letter-spacing:-1.5px;line-height:1;color:var(--ink);}
+.hero-month em{font-style:italic;color:var(--accent-deep);}
+.hero-month.evergreen-title em{color:#30a060;}
+.hero-sub{font-size:12px;color:var(--muted);margin-top:6px;font-weight:600;letter-spacing:.5px;}
+.hero-stats{display:flex;gap:20px;}
+.hero-stat-num{font-family:'Fraunces',serif;font-size:26px;font-weight:600;line-height:1;letter-spacing:-.5px;}
+.hero-stat-lbl{font-size:9.5px;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted);font-weight:700;margin-top:3px;}
+
+/* ── FILTER BAR ── */
+.filter-bar{display:flex;align-items:center;gap:7px;flex-wrap:wrap;margin-bottom:22px;padding:13px 18px;background:var(--surface);border:1px solid var(--line);border-radius:16px;}
+.filter-label{font-size:9.5px;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted);font-weight:700;flex-shrink:0;}
+.f-pill{padding:5px 12px;border:1.5px solid var(--line);border-radius:12px;font-size:11.5px;font-weight:700;cursor:pointer;background:var(--surface);color:var(--muted);font-family:inherit;transition:all .15s;white-space:nowrap;}
+.f-pill:hover{border-color:var(--accent-deep);color:var(--ink);}
+.f-pill.active{background:var(--ink);border-color:var(--ink);color:#fff;}
+.f-pill.price-active{background:var(--accent-soft);border-color:var(--accent-deep);color:var(--accent-deep);}
+.filter-sep{width:1px;height:18px;background:var(--line);flex-shrink:0;}
+.add-btn{margin-left:auto;padding:8px 18px;border:none;border-radius:20px;background:var(--ink);color:#fff;font-family:inherit;font-size:12px;font-weight:700;cursor:pointer;transition:transform .15s;flex-shrink:0;}
+.add-btn:hover{transform:translateY(-1px);}
+
+/* ── CARDS GRID ── */
+.cards-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:14px;}
+
+/* ── EVENT CARD ── */
+.event-card{background:var(--surface);border:1px solid var(--line);border-radius:18px;overflow:hidden;transition:all .2s;display:flex;flex-direction:column;}
+.event-card:hover{transform:translateY(-3px);box-shadow:0 10px 28px rgba(0,0,0,.09);}
+.event-card.done{opacity:.68;}
+/* Banner image */
+.card-banner{width:100%;height:160px;object-fit:cover;display:block;flex-shrink:0;}
+.card-banner-placeholder{width:100%;height:6px;flex-shrink:0;}
+/* Body */
+.card-body{padding:14px 16px;flex:1;display:flex;flex-direction:column;gap:5px;}
+.card-cat-row{display:flex;align-items:center;gap:7px;flex-wrap:wrap;}
+.cat-badge{display:inline-flex;align-items:center;gap:4px;padding:3px 10px;border-radius:10px;font-size:10px;font-weight:800;letter-spacing:.3px;text-transform:uppercase;}
+.price-badge{font-size:10.5px;font-weight:700;color:var(--muted);padding:3px 8px;border:1.5px solid var(--line);border-radius:9px;}
+.hood-badge{font-size:10px;font-weight:600;color:var(--muted);padding:3px 8px;border-radius:9px;background:var(--warm);}
+.card-title{font-family:'Fraunces',serif;font-size:17px;font-weight:600;letter-spacing:-.2px;line-height:1.3;}
+.card-meta{font-size:11px;color:var(--muted);font-weight:600;display:flex;flex-wrap:wrap;gap:8px;margin-top:1px;}
+.card-meta-item{display:flex;align-items:center;gap:3px;}
+.card-note{font-size:11.5px;color:var(--muted);line-height:1.6;font-style:italic;flex:1;margin-top:3px;}
+/* Footer */
+.card-footer{display:flex;align-items:center;gap:7px;padding:9px 14px;border-top:1px solid var(--line);background:var(--warm);}
+.status-btn{display:inline-flex;align-items:center;gap:5px;padding:5px 11px;border-radius:12px;font-size:10.5px;font-weight:700;cursor:pointer;border:1.5px solid;font-family:inherit;transition:all .15s;}
+.status-want{background:#fffbec;border-color:#f0d8a0;color:#8a6010;}
+.status-want:hover{background:#fff5d0;}
+.status-done{background:#eafaf0;border-color:#a8d8b0;color:#1a5a30;}
+.status-done:hover{background:#d8f0e0;}
+.card-link-btn{display:inline-flex;align-items:center;gap:3px;padding:5px 10px;border:1.5px solid var(--line);border-radius:11px;font-size:10.5px;font-weight:600;color:var(--muted);text-decoration:none;transition:all .15s;}
+.card-link-btn:hover{border-color:var(--accent-deep);color:var(--accent-deep);background:var(--accent-soft);}
+/* Dots menu */
+.dots-wrap{position:relative;margin-left:auto;flex-shrink:0;}
+.dots-btn{width:28px;height:28px;border-radius:50%;border:1.5px solid var(--line);background:var(--surface);cursor:pointer;font-size:13px;color:var(--muted);display:flex;align-items:center;justify-content:center;transition:all .15s;font-family:inherit;letter-spacing:1px;}
+.dots-btn:hover{border-color:var(--accent-deep);color:var(--ink);background:var(--accent-soft);}
+.dots-menu{position:absolute;right:0;bottom:calc(100% + 5px);background:var(--surface);border:1px solid var(--line);border-radius:12px;box-shadow:0 -8px 24px rgba(0,0,0,.1);min-width:120px;overflow:hidden;display:none;z-index:50;}
+.dots-menu.open{display:block;animation:popIn .15s;}
+@keyframes popIn{from{opacity:0;transform:scale(.95)}to{opacity:1;transform:scale(1)}}
+.dots-item{display:block;padding:9px 14px;font-size:12px;font-weight:600;color:var(--ink);cursor:pointer;border:none;background:transparent;font-family:inherit;width:100%;text-align:left;transition:background .1s;}
+.dots-item:hover{background:var(--warm);}
+.dots-item.danger{color:#c44;}
+.dots-item.danger:hover{background:#fce8e8;}
+
+/* ── EMPTY ── */
+.empty{text-align:center;padding:60px 20px;color:var(--muted);background:var(--surface);border:1.5px dashed var(--line);border-radius:18px;grid-column:1/-1;}
+.empty-icon{font-size:2.5rem;margin-bottom:12px;}
+.empty-text{font-family:'Fraunces',serif;font-size:20px;font-style:italic;color:var(--ink);margin-bottom:6px;}
+.empty-sub{font-size:12.5px;}
+
+/* ── MODAL ── */
+.modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.4);backdrop-filter:blur(4px);z-index:400;align-items:center;justify-content:center;padding:20px;}
+.modal-overlay.open{display:flex;animation:fadeIn .2s;}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+.modal{background:var(--surface);border-radius:22px;border:1px solid var(--line);padding:26px 28px;width:100%;max-width:540px;max-height:90vh;overflow-y:auto;box-shadow:0 30px 60px -20px rgba(0,0,0,.3);animation:popBig .2s;}
+@keyframes popBig{from{transform:scale(.95);opacity:0}to{transform:scale(1);opacity:1}}
+.modal-title{font-family:'Fraunces',serif;font-size:22px;font-weight:600;margin-bottom:20px;letter-spacing:-.3px;}
+.f-field{margin-bottom:13px;}
+.f-lbl{font-size:9.5px;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted);font-weight:700;margin-bottom:5px;display:block;}
+.f-inp{width:100%;border:1.5px solid var(--line);border-radius:10px;padding:9px 12px;font-size:13px;font-family:inherit;color:var(--ink);background:var(--warm);outline:none;transition:border .15s;}
+.f-inp:focus{border-color:var(--accent-deep);}
+.f-row{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+.f-row3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;}
+.f-hint{font-size:10.5px;color:var(--muted);margin-top:4px;font-style:italic;}
+.m-actions{display:flex;gap:10px;justify-content:flex-end;margin-top:20px;}
+.m-btn{padding:10px 22px;border-radius:22px;font-family:inherit;font-size:13px;font-weight:600;cursor:pointer;border:1.5px solid;transition:all .15s;}
+.m-cancel{background:var(--warm);border-color:var(--line);color:var(--muted);}
+.m-save{background:var(--ink);border-color:var(--ink);color:#fff;}
+.m-save:hover{transform:translateY(-1px);}
+.m-delete{background:#fde0e8;border-color:#f2a0b0;color:#a0304a;}
+/* Cat selector in modal */
+.cat-selector{display:flex;gap:7px;flex-wrap:wrap;}
+.cat-sel-btn{padding:6px 12px;border:1.5px solid var(--line);border-radius:11px;font-size:11.5px;font-weight:700;cursor:pointer;background:var(--surface);color:var(--muted);font-family:inherit;transition:all .15s;}
+
+/* ── IMAGE PREVIEW IN MODAL ── */
+.img-preview{width:100%;height:120px;border-radius:10px;object-fit:cover;margin-top:7px;display:none;border:1px solid var(--line);}
+.img-preview.show{display:block;}
+
+@media(max-width:700px){
+  .topbar{padding:14px 18px;}
+  .hub{padding:18px 14px 60px;}
+  .page-hero{flex-direction:column;gap:8px;align-items:flex-start;}
+  .hero-month{font-size:2.2rem;}
+  .filter-bar{gap:6px;}
+}
+</style>
+</head>
+<body>
+
+<!-- ITEM MODAL -->
+<div class="modal-overlay" id="modal">
+  <div class="modal">
+    <div class="modal-title" id="modal-title">Add Suggestion</div>
+    <div class="f-field">
+      <label class="f-lbl">Name / Event Title</label>
+      <input class="f-inp" id="m-name" type="text" placeholder="e.g. Georgetown Waterfront Walk">
+    </div>
+    <div class="f-row">
+      <div class="f-field">
+        <label class="f-lbl">Category</label>
+        <div class="cat-selector" id="cat-selector"></div>
+      </div>
+      <div class="f-field">
+        <label class="f-lbl">Month</label>
+        <select class="f-inp" id="m-month">
+          <option value="evergreen">📌 Anytime / Year-Round</option>
+        </select>
+        <div class="f-hint">Pick "Anytime" for restaurants, parks & go-to spots</div>
+      </div>
+    </div>
+    <div class="f-row">
+      <div class="f-field">
+        <label class="f-lbl">Neighborhood</label>
+        <select class="f-inp" id="m-hood">
+          <option value="">— Any / TBD —</option>
+          <option>Georgetown</option>
+          <option>Dupont Circle</option>
+          <option>14th St / U Street</option>
+          <option>Adams Morgan</option>
+          <option>Capitol Hill</option>
+          <option>Navy Yard / Yards Park</option>
+          <option>National Mall</option>
+          <option>Penn Quarter / Chinatown</option>
+          <option>Logan Circle</option>
+          <option>Shaw</option>
+          <option>Columbia Heights</option>
+          <option>Foggy Bottom</option>
+          <option>H Street Corridor</option>
+          <option>Petworth</option>
+          <option>NoMa / Union Market</option>
+          <option>Wharf / Southwest</option>
+          <option>Chevy Chase</option>
+          <option>Other</option>
+        </select>
+      </div>
+      <div class="f-field">
+        <label class="f-lbl">Price Tier</label>
+        <select class="f-inp" id="m-price">
+          <option value="free">Free</option>
+          <option value="$">$ — Under $20</option>
+          <option value="$$">$$ — $20–$50</option>
+          <option value="$$$">$$$ — $50+</option>
+        </select>
+      </div>
+    </div>
+    <div class="f-field">
+      <label class="f-lbl">When / Dates <span style="font-weight:400;letter-spacing:0;text-transform:none;font-size:9px;">(optional)</span></label>
+      <input class="f-inp" id="m-dates" type="text" placeholder="e.g. Every Fri · June 7–9 · Weekends only">
+    </div>
+    <div class="f-field">
+      <label class="f-lbl">Cover Image URL <span style="font-weight:400;letter-spacing:0;text-transform:none;font-size:9px;">(optional — right-click any image → Copy Image Address)</span></label>
+      <input class="f-inp" id="m-img" type="text" placeholder="https://..." oninput="previewImg(this.value)">
+      <img class="img-preview" id="img-preview" alt="">
+    </div>
+    <div class="f-field">
+      <label class="f-lbl">Link <span style="font-weight:400;letter-spacing:0;text-transform:none;font-size:9px;">(optional)</span></label>
+      <input class="f-inp" id="m-link" type="text" placeholder="https://...">
+    </div>
+    <div class="f-field">
+      <label class="f-lbl">Notes <span style="font-weight:400;letter-spacing:0;text-transform:none;font-size:9px;">(optional)</span></label>
+      <textarea class="f-inp" id="m-note" rows="2" style="resize:vertical;min-height:60px;" placeholder="Dress code, best time to go, book ahead..."></textarea>
+    </div>
+    <div class="m-actions">
+      <button class="m-btn m-cancel" onclick="closeModal()">Cancel</button>
+      <button class="m-btn m-delete" id="m-del-btn" style="display:none;" onclick="deleteFromModal()">Delete</button>
+      <button class="m-btn m-save" onclick="saveItem()">Save</button>
+    </div>
+  </div>
+</div>
+
+<!-- TOPBAR -->
+<div class="topbar">
+  <div class="topbar-left">
+    <a href="../" class="back-btn">
+      <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"/></svg>
+      Brain 2.0
+    </a>
+    <div class="topbar-title">DC Guide</div>
+  </div>
+  <div class="topbar-date" id="today-date"></div>
+</div>
+
+<!-- MONTH STRIP -->
+<div class="month-strip-wrap">
+  <div class="month-strip" id="month-strip"></div>
+</div>
+
+<div class="hub">
+
+  <!-- RESOURCES PANEL -->
+  <div class="resources-panel">
+    <div class="resources-hdr">
+      <span class="resources-title">Quick Links</span>
+      <button class="add-resource-btn" id="add-res-btn" onclick="toggleAddResource()">+ Add Link</button>
+    </div>
+    <div class="resources-links" id="resources-links"></div>
+    <div class="resource-add-inline" id="res-add-form">
+      <input class="res-inp" id="res-label" placeholder="Label (e.g. DC Events)" style="width:140px;">
+      <input class="res-inp wide" id="res-url" placeholder="https://..." onkeydown="if(event.key==='Enter')saveResource();">
+      <button class="res-save-btn" onclick="saveResource()">Add</button>
+      <button class="res-cancel-btn" onclick="toggleAddResource()">✕</button>
+    </div>
+  </div>
+
+  <!-- PAGE HERO -->
+  <div class="page-hero">
+    <div>
+      <div class="hero-month" id="hero-month"></div>
+      <div class="hero-sub" id="hero-sub"></div>
+    </div>
+    <div class="hero-stats" id="hero-stats"></div>
+  </div>
+
+  <!-- FILTER BAR -->
+  <div class="filter-bar">
+    <span class="filter-label">Category</span>
+    <button class="f-pill active" id="fpill-cat-all" onclick="setCatFilter('all',this)">All</button>
+    <div id="filter-cats"></div>
+    <div class="filter-sep"></div>
+    <span class="filter-label">Neighborhood</span>
+    <select class="f-inp" id="filter-hood" style="padding:5px 28px 5px 10px;font-size:11.5px;font-weight:600;min-width:130px;border-radius:12px;background-size:8px;" onchange="setHoodFilter(this.value)">
+      <option value="">All areas</option>
+    </select>
+    <div class="filter-sep"></div>
+    <span class="filter-label">Price</span>
+    <button class="f-pill active" id="fpill-price-all" onclick="setPriceFilter('all',this)">All</button>
+    <button class="f-pill" onclick="setPriceFilter('free',this)">Free</button>
+    <button class="f-pill" onclick="setPriceFilter('$',this)">$</button>
+    <button class="f-pill" onclick="setPriceFilter('$$',this)">$$</button>
+    <button class="f-pill" onclick="setPriceFilter('$$$',this)">$$$</button>
+    <button class="add-btn" onclick="openAddModal()">+ Add Suggestion</button>
+  </div>
+
+  <div class="cards-grid" id="cards-grid"></div>
+</div>
+
+<script>
+var SK = 'dcGuide1';
+var MONTHS = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+var MONTHS_S = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+var DAYS = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+
+var CATS = [
+  {id:'food',    label:'Food',      icon:'🍽', color:'#e07a20', bg:'#f7d9b0', ink:'#7a4010'},
+  {id:'drinks',  label:'Drinks',    icon:'🍸', color:'#e05070', bg:'#fce8ef', ink:'#a0304a'},
+  {id:'dancing', label:'Dancing',   icon:'💃', color:'#9050d0', bg:'#e8d4f0', ink:'#5a2a7a'},
+  {id:'arts',    label:'Arts',      icon:'🎨', color:'#2080c0', bg:'#d4e8f8', ink:'#1a3a6a'},
+  {id:'outdoors',label:'Outdoors',  icon:'🌿', color:'#30a060', bg:'#d8eee8', ink:'#1a4a2a'},
+  {id:'events',  label:'Events',    icon:'🎉', color:'#c0a020', bg:'#fff5d6', ink:'#6a4a08'},
+  {id:'markets', label:'Markets',   icon:'🛍', color:'#a06030', bg:'#f2e8d8', ink:'#5a3a18'},
+  {id:'nightlife',label:'Nightlife',icon:'✨', color:'#7040b0', bg:'#ede0ff', ink:'#4a1a7a'},
+];
+
+var HOODS = ['Georgetown','Dupont Circle','14th St / U Street','Adams Morgan','Capitol Hill',
+  'Navy Yard / Yards Park','National Mall','Penn Quarter / Chinatown','Logan Circle','Shaw',
+  'Columbia Heights','Foggy Bottom','H Street Corridor','Petworth','NoMa / Union Market',
+  'Wharf / Southwest','Chevy Chase','Other'];
+
+var data = {items:[], resources:[]};
+var currentMonth = 'evergreen'; // start on Anytime
+var filterCat = 'all';
+var filterPrice = 'all';
+var filterHood = '';
+var editingId = null;
+
+// ── STORAGE ──
+function save(){localStorage.setItem(SK,JSON.stringify(data));}
+function load(){
+  var raw=localStorage.getItem(SK);
+  if(raw){
+    try{
+      var parsed=JSON.parse(raw);
+      // Support old format (array) and new format (object)
+      if(Array.isArray(parsed)){data={items:parsed,resources:[]};}
+      else{data=parsed;if(!data.items)data.items=[];if(!data.resources)data.resources=[];}
+    }catch(e){data={items:[],resources:[]};}
+  } else {
+    data={
+      items:[
+        {id:'ex1',name:'Eastern Market',category:'markets',month:'evergreen',price:'free',hood:'Capitol Hill',dates:'Every weekend',img:'',link:'https://www.easternmarket-dc.org',note:'Saturday is farmers market, Sunday is flea market. Get there before 10am.',status:'want'},
+        {id:'ex2',name:'9:30 Club',category:'nightlife',month:4,price:'$$',hood:'14th St / U Street',dates:'Check calendar',img:'',link:'https://www.930.com',note:'Best live music venue in DC. Always worth checking what\'s on.',status:'want'},
+        {id:'ex3',name:'National Cherry Blossom Festival',category:'events',month:3,price:'free',hood:'National Mall',dates:'Late March – Early April',img:'',link:'',note:'Peak bloom usually first week of April. Go early morning.',status:'done'},
+        {id:'ex4',name:'Rosalys',category:'food',month:'evergreen',price:'$',hood:'Georgetown',dates:'',img:'',link:'',note:'Cute French-inspired café. Perfect for a slow Sunday brunch.',status:'want'},
+        {id:'ex5',name:'Yards Park',category:'outdoors',month:'evergreen',price:'free',hood:'Navy Yard / Yards Park',dates:'Best May–Sept',img:'',link:'',note:'Free concerts and events all summer. Great waterfront vibes.',status:'want'},
+        {id:'ex6',name:'Smithsonian Folklife Festival',category:'events',month:5,price:'free',hood:'National Mall',dates:'Late June – July 4th',img:'',link:'',note:'One of the best free events in DC every summer.',status:'want'},
+        {id:'ex7',name:'Salsa Night at Decades',category:'dancing',month:'evergreen',price:'$',hood:'Penn Quarter / Chinatown',dates:'Thursday nights',img:'',link:'',note:'Latin night — get there by 10pm.',status:'want'},
+      ],
+      resources:[
+        {id:'r1',label:'The DC List',url:'https://thedclist.com'},
+        {id:'r2',label:'Meetup DC',url:'https://www.meetup.com/find/?location=us--dc--Washington&source=EVENTS'},
+        {id:'r3',label:'DC Events (Eventbrite)',url:'https://www.eventbrite.com/d/dc--washington/events/'},
+        {id:'r4',label:'Do512 DC',url:'https://dc.do512.com'},
+      ]
+    };
+    save();
+  }
+}
+
+function getCat(id){return CATS.find(function(c){return c.id===id;})||CATS[0];}
+
+// ── MONTH STRIP ──
+function buildMonthStrip(){
+  var strip=document.getElementById('month-strip');strip.innerHTML='';
+  // Evergreen tab first
+  var evCnt=data.items.filter(function(x){return x.month==='evergreen';}).length;
+  var evBtn=document.createElement('button');
+  evBtn.className='month-tab evergreen'+(currentMonth==='evergreen'?' active':'');
+  evBtn.innerHTML='📌 Anytime'+(evCnt>0?'<span class="month-tab-count">'+evCnt+'</span>':'');
+  evBtn.onclick=function(){currentMonth='evergreen';render();};
+  strip.appendChild(evBtn);
+  // Month tabs
+  MONTHS_S.forEach(function(m,i){
+    var cnt=data.items.filter(function(x){return x.month===i;}).length;
+    var btn=document.createElement('button');
+    btn.className='month-tab'+(currentMonth===i?' active':'');
+    btn.innerHTML=m+(cnt>0?'<span class="month-tab-count">'+cnt+'</span>':'');
+    btn.onclick=(function(mi){return function(){currentMonth=mi;render();};})(i);
+    strip.appendChild(btn);
+  });
+}
+
+// ── RESOURCES ──
+function renderResources(){
+  var wrap=document.getElementById('resources-links');wrap.innerHTML='';
+  if(!data.resources.length){
+    wrap.innerHTML='<span class="resources-empty">No links yet — add shortcuts to your favourite DC event sites.</span>';
+    return;
+  }
+  data.resources.forEach(function(r){
+    var a=document.createElement('a');a.className='resource-link';a.href=r.url;a.target='_blank';
+    a.innerHTML='<svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>'+
+      '<span>'+r.label+'</span>'+
+      '<button class="resource-link-del" title="Remove" onclick="removeResource(\''+r.id+'\');event.preventDefault();event.stopPropagation();">✕</button>';
+    wrap.appendChild(a);
+  });
+}
+function toggleAddResource(){
+  var form=document.getElementById('res-add-form');
+  var open=form.classList.toggle('open');
+  if(open){document.getElementById('res-label').focus();}
+  else{document.getElementById('res-label').value='';document.getElementById('res-url').value='';}
+}
+function saveResource(){
+  var label=document.getElementById('res-label').value.trim();
+  var url=document.getElementById('res-url').value.trim();
+  if(!label||!url)return;
+  if(!url.startsWith('http'))url='https://'+url;
+  data.resources.push({id:'r_'+Date.now(),label:label,url:url});
+  save();renderResources();toggleAddResource();
+}
+function removeResource(id){
+  data.resources=data.resources.filter(function(r){return r.id!==id;});
+  save();renderResources();
+}
+
+// ── HERO ──
+function renderHero(){
+  var monthItems=data.items.filter(function(x){return x.month===currentMonth;});
+  var done=monthItems.filter(function(x){return x.status==='done';}).length;
+  var isEvergreen=currentMonth==='evergreen';
+  var titleHtml=isEvergreen?'<em>Anytime</em> in DC':MONTHS[currentMonth]+' <em>2026</em>';
+  document.getElementById('hero-month').innerHTML=titleHtml;
+  document.getElementById('hero-month').className='hero-month'+(isEvergreen?' evergreen-title':'');
+  document.getElementById('hero-sub').textContent=monthItems.length+' suggestion'+(monthItems.length!==1?'s':'')+
+    (isEvergreen?' · Year-round spots & go-to places':' · Washington, D.C.');
+  document.getElementById('hero-stats').innerHTML=
+    '<div class="hero-stat"><div class="hero-stat-num">'+done+'</div><div class="hero-stat-lbl">Done</div></div>'+
+    '<div class="hero-stat" style="margin-left:4px;"><div class="hero-stat-num">'+(monthItems.length-done)+'</div><div class="hero-stat-lbl">To Do</div></div>';
+}
+
+// ── FILTER CATS ──
+function buildFilterCats(){
+  var wrap=document.getElementById('filter-cats');wrap.innerHTML='';
+  var monthItems=data.items.filter(function(x){return x.month===currentMonth;});
+  CATS.forEach(function(c){
+    if(!monthItems.some(function(x){return x.category===c.id;}))return;
+    var btn=document.createElement('button');
+    btn.className='f-pill'+(filterCat===c.id?' active':'');
+    btn.textContent=c.icon+' '+c.label;
+    btn.onclick=(function(cid,el){return function(){setCatFilter(cid,el);};})(c.id,btn);
+    wrap.appendChild(btn);
+  });
+}
+function buildHoodFilter(){
+  var sel=document.getElementById('filter-hood');
+  var current=sel.value;
+  sel.innerHTML='<option value="">All areas</option>';
+  var usedHoods=[...new Set(data.items.filter(function(x){return x.month===currentMonth&&x.hood;}).map(function(x){return x.hood;}))].sort();
+  usedHoods.forEach(function(h){
+    var o=document.createElement('option');o.value=h;o.textContent=h;if(h===current)o.selected=true;sel.appendChild(o);
+  });
+}
+function setCatFilter(val,el){
+  filterCat=val;
+  document.querySelectorAll('#filter-cats .f-pill, #fpill-cat-all').forEach(function(b){b.classList.remove('active');});
+  el.classList.add('active');
+  renderCards();
+}
+function setPriceFilter(val,el){
+  filterPrice=val;
+  var isAll=val==='all';
+  document.querySelectorAll('.filter-bar .f-pill:not(#fpill-cat-all):not([id^="fpill-cat"])').forEach(function(b){b.classList.remove('active','price-active');});
+  el.classList.add(isAll?'active':'price-active');
+  renderCards();
+}
+function setHoodFilter(val){filterHood=val;renderCards();}
+
+// ── CARDS ──
+function renderCards(){
+  var grid=document.getElementById('cards-grid');grid.innerHTML='';
+  var filtered=data.items.filter(function(x){
+    if(x.month!==currentMonth)return false;
+    if(filterCat!=='all'&&x.category!==filterCat)return false;
+    if(filterPrice!=='all'&&x.price!==filterPrice)return false;
+    if(filterHood&&x.hood!==filterHood)return false;
+    return true;
+  });
+  if(!filtered.length){
+    var label=currentMonth==='evergreen'?'Anytime':MONTHS[currentMonth];
+    grid.innerHTML='<div class="empty"><div class="empty-icon">🗺</div><div class="empty-text">Nothing here yet</div><div class="empty-sub">Add your first DC suggestion for '+label+'</div></div>';
+    return;
+  }
+  filtered.forEach(function(item){grid.appendChild(makeCard(item));});
+}
+
+function makeCard(item){
+  var cat=getCat(item.category);
+  var card=document.createElement('div');
+  card.className='event-card'+(item.status==='done'?' done':'');
+
+  // Banner image or color strip
+  if(item.img){
+    var img=document.createElement('img');img.className='card-banner';img.src=item.img;img.alt=item.name;
+    img.onerror=function(){img.style.display='none';var strip=document.createElement('div');strip.className='card-banner-placeholder';strip.style.background=cat.color;card.insertBefore(strip,card.firstChild);};
+    card.appendChild(img);
+  } else {
+    var strip=document.createElement('div');strip.className='card-banner-placeholder';strip.style.background=cat.color;
+    card.appendChild(strip);
+  }
+
+  // Body
+  var body=document.createElement('div');body.className='card-body';
+  // Cat row
+  var catRow=document.createElement('div');catRow.className='card-cat-row';
+  var catBadge=document.createElement('span');catBadge.className='cat-badge';
+  catBadge.style.background=cat.bg;catBadge.style.color=cat.ink;catBadge.textContent=cat.icon+' '+cat.label;
+  var priceBadge=document.createElement('span');priceBadge.className='price-badge';priceBadge.textContent=item.price==='free'?'Free':item.price;
+  catRow.appendChild(catBadge);catRow.appendChild(priceBadge);
+  if(item.hood){var hoodBadge=document.createElement('span');hoodBadge.className='hood-badge';hoodBadge.textContent='📍 '+item.hood;catRow.appendChild(hoodBadge);}
+  body.appendChild(catRow);
+
+  var title=document.createElement('div');title.className='card-title';title.textContent=item.name;body.appendChild(title);
+  if(item.dates){
+    var meta=document.createElement('div');meta.className='card-meta';
+    meta.innerHTML='<span class="card-meta-item" style="color:var(--accent-deep);font-weight:700;">🗓 '+item.dates+'</span>';
+    body.appendChild(meta);
+  }
+  if(item.note){var note=document.createElement('div');note.className='card-note';note.textContent=item.note;body.appendChild(note);}
+  card.appendChild(body);
+
+  // Footer
+  var footer=document.createElement('div');footer.className='card-footer';
+  var statusBtn=document.createElement('button');
+  statusBtn.className='status-btn '+(item.status==='done'?'status-done':'status-want');
+  statusBtn.textContent=item.status==='done'?'✓ Been here':'♡ Want to go';
+  statusBtn.onclick=(function(id){return function(){
+    var it=data.items.find(function(x){return x.id===id;});
+    if(it)it.status=it.status==='done'?'want':'done';
+    save();render();
+  };})(item.id);
+  footer.appendChild(statusBtn);
+
+  if(item.link){
+    var linkBtn=document.createElement('a');linkBtn.className='card-link-btn';linkBtn.href=item.link;linkBtn.target='_blank';
+    linkBtn.innerHTML='↗ Link';footer.appendChild(linkBtn);
+  }
+
+  // Dots menu
+  var dotsWrap=document.createElement('div');dotsWrap.className='dots-wrap';
+  var dotsBtn=document.createElement('button');dotsBtn.className='dots-btn';dotsBtn.textContent='···';
+  var dotsMenu=document.createElement('div');dotsMenu.className='dots-menu';
+  var editItem=document.createElement('button');editItem.className='dots-item';editItem.textContent='✏ Edit';
+  editItem.onclick=(function(id){return function(){dotsMenu.classList.remove('open');openEditModal(id);};})(item.id);
+  var delItem=document.createElement('button');delItem.className='dots-item danger';delItem.textContent='✕ Delete';
+  delItem.onclick=(function(id){return function(){if(confirm('Remove this suggestion?')){data.items=data.items.filter(function(x){return x.id!==id;});save();render();}};})(item.id);
+  dotsMenu.appendChild(editItem);dotsMenu.appendChild(delItem);
+  dotsBtn.onclick=function(e){e.stopPropagation();document.querySelectorAll('.dots-menu.open').forEach(function(m){if(m!==dotsMenu)m.classList.remove('open');});dotsMenu.classList.toggle('open');};
+  dotsWrap.appendChild(dotsBtn);dotsWrap.appendChild(dotsMenu);
+  footer.appendChild(dotsWrap);
+  card.appendChild(footer);
+  return card;
+}
+
+// ── IMAGE PREVIEW ──
+function previewImg(url){
+  var prev=document.getElementById('img-preview');
+  if(url.trim()){prev.src=url;prev.classList.add('show');prev.onerror=function(){prev.classList.remove('show');};}
+  else{prev.classList.remove('show');}
+}
+
+// ── MODAL ──
+function buildModalCats(selectedId){
+  var wrap=document.getElementById('cat-selector');wrap.innerHTML='';
+  CATS.forEach(function(c){
+    var btn=document.createElement('button');btn.className='cat-sel-btn';btn.type='button';btn.dataset.id=c.id;
+    btn.textContent=c.icon+' '+c.label;
+    btn.onclick=function(){
+      wrap.querySelectorAll('.cat-sel-btn').forEach(function(b){b.style.background='';b.style.borderColor='';b.style.color='';});
+      btn.style.background=c.bg;btn.style.borderColor=c.bg;btn.style.color=c.ink;
+    };
+    wrap.appendChild(btn);
+    if(c.id===(selectedId||'food'))btn.click();
+  });
+}
+function buildModalMonths(selected){
+  var sel=document.getElementById('m-month');
+  // Clear all except the evergreen option already in HTML
+  sel.innerHTML='<option value="evergreen">📌 Anytime / Year-Round</option>';
+  MONTHS.forEach(function(m,i){var o=document.createElement('option');o.value=i;o.textContent=m;sel.appendChild(o);});
+  if(selected!==undefined&&selected!==null)sel.value=selected;
+  else sel.value=currentMonth;
+}
+function openAddModal(){
+  editingId=null;
+  document.getElementById('modal-title').textContent='Add Suggestion';
+  document.getElementById('m-del-btn').style.display='none';
+  ['m-name','m-dates','m-link','m-note','m-img'].forEach(function(id){document.getElementById(id).value='';});
+  document.getElementById('m-price').value='free';
+  document.getElementById('m-hood').value='';
+  document.getElementById('img-preview').classList.remove('show');
+  buildModalCats();buildModalMonths();
+  document.getElementById('modal').classList.add('open');
+  setTimeout(function(){document.getElementById('m-name').focus();},100);
+}
+function openEditModal(id){
+  var item=data.items.find(function(x){return x.id===id;});if(!item)return;
+  editingId=id;
+  document.getElementById('modal-title').textContent='Edit Suggestion';
+  document.getElementById('m-del-btn').style.display='inline-flex';
+  document.getElementById('m-name').value=item.name;
+  document.getElementById('m-dates').value=item.dates||'';
+  document.getElementById('m-link').value=item.link||'';
+  document.getElementById('m-note').value=item.note||'';
+  document.getElementById('m-img').value=item.img||'';
+  document.getElementById('m-price').value=item.price||'free';
+  document.getElementById('m-hood').value=item.hood||'';
+  previewImg(item.img||'');
+  buildModalCats(item.category);buildModalMonths(item.month);
+  document.getElementById('modal').classList.add('open');
+}
+function closeModal(){document.getElementById('modal').classList.remove('open');editingId=null;}
+function saveItem(){
+  var name=document.getElementById('m-name').value.trim();if(!name)return;
+  var catId='food';
+  document.querySelectorAll('#cat-selector .cat-sel-btn').forEach(function(b){if(b.style.background&&b.style.background!=='')catId=b.dataset.id;});
+  var monthVal=document.getElementById('m-month').value;
+  var monthParsed=monthVal==='evergreen'?'evergreen':parseInt(monthVal);
+  var item={
+    id:editingId||'i_'+Date.now(),
+    name:name,category:catId,month:monthParsed,
+    price:document.getElementById('m-price').value,
+    hood:document.getElementById('m-hood').value,
+    dates:document.getElementById('m-dates').value.trim(),
+    img:document.getElementById('m-img').value.trim(),
+    link:document.getElementById('m-link').value.trim(),
+    note:document.getElementById('m-note').value.trim(),
+    status:editingId?(data.items.find(function(x){return x.id===editingId;})||{}).status||'want':'want',
+  };
+  if(editingId){var idx=data.items.findIndex(function(x){return x.id===editingId;});if(idx>=0)data.items[idx]=item;}
+  else data.items.push(item);
+  save();closeModal();
+  currentMonth=item.month;
+  filterCat='all';filterPrice='all';filterHood='';
+  render();
+}
+function deleteFromModal(){
+  if(!editingId)return;if(!confirm('Delete this suggestion?'))return;
+  data.items=data.items.filter(function(x){return x.id!==editingId;});
+  save();closeModal();render();
+}
+document.getElementById('modal').addEventListener('click',function(e){if(e.target===this)closeModal();});
+document.addEventListener('click',function(e){if(!e.target.closest('.dots-wrap'))document.querySelectorAll('.dots-menu.open').forEach(function(m){m.classList.remove('open');});});
+document.addEventListener('keydown',function(e){if(e.key==='Escape')closeModal();});
+
+// ── RENDER ──
+function render(){
+  buildMonthStrip();
+  renderResources();
+  renderHero();
+  buildFilterCats();
+  buildHoodFilter();
+  renderCards();
+}
+
+var now=new Date();
+document.getElementById('today-date').textContent=DAYS[now.getDay()]+', '+MONTHS[now.getMonth()]+' '+now.getDate()+', '+now.getFullYear();
+load();
+render();
+</script>
+</body>
+</html>
