@@ -364,6 +364,7 @@ hr.r{border:none;border-top:1px solid var(--line);margin:9px 0;}
     <a href="finances/"      class="sb-link"><span class="sb-icon">💳</span><span>Finances</span></a>
     <a href="wishlist/"      class="sb-link"><span class="sb-icon">✦</span><span>Wishlist</span></a>
     <a href="passport/"      class="sb-link"><span class="sb-icon">🗺</span><span>DC Passport</span></a>
+    <a href="dc-guide/"      class="sb-link"><span class="sb-icon">🏙</span><span>DC Guide</span></a>
     <a href="reset-2026/"    class="sb-link"><span class="sb-icon">✨</span><span>Mid-Year Pivot</span></a>
   </nav>
 </div>
@@ -403,15 +404,14 @@ hr.r{border:none;border-top:1px solid var(--line);margin:9px 0;}
       </div>
     </div>
 
-    <!-- Prof Dev -->
-    <div class="tile t-amber c7">
-      <div class="ey"><span class="ey-dot" style="background:var(--amber)"></span>Learning Hub</div>
-      <div class="ttl">Active Courses</div>
-      <div class="rings-grid" id="rings"></div>
+    <!-- DC Guide -->
+    <div class="tile t-accent c7" style="border-top-color:#30a060;">
+      <div class="ey"><span class="ey-dot" style="background:#30a060"></span>DC Guide</div>
+      <div class="ttl" id="dc-guide-title">This Month in DC</div>
+      <div id="dc-guide-list"></div>
       <hr class="r">
       <div class="btn-row">
-        <a href="professional-dev/" class="btn">Hub →</a>
-        <a href="https://www.coursera.org/my-learning" target="_blank" class="btn">Coursera ↗</a>
+        <a href="dc-guide/" class="btn">Open Guide →</a>
       </div>
     </div>
   </div>
@@ -455,12 +455,24 @@ hr.r{border:none;border-top:1px solid var(--line);margin:9px 0;}
 
   <!-- ROW 3 -->
   <div class="grid">
+    <!-- Prof Dev -->
+    <div class="tile t-amber c6">
+      <div class="ey"><span class="ey-dot" style="background:var(--amber)"></span>Learning Hub</div>
+      <div class="ttl">Active Courses</div>
+      <div class="rings-grid" id="rings"></div>
+      <hr class="r">
+      <div class="btn-row">
+        <a href="professional-dev/" class="btn">Hub →</a>
+        <a href="https://www.coursera.org/my-learning" target="_blank" class="btn">Coursera ↗</a>
+      </div>
+    </div>
+
     <div class="tile t-accent c6">
       <div class="ey"><span class="ey-dot" style="background:var(--accent-deep)"></span>Languages</div>
       <div class="ttl">Active Languages</div>
       <div class="lang-row">
         <span class="l-flag">🇪🇸</span>
-        <div style="flex:1;"><div class="l-name">Spanish</div><div class="l-sub">C1 · Phase 3 — Listening & Immersion</div></div>
+        <div style="flex:1;"><div class="l-name">Spanish</div><div class="l-sub">C1 · Phase 3 — Listening &amp; Immersion</div></div>
         <span class="l-tag l-active">Active</span>
       </div>
       <div class="lang-row">
@@ -836,6 +848,65 @@ document.addEventListener('keydown',function(e){
 // ── TOAST ──
 var toastTimer;
 function showToast(msg){var t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');clearTimeout(toastTimer);toastTimer=setTimeout(function(){t.classList.remove('show');},2000);}
+
+
+// ── DC GUIDE TILE ──
+(function(){
+  var raw=localStorage.getItem('dcGuide1');
+  var items=[];
+  if(raw){try{var x=JSON.parse(raw);items=Array.isArray(x)?x:(x.items||[]);}catch(e){}}
+  var today=new Date();
+  var mo=today.getMonth();
+  var MONTHS_DC=['January','February','March','April','May','June','July','August','September','October','November','December'];
+  var CAT_INFO={
+    food:{icon:'🍽',bg:'#f7d9b0',ink:'#7a4010'},
+    drinks:{icon:'🍸',bg:'#fce8ef',ink:'#a0304a'},
+    dancing:{icon:'💃',bg:'#e8d4f0',ink:'#5a2a7a'},
+    arts:{icon:'🎨',bg:'#d4e8f8',ink:'#1a3a6a'},
+    outdoors:{icon:'🌿',bg:'#d8eee8',ink:'#1a4a2a'},
+    events:{icon:'🎉',bg:'#fff5d6',ink:'#6a4a08'},
+    markets:{icon:'🛍',bg:'#f2e8d8',ink:'#5a3a18'},
+    nightlife:{icon:'✨',bg:'#ede0ff',ink:'#4a1a7a'},
+  };
+  // Show this month's want-to-go + up to 2 evergreen
+  var monthItems=items.filter(function(x){return x.month===mo&&x.status!=='done';});
+  var evergreenItems=items.filter(function(x){return x.month==='evergreen'&&x.status!=='done';});
+  var shown=monthItems.slice(0,4);
+  if(shown.length<4)shown=shown.concat(evergreenItems.slice(0,4-shown.length));
+
+  var titleEl=document.getElementById('dc-guide-title');
+  var listEl=document.getElementById('dc-guide-list');
+  if(!titleEl||!listEl)return;
+
+  var monthCount=monthItems.length;
+  var evCount=evergreenItems.length;
+  titleEl.textContent=MONTHS_DC[mo]+' in DC';
+
+  if(!shown.length){
+    listEl.innerHTML='<div class="empty">No suggestions yet — <a href="dc-guide/" style="color:var(--accent-deep);">open the guide</a> to add some.</div>';
+    return;
+  }
+
+  var html='';
+  shown.forEach(function(item){
+    var cat=CAT_INFO[item.category]||{icon:'📍',bg:'var(--warm)',ink:'var(--muted)'};
+    var isEvergreen=item.month==='evergreen';
+    html+='<div style="display:flex;align-items:center;gap:8px;padding:6px 9px;border-radius:10px;background:var(--warm);border:1px solid var(--line);margin-bottom:5px;">'+
+      '<span style="width:22px;height:22px;border-radius:6px;background:'+cat.bg+';display:flex;align-items:center;justify-content:center;font-size:11px;flex-shrink:0;">'+cat.icon+'</span>'+
+      '<div style="flex:1;min-width:0;">'+
+        '<div style="font-size:12px;font-weight:700;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">'+esc(item.name)+'</div>'+
+        '<div style="font-size:10px;color:var(--muted);font-weight:600;margin-top:1px;">'+(item.hood||'')+(item.hood&&item.dates?' · ':'')+
+          (item.dates?item.dates:'')+((!item.hood&&!item.dates)?(isEvergreen?'Year-round':''):'')+'</div>'+
+      '</div>'+
+      '<span style="font-size:9.5px;font-weight:700;padding:2px 7px;border-radius:8px;background:'+cat.bg+';color:'+cat.ink+';flex-shrink:0;">'+(item.price==='free'?'Free':item.price||'')+'</span>'+
+    '</div>';
+  });
+
+  if(monthCount+evCount>4){
+    html+='<div style="font-size:10.5px;color:var(--muted);font-style:italic;padding:3px 2px;">+ '+(monthCount+evCount-4)+' more this month</div>';
+  }
+  listEl.innerHTML=html;
+})();
 
 // ── INIT ──
 renderCalendar();
