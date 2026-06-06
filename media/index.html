@@ -117,9 +117,10 @@ html,body { background:var(--bg); font-family:'Plus Jakarta Sans',system-ui,sans
 .album-add-song { margin-top:8px; width:100%; padding:7px; border:1.5px dashed var(--line); border-radius:10px; font-size:11.5px; font-weight:600; color:var(--muted); background:transparent; cursor:pointer; font-family:inherit; transition:all .15s; }
 .album-add-song:hover { border-color:var(--accent-deep); color:var(--accent-deep); background:var(--accent-soft); }
 
-/* ── CURRENT STATUS BADGE ── */
-.current-status-pill{display:inline-flex;align-items:center;gap:5px;padding:4px 10px;border-radius:10px;font-size:10.5px;font-weight:700;flex-shrink:0;}
-.current-status-pill::before{content:'';width:6px;height:6px;border-radius:50%;background:currentColor;opacity:.6;flex-shrink:0;}
+/* ── STATUS CYCLE BUTTON (one button = current status, click to advance) ── */
+.status-cycle-btn{display:inline-flex;align-items:center;gap:6px;padding:6px 13px;border-radius:14px;font-size:11px;font-weight:700;cursor:pointer;border:1.5px solid transparent;font-family:inherit;transition:all .15s;white-space:nowrap;}
+.status-cycle-btn:hover{filter:brightness(.95);transform:translateY(-1px);}
+.scb-dot{width:6px;height:6px;border-radius:50%;background:currentColor;opacity:.6;flex-shrink:0;}
 /* ── CARD ACTIONS ── */
 .card-actions { display:flex; align-items:center; gap:6px; padding:10px 12px; border-top:1px solid var(--line); background:var(--warm); border-radius:0 0 14px 14px; flex-wrap:wrap; }
 .cycle-btn { padding:6px 12px; border:1.5px solid var(--accent); border-radius:14px; font-family:inherit; font-size:11px; font-weight:700; cursor:pointer; background:var(--accent-soft); color:var(--accent-deep); transition:all .15s; white-space:nowrap; }
@@ -583,9 +584,9 @@ function makeGridCard(item,statusMap,sec){
   var actions=document.createElement('div');actions.className='card-actions';
   var statuses=sec.statuses;var ci=statuses.findIndex(function(s){return s.val===item.status;});var ns=statuses[(ci+1)%statuses.length];
   var curStatus=statusMap[item.status]||{label:item.status,cls:'status-want'};
-  var statusPill=document.createElement('span');statusPill.className='current-status-pill '+curStatus.cls;statusPill.textContent=curStatus.label;
-  actions.appendChild(statusPill);
-  var cycleB=document.createElement('button');cycleB.className='cycle-btn';cycleB.textContent='Mark as '+ns.label;
+  var cycleB=document.createElement('button');cycleB.className='status-cycle-btn '+curStatus.cls;
+  cycleB.innerHTML='<span class="scb-dot"></span>'+curStatus.label;
+  cycleB.title='Click to mark as '+ns.label;
   cycleB.onclick=(function(id,nv){return function(){cycleStatus(id,nv);};})(item.id,ns.val);actions.appendChild(cycleB);
   // Open link — visible for articles (primary), in dots for others
   if(currentSection==='articles'&&item.link){
@@ -687,8 +688,9 @@ function makeListCard(item,statusMap,sec){
   }
   var statuses=sec.statuses;var ci=statuses.findIndex(function(s){return s.val===item.status;});var ns=statuses[(ci+1)%statuses.length];
   var curSt=statusMap[item.status]||{label:item.status,cls:'status-want'};
-  var sPill=document.createElement('span');sPill.className='current-status-pill '+curSt.cls;sPill.textContent=curSt.label;right.appendChild(sPill);
-  var cycleB=document.createElement('button');cycleB.className='cycle-btn';cycleB.textContent='Mark as '+ns.label;
+  var cycleB=document.createElement('button');cycleB.className='status-cycle-btn '+curSt.cls;
+  cycleB.innerHTML='<span class="scb-dot"></span>'+curSt.label;
+  cycleB.title='Click to mark as '+ns.label;
   cycleB.onclick=(function(id,nv){return function(){cycleStatus(id,nv);};})(item.id,ns.val);right.appendChild(cycleB);
   var dotsActs=[{label:'Edit',fn:(function(id){return function(){openEditModal(id);};})(item.id)}];
   if(item.link) dotsActs.push({label:'Open ↗',href:item.link});
