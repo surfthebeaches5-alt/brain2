@@ -65,7 +65,7 @@ html,body { background:var(--bg); font-family:'Plus Jakarta Sans',system-ui,sans
    Card cover gets top border-radius instead to clip the image corners.
 ── */
 .media-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(200px,1fr)); gap:16px; }
-.media-card { background:var(--surface); border:1px solid var(--line); border-radius:16px; display:flex; flex-direction:column; transition:transform .15s,box-shadow .15s; position:relative; }
+.media-card { background:var(--surface); border:1px solid var(--line); border-radius:16px; display:flex; flex-direction:column; transition:transform .15s,box-shadow .15s; position:relative; cursor:pointer; }
 .media-card:hover { transform:translateY(-3px); box-shadow:0 12px 28px rgba(0,0,0,.08); }
 .media-card.done { opacity:0.72; }
 .card-cover { width:100%; height:220px; display:flex; align-items:center; justify-content:center; background:var(--warm); flex-shrink:0; overflow:hidden; border-radius:14px 14px 0 0; }
@@ -148,7 +148,7 @@ html,body { background:var(--bg); font-family:'Plus Jakarta Sans',system-ui,sans
 
 /* ── LIST CARDS (podcasts only) ── */
 .list-view { display:flex; flex-direction:column; gap:8px; }
-.list-card { background:var(--surface); border:1px solid var(--line); border-radius:14px; display:flex; align-items:center; gap:14px; padding:14px 16px; transition:all .15s; position:relative; }
+.list-card { background:var(--surface); border:1px solid var(--line); border-radius:14px; display:flex; align-items:center; gap:14px; padding:14px 16px; transition:all .15s; position:relative; cursor:pointer; }
 .list-card:hover { border-color:#d9d2bd; box-shadow:0 4px 12px rgba(0,0,0,.05); }
 .list-card.done { opacity:0.65; }
 .list-icon { width:44px; height:44px; border-radius:10px; display:flex; align-items:center; justify-content:center; font-size:20px; flex-shrink:0; background:var(--warm); border:1px solid var(--line); overflow:hidden; }
@@ -458,6 +458,11 @@ function getFiltered(){
   if(currentStatus!=='all') items=items.filter(function(i){return i.status===currentStatus;});
   if(currentCat!=='all')    items=items.filter(function(i){return i.category===currentCat;});
   if(searchQuery){var q=searchQuery.toLowerCase();items=items.filter(function(i){return(i.title||'').toLowerCase().includes(q)||(i.creator||'').toLowerCase().includes(q)||(i.note||'').toLowerCase().includes(q);});}
+  // "Next up" sort for Screen: Watching first, then Want to Watch, then Watched
+  if(currentSection==='screen'){
+    var order={progress:0,want:1,done:2};
+    items=items.slice().sort(function(a,b){return (order[a.status]!==undefined?order[a.status]:1)-(order[b.status]!==undefined?order[b.status]:1);});
+  }
   return items;
 }
 function setFilter(t,v){if(t==='status')currentStatus=v;else currentCat=v;render();}
@@ -521,6 +526,7 @@ function makeDots(actions){
   var wrap=document.createElement('div');wrap.className='dots-wrap';
   var btn=document.createElement('button');btn.className='dots-btn';btn.textContent='···';
   var menu=document.createElement('div');menu.className='dots-menu';
+  menu.onclick=function(e){e.stopPropagation();};
   btn.onclick=function(e){
     e.stopPropagation();
     document.querySelectorAll('.dots-menu.open').forEach(function(m){if(m!==menu)m.classList.remove('open');});
@@ -546,7 +552,7 @@ function makeGridCard(item,statusMap,sec){
   body.innerHTML='<div class="card-category">'+esc(item.category)+'</div>';
   // Title — clickable link for articles
   if(currentSection==='articles'&&item.link){
-    var titleA=document.createElement('a');titleA.className='card-title-link';titleA.href=item.link;titleA.target='_blank';titleA.textContent=item.title;body.appendChild(titleA);
+    var titleA=document.createElement('a');titleA.className='card-title-link';titleA.href=item.link;titleA.target='_blank';titleA.textContent=item.title;titleA.onclick=function(e){e.stopPropagation();};body.appendChild(titleA);
   } else {
     var titleDiv=document.createElement('div');titleDiv.className='card-title';titleDiv.textContent=item.title;body.appendChild(titleDiv);
   }
@@ -569,10 +575,21 @@ function makeGridCard(item,statusMap,sec){
       body.appendChild(pw);
     }
   }
-  // Screen progress
-  if(currentSection==='screen'){
-    if((item.season||item.episode)&&item.status!=='done'){var ep=document.createElement('div');ep.className='card-episode';ep.textContent='S'+(item.season||1)+' · E'+(item.episode||1)+(item.seasonsTotal?' · '+item.seasonsTotal+' seasons':'');body.appendChild(ep);}
-    if(item.status==='done'&&item.date){var dd2=document.createElement('div');dd2.className='card-date';var d2=new Date(item.date+'T00:00:00');dd2.textContent='✓ '+MS[d2.getMonth()]+' '+d2.getDate()+', '+d2.getFullYear();body.appendChild(dd2);}
+  // Screen progress — inline S/E steppers while watching (done-date already shown by generic block above)
+  if(currentSection==='screen'&&item.status!=='done'){
+    var epWrap=document.createElement('div');epWrap.className='card-progress-controls';
+    [['S','season'],['E','episode']].forEach(function(pair,pi){
+      if(pi===1){var sep=document.createElement('span');sep.style.cssText='color:#d9d2bd;font-size:12px;margin:0 2px;';sep.textContent='·';epWrap.appendChild(sep);}
+      var lbl=pair[0],field=pair[1];
+      var minus=document.createElement('button');minus.className='prog-btn';minus.textContent='−';
+      minus.onclick=(function(id,f){return function(e){e.stopPropagation();var it=findItem(id);if(!it)return;it[f]=Math.max(1,(it[f]||1)-1);save();renderGrid();};})(item.id,field);
+      var cnt=document.createElement('span');cnt.className='prog-count';cnt.textContent=lbl+(item[field]||1);
+      var plus=document.createElement('button');plus.className='prog-btn';plus.textContent='+';
+      plus.onclick=(function(id,f){return function(e){e.stopPropagation();var it=findItem(id);if(!it)return;it[f]=(it[f]||1)+1;save();renderGrid();};})(item.id,field);
+      epWrap.appendChild(minus);epWrap.appendChild(cnt);epWrap.appendChild(plus);
+    });
+    if(item.seasonsTotal){var tot=document.createElement('span');tot.style.cssText='font-size:10.5px;color:var(--muted);margin-left:4px;';tot.textContent='of '+item.seasonsTotal+' seasons';epWrap.appendChild(tot);}
+    body.appendChild(epWrap);
   }
   if(item.note){var note=document.createElement('div');note.className='card-note';note.textContent=item.note;body.appendChild(note);}
   card.appendChild(body);
@@ -587,10 +604,10 @@ function makeGridCard(item,statusMap,sec){
   var cycleB=document.createElement('button');cycleB.className='status-cycle-btn '+curStatus.cls;
   cycleB.innerHTML='<span class="scb-dot"></span>'+curStatus.label;
   cycleB.title='Click to mark as '+ns.label;
-  cycleB.onclick=(function(id,nv){return function(){cycleStatus(id,nv);};})(item.id,ns.val);actions.appendChild(cycleB);
+  cycleB.onclick=(function(id,nv){return function(e){e.stopPropagation();cycleStatus(id,nv);};})(item.id,ns.val);actions.appendChild(cycleB);
   // Open link — visible for articles (primary), in dots for others
   if(currentSection==='articles'&&item.link){
-    var ol=document.createElement('a');ol.className='open-link-btn';ol.href=item.link;ol.target='_blank';ol.innerHTML='Open <svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>';
+    var ol=document.createElement('a');ol.className='open-link-btn';ol.href=item.link;ol.target='_blank';ol.onclick=function(e){e.stopPropagation();};ol.innerHTML='Open <svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>';
     actions.appendChild(ol);
   }
   var dotsActions=[{label:'Edit',fn:(function(id){return function(){openEditModal(id);};})(item.id)}];
@@ -598,6 +615,7 @@ function makeGridCard(item,statusMap,sec){
   dotsActions.push({label:'Delete',danger:true,fn:(function(id){return function(){if(confirm('Remove?'))deleteItem(id);};})(item.id)});
   actions.appendChild(makeDots(dotsActions));
   card.appendChild(actions);
+  card.onclick=(function(id){return function(){openEditModal(id);};})(item.id);
   return card;
 }
 
@@ -691,12 +709,13 @@ function makeListCard(item,statusMap,sec){
   var cycleB=document.createElement('button');cycleB.className='status-cycle-btn '+curSt.cls;
   cycleB.innerHTML='<span class="scb-dot"></span>'+curSt.label;
   cycleB.title='Click to mark as '+ns.label;
-  cycleB.onclick=(function(id,nv){return function(){cycleStatus(id,nv);};})(item.id,ns.val);right.appendChild(cycleB);
+  cycleB.onclick=(function(id,nv){return function(e){e.stopPropagation();cycleStatus(id,nv);};})(item.id,ns.val);right.appendChild(cycleB);
   var dotsActs=[{label:'Edit',fn:(function(id){return function(){openEditModal(id);};})(item.id)}];
   if(item.link) dotsActs.push({label:'Open ↗',href:item.link});
   dotsActs.push({label:'Delete',danger:true,fn:(function(id){return function(){if(confirm('Remove?'))deleteItem(id);};})(item.id)});
   right.appendChild(makeDots(dotsActs));
   card.appendChild(right);
+  card.onclick=(function(id){return function(){openEditModal(id);};})(item.id);
   return card;
 }
 
