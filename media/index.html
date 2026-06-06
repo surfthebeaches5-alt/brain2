@@ -117,6 +117,9 @@ html,body { background:var(--bg); font-family:'Plus Jakarta Sans',system-ui,sans
 .album-add-song { margin-top:8px; width:100%; padding:7px; border:1.5px dashed var(--line); border-radius:10px; font-size:11.5px; font-weight:600; color:var(--muted); background:transparent; cursor:pointer; font-family:inherit; transition:all .15s; }
 .album-add-song:hover { border-color:var(--accent-deep); color:var(--accent-deep); background:var(--accent-soft); }
 
+/* ── CURRENT STATUS BADGE ── */
+.current-status-pill{display:inline-flex;align-items:center;gap:5px;padding:4px 10px;border-radius:10px;font-size:10.5px;font-weight:700;flex-shrink:0;}
+.current-status-pill::before{content:'';width:6px;height:6px;border-radius:50%;background:currentColor;opacity:.6;flex-shrink:0;}
 /* ── CARD ACTIONS ── */
 .card-actions { display:flex; align-items:center; gap:6px; padding:10px 12px; border-top:1px solid var(--line); background:var(--warm); border-radius:0 0 14px 14px; flex-wrap:wrap; }
 .cycle-btn { padding:6px 12px; border:1.5px solid var(--accent); border-radius:14px; font-family:inherit; font-size:11px; font-weight:700; cursor:pointer; background:var(--accent-soft); color:var(--accent-deep); transition:all .15s; white-space:nowrap; }
@@ -201,6 +204,9 @@ html,body { background:var(--bg); font-family:'Plus Jakarta Sans',system-ui,sans
 .stats-empty { text-align:center; padding:40px 20px; color:var(--muted); font-size:13px; }
 .stats-empty strong { display:block; font-family:'Fraunces',serif; font-size:18px; color:var(--ink); margin-bottom:6px; }
 
+/* ── EXTERNAL LINK BTN ── */
+.ext-link-btn{display:inline-flex;align-items:center;gap:5px;padding:7px 14px;border:1.5px solid #d9d2bd;border-radius:20px;font-family:inherit;font-size:11.5px;font-weight:600;color:var(--muted);text-decoration:none;transition:all .15s;white-space:nowrap;flex-shrink:0;background:transparent;}
+.ext-link-btn:hover{border-color:var(--accent-deep);color:var(--ink);background:var(--accent-soft);}
 /* ── MODAL ── */
 .modal-overlay { display:none; position:fixed; inset:0; background:rgba(0,0,0,.4); backdrop-filter:blur(4px); z-index:300; align-items:center; justify-content:center; padding:20px; }
 .modal-overlay.open { display:flex; animation:fadeIn .2s; }
@@ -494,11 +500,17 @@ function renderControls(){
     var ecLink=document.createElement('a');
     ecLink.href='https://episodecalendar.com/en/calendar';
     ecLink.target='_blank';
-    ecLink.innerHTML='&#128197; Episode Calendar &#8599;';
-    ecLink.style.cssText='display:inline-flex;align-items:center;gap:5px;padding:7px 14px;border:1.5px solid #d9d2bd;border-radius:20px;font-family:inherit;font-size:11.5px;font-weight:600;color:var(--muted);text-decoration:none;transition:all .15s;white-space:nowrap;flex-shrink:0;';
-    ecLink.addEventListener("mouseover",function(){this.style.borderColor="var(--accent-deep)";this.style.color="var(--ink)";});
-    ecLink.addEventListener("mouseout",function(){this.style.borderColor="#d9d2bd";this.style.color="var(--muted)";});
+    ecLink.className='ext-link-btn';
+    ecLink.textContent='📅 Episode Calendar ↗';
     r2.appendChild(ecLink);
+  }
+  if(currentSection==='books'){
+    var grLink=document.createElement('a');
+    grLink.href='https://www.goodreads.com/review/list';
+    grLink.target='_blank';
+    grLink.className='ext-link-btn';
+    grLink.textContent='📚 Goodreads ↗';
+    r2.appendChild(grLink);
   }
   wrap.appendChild(r2);
 }
@@ -570,7 +582,10 @@ function makeGridCard(item,statusMap,sec){
   // Actions
   var actions=document.createElement('div');actions.className='card-actions';
   var statuses=sec.statuses;var ci=statuses.findIndex(function(s){return s.val===item.status;});var ns=statuses[(ci+1)%statuses.length];
-  var cycleB=document.createElement('button');cycleB.className='cycle-btn';cycleB.textContent='→ '+ns.label;
+  var curStatus=statusMap[item.status]||{label:item.status,cls:'status-want'};
+  var statusPill=document.createElement('span');statusPill.className='current-status-pill '+curStatus.cls;statusPill.textContent=curStatus.label;
+  actions.appendChild(statusPill);
+  var cycleB=document.createElement('button');cycleB.className='cycle-btn';cycleB.textContent='Mark as '+ns.label;
   cycleB.onclick=(function(id,nv){return function(){cycleStatus(id,nv);};})(item.id,ns.val);actions.appendChild(cycleB);
   // Open link — visible for articles (primary), in dots for others
   if(currentSection==='articles'&&item.link){
@@ -671,7 +686,9 @@ function makeListCard(item,statusMap,sec){
     right.appendChild(starsDiv);
   }
   var statuses=sec.statuses;var ci=statuses.findIndex(function(s){return s.val===item.status;});var ns=statuses[(ci+1)%statuses.length];
-  var cycleB=document.createElement('button');cycleB.className='cycle-btn';cycleB.textContent='→ '+ns.label.split(' ').pop();
+  var curSt=statusMap[item.status]||{label:item.status,cls:'status-want'};
+  var sPill=document.createElement('span');sPill.className='current-status-pill '+curSt.cls;sPill.textContent=curSt.label;right.appendChild(sPill);
+  var cycleB=document.createElement('button');cycleB.className='cycle-btn';cycleB.textContent='Mark as '+ns.label;
   cycleB.onclick=(function(id,nv){return function(){cycleStatus(id,nv);};})(item.id,ns.val);right.appendChild(cycleB);
   var dotsActs=[{label:'Edit',fn:(function(id){return function(){openEditModal(id);};})(item.id)}];
   if(item.link) dotsActs.push({label:'Open ↗',href:item.link});
@@ -752,7 +769,6 @@ function cycleStatus(id,ns){
 function deleteItem(id){data[currentSection]=data[currentSection].filter(function(i){return i.id!==id;});save();render();}
 function findItem(id){return(data[currentSection]||[]).find(function(i){return i.id===id;});}
 
-/* ── MODAL ── */
 function showModalFields(sec){
   var sd=SECTIONS[sec].showDate;
   document.getElementById('date-field-wrap').style.display=sd?'block':'none';
