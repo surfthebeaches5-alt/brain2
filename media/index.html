@@ -458,11 +458,25 @@ function getFiltered(){
   if(currentStatus!=='all') items=items.filter(function(i){return i.status===currentStatus;});
   if(currentCat!=='all')    items=items.filter(function(i){return i.category===currentCat;});
   if(searchQuery){var q=searchQuery.toLowerCase();items=items.filter(function(i){return(i.title||'').toLowerCase().includes(q)||(i.creator||'').toLowerCase().includes(q)||(i.note||'').toLowerCase().includes(q);});}
-  // "Next up" sort for Screen: Watching first, then Want to Watch, then Watched
-  if(currentSection==='screen'){
-    var order={progress:0,want:1,done:2};
-    items=items.slice().sort(function(a,b){return (order[a.status]!==undefined?order[a.status]:1)-(order[b.status]!==undefined?order[b.status]:1);});
-  }
+  // "Next up" sort (all tabs): in-progress first, queued second, completed last.
+  // Completed items sort by completion date, most recent first.
+  var order=currentSection==='podcasts'
+    ? {following:0,queue:1,archived:2}
+    : {progress:0,want:1,done:2};
+  var doneKey=currentSection==='podcasts'?'archived':'done';
+  items=items.slice().sort(function(a,b){
+    var oa=order[a.status]!==undefined?order[a.status]:1;
+    var ob=order[b.status]!==undefined?order[b.status]:1;
+    if(oa!==ob)return oa-ob;
+    // Within completed group: newest completion date first, undated last
+    if(a.status===doneKey&&b.status===doneKey){
+      var da=a.date||'',db=b.date||'';
+      if(da&&db)return db.localeCompare(da);
+      if(da)return -1;
+      if(db)return 1;
+    }
+    return 0;
+  });
   return items;
 }
 function setFilter(t,v){if(t==='status')currentStatus=v;else currentCat=v;render();}
