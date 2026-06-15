@@ -193,6 +193,24 @@ body.collapsed .sb-link{justify-content:center;padding:9px 0;}
 .ev-dot{width:7px;height:7px;border-radius:50%;background:var(--cat,#b099e0);margin-top:5px;flex-shrink:0;}
 .ev-t{font-size:12.5px;font-weight:700;line-height:1.3;}
 .ev-l{font-size:10.5px;color:var(--muted);font-weight:600;margin-top:1px;}
+.mini-d.has-ev{} /* clickable days inherit pointer from .mini-d */
+.qa{background:var(--warm);border:1px solid var(--line);border-radius:12px;padding:11px 12px;margin:-4px 0 16px;}
+.qa-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:9px;}
+.qa-date{font-size:12px;font-weight:800;color:var(--accent-deep);}
+.qa-x{border:none;background:transparent;color:var(--muted);font-size:18px;line-height:1;cursor:pointer;padding:0 2px;}
+.qa-x:hover{color:var(--ink);}
+.qa-exist{display:flex;flex-direction:column;gap:4px;margin-bottom:9px;padding-bottom:9px;border-bottom:1px solid var(--line);}
+.qa-ev{font-size:11.5px;font-weight:600;color:var(--ink);display:flex;align-items:center;gap:6px;}
+.qa-ev-dot{width:6px;height:6px;border-radius:50%;flex-shrink:0;}
+.qa-in{width:100%;border:1px solid var(--line);background:#fff;border-radius:9px;padding:8px 10px;font-family:inherit;font-size:12.5px;color:var(--ink);margin-bottom:7px;}
+.qa-in:focus{outline:none;border-color:var(--accent-line);}
+.qa-row{display:flex;gap:7px;}
+.qa-row .qa-in{flex:1;min-width:0;}
+.qa-actions{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-top:2px;}
+.qa-save{border:none;background:var(--accent);color:#fff;font-weight:700;font-size:12px;padding:8px 14px;border-radius:9px;cursor:pointer;font-family:inherit;transition:background .14s;}
+.qa-save:hover{background:var(--accent-deep);}
+.qa-more{font-size:11px;font-weight:700;color:var(--muted);text-decoration:none;white-space:nowrap;}
+.qa-more:hover{color:var(--accent-deep);}
 
 @media(max-width:1180px){
   :root{--rp-w:0px;}
@@ -371,8 +389,9 @@ body.collapsed .sb-link{justify-content:center;padding:9px 0;}
     </div>
     <div class="mini-grid" id="mini-grid"></div>
   </div>
+  <div id="quick-add"></div>
 
-  <div class="rp-sec">Today's Tasks <a class="rp-add" href="calendar/" onclick="event.stopPropagation()">+ add</a></div>
+  <div class="rp-sec">Today's Tasks <button class="rp-add" onclick="openQuickAdd(dateKey(new Date()))">+ add</button></div>
   <div id="rp-tasks"></div>
 
   <div class="rp-sec" style="margin-top:18px;">Today's Schedule</div>
@@ -646,7 +665,26 @@ function renderDC(){
 }
 
 /* ───────── RIGHT PANEL — TODAY (lifeCalendar1) ───────── */
-var CAL_COLOR={work:'#7e9cc4',social:'#5b8fd0',travel:'#8aa05a',learning:'#c9a83a',tasks:'#b099e0',health:'#4aa39a',selfcare:'#d27a9a',personal:'#cb9a4f'};
+/* categories — shared with the Calendar page via calCategories1 (Calendar owns/edits the list) */
+var HP_DEFAULT_CATS=[
+  {id:'work',    label:'Work',     dot:'#a9bfdd'},
+  {id:'study',   label:'Study',    dot:'#c1a9ee'},
+  {id:'fitness', label:'Fitness',  dot:'#a9cf6e'},
+  {id:'health',  label:'Health',   dot:'#95d0c6'},
+  {id:'finances',label:'Finances', dot:'#ddbd5c'},
+  {id:'social',  label:'Social',   dot:'#9cc4f0'},
+  {id:'outings', label:'Outings',  dot:'#e2a172'},
+  {id:'travel',  label:'Travel',   dot:'#a7b384'},
+  {id:'selfcare',label:'Self-care',dot:'#f3b3cf'},
+  {id:'personal',label:'Personal', dot:'#f3c193'}
+];
+var HP_CATS=HP_DEFAULT_CATS;
+function loadHpCats(){
+  try{var raw=localStorage.getItem('calCategories1');if(raw){var a=JSON.parse(raw);if(Array.isArray(a)&&a.length){HP_CATS=a;return;}}}catch(e){}
+  HP_CATS=HP_DEFAULT_CATS;
+}
+function catColor(id){var c=HP_CATS.find(function(x){return x.id===id;});return (c&&c.dot)?c.dot:'#b099e0';}
+function catLabel(id){var c=HP_CATS.find(function(x){return x.id===id;});return c?c.label:cap(id);}
 function calEvents(){var d=lsGet('lifeCalendar1');if(!d)return [];return Array.isArray(d)?d:(d.events||[]);}
 function fmtTime(t){
   if(!t)return '';
@@ -669,16 +707,20 @@ function renderMini(){
   for(var i=0;i<startDow;i++)mini+='<div class="mini-d mut"></div>';
   for(var dd=1;dd<=dim;dd++){
     var today=curMonth&&dd===base.getDate();
-    mini+='<div class="mini-d'+(today?' today':'')+'">'+dd+(evDays[dd]?'<span class="ev"></span>':'')+'</div>';
+    var iso=y+'-'+String(m+1).padStart(2,'0')+'-'+String(dd).padStart(2,'0');
+    mini+='<div class="mini-d'+(today?' today':'')+'" onclick="openQuickAdd(\''+iso+'\')">'+dd+(evDays[dd]?'<span class="ev"></span>':'')+'</div>';
   }
   document.getElementById('mini-grid').innerHTML=mini;
 }
 function miniNav(dir){miniOffset+=dir;renderMini();}
 function renderRightPanel(){
-  var now=new Date(), tk=dateKey(now), events=calEvents();
+  var now=new Date();
   document.getElementById('rp-date').textContent=DF[now.getDay()]+', '+MF[now.getMonth()]+' '+now.getDate();
   renderMini();
-
+  renderTodayLists();
+}
+function renderTodayLists(){
+  var now=new Date(), tk=dateKey(now), events=calEvents();
   var todays=events.filter(function(e){return e.date===tk;});
   var untimed=todays.filter(function(e){return !e.time;});
   var timed=todays.filter(function(e){return e.time;}).sort(function(a,b){return (a.time||'').localeCompare(b.time||'');});
@@ -693,15 +735,58 @@ function renderRightPanel(){
   if(!timed.length){schedEl.innerHTML=emptyRow('Nothing scheduled today.');return;}
   var nowMin=now.getHours()*60+now.getMinutes();
   schedEl.innerHTML=timed.map(function(e){
-    var col=CAL_COLOR[e.cat]||'#b099e0';
+    var col=catColor(e.cat);
     var tp=e.time.split(':'),emin=parseInt(tp[0])*60+parseInt(tp[1]);
     var isNow=Math.abs(emin-nowMin)<=45;
     return '<div class="ev-row"><div class="ev-time'+(isNow?' now':'')+'">'+fmtTime(e.time)+'</div>'+
       '<div class="ev-card" style="--cat:'+col+';"><div class="ev-dot"></div><div>'+
       '<div class="ev-t">'+esc(e.title)+'</div>'+
-      (e.note?'<div class="ev-l">'+esc(e.note)+'</div>':(e.cat?'<div class="ev-l">'+esc(cap(e.cat))+'</div>':''))+
+      (e.note?'<div class="ev-l">'+esc(e.note)+'</div>':(e.cat?'<div class="ev-l">'+esc(catLabel(e.cat))+'</div>':''))+
       '</div></div></div>';
   }).join('');
+}
+
+/* ── quick-add: click any mini-calendar day (or "+ add") to drop an event into lifeCalendar1 ── */
+var qaDate=null;
+function openQuickAdd(iso){
+  qaDate=iso;
+  var p=iso.split('-'), d=new Date(+p[0],+p[1]-1,+p[2]);
+  var existing=calEvents().filter(function(e){return e.date===iso;})
+    .sort(function(a,b){return (a.time||'').localeCompare(b.time||'');});
+  var exHtml=existing.length?'<div class="qa-exist">'+existing.map(function(e){
+    return '<div class="qa-ev"><span class="qa-ev-dot" style="background:'+catColor(e.cat)+'"></span>'+
+      (e.time?fmtTime(e.time)+' · ':'')+esc(e.title)+'</div>';
+  }).join('')+'</div>':'';
+  var opts=HP_CATS.map(function(c){return '<option value="'+esc(c.id)+'"'+(c.id==='personal'?' selected':'')+'>'+esc(c.label)+'</option>';}).join('');
+  document.getElementById('quick-add').innerHTML=
+    '<div class="qa">'+
+      '<div class="qa-top"><span class="qa-date">'+DF[d.getDay()].slice(0,3)+', '+MF[d.getMonth()].slice(0,3)+' '+d.getDate()+'</span>'+
+        '<button class="qa-x" onclick="closeQuickAdd()" aria-label="Close">×</button></div>'+
+      exHtml+
+      '<input id="qa-title" class="qa-in" placeholder="Add something…" autocomplete="off" onkeydown="if(event.key===\'Enter\')saveQuickAdd()">'+
+      '<div class="qa-row"><input id="qa-time" type="time" class="qa-in"><select id="qa-cat" class="qa-in">'+opts+'</select></div>'+
+      '<div class="qa-actions"><button class="qa-save" onclick="saveQuickAdd()">Add to calendar</button>'+
+        '<a class="qa-more" href="calendar/">Open Calendar →</a></div>'+
+    '</div>';
+  var t=document.getElementById('qa-title'); if(t)t.focus();
+}
+function closeQuickAdd(){qaDate=null;document.getElementById('quick-add').innerHTML='';}
+function addCalEvent(evt){
+  var d=lsGet('lifeCalendar1');
+  if(Array.isArray(d)){d.push(evt);localStorage.setItem('lifeCalendar1',JSON.stringify(d));}
+  else{var obj=d||{events:[]};if(!obj.events)obj.events=[];obj.events.push(evt);localStorage.setItem('lifeCalendar1',JSON.stringify(obj));}
+}
+function saveQuickAdd(){
+  if(!qaDate)return;
+  var ti=document.getElementById('qa-title'), title=ti?ti.value.trim():'';
+  if(!title){if(ti)ti.focus();return;}
+  var time=(document.getElementById('qa-time')||{}).value||'';
+  var cat=(document.getElementById('qa-cat')||{}).value||'personal';
+  addCalEvent({id:'ev'+Date.now().toString(36)+Math.floor(Math.random()*10000),title:title,date:qaDate,time:time,cat:cat,note:'',done:false});
+  var keep=qaDate;
+  renderMini();
+  renderTodayLists();
+  openQuickAdd(keep); /* reopen cleared, now showing the new entry, for fast multi-add */
 }
 function toggleCalDone(id){
   var d=lsGet('lifeCalendar1'); if(!d)return;
@@ -726,6 +811,7 @@ function renderHero(){
 }
 
 /* ───────── INIT ───────── */
+safe(loadHpCats);
 safe(renderHero);
 safe(renderLearning);
 safe(renderFinances);
