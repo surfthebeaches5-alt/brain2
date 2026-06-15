@@ -89,6 +89,9 @@ body.collapsed .sb-link{justify-content:center;padding:9px 0;}
 .chip-over{background:var(--over-bg);color:var(--over);}
 .chip-mut{background:var(--warm);color:var(--muted);}
 
+/* empty state */
+.empty-line{padding:14px 2px;color:var(--muted);font-size:12.5px;font-style:italic;line-height:1.5;}
+
 /* split (learning) */
 .split{display:grid;grid-template-columns:1fr 1fr;gap:18px;}
 .col-hdr{font-size:10px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-bottom:10px;}
@@ -149,9 +152,9 @@ body.collapsed .sb-link{justify-content:center;padding:9px 0;}
 .dc{display:flex;align-items:center;gap:11px;padding:9px 0;}
 .dc + .dc{border-top:1px solid var(--hair);}
 .dc-ic{width:26px;height:26px;border-radius:8px;background:var(--warm);display:flex;align-items:center;justify-content:center;font-size:13px;flex-shrink:0;}
-.dc-n{flex:1;}
-.dc-t{font-size:13px;font-weight:700;}
-.dc-s{font-size:11px;color:var(--muted);font-weight:600;}
+.dc-n{flex:1;min-width:0;}
+.dc-t{font-size:13px;font-weight:700;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.dc-s{font-size:11px;color:var(--muted);font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
 
 /* ───────── RIGHT PANEL — TODAY ───────── */
 .right{position:fixed;right:0;top:0;bottom:0;width:var(--rp-w);background:var(--surface);border-left:1px solid var(--line);display:flex;flex-direction:column;padding:22px 20px;overflow-y:auto;z-index:100;}
@@ -161,9 +164,6 @@ body.collapsed .sb-link{justify-content:center;padding:9px 0;}
 .mini{margin-bottom:18px;}
 .mini-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:9px;}
 .mini-mo{font-size:13px;font-weight:700;}
-.mini-nav{display:flex;gap:4px;}
-.mini-nav button{width:24px;height:24px;border:none;background:var(--warm);border-radius:7px;cursor:pointer;color:var(--muted);font-size:12px;}
-.mini-nav button:hover{background:var(--warm-deep);}
 .mini-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:2px;text-align:center;}
 .mini-dow{font-size:9px;font-weight:700;color:var(--muted);padding-bottom:4px;}
 .mini-d{aspect-ratio:1;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:600;border-radius:50%;position:relative;cursor:pointer;}
@@ -173,7 +173,7 @@ body.collapsed .sb-link{justify-content:center;padding:9px 0;}
 .mini-d .ev{position:absolute;bottom:3px;width:3px;height:3px;border-radius:50%;background:var(--accent-deep);}
 .mini-d.today .ev{background:#fff;}
 .rp-sec{font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);font-weight:800;margin:6px 0 9px;display:flex;align-items:center;justify-content:space-between;}
-.rp-add{border:none;background:var(--warm);color:var(--accent-deep);font-size:11px;font-weight:700;padding:3px 9px;border-radius:8px;cursor:pointer;}
+.rp-add{border:none;background:var(--warm);color:var(--accent-deep);font-size:11px;font-weight:700;padding:3px 9px;border-radius:8px;cursor:pointer;text-decoration:none;}
 .rp-add:hover{background:var(--accent-soft);}
 .task{display:flex;align-items:center;gap:10px;padding:8px 9px;border-radius:10px;cursor:pointer;transition:background .14s;}
 .task:hover{background:var(--warm);}
@@ -248,12 +248,12 @@ body.collapsed .sb-link{justify-content:center;padding:9px 0;}
   <div class="hero">
     <div>
       <div class="hero-greet" id="greet">Good afternoon</div>
-      <div class="hero-date" id="date">Saturday, June 14 · Week 24</div>
+      <div class="hero-date" id="date">—</div>
     </div>
     <div class="hero-right">
       <div class="yr">
-        <div class="yr-top"><span id="yr-left">200 days left</span><span id="yr-pct">45.2%</span></div>
-        <div class="yr-track"><div class="yr-fill" id="yrfill" style="width:45.2%"></div></div>
+        <div class="yr-top"><span id="yr-left">—</span><span id="yr-pct">—</span></div>
+        <div class="yr-track"><div class="yr-fill" id="yrfill" style="width:0%"></div></div>
       </div>
     </div>
   </div>
@@ -264,29 +264,16 @@ body.collapsed .sb-link{justify-content:center;padding:9px 0;}
     <div class="tile lead c7" onclick="location.href='learning-hub/'">
       <div class="tile-head">
         <div class="ttl"><span class="ey-dot"></span>Learning &amp; Classes</div>
-        <div class="head-right"><span class="chip chip-warn">1 due soon</span><span class="go">→</span></div>
+        <div class="head-right"><span class="chip chip-mut" id="learn-chip">—</span><span class="go">→</span></div>
       </div>
       <div class="split">
         <div>
           <div class="col-hdr">🎓 Enrolled</div>
-          <div class="ring-row">
-            <svg class="ring" width="40" height="40" viewBox="0 0 44 44"><circle class="ring-bg" cx="22" cy="22" r="18"/><circle class="ring-fl" cx="22" cy="22" r="18" stroke="#9a7fd4" stroke-dasharray="113.1" stroke-dashoffset="104"/><text class="ring-pct" x="22" y="23" fill="#9a7fd4">8%</text></svg>
-            <div style="min-width:0;">
-              <div class="ring-name">Spanish 3</div>
-              <div class="ring-sub" style="color:var(--warn)">Prep Comunicativa 1 · 10d</div>
-            </div>
-          </div>
+          <div id="enrolled-list"></div>
         </div>
         <div>
           <div class="col-hdr">📚 Self-Study</div>
-          <div class="ring-row">
-            <svg class="ring" width="40" height="40" viewBox="0 0 44 44"><circle class="ring-bg" cx="22" cy="22" r="18"/><circle class="ring-fl" cx="22" cy="22" r="18" stroke="#9a7fd4" stroke-dasharray="113.1" stroke-dashoffset="33"/><text class="ring-pct" x="22" y="23" fill="#9a7fd4">71%</text></svg>
-            <div style="min-width:0;"><div class="ring-name">Power BI</div><div class="ring-sub" style="color:var(--muted)">2 of 8 courses left</div></div>
-          </div>
-          <div class="ring-row">
-            <svg class="ring" width="40" height="40" viewBox="0 0 44 44"><circle class="ring-bg" cx="22" cy="22" r="18"/><circle class="ring-fl" cx="22" cy="22" r="18" stroke="#9a7fd4" stroke-dasharray="113.1" stroke-dashoffset="46"/><text class="ring-pct" x="22" y="23" fill="#9a7fd4">59%</text></svg>
-            <div style="min-width:0;"><div class="ring-name">Google UX</div><div class="ring-sub" style="color:var(--muted)">course 3 of 7</div></div>
-          </div>
+          <div id="selfstudy-list"></div>
         </div>
       </div>
       <div class="divider"></div>
@@ -307,11 +294,9 @@ body.collapsed .sb-link{justify-content:center;padding:9px 0;}
     <div class="tile c5" onclick="location.href='finances/'">
       <div class="tile-head">
         <div class="ttl"><span class="ey-dot"></span>Finances</div>
-        <div class="head-right"><span class="chip chip-mut">3 upcoming</span><span class="go">→</span></div>
+        <div class="head-right"><span class="chip chip-mut" id="fin-chip">—</span><span class="go">→</span></div>
       </div>
-      <div class="due"><span class="due-name">Bilt Blue</span><span class="due-date">Jun 18</span><span class="chip chip-over">4d</span></div>
-      <div class="due"><span class="due-name">Chase Sapphire</span><span class="due-date">Jun 22</span><span class="chip chip-warn">8d</span></div>
-      <div class="due"><span class="due-name">Marriott Bonvoy</span><span class="due-date">Jul 12</span><span class="chip chip-ok">28d</span></div>
+      <div id="fin-list"></div>
       <div class="divider"></div>
       <div class="links">
         <a class="lnk" href="https://login.sofi.com/" target="_blank" rel="noopener" onclick="event.stopPropagation()">SoFi ↗</a>
@@ -326,39 +311,30 @@ body.collapsed .sb-link{justify-content:center;padding:9px 0;}
     <div class="tile c6" onclick="location.href='fitness/'">
       <div class="tile-head">
         <div class="ttl"><span class="ey-dot"></span>Fitness</div>
-        <div class="head-right"><span class="chip chip-mut" id="nn-count">2 / 4 today</span><span class="go">→</span></div>
+        <div class="head-right"><span class="chip chip-mut" id="nn-count">—</span><span class="go">→</span></div>
       </div>
-      <div class="wo">Upper Body Sculpt</div>
-      <div class="wo-sub">Shoulders · triceps · rear delts</div>
-      <div class="nn done" onclick="event.stopPropagation();toggleNN(this)"><span class="box">✓</span>💧 1L Water</div>
-      <div class="nn done" onclick="event.stopPropagation();toggleNN(this)"><span class="box">✓</span>🚶 Walking Pad — 1 hr</div>
-      <div class="nn" onclick="event.stopPropagation();toggleNN(this)"><span class="box"></span>👟 6k+ Steps</div>
-      <div class="nn" onclick="event.stopPropagation();toggleNN(this)"><span class="box"></span>💪 Workout</div>
+      <div class="wo" id="wo-label">—</div>
+      <div class="wo-sub" id="wo-sub"></div>
+      <div id="nn-list"></div>
     </div>
 
     <!-- Meals -->
     <div class="tile c6" onclick="location.href='meals/'">
       <div class="tile-head">
         <div class="ttl"><span class="ey-dot"></span>Meals</div>
-        <div class="head-right"><span class="chip chip-ok">Keto range</span><span class="go">→</span></div>
+        <div class="head-right"><span class="chip chip-mut" id="meal-chip">—</span><span class="go">→</span></div>
       </div>
-      <div class="carb">
-        <svg class="carb-ring" width="50" height="50" viewBox="0 0 44 44"><circle class="ring-bg" cx="22" cy="22" r="18"/><circle class="ring-fl" cx="22" cy="22" r="18" stroke="#3f9866" stroke-dasharray="113.1" stroke-dashoffset="30"/></svg>
-        <div><div class="carb-big">22g</div><div class="carb-lbl">Net carbs today</div></div>
-        <div class="carb-note">Goal 30g<br>✓ 8g to spare</div>
-      </div>
-      <div class="meal"><span class="meal-w">B</span><span class="meal-n">Eggs &amp; avocado</span><span class="meal-c">4g</span></div>
-      <div class="meal"><span class="meal-w">L</span><span class="meal-n">Cobb salad</span><span class="meal-c">9g</span></div>
-      <div class="meal"><span class="meal-w">D</span><span class="meal-n empty">not planned</span></div>
+      <div class="carb" id="carb-block"></div>
+      <div id="meal-list"></div>
       <div class="divider"></div>
-      <div style="display:flex;justify-content:space-between;align-items:center;">
-        <span style="font-size:12px;font-weight:600;color:var(--muted);">🛒 2 low — <b style="color:var(--over)">eggs</b>, butter</span>
+      <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;">
+        <span id="pantry-low"></span>
         <a class="lnk" href="https://www.instacart.com/store" target="_blank" rel="noopener" onclick="event.stopPropagation()">Instacart ↗</a>
       </div>
     </div>
   </div>
 
-  <!-- ROW 3 — Media (3 with covers) + DC Guide -->
+  <!-- ROW 3 — Media (covers) + DC Guide -->
   <div class="grid">
     <!-- Media -->
     <div class="tile c6" onclick="location.href='media/'">
@@ -366,29 +342,16 @@ body.collapsed .sb-link{justify-content:center;padding:9px 0;}
         <div class="ttl"><span class="ey-dot"></span>Media</div>
         <div class="head-right"><span class="go">→</span></div>
       </div>
-      <div class="media-item">
-        <div class="cover" style="background:linear-gradient(140deg,#5b7ea8,#2f4d70)">📖</div>
-        <div class="media-info"><div class="media-t">Tomorrow, and Tomorrow, and Tomorrow</div><div class="media-a">Gabrielle Zevin</div><span class="chip chip-mut">Reading · 62%</span></div>
-      </div>
-      <div class="media-item">
-        <div class="cover" style="background:linear-gradient(140deg,#c06a4e,#7a3320)">📺</div>
-        <div class="media-info"><div class="media-t">The Bear</div><div class="media-a">FX · Hulu</div><span class="chip chip-ok">Watching · S3 E5</span></div>
-      </div>
-      <div class="media-item">
-        <div class="cover" style="background:linear-gradient(140deg,#8a7bb8,#574a86)">📰</div>
-        <div class="media-info"><div class="media-t">The case for slow productivity</div><div class="media-a">The New Yorker</div><span class="chip chip-mut">Up Next</span></div>
-      </div>
+      <div id="media-list"></div>
     </div>
 
     <!-- DC Guide -->
     <div class="tile c6" onclick="location.href='dc-guide/'">
       <div class="tile-head">
-        <div class="ttl"><span class="ey-dot"></span>June in DC</div>
+        <div class="ttl"><span class="ey-dot"></span><span id="dc-title">In DC</span></div>
         <div class="head-right"><span class="go">→</span></div>
       </div>
-      <div class="dc"><div class="dc-ic">🎉</div><div class="dc-n"><div class="dc-t">Jazz in the Garden</div><div class="dc-s">Penn Quarter · Fridays</div></div><span class="chip chip-ok">Free</span></div>
-      <div class="dc"><div class="dc-ic">🍽</div><div class="dc-n"><div class="dc-t">Tatte Bakery</div><div class="dc-s">Shaw · brunch</div></div><span class="chip chip-mut">$$</span></div>
-      <div class="dc"><div class="dc-ic">🌿</div><div class="dc-n"><div class="dc-t">Kenilworth Aquatic Gardens</div><div class="dc-s">NE · lotus bloom</div></div><span class="chip chip-ok">Free</span></div>
+      <div id="dc-list"></div>
     </div>
   </div>
 </main>
@@ -396,73 +359,361 @@ body.collapsed .sb-link{justify-content:center;padding:9px 0;}
 <!-- ───────── RIGHT PANEL — TODAY ───────── -->
 <aside class="right">
   <div class="rp-head">Today</div>
-  <div class="rp-sub" id="rp-date">Saturday, June 14</div>
+  <div class="rp-sub" id="rp-date">—</div>
 
   <div class="mini">
     <div class="mini-top">
-      <div class="mini-mo">June 2026</div>
-      <div class="mini-nav"><button>‹</button><button>›</button></div>
+      <div class="mini-mo">—</div>
     </div>
-    <div class="mini-grid">
-      <div class="mini-dow">M</div><div class="mini-dow">T</div><div class="mini-dow">W</div><div class="mini-dow">T</div><div class="mini-dow">F</div><div class="mini-dow">S</div><div class="mini-dow">S</div>
-      <div class="mini-d mut">1</div><div class="mini-d mut">2</div><div class="mini-d mut">3</div><div class="mini-d mut">4</div><div class="mini-d mut">5</div><div class="mini-d mut">6</div><div class="mini-d mut">7</div>
-      <div class="mini-d">8</div><div class="mini-d">9</div><div class="mini-d">10</div><div class="mini-d">11</div><div class="mini-d">12</div><div class="mini-d">13</div><div class="mini-d today">14<span class="ev"></span></div>
-      <div class="mini-d">15</div><div class="mini-d">16</div><div class="mini-d">17</div><div class="mini-d">18</div><div class="mini-d">19<span class="ev"></span></div><div class="mini-d">20</div><div class="mini-d">21</div>
-      <div class="mini-d">22<span class="ev"></span></div><div class="mini-d">23</div><div class="mini-d">24<span class="ev"></span></div><div class="mini-d">25</div><div class="mini-d">26</div><div class="mini-d">27</div><div class="mini-d">28<span class="ev"></span></div>
-      <div class="mini-d">29</div><div class="mini-d">30</div>
-    </div>
+    <div class="mini-grid" id="mini-grid"></div>
   </div>
 
-  <div class="rp-sec">Today's Tasks <button class="rp-add">+ add</button></div>
-  <div class="task done" onclick="this.classList.toggle('done')"><span class="t-box">✓</span><span class="tx">Read PLUMA 1, pages 1–5</span></div>
-  <div class="task" onclick="this.classList.toggle('done')"><span class="t-box"></span><span class="tx">Draft Reading Summary 1</span><span class="t-due chip-warn">Mon</span></div>
-  <div class="task" onclick="this.classList.toggle('done')"><span class="t-box"></span><span class="tx">Reply to Profe Mendoza</span></div>
-  <div class="task" onclick="this.classList.toggle('done')"><span class="t-box"></span><span class="tx">Pay Chase Sapphire</span><span class="t-due chip-mut">Jun 22</span></div>
+  <div class="rp-sec">Today's Tasks <a class="rp-add" href="calendar/" onclick="event.stopPropagation()">+ add</a></div>
+  <div id="rp-tasks"></div>
 
   <div class="rp-sec" style="margin-top:18px;">Today's Schedule</div>
-  <div class="sched">
-    <div class="ev-row">
-      <div class="ev-time now">9:00a</div>
-      <div class="ev-card" style="--cat:#9a7fd4;"><div class="ev-dot"></div><div><div class="ev-t">Spanish — deep work block</div><div class="ev-l">9:00 – 10:30a · Learning</div></div></div>
-    </div>
-    <div class="ev-row">
-      <div class="ev-time">1:00p</div>
-      <div class="ev-card" style="--cat:#4d84a6;"><div class="ev-dot"></div><div><div class="ev-t">Dr. appointment</div><div class="ev-l">1:00p · Health</div></div></div>
-    </div>
-    <div class="ev-row">
-      <div class="ev-time">6:30p</div>
-      <div class="ev-card" style="--cat:#3f9866;"><div class="ev-dot"></div><div><div class="ev-t">Walking pad + podcast</div><div class="ev-l">6:30p · Personal</div></div></div>
-    </div>
-  </div>
+  <div class="sched" id="rp-sched"></div>
 </aside>
 
 <script>
-function toggleNN(el){
-  el.classList.toggle('done');
-  el.querySelector('.box').textContent=el.classList.contains('done')?'✓':'';
-  var total=document.querySelectorAll('.nn').length;
-  var done=document.querySelectorAll('.nn.done').length;
-  document.getElementById('nn-count').textContent=done+' / '+total+' today';
+/* ───────── HELPERS ───────── */
+function lsGet(key){try{var r=localStorage.getItem(key);return r?JSON.parse(r):null;}catch(e){return null;}}
+function esc(s){return String(s==null?'':s).replace(/[&<>"']/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];});}
+function todayMidnight(){var d=new Date();d.setHours(0,0,0,0);return d;}
+function dateKey(d){return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');}
+function daysUntilISO(iso){if(!iso)return null;var d=new Date(iso+'T00:00:00');return Math.round((d-todayMidnight())/86400000);}
+function fmtG(n){var r=Math.round(n*10)/10;return r%1?r.toFixed(1):String(Math.round(r));}
+function emptyRow(msg){return '<div class="empty-line">'+esc(msg)+'</div>';}
+function safe(fn){try{fn();}catch(e){if(window.console)console.warn('tile failed:',e);}}
+var MS=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+var MF=['January','February','March','April','May','June','July','August','September','October','November','December'];
+var DF=['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+
+/* ───────── LEARNING & CLASSES (classTracker1 + profDevData2) ───────── */
+function ringRow(pct,name,sub,subColor){
+  var off=(113.1*(1-pct/100)).toFixed(1);
+  return '<div class="ring-row">'+
+    '<svg class="ring" width="40" height="40" viewBox="0 0 44 44"><circle class="ring-bg" cx="22" cy="22" r="18"/>'+
+    '<circle class="ring-fl" cx="22" cy="22" r="18" stroke="#9a7fd4" stroke-dasharray="113.1" stroke-dashoffset="'+off+'"/>'+
+    '<text class="ring-pct" x="22" y="23" fill="#9a7fd4">'+pct+'%</text></svg>'+
+    '<div style="min-width:0;"><div class="ring-name">'+esc(name)+'</div>'+
+    '<div class="ring-sub" style="color:'+subColor+'">'+esc(sub)+'</div></div></div>';
 }
-(function(){
-  var now=new Date();
-  var days=['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
-  var months=['January','February','March','April','May','June','July','August','September','October','November','December'];
-  var h=now.getHours();
+function renderLearning(){
+  var db=lsGet('classTracker1'); var classes=db?(Array.isArray(db)?db:(db.classes||[])):[];
+  var enrolled=document.getElementById('enrolled-list'); var dueSoon=0;
+  if(!classes.length){enrolled.innerHTML=emptyRow('No classes yet.');}
+  else{
+    enrolled.innerHTML=classes.slice(0,2).map(function(c){
+      var done=0,total=0,next=null;
+      (c.modules||[]).forEach(function(m){(m.tasks||[]).forEach(function(t){
+        total++; if(t.done){done++;return;}
+        var eff=t.due||m.due||'';
+        if(!next || (eff && (!next.eff || eff<next.eff))) next={label:t.label,eff:eff};
+      });});
+      var pct=total?Math.round(done/total*100):0;
+      var sub='All done ✓', col='var(--ok)';
+      if(next){
+        var d=next.eff?daysUntilISO(next.eff):null;
+        if(d!==null&&d<=3)dueSoon++;
+        sub=next.label+(d!==null?' · '+d+'d':'');
+        col=(d!==null&&d<=3)?'var(--warn)':'var(--muted)';
+      }
+      return ringRow(pct,c.name||'Class',sub,col);
+    }).join('');
+  }
+  var chip=document.getElementById('learn-chip');
+  chip.textContent=dueSoon?dueSoon+' due soon':'on track';
+  chip.className='chip '+(dueSoon?'chip-warn':'chip-mut');
+
+  var progs=lsGet('profDevData2'); if(!Array.isArray(progs))progs=[];
+  var active=progs.filter(function(p){return p.status==='active';}).map(function(p){
+    var cs=p.courses||[];
+    var pct=cs.length?Math.round(cs.reduce(function(s,c){return s+(c.pct||0);},0)/cs.length):0;
+    var remaining=cs.filter(function(c){return (c.pct||0)<100;}).length;
+    return {name:p.name,pct:pct,total:cs.length,remaining:remaining};
+  }).sort(function(a,b){return b.pct-a.pct;}).slice(0,2);
+  var ss=document.getElementById('selfstudy-list');
+  if(!active.length){ss.innerHTML=emptyRow('No active programs.');return;}
+  ss.innerHTML=active.map(function(p){
+    var sub=p.remaining>0?(p.remaining+' of '+p.total+' courses left'):'complete ✓';
+    return ringRow(p.pct,p.name,sub,'var(--muted)');
+  }).join('');
+}
+
+/* ───────── FINANCES (finTrackerState2) ───────── */
+function daysUntilDay(day){
+  var now=todayMidnight();
+  var due=new Date(now.getFullYear(),now.getMonth(),day);
+  if(due<now)due=new Date(now.getFullYear(),now.getMonth()+1,day);
+  return Math.ceil((due-now)/86400000);
+}
+function dueStr(day){
+  var now=todayMidnight();
+  var due=new Date(now.getFullYear(),now.getMonth(),day);
+  if(due<now)due=new Date(now.getFullYear(),now.getMonth()+1,day);
+  return MS[due.getMonth()]+' '+due.getDate();
+}
+function renderFinances(){
+  var s=lsGet('finTrackerState2'); var cards=(s&&s.cards)?s.cards:[];
+  var active=cards.filter(function(c){return c.active&&!c.paid;})
+    .map(function(c){return {name:c.name,day:c.day,d:daysUntilDay(c.day)};})
+    .sort(function(a,b){return a.d-b.d;});
+  document.getElementById('fin-chip').textContent=active.length?active.length+' upcoming':'all paid';
+  var el=document.getElementById('fin-list');
+  var top=active.slice(0,3);
+  if(!top.length){el.innerHTML=emptyRow('No upcoming payments — all caught up.');return;}
+  el.innerHTML=top.map(function(c){
+    var cls=c.d<=7?'chip-over':(c.d<=14?'chip-warn':'chip-ok');
+    return '<div class="due"><span class="due-name">'+esc(c.name)+'</span><span class="due-date">'+dueStr(c.day)+'</span><span class="chip '+cls+'">'+c.d+'d</span></div>';
+  }).join('');
+}
+
+/* ───────── FITNESS (fitnessTracker1_day_*) ───────── */
+var WO_MAP={
+  0:{label:'Rest & Prep',focus:'Light walking, meal prep, self-care'},
+  1:{label:'Lower Body Sculpt',focus:'Legs & Glutes — lift and tighten'},
+  2:{label:'Waist Snatching',focus:'Cardio & core tightening'},
+  3:{label:'Upper Body Sculpt',focus:'Toned shoulders & arms'},
+  4:{label:'Active Recovery',focus:'Cortisol management & NEAT'},
+  5:{label:'Full Body Glow',focus:'Full body metabolic conditioning'},
+  6:{label:'Sweat Session',focus:'Maximum calorie burn'}
+};
+var NN_DEFS=[
+  {id:'water',emoji:'💧',label:'1L Water'},
+  {id:'walk', emoji:'🚶',label:'Walking Pad — 1 hr'},
+  {id:'steps',emoji:'👟',label:'6k+ Steps'},
+  {id:'workout',emoji:'💪',label:'Workout'}
+];
+function fitKey(){return 'fitnessTracker1_day_'+dateKey(new Date());}
+function fitDay(){return lsGet(fitKey())||{};}
+function renderFitness(){
+  var dk=dateKey(new Date()), dow=new Date().getDay();
+  var custom=lsGet('fitnessTracker1_custom_workout_'+dk);
+  var wo=custom||WO_MAP[dow]||{label:'Workout',focus:''};
+  document.getElementById('wo-label').textContent=wo.label||'Workout';
+  document.getElementById('wo-sub').textContent=wo.focus||'';
+  var nn=(fitDay().nonneg)||{};
+  document.getElementById('nn-list').innerHTML=NN_DEFS.map(function(n){
+    var done=!!nn[n.id];
+    return '<div class="nn'+(done?' done':'')+'" onclick="event.stopPropagation();toggleNN(\''+n.id+'\')">'+
+      '<span class="box">'+(done?'✓':'')+'</span>'+n.emoji+' '+n.label+'</div>';
+  }).join('');
+  var doneCount=NN_DEFS.filter(function(n){return nn[n.id];}).length;
+  document.getElementById('nn-count').textContent=doneCount+' / '+NN_DEFS.length+' today';
+}
+function toggleNN(id){
+  var key=fitKey(); var dd=lsGet(key)||{};
+  if(!dd.nonneg)dd.nonneg={};
+  dd.nonneg[id]=!dd.nonneg[id];
+  localStorage.setItem(key,JSON.stringify(dd));
+  renderFitness();
+}
+
+/* ───────── MEALS (mealPlanner1) ───────── */
+var MEAL_TYPES=['Breakfast','Lunch','Dinner','Snack'];
+var KETO_GOAL=30;
+function shortName(n){n=String(n||'');return n.length>18?n.slice(0,17)+'…':n;}
+function renderMeals(){
+  var d=lsGet('mealPlanner1')||{};
+  var pantry=d.pantry||[], recipes=d.recipes||[], meals=d.meals||{};
+  function getItem(id){return pantry.find(function(p){return p.id===id;});}
+  function getRecipe(id){return recipes.find(function(r){return r.id===id;});}
+  function recipeCarbs(r){return r.ingredients.reduce(function(s,i){var it=getItem(i.itemId);return s+(it?it.carbsPerUnit*i.servings:0);},0);}
+  function entryCarbs(e){
+    if(e.type==='takeout')return e.carbs||0;
+    if(e.type==='item'){var it=getItem(e.itemId);return it?it.carbsPerUnit*(e.servings||1):0;}
+    if(e.type==='recipe'){var r=getRecipe(e.recipeId);return r?recipeCarbs(r):0;}
+    return 0;
+  }
+  function entryName(e){
+    if(e.type==='takeout')return e.name;
+    if(e.type==='item'){var it=getItem(e.itemId);return it?it.name:'Unknown';}
+    if(e.type==='recipe'){var r=getRecipe(e.recipeId);return r?r.name:'Unknown';}
+    return '';
+  }
+  function stockStatus(item){
+    if(item.remaining<=0)return 'out';
+    if(item.reorderAt>0&&item.remaining<=item.reorderAt)return 'low';
+    return 'ok';
+  }
+  var dk=dateKey(new Date());
+  var totalCarbs=0;
+  MEAL_TYPES.forEach(function(mt){(meals[dk+'_'+mt]||[]).forEach(function(e){totalCarbs+=entryCarbs(e);});});
+
+  var cls=totalCarbs<=KETO_GOAL?'ok':(totalCarbs<=KETO_GOAL*1.3?'warn':'over');
+  var chip=document.getElementById('meal-chip');
+  chip.className='chip '+({ok:'chip-ok',warn:'chip-warn',over:'chip-over'}[cls]);
+  chip.textContent={ok:'Keto range',warn:'Near limit',over:'Over goal'}[cls];
+
+  var off=(113.1*(1-Math.min(1,totalCarbs/KETO_GOAL))).toFixed(1);
+  var ringColor=cls==='ok'?'#3f9866':(cls==='warn'?'#c2882f':'#cf5d72');
+  var spare=KETO_GOAL-totalCarbs;
+  var note=spare>=0?('Goal '+KETO_GOAL+'g<br>✓ '+fmtG(spare)+'g to spare'):('Goal '+KETO_GOAL+'g<br>⚠ '+fmtG(-spare)+'g over');
+  var cb=document.getElementById('carb-block');
+  cb.style.background=cls==='ok'?'var(--ok-bg)':(cls==='warn'?'var(--warn-bg)':'var(--over-bg)');
+  cb.innerHTML=
+    '<svg class="carb-ring" width="50" height="50" viewBox="0 0 44 44"><circle class="ring-bg" cx="22" cy="22" r="18"/>'+
+    '<circle class="ring-fl" cx="22" cy="22" r="18" stroke="'+ringColor+'" stroke-dasharray="113.1" stroke-dashoffset="'+off+'"/></svg>'+
+    '<div><div class="carb-big">'+fmtG(totalCarbs)+'g</div><div class="carb-lbl">Net carbs today</div></div>'+
+    '<div class="carb-note" style="color:'+(spare>=0?'var(--ok)':'var(--over)')+'">'+note+'</div>';
+
+  var abbr={Breakfast:'B',Lunch:'L',Dinner:'D'};
+  document.getElementById('meal-list').innerHTML=['Breakfast','Lunch','Dinner'].map(function(mt){
+    var entries=meals[dk+'_'+mt]||[];
+    if(!entries.length)return '<div class="meal"><span class="meal-w">'+abbr[mt]+'</span><span class="meal-n empty">not planned</span></div>';
+    var nm=entryName(entries[0])+(entries.length>1?' +'+(entries.length-1):'');
+    var c=entries.reduce(function(s,e){return s+entryCarbs(e);},0);
+    return '<div class="meal"><span class="meal-w">'+abbr[mt]+'</span><span class="meal-n">'+esc(nm)+'</span><span class="meal-c">'+fmtG(c)+'g</span></div>';
+  }).join('');
+
+  var lowOut=pantry.filter(function(p){var st=stockStatus(p);return st==='low'||st==='out';});
+  var pl=document.getElementById('pantry-low');
+  if(!lowOut.length){pl.innerHTML='<span style="font-size:12px;font-weight:600;color:var(--muted);">🛒 Pantry stocked</span>';}
+  else{
+    var names=lowOut.slice(0,3).map(function(p){
+      var nm=esc(shortName(p.name));
+      return stockStatus(p)==='out'?'<b style="color:var(--over)">'+nm+'</b>':nm;
+    }).join(', ');
+    pl.innerHTML='<span style="font-size:12px;font-weight:600;color:var(--muted);">🛒 '+lowOut.length+' low — '+names+'</span>';
+  }
+}
+
+/* ───────── MEDIA (mediaTracker3) ───────── */
+var MEDIA_TYPES=[
+  {key:'books',   icon:'📖', grad:'linear-gradient(140deg,#5b7ea8,#2f4d70)', prog:'progress',  queue:'want',  labels:{progress:'Reading',  want:'Up Next'}},
+  {key:'screen',  icon:'📺', grad:'linear-gradient(140deg,#c06a4e,#7a3320)', prog:'progress',  queue:'want',  labels:{progress:'Watching', want:'Up Next'}},
+  {key:'articles',icon:'📰', grad:'linear-gradient(140deg,#8a7bb8,#574a86)', prog:'progress',  queue:'want',  labels:{progress:'Reading',  want:'Up Next'}},
+  {key:'music',   icon:'🎵', grad:'linear-gradient(140deg,#4d84a6,#2f5870)', prog:'progress',  queue:'want',  labels:{progress:'Listening',want:'Up Next'}},
+  {key:'podcasts',icon:'🎙️',grad:'linear-gradient(140deg,#6a9a7a,#3a5a44)', prog:'following', queue:'queue', labels:{following:'Following',queue:'In Queue'}}
+];
+function renderMedia(){
+  var d=lsGet('mediaTracker3')||{};
+  var inprog=[], queued=[];
+  MEDIA_TYPES.forEach(function(t){
+    (d[t.key]||[]).forEach(function(it){
+      if(it.status===t.prog)inprog.push({t:t,it:it});
+      else if(it.status===t.queue)queued.push({t:t,it:it});
+    });
+  });
+  var picks=inprog.concat(queued).slice(0,3);
+  var el=document.getElementById('media-list');
+  if(!picks.length){el.innerHTML=emptyRow('Nothing reading or queued yet — add something in the Media Tracker.');return;}
+  el.innerHTML=picks.map(function(p){
+    var it=p.it,t=p.t,isProg=(it.status===t.prog);
+    var label=t.labels[it.status]||'';
+    if(t.key==='screen'&&isProg)label='Watching · S'+(it.season||1)+' E'+(it.episode||1);
+    if(t.key==='podcasts'&&isProg&&it.epCurrent)label='Following · Ep '+it.epCurrent;
+    var chipCls=isProg?'chip-ok':'chip-mut';
+    var inner=it.cover?('<img src="'+esc(it.cover)+'" alt="" onerror="this.outerHTML=\''+t.icon+'\'">'):t.icon;
+    var creator=it.creator?'<div class="media-a">'+esc(it.creator)+'</div>':'';
+    return '<div class="media-item"><div class="cover" style="background:'+t.grad+'">'+inner+'</div>'+
+      '<div class="media-info"><div class="media-t">'+esc(it.title)+'</div>'+creator+
+      '<span class="chip '+chipCls+'">'+esc(label)+'</span></div></div>';
+  }).join('');
+}
+
+/* ───────── DC GUIDE (dcGuide1) ───────── */
+var DC_ICONS={food:'🍽',drinks:'🍸',dancing:'💃',arts:'🎨',outdoors:'🌿',events:'🎉',markets:'🛍',nightlife:'✨'};
+function renderDC(){
+  var d=lsGet('dcGuide1'); var items=d?(Array.isArray(d)?d:(d.items||[])):[];
+  var m=new Date().getMonth();
+  document.getElementById('dc-title').textContent=MF[m]+' in DC';
+  var monthItems=items.filter(function(x){return x.month===m && x.status!=='done';});
+  var ever=items.filter(function(x){return x.month==='evergreen' && x.status!=='done';});
+  var picks=monthItems.concat(ever).slice(0,3);
+  var el=document.getElementById('dc-list');
+  if(!picks.length){el.innerHTML=emptyRow('Nothing for '+MF[m]+' yet — open the DC Guide to add spots.');return;}
+  el.innerHTML=picks.map(function(x){
+    var ic=DC_ICONS[x.category]||'📍';
+    var sub=[x.hood,(x.dates||'')].filter(Boolean).join(' · ')||(x.category||'');
+    var price=x.price==='free'?'<span class="chip chip-ok">Free</span>':'<span class="chip chip-mut">'+esc(x.price||'')+'</span>';
+    return '<div class="dc"><div class="dc-ic">'+ic+'</div><div class="dc-n"><div class="dc-t">'+esc(x.name)+'</div>'+
+      '<div class="dc-s">'+esc(sub)+'</div></div>'+price+'</div>';
+  }).join('');
+}
+
+/* ───────── RIGHT PANEL — TODAY (lifeCalendar1) ───────── */
+var CAL_COLOR={work:'#7e9cc4',social:'#5b8fd0',travel:'#8aa05a',learning:'#c9a83a',tasks:'#b099e0',health:'#4aa39a',selfcare:'#d27a9a',personal:'#cb9a4f'};
+function calEvents(){var d=lsGet('lifeCalendar1');if(!d)return [];return Array.isArray(d)?d:(d.events||[]);}
+function fmtTime(t){
+  if(!t)return '';
+  var p=t.split(':'),h=parseInt(p[0]),m=p[1],ap=h>=12?'p':'a';h=h%12||12;
+  return h+(m!=='00'?':'+m:'')+ap;
+}
+function cap(s){s=String(s||'');return s.charAt(0).toUpperCase()+s.slice(1);}
+function renderRightPanel(){
+  var now=new Date(), tk=dateKey(now), events=calEvents();
+  document.getElementById('rp-date').textContent=DF[now.getDay()]+', '+MF[now.getMonth()]+' '+now.getDate();
+
+  var y=now.getFullYear(),m=now.getMonth();
+  document.querySelector('.mini-mo').textContent=MF[m]+' '+y;
+  var startDow=(new Date(y,m,1).getDay()+6)%7;
+  var dim=new Date(y,m+1,0).getDate();
+  var evDays={};
+  events.forEach(function(e){if(!e.date)return;var p=e.date.split('-');if(+p[0]===y&&(+p[1]-1)===m)evDays[+p[2]]=true;});
+  var mini='<div class="mini-dow">M</div><div class="mini-dow">T</div><div class="mini-dow">W</div><div class="mini-dow">T</div><div class="mini-dow">F</div><div class="mini-dow">S</div><div class="mini-dow">S</div>';
+  for(var i=0;i<startDow;i++)mini+='<div class="mini-d mut"></div>';
+  for(var dd=1;dd<=dim;dd++){
+    mini+='<div class="mini-d'+(dd===now.getDate()?' today':'')+'">'+dd+(evDays[dd]?'<span class="ev"></span>':'')+'</div>';
+  }
+  document.getElementById('mini-grid').innerHTML=mini;
+
+  var todays=events.filter(function(e){return e.date===tk;});
+  var untimed=todays.filter(function(e){return !e.time;});
+  var timed=todays.filter(function(e){return e.time;}).sort(function(a,b){return (a.time||'').localeCompare(b.time||'');});
+
+  var taskEl=document.getElementById('rp-tasks');
+  taskEl.innerHTML=untimed.length?untimed.map(function(e){
+    return '<div class="task'+(e.done?' done':'')+'" onclick="toggleCalDone(\''+e.id+'\')">'+
+      '<span class="t-box">'+(e.done?'✓':'')+'</span><span class="tx">'+esc(e.title)+'</span></div>';
+  }).join(''):emptyRow('No untimed tasks today.');
+
+  var schedEl=document.getElementById('rp-sched');
+  if(!timed.length){schedEl.innerHTML=emptyRow('Nothing scheduled today.');return;}
+  var nowMin=now.getHours()*60+now.getMinutes();
+  schedEl.innerHTML=timed.map(function(e){
+    var col=CAL_COLOR[e.cat]||'#b099e0';
+    var tp=e.time.split(':'),emin=parseInt(tp[0])*60+parseInt(tp[1]);
+    var isNow=Math.abs(emin-nowMin)<=45;
+    return '<div class="ev-row"><div class="ev-time'+(isNow?' now':'')+'">'+fmtTime(e.time)+'</div>'+
+      '<div class="ev-card" style="--cat:'+col+';"><div class="ev-dot"></div><div>'+
+      '<div class="ev-t">'+esc(e.title)+'</div>'+
+      (e.note?'<div class="ev-l">'+esc(e.note)+'</div>':(e.cat?'<div class="ev-l">'+esc(cap(e.cat))+'</div>':''))+
+      '</div></div></div>';
+  }).join('');
+}
+function toggleCalDone(id){
+  var d=lsGet('lifeCalendar1'); if(!d)return;
+  var obj=Array.isArray(d)?{events:d}:d;
+  var ev=(obj.events||[]).find(function(e){return e.id===id;});
+  if(ev){ev.done=!ev.done;localStorage.setItem('lifeCalendar1',JSON.stringify(obj));renderRightPanel();}
+}
+
+/* ───────── HERO (greeting + year progress) ───────── */
+function renderHero(){
+  var now=new Date(), h=now.getHours();
   document.getElementById('greet').textContent=h<12?'Good morning':h<17?'Good afternoon':'Good evening';
   var soy=new Date(now.getFullYear(),0,1);
   var doy=Math.floor((now-soy)/86400000)+1;
   var tot=(now.getFullYear()%4===0)?366:365;
-  var pct=Math.round(doy/tot*100);
   var wk=Math.ceil((doy+soy.getDay())/7);
-  var left=tot-doy;
   var pctExact=(doy/tot*100).toFixed(1);
-  document.getElementById('date').textContent=days[now.getDay()]+', '+months[now.getMonth()]+' '+now.getDate()+' · Week '+wk;
-  document.getElementById('yr-left').textContent=left+' days left';
+  document.getElementById('date').textContent=DF[now.getDay()]+', '+MF[now.getMonth()]+' '+now.getDate()+' · Week '+wk;
+  document.getElementById('yr-left').textContent=(tot-doy)+' days left';
   document.getElementById('yr-pct').textContent=pctExact+'%';
   document.getElementById('yrfill').style.width=pctExact+'%';
-  document.getElementById('rp-date').textContent=days[now.getDay()]+', '+months[now.getMonth()]+' '+now.getDate();
-})();
+}
+
+/* ───────── INIT ───────── */
+safe(renderHero);
+safe(renderLearning);
+safe(renderFinances);
+safe(renderFitness);
+safe(renderMeals);
+safe(renderMedia);
+safe(renderDC);
+safe(renderRightPanel);
 </script>
 </body>
 </html>
