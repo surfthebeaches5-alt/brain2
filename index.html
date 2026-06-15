@@ -167,11 +167,14 @@ body.collapsed .sb-link{justify-content:center;padding:9px 0;}
 .mini-nav{display:flex;gap:4px;}
 .mini-nav button{width:24px;height:24px;border:none;background:var(--warm);border-radius:7px;cursor:pointer;color:var(--muted);font-size:13px;line-height:1;display:flex;align-items:center;justify-content:center;transition:background .14s,color .14s;}
 .mini-nav button:hover{background:var(--warm-deep);color:var(--ink);}
+.mini-today{width:auto !important;padding:0 9px;color:var(--accent-deep) !important;font-size:10.5px !important;font-weight:800;}
+.mini-today:hover{background:var(--accent-soft) !important;color:var(--accent-deep) !important;}
 .mini-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:2px;text-align:center;}
 .mini-dow{font-size:9px;font-weight:700;color:var(--muted);padding-bottom:4px;}
 .mini-d{aspect-ratio:1;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:600;border-radius:50%;position:relative;cursor:pointer;}
 .mini-d:hover{background:var(--warm);}
 .mini-d.mut{color:#cfc6b4;}
+.mini-d.sel:not(.today){box-shadow:inset 0 0 0 1.5px var(--accent-deep);color:var(--accent-deep);font-weight:800;}
 .mini-d.today{background:var(--accent);color:#fff;font-weight:800;}
 .mini-d .ev{position:absolute;bottom:3px;width:3px;height:3px;border-radius:50%;background:var(--accent-deep);}
 .mini-d.today .ev{background:#fff;}
@@ -211,6 +214,16 @@ body.collapsed .sb-link{justify-content:center;padding:9px 0;}
 .qa-save:hover{background:var(--accent-deep);}
 .qa-more{font-size:11px;font-weight:700;color:var(--muted);text-decoration:none;white-space:nowrap;}
 .qa-more:hover{color:var(--accent-deep);}
+.qa-sec{font-size:9px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);font-weight:800;margin:11px 2px 4px;}
+.qa-list{display:flex;flex-direction:column;}
+.qa-empty{font-size:11.5px;font-style:italic;color:var(--muted);padding:5px 2px;}
+.qa-addtoggle{border:1px dashed var(--accent-line);background:transparent;color:var(--accent-deep);font-size:11.5px;font-weight:700;padding:7px 12px;border-radius:9px;cursor:pointer;font-family:inherit;transition:background .14s;}
+.qa-addtoggle:hover{background:var(--accent-soft);}
+.qa-form{margin-top:10px;padding-top:10px;border-top:1px solid var(--line);}
+.qa-cancel{border:none;background:transparent;color:var(--muted);font-weight:700;font-size:11.5px;cursor:pointer;font-family:inherit;}
+.qa-cancel:hover{color:var(--ink);}
+.qa .sched{margin-top:2px;}
+.qa-top{margin-bottom:4px;}
 
 @media(max-width:1180px){
   :root{--rp-w:0px;}
@@ -379,23 +392,17 @@ body.collapsed .sb-link{justify-content:center;padding:9px 0;}
 
 <!-- ───────── RIGHT PANEL — TODAY ───────── -->
 <aside class="right">
-  <div class="rp-head">Today</div>
+  <div class="rp-head" id="rp-head">Today</div>
   <div class="rp-sub" id="rp-date">—</div>
 
   <div class="mini">
     <div class="mini-top">
       <div class="mini-mo">—</div>
-      <div class="mini-nav"><button onclick="miniNav(-1)" aria-label="Previous month">‹</button><button onclick="miniNav(1)" aria-label="Next month">›</button></div>
+      <div class="mini-nav"><button class="mini-today" onclick="goMiniToday()">Today</button><button onclick="miniNav(-1)" aria-label="Previous month">‹</button><button onclick="miniNav(1)" aria-label="Next month">›</button></div>
     </div>
     <div class="mini-grid" id="mini-grid"></div>
   </div>
   <div id="quick-add"></div>
-
-  <div class="rp-sec">Today's Tasks <button class="rp-add" onclick="openQuickAdd(dateKey(new Date()))">+ add</button></div>
-  <div id="rp-tasks"></div>
-
-  <div class="rp-sec" style="margin-top:18px;">Today's Schedule</div>
-  <div class="sched" id="rp-sched"></div>
 </aside>
 
 <script>
@@ -720,104 +727,103 @@ function renderMini(){
   for(var dd=1;dd<=dim;dd++){
     var today=curMonth&&dd===base.getDate();
     var iso=y+'-'+String(m+1).padStart(2,'0')+'-'+String(dd).padStart(2,'0');
-    mini+='<div class="mini-d'+(today?' today':'')+'" onclick="openQuickAdd(\''+iso+'\')">'+dd+(evDays[dd]?'<span class="ev"></span>':'')+'</div>';
+    var sel=(dayIso===iso);
+    mini+='<div class="mini-d'+(today?' today':'')+(sel?' sel':'')+'" onclick="openDay(\''+iso+'\')">'+dd+(evDays[dd]?'<span class="ev"></span>':'')+'</div>';
   }
   document.getElementById('mini-grid').innerHTML=mini;
 }
 function miniNav(dir){miniOffset+=dir;renderMini();}
 function renderRightPanel(){
-  var now=new Date();
-  document.getElementById('rp-date').textContent=DF[now.getDay()]+', '+MF[now.getMonth()]+' '+now.getDate();
+  if(!dayIso) dayIso=dateKey(new Date());
   renderMini();
-  renderTodayLists();
+  renderDay();
 }
-function renderTodayLists(){
-  var now=new Date(), tk=dateKey(now), events=calEvents();
-  var todays=events.filter(function(e){return e.date===tk;});
-  var untimed=todays.filter(function(e){return !e.time;});
-  var timed=todays.filter(function(e){return e.time;}).sort(function(a,b){return (a.time||'').localeCompare(b.time||'');});
+function goMiniToday(){ miniOffset=0; openDay(dateKey(new Date())); }
 
-  var clsToday=classEvents().filter(function(e){return e.date===tk;});
-  var taskEl=document.getElementById('rp-tasks');
-  var tHtml=untimed.map(function(e){
-    return '<div class="task'+(e.done?' done':'')+'" onclick="toggleCalDone(\''+e.id+'\')">'+
-      '<span class="t-box">'+(e.done?'✓':'')+'</span><span class="tx">'+esc(e.title)+'</span></div>';
-  }).join('');
-  tHtml+=clsToday.map(function(e){
-    return '<div class="task'+(e.done?' done':'')+'" onclick="location.href=\'classes/\'" title="'+esc(e.cls)+' — manage in Classes" style="cursor:pointer">'+
-      '<span class="t-box" style="border-color:'+e.color+';background:'+e.color+';color:#fff;font-size:9px;">🎓</span>'+
-      '<span class="tx">'+esc(e.title)+'</span><span class="t-due chip-mut">'+esc(e.cls)+'</span></div>';
-  }).join('');
-  taskEl.innerHTML=tHtml||emptyRow('No untimed tasks today.');
-
-  var schedEl=document.getElementById('rp-sched');
-  if(!timed.length){schedEl.innerHTML=emptyRow('Nothing scheduled today.');return;}
-  var nowMin=now.getHours()*60+now.getMinutes();
-  schedEl.innerHTML=timed.map(function(e){
-    var col=catColor(e.cat);
-    var tp=e.time.split(':'),emin=parseInt(tp[0])*60+parseInt(tp[1]);
-    var isNow=Math.abs(emin-nowMin)<=45;
-    return '<div class="ev-row"><div class="ev-time'+(isNow?' now':'')+'">'+fmtTime(e.time)+'</div>'+
-      '<div class="ev-card" style="--cat:'+col+';"><div class="ev-dot"></div><div>'+
-      '<div class="ev-t">'+esc(e.title)+'</div>'+
-      (e.note?'<div class="ev-l">'+esc(e.note)+'</div>':(e.cat?'<div class="ev-l">'+esc(catLabel(e.cat))+'</div>':''))+
-      '</div></div></div>';
-  }).join('');
-}
-
-/* ── quick-add: click any mini-calendar day (or "+ add") to drop an event into lifeCalendar1 ── */
-var qaDate=null;
-function openQuickAdd(iso){
-  qaDate=iso;
-  var p=iso.split('-'), d=new Date(+p[0],+p[1]-1,+p[2]);
-  var existing=calEvents().filter(function(e){return e.date===iso;})
-    .sort(function(a,b){return (a.time||'').localeCompare(b.time||'');});
-  var clsItems=classEvents().filter(function(e){return e.date===iso;});
-  var rowsHtml=existing.map(function(e){
-    return '<div class="qa-ev"><span class="qa-ev-dot" style="background:'+catColor(e.cat)+'"></span>'+
-      (e.time?fmtTime(e.time)+' · ':'')+esc(e.title)+'</div>';
-  }).join('')+clsItems.map(function(e){
-    return '<div class="qa-ev"'+(e.done?' style="opacity:.55;text-decoration:line-through"':'')+'>'+
-      '<span class="qa-ev-dot" style="background:'+e.color+'"></span>🎓 '+esc(e.title)+
-      ' <small style="color:var(--muted)">· '+esc(e.cls)+'</small></div>';
-  }).join('');
-  var exHtml=rowsHtml?'<div class="qa-exist">'+rowsHtml+'</div>':'';
-  var opts=HP_CATS.map(function(c){return '<option value="'+esc(c.id)+'"'+(c.id==='personal'?' selected':'')+'>'+esc(c.label)+'</option>';}).join('');
-  document.getElementById('quick-add').innerHTML=
-    '<div class="qa">'+
-      '<div class="qa-top"><span class="qa-date">'+DF[d.getDay()].slice(0,3)+', '+MF[d.getMonth()].slice(0,3)+' '+d.getDate()+'</span>'+
-        '<button class="qa-x" onclick="closeQuickAdd()" aria-label="Close">×</button></div>'+
-      exHtml+
-      '<input id="qa-title" class="qa-in" placeholder="Add something…" autocomplete="off" onkeydown="if(event.key===\'Enter\')saveQuickAdd()">'+
-      '<div class="qa-row"><input id="qa-time" type="time" class="qa-in"><select id="qa-cat" class="qa-in">'+opts+'</select></div>'+
-      '<div class="qa-actions"><button class="qa-save" onclick="saveQuickAdd()">Add to calendar</button>'+
-        '<a class="qa-more" href="calendar/">Open Calendar →</a></div>'+
-    '</div>';
-  var t=document.getElementById('qa-title'); if(t)t.focus();
-}
-function closeQuickAdd(){qaDate=null;document.getElementById('quick-add').innerHTML='';}
+/* ── day view: tap any day to SEE that day's Tasks & Schedule. "+ Add" reveals the form on demand ── */
+var dayIso=null, dayFormOpen=false;
+function openDay(iso, openForm){ dayIso=iso; dayFormOpen=!!openForm; renderMini(); renderDay(); }
+function closeDay(){ dayIso=null; dayFormOpen=false; document.getElementById('quick-add').innerHTML=''; }
+function toggleDayForm(){ dayFormOpen=!dayFormOpen; renderDay(); }
 function addCalEvent(evt){
   var d=lsGet('lifeCalendar1');
   if(Array.isArray(d)){d.push(evt);localStorage.setItem('lifeCalendar1',JSON.stringify(d));}
   else{var obj=d||{events:[]};if(!obj.events)obj.events=[];obj.events.push(evt);localStorage.setItem('lifeCalendar1',JSON.stringify(obj));}
 }
-function saveQuickAdd(){
-  if(!qaDate)return;
+function dayToggleDone(id){
+  var d=lsGet('lifeCalendar1'); if(!d)return;
+  var obj=Array.isArray(d)?{events:d}:d;
+  var ev=(obj.events||[]).find(function(e){return e.id===id;});
+  if(ev){ev.done=!ev.done;localStorage.setItem('lifeCalendar1',JSON.stringify(obj));}
+  renderDay();
+}
+function saveDayEvent(){
+  if(!dayIso)return;
   var ti=document.getElementById('qa-title'), title=ti?ti.value.trim():'';
   if(!title){if(ti)ti.focus();return;}
   var time=(document.getElementById('qa-time')||{}).value||'';
   var cat=(document.getElementById('qa-cat')||{}).value||'personal';
-  addCalEvent({id:'ev'+Date.now().toString(36)+Math.floor(Math.random()*10000),title:title,date:qaDate,time:time,cat:cat,note:'',done:false});
-  var keep=qaDate;
+  addCalEvent({id:'ev'+Date.now().toString(36)+Math.floor(Math.random()*10000),title:title,date:dayIso,time:time,cat:cat,note:'',done:false});
   renderMini();
-  renderTodayLists();
-  openQuickAdd(keep); /* reopen cleared, now showing the new entry, for fast multi-add */
+  dayFormOpen=true; renderDay(); /* keep form open for rapid multi-add, fields cleared */
+}
+function renderDay(){
+  var host=document.getElementById('quick-add');
+  if(!dayIso) dayIso=dateKey(new Date());
+  var iso=dayIso, p=iso.split('-'), d=new Date(+p[0],+p[1]-1,+p[2]);
+  var label=DF[d.getDay()].slice(0,3)+', '+MF[d.getMonth()].slice(0,3)+' '+d.getDate();
+  var isToday=(iso===dateKey(new Date()));
+  var rh=document.getElementById('rp-head'); if(rh)rh.textContent=isToday?'Today':DF[d.getDay()];
+  var rd=document.getElementById('rp-date'); if(rd)rd.textContent=MF[d.getMonth()]+' '+d.getDate()+', '+d.getFullYear();
+
+  var all=calEvents().filter(function(e){return e.date===iso;});
+  var untimed=all.filter(function(e){return !e.time;});
+  var timed=all.filter(function(e){return e.time;}).sort(function(a,b){return (a.time||'').localeCompare(b.time||'');});
+  var clsItems=classEvents().filter(function(e){return e.date===iso;});
+
+  var tasksHtml=untimed.map(function(e){
+    return '<div class="task'+(e.done?' done':'')+'" onclick="dayToggleDone(\''+e.id+'\')">'+
+      '<span class="t-box">'+(e.done?'✓':'')+'</span><span class="tx">'+esc(e.title)+'</span></div>';
+  }).join('')+clsItems.map(function(e){
+    return '<div class="task'+(e.done?' done':'')+'" onclick="location.href=\'classes/\'" style="cursor:pointer" title="'+esc(e.cls)+' — manage in Classes">'+
+      '<span class="t-box" style="border-color:'+e.color+';background:'+e.color+';color:#fff;font-size:9px;">🎓</span>'+
+      '<span class="tx">'+esc(e.title)+'</span><span class="t-due chip-mut">'+esc(e.cls)+'</span></div>';
+  }).join('');
+  if(!tasksHtml) tasksHtml='<div class="qa-empty">No tasks</div>';
+
+  var schedHtml=timed.length?timed.map(function(e){
+    return '<div class="ev-row"><div class="ev-time">'+fmtTime(e.time)+'</div>'+
+      '<div class="ev-card" style="--cat:'+catColor(e.cat)+';"><div class="ev-dot"></div><div>'+
+      '<div class="ev-t">'+esc(e.title)+'</div>'+
+      (e.note?'<div class="ev-l">'+esc(e.note)+'</div>':(e.cat?'<div class="ev-l">'+esc(catLabel(e.cat))+'</div>':''))+
+      '</div></div></div>';
+  }).join(''):'<div class="qa-empty">Nothing scheduled</div>';
+
+  var footHtml;
+  if(dayFormOpen){
+    var opts=HP_CATS.map(function(c){return '<option value="'+esc(c.id)+'"'+(c.id==='personal'?' selected':'')+'>'+esc(c.label)+'</option>';}).join('');
+    footHtml='<div class="qa-form">'+
+      '<input id="qa-title" class="qa-in" placeholder="Add to '+esc(label)+'…" autocomplete="off" onkeydown="if(event.key===\'Enter\')saveDayEvent()">'+
+      '<div class="qa-row"><input id="qa-time" type="time" class="qa-in"><select id="qa-cat" class="qa-in">'+opts+'</select></div>'+
+      '<div class="qa-actions"><button class="qa-save" onclick="saveDayEvent()">Add</button>'+
+        '<button class="qa-cancel" onclick="toggleDayForm()">Done</button></div></div>';
+  }else{
+    footHtml='<div class="qa-actions" style="margin-top:11px;"><button class="qa-addtoggle" onclick="toggleDayForm()">+ Add to this day</button>'+
+      '<a class="qa-more" href="calendar/">Open Calendar →</a></div>';
+  }
+
+  host.innerHTML='<div class="qa">'+
+    '<div class="qa-sec">Tasks</div><div class="qa-list">'+tasksHtml+'</div>'+
+    '<div class="qa-sec">Schedule</div><div class="sched">'+schedHtml+'</div>'+
+    footHtml+
+  '</div>';
+  if(dayFormOpen){var t=document.getElementById('qa-title'); if(t)t.focus();}
 }
 function toggleCalDone(id){
   var d=lsGet('lifeCalendar1'); if(!d)return;
   var obj=Array.isArray(d)?{events:d}:d;
   var ev=(obj.events||[]).find(function(e){return e.id===id;});
-  if(ev){ev.done=!ev.done;localStorage.setItem('lifeCalendar1',JSON.stringify(obj));renderRightPanel();}
+  if(ev){ev.done=!ev.done;localStorage.setItem('lifeCalendar1',JSON.stringify(obj));renderRightPanel();if(dayIso)renderDay();}
 }
 
 /* ───────── HERO (greeting + year progress) ───────── */
