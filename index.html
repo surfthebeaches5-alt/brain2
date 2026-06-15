@@ -220,6 +220,9 @@ body.collapsed .sb-link{justify-content:center;padding:9px 0;}
 .qa-addtoggle{border:1px dashed var(--accent-line);background:transparent;color:var(--accent-deep);font-size:11.5px;font-weight:700;padding:7px 12px;border-radius:9px;cursor:pointer;font-family:inherit;transition:background .14s;}
 .qa-addtoggle:hover{background:var(--accent-soft);}
 .qa-form{margin-top:10px;padding-top:10px;border-top:1px solid var(--line);}
+.qa-modes{display:flex;gap:0;background:#fff;border:1px solid var(--line);border-radius:9px;padding:3px;margin-bottom:8px;}
+.qa-mode{flex:1;border:none;background:transparent;color:var(--muted);font-size:11.5px;font-weight:700;padding:6px 8px;border-radius:7px;cursor:pointer;font-family:inherit;transition:background .14s,color .14s;}
+.qa-mode.on{background:var(--accent-soft);color:var(--accent-deep);}
 .qa-cancel{border:none;background:transparent;color:var(--muted);font-weight:700;font-size:11.5px;cursor:pointer;font-family:inherit;}
 .qa-cancel:hover{color:var(--ink);}
 .qa .sched{margin-top:2px;}
@@ -741,10 +744,15 @@ function renderRightPanel(){
 function goMiniToday(){ miniOffset=0; openDay(dateKey(new Date())); }
 
 /* ── day view: tap any day to SEE that day's Tasks & Schedule. "+ Add" reveals the form on demand ── */
-var dayIso=null, dayFormOpen=false;
-function openDay(iso, openForm){ dayIso=iso; dayFormOpen=!!openForm; renderMini(); renderDay(); }
+var dayIso=null, dayFormOpen=false, dayAddMode='task';
+function openDay(iso, openForm){ dayIso=iso; dayFormOpen=!!openForm; if(dayFormOpen)dayAddMode='task'; renderMini(); renderDay(); }
 function closeDay(){ dayIso=null; dayFormOpen=false; document.getElementById('quick-add').innerHTML=''; }
-function toggleDayForm(){ dayFormOpen=!dayFormOpen; renderDay(); }
+function toggleDayForm(){ dayFormOpen=!dayFormOpen; if(dayFormOpen)dayAddMode='task'; renderDay(); }
+function setAddMode(m){
+  var ti=document.getElementById('qa-title'); var v=ti?ti.value:'';
+  dayAddMode=m; renderDay();
+  var ti2=document.getElementById('qa-title'); if(ti2){ti2.value=v; ti2.focus();}
+}
 function addCalEvent(evt){
   var d=lsGet('lifeCalendar1');
   if(Array.isArray(d)){d.push(evt);localStorage.setItem('lifeCalendar1',JSON.stringify(d));}
@@ -761,7 +769,7 @@ function saveDayEvent(){
   if(!dayIso)return;
   var ti=document.getElementById('qa-title'), title=ti?ti.value.trim():'';
   if(!title){if(ti)ti.focus();return;}
-  var time=(document.getElementById('qa-time')||{}).value||'';
+  var time=(dayAddMode==='sched') ? ((document.getElementById('qa-time')||{}).value||'') : '';
   var cat=(document.getElementById('qa-cat')||{}).value||'personal';
   addCalEvent({id:'ev'+Date.now().toString(36)+Math.floor(Math.random()*10000),title:title,date:dayIso,time:time,cat:cat,note:'',done:false});
   renderMini();
@@ -782,8 +790,10 @@ function renderDay(){
   var clsItems=classEvents().filter(function(e){return e.date===iso;});
 
   var tasksHtml=untimed.map(function(e){
-    return '<div class="task'+(e.done?' done':'')+'" onclick="dayToggleDone(\''+e.id+'\')">'+
-      '<span class="t-box">'+(e.done?'✓':'')+'</span><span class="tx">'+esc(e.title)+'</span></div>';
+    var col=catColor(e.cat);
+    var bs=e.done ? ('border-color:'+col+';background:'+col+';color:#fff;') : ('border-color:'+col+';');
+    return '<div class="task'+(e.done?' done':'')+'" onclick="dayToggleDone(\''+e.id+'\')" title="'+esc(catLabel(e.cat))+'">'+
+      '<span class="t-box" style="'+bs+'">'+(e.done?'✓':'')+'</span><span class="tx">'+esc(e.title)+'</span></div>';
   }).join('')+clsItems.map(function(e){
     return '<div class="task'+(e.done?' done':'')+'" onclick="location.href=\'classes/\'" style="cursor:pointer" title="'+esc(e.cls)+' — manage in Classes">'+
       '<span class="t-box" style="border-color:'+e.color+';background:'+e.color+';color:#fff;font-size:9px;">🎓</span>'+
@@ -802,10 +812,17 @@ function renderDay(){
   var footHtml;
   if(dayFormOpen){
     var opts=HP_CATS.map(function(c){return '<option value="'+esc(c.id)+'"'+(c.id==='personal'?' selected':'')+'>'+esc(c.label)+'</option>';}).join('');
+    var isTask=(dayAddMode!=='sched');
     footHtml='<div class="qa-form">'+
-      '<input id="qa-title" class="qa-in" placeholder="Add to '+esc(label)+'…" autocomplete="off" onkeydown="if(event.key===\'Enter\')saveDayEvent()">'+
-      '<div class="qa-row"><input id="qa-time" type="time" class="qa-in"><select id="qa-cat" class="qa-in">'+opts+'</select></div>'+
-      '<div class="qa-actions"><button class="qa-save" onclick="saveDayEvent()">Add</button>'+
+      '<div class="qa-modes">'+
+        '<button class="qa-mode'+(isTask?' on':'')+'" onclick="setAddMode(\'task\')">✓ Task</button>'+
+        '<button class="qa-mode'+(!isTask?' on':'')+'" onclick="setAddMode(\'sched\')">🕐 Scheduled</button>'+
+      '</div>'+
+      '<input id="qa-title" class="qa-in" placeholder="'+(isTask?'New task…':'New scheduled item…')+'" autocomplete="off" onkeydown="if(event.key===\'Enter\')saveDayEvent()">'+
+      (isTask
+        ? '<div class="qa-row"><select id="qa-cat" class="qa-in">'+opts+'</select></div>'
+        : '<div class="qa-row"><input id="qa-time" type="time" class="qa-in"><select id="qa-cat" class="qa-in">'+opts+'</select></div>')+
+      '<div class="qa-actions"><button class="qa-save" onclick="saveDayEvent()">'+(isTask?'Add task':'Add to schedule')+'</button>'+
         '<button class="qa-cancel" onclick="toggleDayForm()">Done</button></div></div>';
   }else{
     footHtml='<div class="qa-actions" style="margin-top:11px;"><button class="qa-addtoggle" onclick="toggleDayForm()">+ Add to this day</button>'+
