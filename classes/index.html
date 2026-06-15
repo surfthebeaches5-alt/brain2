@@ -476,6 +476,17 @@ function tdClass(iso){
 }
 function esc(s){return (s||'').replace(/[&<>"]/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[m]))}
 
+/* display-only: a module's tasks shown earliest-due first, undated last.
+   Returns a sorted COPY — never mutates the stored task order. */
+function sortTasksForDisplay(tasks){
+  return tasks.slice().sort((a,b)=>{
+    if(!a.due&&!b.due)return 0;
+    if(!a.due)return 1;
+    if(!b.due)return -1;
+    return a.due.localeCompare(b.due);
+  });
+}
+
 /* ════════════ PROGRESS ════════════ */
 function clsProgress(c){
   let done=0,total=0;
@@ -551,7 +562,7 @@ function render(){
   const modsHtml=c.modules.map(m=>{
     const mp=modProgress(m);
     const full=mp.total>0&&mp.done===mp.total;
-    const tasks=m.tasks.map(t=>{
+    const tasks=sortTasksForDisplay(m.tasks).map(t=>{
       const chip=t.due
         ? `<span class="tdue ${tdClass(t.due)}">${fmtShort(t.due)}</span>`
         : `<span class="tdue empty">＋ date</span>`;
