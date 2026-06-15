@@ -587,16 +587,32 @@ var MEDIA_TYPES=[
   {key:'music',   icon:'🎵', grad:'linear-gradient(140deg,#4d84a6,#2f5870)', prog:'progress',  queue:'want',  labels:{progress:'Listening',want:'Up Next'}},
   {key:'podcasts',icon:'🎙️',grad:'linear-gradient(140deg,#6a9a7a,#3a5a44)', prog:'following', queue:'queue', labels:{following:'Following',queue:'In Queue'}}
 ];
+function pickRR(pools,limit){
+  var out=[],idx=0,added=true;
+  while(out.length<limit&&added){
+    added=false;
+    for(var i=0;i<pools.length;i++){
+      if(pools[i][idx]){out.push(pools[i][idx]);added=true;if(out.length>=limit)return out;}
+    }
+    idx++;
+  }
+  return out;
+}
 function renderMedia(){
   var d=lsGet('mediaTracker3')||{};
-  var inprog=[], queued=[];
+  var inprogPools=[], queuedPools=[];
   MEDIA_TYPES.forEach(function(t){
+    var ip=[], q=[];
     (d[t.key]||[]).forEach(function(it){
-      if(it.status===t.prog)inprog.push({t:t,it:it});
-      else if(it.status===t.queue)queued.push({t:t,it:it});
+      if(it.status===t.prog)ip.push({t:t,it:it});
+      else if(it.status===t.queue)q.push({t:t,it:it});
     });
+    inprogPools.push(ip); queuedPools.push(q);
   });
-  var picks=inprog.concat(queued).slice(0,3);
+  // one per medium first (round-robin) so each type gets a slot before any doubles up;
+  // in-progress always beats queued
+  var picks=pickRR(inprogPools,3);
+  if(picks.length<3)picks=picks.concat(pickRR(queuedPools,3-picks.length));
   var el=document.getElementById('media-list');
   if(!picks.length){el.innerHTML=emptyRow('Nothing reading or queued yet — add something in the Media Tracker.');return;}
   el.innerHTML=picks.map(function(p){
