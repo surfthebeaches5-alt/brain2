@@ -22,16 +22,6 @@
     --accent: #c9b6ee;
     --accent-deep: #b099e0;
     --accent-soft: #ede5fb;
-
-    /* Category colors — mapped from current calendar.html */
-    --c-work-bg: #eaf0fb;       --c-work-text: #2a3a5a;    --c-work-dot: #c2cde6;
-    --c-social-bg: #d8e8f8;     --c-social-text: #1a3a6a;  --c-social-dot: #b8d4f0;
-    --c-travel-bg: #ecf2dd;     --c-travel-text: #3a4a18;  --c-travel-dot: #a7b384;
-    --c-learning-bg: #fffac9;   --c-learning-text: #5a4a08;--c-learning-dot: #f3e26a;
-    --c-tasks-bg: #ede5fb;      --c-tasks-text: #4a3a8a;   --c-tasks-dot: #c9b6ee;
-    --c-health-bg: #d8eee8;     --c-health-text: #1a4a44;  --c-health-dot: #a8d8d0;
-    --c-selfcare-bg: #fde7ef;   --c-selfcare-text: #7a2a4a;--c-selfcare-dot: #f6b9d3;
-    --c-personal-bg: #fde0c8;   --c-personal-text: #6a3a18;--c-personal-dot: #f6c89e;
   }
 
   html, body {
@@ -179,7 +169,6 @@
   .today-btn:hover { background: #f3eedc; }
 
   .add-event-btn {
-    margin-left: auto;
     padding: 9px 18px;
     border: none;
     border-radius: 22px;
@@ -447,16 +436,6 @@
     color: var(--ink);
   }
 
-  /* Category background classes */
-  .cat-work     { background: var(--c-work-bg);     color: var(--c-work-text); }
-  .cat-social   { background: var(--c-social-bg);   color: var(--c-social-text); }
-  .cat-travel   { background: var(--c-travel-bg);   color: var(--c-travel-text); }
-  .cat-learning { background: var(--c-learning-bg); color: var(--c-learning-text); }
-  .cat-tasks    { background: var(--c-tasks-bg);    color: var(--c-tasks-text); }
-  .cat-health   { background: var(--c-health-bg);   color: var(--c-health-text); }
-  .cat-selfcare { background: var(--c-selfcare-bg); color: var(--c-selfcare-text); }
-  .cat-personal { background: var(--c-personal-bg); color: var(--c-personal-text); }
-
   /* ============ MODAL ============ */
   .modal-backdrop {
     position: fixed; inset: 0;
@@ -549,11 +528,22 @@
     border: 1.5px solid transparent;
     text-align: center;
     transition: all .15s;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
   }
   .cat-option.selected {
     border-color: var(--ink);
     transform: scale(1.04);
   }
+
+  /* ===== category manager rows ===== */
+  .cat-row { display: flex; align-items: center; gap: 8px; margin-bottom: 9px; }
+  .cat-row-label { flex: 0 0 116px; font-weight: 600; }
+  .cat-swatches { display: flex; gap: 4px; flex: 1; flex-wrap: wrap; }
+  .cat-sw { width: 18px; height: 18px; border-radius: 50%; cursor: pointer; padding: 0; border: 2px solid transparent; }
+  .cat-ctrl { width: 26px; height: 32px; border: 1px solid #e2dec5; background: #fff; border-radius: 8px; cursor: pointer; font-size: 12px; flex-shrink: 0; }
+  .cat-ctrl:hover { background: #f3eedc; }
 
   .form-actions {
     display: flex;
@@ -635,7 +625,8 @@
       </button>
     </div>
     <button class="today-btn" onclick="goToday()">Today</button>
-    <button class="add-event-btn" onclick="openAddModal()">+ Add Event</button>
+    <button class="today-btn" onclick="openCatManager()" style="margin-left:auto;">Categories</button>
+    <button class="add-event-btn" onclick="openAddModal()" style="margin-left:8px;">+ Add Event</button>
   </div>
 
   <!-- ============ LEGEND ============ -->
@@ -646,7 +637,7 @@
 
 </div>
 
-<!-- ============ MODAL ============ -->
+<!-- ============ EVENT MODAL ============ -->
 <div class="modal-backdrop" id="modal">
   <div class="modal">
     <div class="modal-head">
@@ -685,37 +676,91 @@
   </div>
 </div>
 
+<!-- ============ CATEGORY MANAGER MODAL ============ -->
+<div class="modal-backdrop" id="cat-modal">
+  <div class="modal" style="max-width:540px;">
+    <div class="modal-head">
+      <div class="modal-title">Categories</div>
+      <button class="modal-close" id="cat-modal-close">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#1a1a1a" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+    </div>
+    <p style="font-size:11.5px;color:var(--muted);margin:-6px 0 14px;line-height:1.5;">Rename, recolor, reorder or add categories. Changes apply here and on your homepage.</p>
+    <div id="cat-manager-list"></div>
+    <button class="btn secondary" id="cat-add-btn" style="width:100%;margin-top:4px;">+ Add category</button>
+    <div class="form-actions">
+      <button class="btn secondary" id="cat-modal-cancel">Close</button>
+      <button class="btn primary" id="cat-modal-save">Save</button>
+    </div>
+  </div>
+</div>
+
 <div class="toast" id="toast">Saved ✓</div>
 
 <script>
 /* ============ STATE ============ */
-const STORAGE_KEY = 'lifeCalendar1'; // SHARED with dashboard
+const STORAGE_KEY = 'lifeCalendar1';   // events — SHARED with dashboard
+const CAT_KEY = 'calCategories1';      // categories — SHARED with dashboard
 
-const CATS = [
-  {id:'work',     label:'Work',      bg:'var(--c-work-bg)',     text:'var(--c-work-text)',     dot:'var(--c-work-dot)'},
-  {id:'social',   label:'Social',    bg:'var(--c-social-bg)',   text:'var(--c-social-text)',   dot:'var(--c-social-dot)'},
-  {id:'travel',   label:'Travel',    bg:'var(--c-travel-bg)',   text:'var(--c-travel-text)',   dot:'var(--c-travel-dot)'},
-  {id:'learning', label:'Learning',  bg:'var(--c-learning-bg)', text:'var(--c-learning-text)', dot:'var(--c-learning-dot)'},
-  {id:'tasks',    label:'Tasks',     bg:'var(--c-tasks-bg)',    text:'var(--c-tasks-text)',    dot:'var(--c-tasks-dot)'},
-  {id:'health',   label:'Health',    bg:'var(--c-health-bg)',   text:'var(--c-health-text)',   dot:'var(--c-health-dot)'},
-  {id:'selfcare', label:'Self-Care', bg:'var(--c-selfcare-bg)', text:'var(--c-selfcare-text)', dot:'var(--c-selfcare-dot)'},
-  {id:'personal', label:'Personal',  bg:'var(--c-personal-bg)', text:'var(--c-personal-text)', dot:'var(--c-personal-dot)'},
+/* Recommended starter set (mapped to the Brain 2.0 hub). Editable via the Categories manager. */
+const DEFAULT_CATS = [
+  {id:'work',     label:'Work',      bg:'#e7eef9', text:'#26405e', dot:'#a9bfdd'},
+  {id:'study',    label:'Study',     bg:'#ece4fb', text:'#463586', dot:'#c1a9ee'},
+  {id:'fitness',  label:'Fitness',   bg:'#e6f2d8', text:'#355010', dot:'#a9cf6e'},
+  {id:'health',   label:'Health',    bg:'#d6efe9', text:'#15463f', dot:'#95d0c6'},
+  {id:'finances', label:'Finances',  bg:'#fbf0d4', text:'#654807', dot:'#ddbd5c'},
+  {id:'social',   label:'Social',    bg:'#dceafb', text:'#1f4a86', dot:'#9cc4f0'},
+  {id:'outings',  label:'Outings',   bg:'#fbe6da', text:'#7a3417', dot:'#e2a172'},
+  {id:'travel',   label:'Travel',    bg:'#ecf2dd', text:'#3a4a18', dot:'#a7b384'},
+  {id:'selfcare', label:'Self-care', bg:'#fde7ef', text:'#7a2a4a', dot:'#f3b3cf'},
+  {id:'personal', label:'Personal',  bg:'#fde0c8', text:'#6a3a18', dot:'#f3c193'},
 ];
 
-function getCat(id) { return CATS.find(c => c.id === id) || CATS[4]; }
+/* Old category ids → new ones, so existing events keep meaning */
+const CAT_MIGRATE = { learning: 'study', tasks: 'personal' };
+
+/* On-brand swatch presets the manager can assign */
+const PRESETS = [
+  {bg:'#e7eef9',text:'#26405e',dot:'#a9bfdd'}, {bg:'#dceafb',text:'#1f4a86',dot:'#9cc4f0'},
+  {bg:'#ece4fb',text:'#463586',dot:'#c1a9ee'}, {bg:'#ede5fb',text:'#4a3a8a',dot:'#c9b6ee'},
+  {bg:'#d6efe9',text:'#15463f',dot:'#95d0c6'}, {bg:'#e6f2d8',text:'#355010',dot:'#a9cf6e'},
+  {bg:'#ecf2dd',text:'#3a4a18',dot:'#a7b384'}, {bg:'#fbf0d4',text:'#654807',dot:'#ddbd5c'},
+  {bg:'#fbe6da',text:'#7a3417',dot:'#e2a172'}, {bg:'#fde0c8',text:'#6a3a18',dot:'#f3c193'},
+  {bg:'#fde7ef',text:'#7a2a4a',dot:'#f3b3cf'}, {bg:'#f1e8d6',text:'#5a4520',dot:'#cab389'},
+];
+
+let CATS = [];
+function loadCats() {
+  try {
+    const raw = localStorage.getItem(CAT_KEY);
+    if (raw) { const arr = JSON.parse(raw); if (Array.isArray(arr) && arr.length) { CATS = arr; return; } }
+  } catch(e) {}
+  CATS = DEFAULT_CATS.map(c => Object.assign({}, c));
+  saveCats();
+}
+function saveCats() { localStorage.setItem(CAT_KEY, JSON.stringify(CATS)); }
+function getCat(id) {
+  return CATS.find(c => c.id === id) || CATS.find(c => c.id === 'personal') || CATS[0] || DEFAULT_CATS[DEFAULT_CATS.length-1];
+}
 
 let TODAY = new Date(); TODAY.setHours(0,0,0,0);
 let currentView = 'month';
 let currentDate = new Date(TODAY);
 let events = [];
 let activeCategories = {};
-CATS.forEach(c => { activeCategories[c.id] = true; });
 let editingId = null;
-let pendingCat = 'tasks';
+let pendingCat = 'personal';
+let catEdit = null;
 
 const DAYS_FULL = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
 const MONTHS_FULL = ['January','February','March','April','May','June','July','August','September','October','November','December'];
 const MONTHS_SHORT = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+
+function buildActiveCats() {
+  const prev = activeCategories;
+  activeCategories = {};
+  CATS.forEach(c => { activeCategories[c.id] = (c.id in prev) ? prev[c.id] : true; });
+}
 
 /* ============ STORAGE ============ */
 function save() {
@@ -726,7 +771,6 @@ function load() {
     const raw = localStorage.getItem(STORAGE_KEY);
     if (raw) {
       const d = JSON.parse(raw);
-      // Support both old (array) and new ({events, view}) format
       if (Array.isArray(d)) {
         events = d;
       } else {
@@ -736,17 +780,21 @@ function load() {
     }
   } catch(e) { events = []; }
 
-  // Seed sample events on first load
   if (events.length === 0) {
     const today = dateKey(TODAY);
     events = [
-      {id: id(), title: 'Morning meditation', date: today, time: '07:00', cat: 'health', note: 'Home', done: false},
+      {id: id(), title: 'Morning meditation', date: today, time: '07:00', cat: 'selfcare', note: 'Home', done: false},
       {id: id(), title: 'Deep work: project plan', date: today, time: '09:00', cat: 'work', note: 'Desk', done: false},
-      {id: id(), title: 'Capture weekly ideas', date: today, time: '14:00', cat: 'learning', note: '', done: false},
-      {id: id(), title: 'Walk + audiobook', date: today, time: '17:30', cat: 'health', note: 'Park', done: false},
+      {id: id(), title: 'Spanish practice', date: today, time: '14:00', cat: 'study', note: '', done: false},
+      {id: id(), title: 'Walk + audiobook', date: today, time: '17:30', cat: 'fitness', note: 'Park', done: false},
     ];
     save();
   }
+}
+function migrateEventCats() {
+  let changed = false;
+  events.forEach(e => { if (CAT_MIGRATE[e.cat]) { e.cat = CAT_MIGRATE[e.cat]; changed = true; } });
+  if (changed) save();
 }
 
 function id() { return 'ev_' + Math.random().toString(36).slice(2,10); }
@@ -768,7 +816,7 @@ function isSameMonth(d1, d2) {
 }
 function getWeekStart(d) {
   const day = d.getDay();
-  const diff = day === 0 ? -6 : 1 - day; // Monday-based
+  const diff = day === 0 ? -6 : 1 - day;
   const start = new Date(d);
   start.setDate(d.getDate() + diff);
   return start;
@@ -799,8 +847,10 @@ function renderLegend() {
   el.innerHTML = '';
   CATS.forEach(c => {
     const chip = document.createElement('div');
-    chip.className = 'leg-chip cat-' + c.id + (activeCategories[c.id] ? ' active' : '');
-    chip.innerHTML = `<div class="leg-dot" style="background:${c.dot}"></div>${c.label}`;
+    chip.className = 'leg-chip' + (activeCategories[c.id] ? ' active' : '');
+    chip.style.background = c.bg;
+    chip.style.color = c.text;
+    chip.innerHTML = `<div class="leg-dot" style="background:${c.dot}"></div>${esc(c.label)}`;
     chip.addEventListener('click', () => {
       activeCategories[c.id] = !activeCategories[c.id];
       renderLegend();
@@ -860,7 +910,6 @@ function renderMonth() {
   main.innerHTML = '';
   const grid = document.createElement('div'); grid.className = 'month-grid';
 
-  // Header row
   const hrow = document.createElement('div'); hrow.className = 'month-header-row';
   ['Mon','Tue','Wed','Thu','Fri','Sat','Sun'].forEach(d => {
     const h = document.createElement('div');
@@ -902,7 +951,9 @@ function renderMonth() {
     dayEvs.forEach(ev => {
       const cat = getCat(ev.cat);
       const chip = document.createElement('div');
-      chip.className = 'month-event-chip cat-' + ev.cat + (ev.done?' done':'');
+      chip.className = 'month-event-chip' + (ev.done?' done':'');
+      chip.style.background = cat.bg;
+      chip.style.color = cat.text;
 
       const checkEl = document.createElement('div');
       checkEl.className = 'chip-check' + (ev.done?' checked':'');
@@ -959,7 +1010,9 @@ function renderWeek() {
     dayEvs.forEach(ev => {
       const cat = getCat(ev.cat);
       const evEl = document.createElement('div');
-      evEl.className = 'week-event cat-' + ev.cat + (ev.done?' done':'');
+      evEl.className = 'week-event' + (ev.done?' done':'');
+      evEl.style.background = cat.bg;
+      evEl.style.color = cat.text;
 
       const checkEl = document.createElement('div');
       checkEl.className = 'ev-check' + (ev.done?' checked':'');
@@ -1009,14 +1062,16 @@ function renderWeek() {
   main.appendChild(grid);
 }
 
-/* ============ MODAL ============ */
+/* ============ EVENT MODAL ============ */
 function buildCatPicker(selectedCat) {
   const picker = document.getElementById('cat-picker');
   picker.innerHTML = '';
-  pendingCat = selectedCat || 'tasks';
+  pendingCat = (selectedCat && CATS.find(c => c.id === selectedCat)) ? selectedCat : ((CATS[0] && CATS[0].id) || 'personal');
   CATS.forEach(c => {
     const btn = document.createElement('div');
-    btn.className = 'cat-option cat-' + c.id + (c.id === pendingCat ? ' selected' : '');
+    btn.className = 'cat-option' + (c.id === pendingCat ? ' selected' : '');
+    btn.style.background = c.bg;
+    btn.style.color = c.text;
     btn.textContent = c.label;
     btn.dataset.cat = c.id;
     btn.addEventListener('click', () => {
@@ -1036,7 +1091,7 @@ function openAddModal(dateStr) {
   document.getElementById('ev-time').value = '';
   document.getElementById('ev-note').value = '';
   document.getElementById('modal-delete-btn').style.display = 'none';
-  buildCatPicker('tasks');
+  buildCatPicker('personal');
   document.getElementById('modal').classList.add('show');
   setTimeout(() => document.getElementById('ev-title').focus(), 100);
 }
@@ -1108,6 +1163,99 @@ function toggleDone(id) {
   render();
 }
 
+/* ============ CATEGORY MANAGER ============ */
+function openCatManager() {
+  catEdit = CATS.map(c => Object.assign({}, c));
+  renderCatManager();
+  document.getElementById('cat-modal').classList.add('show');
+}
+function closeCatManager() {
+  document.getElementById('cat-modal').classList.remove('show');
+  catEdit = null;
+}
+function syncCatLabels() {
+  document.querySelectorAll('#cat-manager-list .cat-row').forEach((row, i) => {
+    const inp = row.querySelector('.cat-row-label');
+    if (inp && catEdit[i]) catEdit[i].label = inp.value;
+  });
+}
+function renderCatManager() {
+  const list = document.getElementById('cat-manager-list');
+  list.innerHTML = '';
+  catEdit.forEach((c, idx) => {
+    const row = document.createElement('div');
+    row.className = 'cat-row';
+
+    const inp = document.createElement('input');
+    inp.className = 'form-input cat-row-label';
+    inp.value = c.label;
+    inp.style.background = c.bg;
+    inp.style.color = c.text;
+    row.appendChild(inp);
+
+    const sw = document.createElement('div');
+    sw.className = 'cat-swatches';
+    PRESETS.forEach(p => {
+      const dot = document.createElement('button');
+      dot.type = 'button';
+      dot.className = 'cat-sw';
+      dot.style.background = p.dot;
+      if (c.dot === p.dot) dot.style.borderColor = '#1a1612';
+      dot.addEventListener('click', () => {
+        syncCatLabels();
+        catEdit[idx].bg = p.bg; catEdit[idx].text = p.text; catEdit[idx].dot = p.dot;
+        renderCatManager();
+      });
+      sw.appendChild(dot);
+    });
+    row.appendChild(sw);
+
+    const up = document.createElement('button');
+    up.className = 'cat-ctrl'; up.textContent = '↑';
+    up.addEventListener('click', () => {
+      if (idx > 0) { syncCatLabels(); const t = catEdit[idx-1]; catEdit[idx-1] = catEdit[idx]; catEdit[idx] = t; renderCatManager(); }
+    });
+    const dn = document.createElement('button');
+    dn.className = 'cat-ctrl'; dn.textContent = '↓';
+    dn.addEventListener('click', () => {
+      if (idx < catEdit.length-1) { syncCatLabels(); const t = catEdit[idx+1]; catEdit[idx+1] = catEdit[idx]; catEdit[idx] = t; renderCatManager(); }
+    });
+    const del = document.createElement('button');
+    del.className = 'cat-ctrl'; del.textContent = '✕'; del.style.color = '#a04040';
+    del.addEventListener('click', () => {
+      if (catEdit.length > 1) { syncCatLabels(); catEdit.splice(idx, 1); renderCatManager(); }
+    });
+    row.appendChild(up); row.appendChild(dn); row.appendChild(del);
+
+    list.appendChild(row);
+  });
+}
+function addCatRow() {
+  syncCatLabels();
+  const p = PRESETS[catEdit.length % PRESETS.length];
+  catEdit.push({id: 'cat' + Date.now().toString(36) + Math.floor(Math.random()*1000), label: 'New category', bg: p.bg, text: p.text, dot: p.dot});
+  renderCatManager();
+}
+function saveCatManager() {
+  syncCatLabels();
+  if (!catEdit.length) return;
+  catEdit.forEach((c, i) => { if (!c.label.trim()) c.label = 'Category ' + (i+1); });
+  CATS = catEdit.map(c => Object.assign({}, c));
+  saveCats();
+
+  const ids = {}; CATS.forEach(c => ids[c.id] = true);
+  const fallback = (CATS.find(c => c.id === 'personal') || CATS[0]).id;
+  let changed = false;
+  events.forEach(e => { if (!ids[e.cat]) { e.cat = fallback; changed = true; } });
+  if (changed) save();
+
+  buildActiveCats();
+  closeCatManager();
+  renderLegend();
+  render();
+  showToast('Categories saved ✓');
+}
+
 /* ============ TOAST ============ */
 let toastTimer;
 function showToast(msg) {
@@ -1126,10 +1274,18 @@ document.getElementById('modal-delete-btn').addEventListener('click', deleteFrom
 document.getElementById('modal').addEventListener('click', e => {
   if (e.target.id === 'modal') closeModal();
 });
+document.getElementById('cat-modal-close').addEventListener('click', closeCatManager);
+document.getElementById('cat-modal-cancel').addEventListener('click', closeCatManager);
+document.getElementById('cat-modal-save').addEventListener('click', saveCatManager);
+document.getElementById('cat-add-btn').addEventListener('click', addCatRow);
+document.getElementById('cat-modal').addEventListener('click', e => {
+  if (e.target.id === 'cat-modal') closeCatManager();
+});
 document.addEventListener('keydown', e => {
-  const modalOpen = document.getElementById('modal').classList.contains('show');
-  if (e.key === 'Escape' && modalOpen) closeModal();
-  if (e.key === 'Enter' && modalOpen && document.activeElement.tagName !== 'BUTTON') {
+  const evModalOpen = document.getElementById('modal').classList.contains('show');
+  const catModalOpen = document.getElementById('cat-modal').classList.contains('show');
+  if (e.key === 'Escape') { if (evModalOpen) closeModal(); if (catModalOpen) closeCatManager(); }
+  if (e.key === 'Enter' && evModalOpen && document.activeElement.tagName !== 'BUTTON') {
     e.preventDefault();
     saveEvent();
   }
@@ -1140,7 +1296,10 @@ const now = new Date();
 document.getElementById('today-date').textContent =
   DAYS_FULL[now.getDay()] + ', ' + MONTHS_FULL[now.getMonth()] + ' ' + now.getDate() + ', ' + now.getFullYear();
 
+loadCats();
 load();
+migrateEventCats();
+buildActiveCats();
 renderLegend();
 render();
 </script>
