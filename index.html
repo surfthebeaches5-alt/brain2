@@ -164,6 +164,9 @@ body.collapsed .sb-link{justify-content:center;padding:9px 0;}
 .mini{margin-bottom:18px;}
 .mini-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:9px;}
 .mini-mo{font-size:13px;font-weight:700;}
+.mini-nav{display:flex;gap:4px;}
+.mini-nav button{width:24px;height:24px;border:none;background:var(--warm);border-radius:7px;cursor:pointer;color:var(--muted);font-size:13px;line-height:1;display:flex;align-items:center;justify-content:center;transition:background .14s,color .14s;}
+.mini-nav button:hover{background:var(--warm-deep);color:var(--ink);}
 .mini-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:2px;text-align:center;}
 .mini-dow{font-size:9px;font-weight:700;color:var(--muted);padding-bottom:4px;}
 .mini-d{aspect-ratio:1;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:600;border-radius:50%;position:relative;cursor:pointer;}
@@ -229,7 +232,7 @@ body.collapsed .sb-link{justify-content:center;padding:9px 0;}
     <a class="sb-link" href="meals/"><svg viewBox="0 0 24 24"><path d="M4 11h16a8 8 0 0 1-16 0Z"/><path d="M9 6.5c0-1 .6-1.5 1-2M13 6.5c0-1 .6-1.5 1-2"/></svg><span class="sb-txt">Meals</span></a>
     <div class="sb-rule"></div>
     <div class="sb-group">Growth</div>
-    <a class="sb-link" href="learning-hub/"><svg viewBox="0 0 24 24"><path d="M3 8l9-4 9 4-9 4Z"/><path d="M7 10v5c0 1 5 3 5 3s5-2 5-3v-5"/></svg><span class="sb-txt">Learning &amp; Classes</span></a>
+    <a class="sb-link" href="professional-dev/"><svg viewBox="0 0 24 24"><path d="M3 8l9-4 9 4-9 4Z"/><path d="M7 10v5c0 1 5 3 5 3s5-2 5-3v-5"/></svg><span class="sb-txt">Learning &amp; Classes</span></a>
     <a class="sb-link" href="media/"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8"/><circle cx="12" cy="12" r="2.4"/></svg><span class="sb-txt">Media Tracker</span></a>
     <a class="sb-link" href="language-portal/"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8"/><path d="M4 12h16M12 4c2.4 2.4 2.4 13.6 0 16M12 4c-2.4 2.4-2.4 13.6 0 16"/></svg><span class="sb-txt">Languages</span></a>
     <a class="sb-link" href="stoic/"><svg viewBox="0 0 24 24"><path d="M5 19c0-8 6-14 14-14 0 8-6 14-14 14Z"/><path d="M5 19c4-4 7-6 11-8"/></svg><span class="sb-txt">Stoic Workbook</span></a>
@@ -261,7 +264,7 @@ body.collapsed .sb-link{justify-content:center;padding:9px 0;}
   <!-- ROW 1 — Growth flagship + obligations -->
   <div class="grid">
     <!-- Learning & Classes -->
-    <div class="tile lead c7" onclick="location.href='learning-hub/'">
+    <div class="tile lead c7" onclick="location.href='professional-dev/'">
       <div class="tile-head">
         <div class="ttl"><span class="ey-dot"></span>Learning &amp; Classes</div>
         <div class="head-right"><span class="chip chip-mut" id="learn-chip">—</span><span class="go">→</span></div>
@@ -283,7 +286,7 @@ body.collapsed .sb-link{justify-content:center;padding:9px 0;}
           <a class="lang-chip" href="language-portal/" onclick="event.stopPropagation()"><span class="flag">🇧🇷</span>Portuguese <small>A1</small></a>
         </div>
         <div class="links" style="margin:0;">
-          <a class="lnk go-lnk" href="learning-hub/" onclick="event.stopPropagation()">Learning Hub →</a>
+          <a class="lnk go-lnk" href="professional-dev/" onclick="event.stopPropagation()">Learning Hub →</a>
           <a class="lnk go-lnk" href="classes/" onclick="event.stopPropagation()">Classes →</a>
           <a class="lnk" href="https://www.coursera.org/my-learning?myLearningTab=IN_PROGRESS" target="_blank" rel="noopener" onclick="event.stopPropagation()">Coursera ↗</a>
         </div>
@@ -364,6 +367,7 @@ body.collapsed .sb-link{justify-content:center;padding:9px 0;}
   <div class="mini">
     <div class="mini-top">
       <div class="mini-mo">—</div>
+      <div class="mini-nav"><button onclick="miniNav(-1)" aria-label="Previous month">‹</button><button onclick="miniNav(1)" aria-label="Next month">›</button></div>
     </div>
     <div class="mini-grid" id="mini-grid"></div>
   </div>
@@ -568,15 +572,7 @@ function renderMeals(){
   }).join('');
 
   var lowOut=pantry.filter(function(p){var st=stockStatus(p);return st==='low'||st==='out';});
-  var pl=document.getElementById('pantry-low');
-  if(!lowOut.length){pl.innerHTML='<span style="font-size:12px;font-weight:600;color:var(--muted);">🛒 Pantry stocked</span>';}
-  else{
-    var names=lowOut.slice(0,3).map(function(p){
-      var nm=esc(shortName(p.name));
-      return stockStatus(p)==='out'?'<b style="color:var(--over)">'+nm+'</b>':nm;
-    }).join(', ');
-    pl.innerHTML='<span style="font-size:12px;font-weight:600;color:var(--muted);">🛒 '+lowOut.length+' low — '+names+'</span>';
-  }
+  document.getElementById('pantry-low').innerHTML='<span style="font-size:12px;font-weight:600;color:var(--muted);white-space:nowrap;">🛒 '+(lowOut.length?lowOut.length+' low':'Pantry stocked')+'</span>';
 }
 
 /* ───────── MEDIA (mediaTracker3) ───────── */
@@ -658,22 +654,30 @@ function fmtTime(t){
   return h+(m!=='00'?':'+m:'')+ap;
 }
 function cap(s){s=String(s||'');return s.charAt(0).toUpperCase()+s.slice(1);}
-function renderRightPanel(){
-  var now=new Date(), tk=dateKey(now), events=calEvents();
-  document.getElementById('rp-date').textContent=DF[now.getDay()]+', '+MF[now.getMonth()]+' '+now.getDate();
-
-  var y=now.getFullYear(),m=now.getMonth();
+var miniOffset=0;
+function renderMini(){
+  var base=new Date();
+  var disp=new Date(base.getFullYear(),base.getMonth()+miniOffset,1);
+  var y=disp.getFullYear(), m=disp.getMonth(), events=calEvents();
   document.querySelector('.mini-mo').textContent=MF[m]+' '+y;
   var startDow=(new Date(y,m,1).getDay()+6)%7;
   var dim=new Date(y,m+1,0).getDate();
   var evDays={};
   events.forEach(function(e){if(!e.date)return;var p=e.date.split('-');if(+p[0]===y&&(+p[1]-1)===m)evDays[+p[2]]=true;});
+  var curMonth=(y===base.getFullYear()&&m===base.getMonth());
   var mini='<div class="mini-dow">M</div><div class="mini-dow">T</div><div class="mini-dow">W</div><div class="mini-dow">T</div><div class="mini-dow">F</div><div class="mini-dow">S</div><div class="mini-dow">S</div>';
   for(var i=0;i<startDow;i++)mini+='<div class="mini-d mut"></div>';
   for(var dd=1;dd<=dim;dd++){
-    mini+='<div class="mini-d'+(dd===now.getDate()?' today':'')+'">'+dd+(evDays[dd]?'<span class="ev"></span>':'')+'</div>';
+    var today=curMonth&&dd===base.getDate();
+    mini+='<div class="mini-d'+(today?' today':'')+'">'+dd+(evDays[dd]?'<span class="ev"></span>':'')+'</div>';
   }
   document.getElementById('mini-grid').innerHTML=mini;
+}
+function miniNav(dir){miniOffset+=dir;renderMini();}
+function renderRightPanel(){
+  var now=new Date(), tk=dateKey(now), events=calEvents();
+  document.getElementById('rp-date').textContent=DF[now.getDay()]+', '+MF[now.getMonth()]+' '+now.getDate();
+  renderMini();
 
   var todays=events.filter(function(e){return e.date===tk;});
   var untimed=todays.filter(function(e){return !e.time;});
