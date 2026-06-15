@@ -686,6 +686,17 @@ function loadHpCats(){
 function catColor(id){var c=HP_CATS.find(function(x){return x.id===id;});return (c&&c.dot)?c.dot:'#b099e0';}
 function catLabel(id){var c=HP_CATS.find(function(x){return x.id===id;});return c?c.label:cap(id);}
 function calEvents(){var d=lsGet('lifeCalendar1');if(!d)return [];return Array.isArray(d)?d:(d.events||[]);}
+/* class assignments (read-only overlay) — from the Classes store, shown on each task's effective due date */
+function classEvents(){
+  var db=lsGet('classTracker1'); if(!db)return [];
+  var classes=Array.isArray(db)?db:(db.classes||[]);
+  var out=[];
+  classes.forEach(function(c){(c.modules||[]).forEach(function(m){(m.tasks||[]).forEach(function(t){
+    var due=t.due||m.due||''; if(!due)return;
+    out.push({id:'class:'+t.id,title:t.label,date:due,done:!!t.done,color:c.color||'#b099e0',cls:c.name});
+  });});});
+  return out;
+}
 function fmtTime(t){
   if(!t)return '';
   var p=t.split(':'),h=parseInt(p[0]),m=p[1],ap=h>=12?'p':'a';h=h%12||12;
@@ -702,6 +713,7 @@ function renderMini(){
   var dim=new Date(y,m+1,0).getDate();
   var evDays={};
   events.forEach(function(e){if(!e.date)return;var p=e.date.split('-');if(+p[0]===y&&(+p[1]-1)===m)evDays[+p[2]]=true;});
+  classEvents().forEach(function(e){if(!e.date)return;var p=e.date.split('-');if(+p[0]===y&&(+p[1]-1)===m)evDays[+p[2]]=true;});
   var curMonth=(y===base.getFullYear()&&m===base.getMonth());
   var mini='<div class="mini-dow">M</div><div class="mini-dow">T</div><div class="mini-dow">W</div><div class="mini-dow">T</div><div class="mini-dow">F</div><div class="mini-dow">S</div><div class="mini-dow">S</div>';
   for(var i=0;i<startDow;i++)mini+='<div class="mini-d mut"></div>';
@@ -725,11 +737,18 @@ function renderTodayLists(){
   var untimed=todays.filter(function(e){return !e.time;});
   var timed=todays.filter(function(e){return e.time;}).sort(function(a,b){return (a.time||'').localeCompare(b.time||'');});
 
+  var clsToday=classEvents().filter(function(e){return e.date===tk;});
   var taskEl=document.getElementById('rp-tasks');
-  taskEl.innerHTML=untimed.length?untimed.map(function(e){
+  var tHtml=untimed.map(function(e){
     return '<div class="task'+(e.done?' done':'')+'" onclick="toggleCalDone(\''+e.id+'\')">'+
       '<span class="t-box">'+(e.done?'✓':'')+'</span><span class="tx">'+esc(e.title)+'</span></div>';
-  }).join(''):emptyRow('No untimed tasks today.');
+  }).join('');
+  tHtml+=clsToday.map(function(e){
+    return '<div class="task'+(e.done?' done':'')+'" onclick="location.href=\'classes/\'" title="'+esc(e.cls)+' — manage in Classes" style="cursor:pointer">'+
+      '<span class="t-box" style="border-color:'+e.color+';background:'+e.color+';color:#fff;font-size:9px;">🎓</span>'+
+      '<span class="tx">'+esc(e.title)+'</span><span class="t-due chip-mut">'+esc(e.cls)+'</span></div>';
+  }).join('');
+  taskEl.innerHTML=tHtml||emptyRow('No untimed tasks today.');
 
   var schedEl=document.getElementById('rp-sched');
   if(!timed.length){schedEl.innerHTML=emptyRow('Nothing scheduled today.');return;}
@@ -753,10 +772,16 @@ function openQuickAdd(iso){
   var p=iso.split('-'), d=new Date(+p[0],+p[1]-1,+p[2]);
   var existing=calEvents().filter(function(e){return e.date===iso;})
     .sort(function(a,b){return (a.time||'').localeCompare(b.time||'');});
-  var exHtml=existing.length?'<div class="qa-exist">'+existing.map(function(e){
+  var clsItems=classEvents().filter(function(e){return e.date===iso;});
+  var rowsHtml=existing.map(function(e){
     return '<div class="qa-ev"><span class="qa-ev-dot" style="background:'+catColor(e.cat)+'"></span>'+
       (e.time?fmtTime(e.time)+' · ':'')+esc(e.title)+'</div>';
-  }).join('')+'</div>':'';
+  }).join('')+clsItems.map(function(e){
+    return '<div class="qa-ev"'+(e.done?' style="opacity:.55;text-decoration:line-through"':'')+'>'+
+      '<span class="qa-ev-dot" style="background:'+e.color+'"></span>🎓 '+esc(e.title)+
+      ' <small style="color:var(--muted)">· '+esc(e.cls)+'</small></div>';
+  }).join('');
+  var exHtml=rowsHtml?'<div class="qa-exist">'+rowsHtml+'</div>':'';
   var opts=HP_CATS.map(function(c){return '<option value="'+esc(c.id)+'"'+(c.id==='personal'?' selected':'')+'>'+esc(c.label)+'</option>';}).join('');
   document.getElementById('quick-add').innerHTML=
     '<div class="qa">'+
