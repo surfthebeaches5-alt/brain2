@@ -826,6 +826,25 @@ function eventsForDate(dateStr) {
     .filter(e => e.date === dateStr && activeCategories[e.cat])
     .sort((a,b) => (a.time||'').localeCompare(b.time||''));
 }
+/* read-only overlay: assignment due dates pulled from the Classes page store (classTracker1) */
+let showClassEvents = true;
+function classEvents() {
+  let db;
+  try { db = JSON.parse(localStorage.getItem('classTracker1')); } catch(e) { db = null; }
+  if (!db) return [];
+  const classes = Array.isArray(db) ? db : (db.classes || []);
+  const out = [];
+  classes.forEach(c => (c.modules||[]).forEach(m => (m.tasks||[]).forEach(t => {
+    const due = t.due || m.due || '';
+    if (!due) return;
+    out.push({ id:'class:'+t.id, title:t.label, date:due, done:!!t.done, color:c.color||'#b099e0', cls:c.name });
+  })));
+  return out;
+}
+function classForDate(dateStr) {
+  if (!showClassEvents) return [];
+  return classEvents().filter(e => e.date === dateStr).sort((a,b) => a.title.localeCompare(b.title));
+}
 function formatTime(t) {
   if (!t) return '';
   const p = t.split(':');
@@ -858,6 +877,15 @@ function renderLegend() {
     });
     el.appendChild(chip);
   });
+  const clsChip = document.createElement('div');
+  clsChip.className = 'leg-chip' + (showClassEvents ? ' active' : '');
+  clsChip.style.background = '#fff';
+  clsChip.style.color = '#7a7468';
+  clsChip.style.border = '1.5px dashed #c9b6ee';
+  clsChip.innerHTML = '🎓 Classes';
+  clsChip.title = 'Show assignment due dates from the Classes page (read-only)';
+  clsChip.addEventListener('click', () => { showClassEvents = !showClassEvents; renderLegend(); render(); });
+  el.appendChild(clsChip);
 }
 
 /* ============ NAV ============ */
@@ -975,6 +1003,18 @@ function renderMonth() {
       evsWrap.appendChild(chip);
     });
 
+    classForDate(dStr).forEach(ce => {
+      const cc = document.createElement('div');
+      cc.className = 'month-event-chip' + (ce.done ? ' done' : '');
+      cc.style.background = '#fff';
+      cc.style.color = ce.color;
+      cc.style.border = '1px dashed ' + ce.color;
+      cc.title = ce.cls + ' · ' + ce.title + ' — manage in Classes';
+      cc.innerHTML = `<span class="chip-text">🎓 ${esc(ce.title)}</span>`;
+      cc.addEventListener('click', e => { e.stopPropagation(); window.location.href = '../classes/'; });
+      evsWrap.appendChild(cc);
+    });
+
     cell.appendChild(evsWrap);
     body.appendChild(cell);
   }
@@ -1046,6 +1086,18 @@ function renderWeek() {
         if (e.target !== checkEl && !e.target.classList.contains('ev-del')) openEditModal(ev.id);
       });
       evsWrap.appendChild(evEl);
+    });
+
+    classForDate(dStr).forEach(ce => {
+      const ccEl = document.createElement('div');
+      ccEl.className = 'week-event' + (ce.done ? ' done' : '');
+      ccEl.style.background = '#fff';
+      ccEl.style.color = ce.color;
+      ccEl.style.border = '1px dashed ' + ce.color;
+      ccEl.style.cursor = 'pointer';
+      ccEl.innerHTML = `<div class="ev-body"><div class="ev-title">🎓 ${esc(ce.title)}</div><div class="ev-time">${esc(ce.cls)}</div></div>`;
+      ccEl.addEventListener('click', () => { window.location.href = '../classes/'; });
+      evsWrap.appendChild(ccEl);
     });
 
     col.appendChild(evsWrap);
