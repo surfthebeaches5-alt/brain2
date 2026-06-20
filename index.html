@@ -188,6 +188,8 @@ body.collapsed .sb-link{justify-content:center;padding:9px 0;}
 .task.done .t-box{background:var(--accent);border-color:var(--accent);color:#fff;}
 .tx{flex:1;font-size:13px;font-weight:600;}
 .t-due{font-size:10px;font-weight:700;padding:2px 7px;border-radius:7px;}
+.t-del{margin-left:auto;border:none;background:transparent;color:var(--muted);font-size:12px;line-height:1;cursor:pointer;padding:3px 5px;border-radius:6px;flex-shrink:0;font-family:inherit;opacity:.5;transition:opacity .14s,background .14s,color .14s;}
+.t-del:hover{opacity:1;background:var(--warm-deep);color:var(--over,#cf5d72);}
 .sched{display:flex;flex-direction:column;gap:7px;margin-top:4px;}
 .ev-row{display:grid;grid-template-columns:46px 1fr;gap:9px;align-items:start;}
 .ev-time{font-size:10px;color:var(--muted);font-weight:700;padding-top:9px;}
@@ -765,6 +767,13 @@ function dayToggleDone(id){
   if(ev){ev.done=!ev.done;localStorage.setItem('lifeCalendar1',JSON.stringify(obj));}
   renderDay();
 }
+function dayDeleteEvent(id){
+  var d=lsGet('lifeCalendar1'); if(!d)return;
+  var obj=Array.isArray(d)?{events:d}:d;
+  obj.events=(obj.events||[]).filter(function(e){return e.id!==id;});
+  localStorage.setItem('lifeCalendar1',JSON.stringify(obj));
+  renderMini(); renderDay();
+}
 function saveDayEvent(){
   if(!dayIso)return;
   var ti=document.getElementById('qa-title'), title=ti?ti.value.trim():'';
@@ -793,7 +802,8 @@ function renderDay(){
     var col=catColor(e.cat);
     var bs=e.done ? ('border-color:'+col+';background:'+col+';color:#fff;') : ('border-color:'+col+';');
     return '<div class="task'+(e.done?' done':'')+'" onclick="dayToggleDone(\''+e.id+'\')" title="'+esc(catLabel(e.cat))+'">'+
-      '<span class="t-box" style="'+bs+'">'+(e.done?'✓':'')+'</span><span class="tx">'+esc(e.title)+'</span></div>';
+      '<span class="t-box" style="'+bs+'">'+(e.done?'✓':'')+'</span><span class="tx">'+esc(e.title)+'</span>'+
+      '<button class="t-del" onclick="event.stopPropagation();dayDeleteEvent(\''+e.id+'\')" aria-label="Delete task" title="Delete">✕</button></div>';
   }).join('')+clsItems.map(function(e){
     return '<div class="task'+(e.done?' done':'')+'" onclick="location.href=\'classes/\'" style="cursor:pointer" title="'+esc(e.cls)+' — manage in Classes">'+
       '<span class="t-box" style="border-color:'+e.color+';background:'+e.color+';color:#fff;font-size:9px;">🎓</span>'+
@@ -806,7 +816,9 @@ function renderDay(){
       '<div class="ev-card" style="--cat:'+catColor(e.cat)+';"><div class="ev-dot"></div><div>'+
       '<div class="ev-t">'+esc(e.title)+'</div>'+
       (e.note?'<div class="ev-l">'+esc(e.note)+'</div>':(e.cat?'<div class="ev-l">'+esc(catLabel(e.cat))+'</div>':''))+
-      '</div></div></div>';
+      '</div>'+
+      '<button class="t-del" onclick="event.stopPropagation();dayDeleteEvent(\''+e.id+'\')" aria-label="Delete event" title="Delete">✕</button>'+
+      '</div></div>';
   }).join(''):'<div class="qa-empty">Nothing scheduled</div>';
 
   var footHtml;
