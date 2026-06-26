@@ -268,7 +268,7 @@ body.collapsed .sb-link{justify-content:center;padding:9px 0;}
     <a class="sb-link" href="meals/"><svg viewBox="0 0 24 24"><path d="M4 11h16a8 8 0 0 1-16 0Z"/><path d="M9 6.5c0-1 .6-1.5 1-2M13 6.5c0-1 .6-1.5 1-2"/></svg><span class="sb-txt">Meals</span></a>
     <div class="sb-rule"></div>
     <div class="sb-group">Growth</div>
-    <a class="sb-link" href="professional-dev/"><svg viewBox="0 0 24 24"><path d="M3 8l9-4 9 4-9 4Z"/><path d="M7 10v5c0 1 5 3 5 3s5-2 5-3v-5"/></svg><span class="sb-txt">Learning &amp; Classes</span></a>
+    <a class="sb-link" href="learning/"><svg viewBox="0 0 24 24"><path d="M3 8l9-4 9 4-9 4Z"/><path d="M7 10v5c0 1 5 3 5 3s5-2 5-3v-5"/></svg><span class="sb-txt">Learning &amp; Classes</span></a>
     <a class="sb-link" href="media/"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8"/><circle cx="12" cy="12" r="2.4"/></svg><span class="sb-txt">Media Tracker</span></a>
     <a class="sb-link" href="language-portal/"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8"/><path d="M4 12h16M12 4c2.4 2.4 2.4 13.6 0 16M12 4c-2.4 2.4-2.4 13.6 0 16"/></svg><span class="sb-txt">Languages</span></a>
     <a class="sb-link" href="stoic/"><svg viewBox="0 0 24 24"><path d="M5 19c0-8 6-14 14-14 0 8-6 14-14 14Z"/><path d="M5 19c4-4 7-6 11-8"/></svg><span class="sb-txt">Stoic Workbook</span></a>
@@ -300,7 +300,7 @@ body.collapsed .sb-link{justify-content:center;padding:9px 0;}
   <!-- ROW 1 — Growth flagship + obligations -->
   <div class="grid">
     <!-- Learning & Classes -->
-    <div class="tile lead c7" onclick="location.href='professional-dev/'">
+    <div class="tile lead c7" onclick="location.href='learning/'">
       <div class="tile-head">
         <div class="ttl"><span class="ey-dot"></span>Learning &amp; Classes</div>
         <div class="head-right"><span class="chip chip-mut" id="learn-chip">—</span><span class="go">→</span></div>
@@ -322,8 +322,7 @@ body.collapsed .sb-link{justify-content:center;padding:9px 0;}
           <a class="lang-chip" href="language-portal/" onclick="event.stopPropagation()"><span class="flag">🇧🇷</span>Portuguese <small>A1</small></a>
         </div>
         <div class="links" style="margin:0;">
-          <a class="lnk go-lnk" href="professional-dev/" onclick="event.stopPropagation()">Learning Hub →</a>
-          <a class="lnk go-lnk" href="classes/" onclick="event.stopPropagation()">Classes →</a>
+          <a class="lnk go-lnk" href="learning/" onclick="event.stopPropagation()">Learning Hub →</a>
           <a class="lnk" href="https://www.coursera.org/my-learning?myLearningTab=IN_PROGRESS" target="_blank" rel="noopener" onclick="event.stopPropagation()">Coursera ↗</a>
         </div>
       </div>
@@ -462,17 +461,26 @@ function renderLearning(){
   chip.className='chip '+(dueSoon?'chip-warn':'chip-mut');
 
   var progs=lsGet('profDevData2'); if(!Array.isArray(progs))progs=[];
-  var active=progs.filter(function(p){return p.status==='active';}).map(function(p){
+  /* front page priority is driven by STATUS: active first, then on hold, then queued.
+     within a status, the program with the most work left surfaces first (so new/in-progress
+     work rises and nearly-finished stale programs sink). No dates involved. */
+  var RANK={active:0,hold:1,queued:2};
+  var picks=progs.map(function(p){
     var cs=p.courses||[];
     var pct=cs.length?Math.round(cs.reduce(function(s,c){return s+(c.pct||0);},0)/cs.length):0;
     var remaining=cs.filter(function(c){return (c.pct||0)<100;}).length;
-    return {name:p.name,pct:pct,total:cs.length,remaining:remaining};
-  }).sort(function(a,b){return b.pct-a.pct;}).slice(0,2);
+    return {name:p.name,pct:pct,total:cs.length,remaining:remaining,status:(p.status||'active')};
+  }).sort(function(a,b){
+    var ra=(a.status in RANK)?RANK[a.status]:0, rb=(b.status in RANK)?RANK[b.status]:0;
+    if(ra!==rb)return ra-rb;
+    return a.pct-b.pct;
+  }).slice(0,2);
   var ss=document.getElementById('selfstudy-list');
-  if(!active.length){ss.innerHTML=emptyRow('No active programs.');return;}
-  ss.innerHTML=active.map(function(p){
-    var sub=p.remaining>0?(p.remaining+' of '+p.total+' courses left'):'complete ✓';
-    return ringRow(p.pct,p.name,sub,'var(--muted)');
+  if(!picks.length){ss.innerHTML=emptyRow('No programs yet.');return;}
+  var STAG={active:'',hold:'On hold · ',queued:'Queued · '};
+  ss.innerHTML=picks.map(function(p){
+    var base=p.remaining>0?(p.remaining+' of '+p.total+' courses left'):'complete ✓';
+    return ringRow(p.pct,p.name,(STAG[p.status]||'')+base,'var(--muted)');
   }).join('');
 }
 
@@ -709,6 +717,22 @@ function classEvents(){
   });});});
   return out;
 }
+/* self-study tasks/coursework (read-only overlay) — from the Learning page's Self-Study plans */
+function studyEvents(){
+  var db=lsGet('selfStudy1'); if(!db||!Array.isArray(db.plans))return [];
+  var out=[];
+  db.plans.forEach(function(p){
+    if(p.archived)return;
+    (p.modules||[]).forEach(function(mod){
+      if(mod.due)out.push({id:'study:'+mod.id,title:mod.title||'Module',date:mod.due,done:!!mod.done,color:'#b099e0',plan:p.title});
+      (mod.tasks||[]).forEach(function(t){if(t.due)out.push({id:'study:'+t.id,title:t.label||'Task',date:t.due,done:!!t.done,color:'#b099e0',plan:p.title});});
+      (mod.coursework||[]).forEach(function(c){if(c.due)out.push({id:'study:'+c.id,title:c.title||c.source||'Coursework',date:c.due,done:!!c.done,color:'#b099e0',plan:p.title});});
+    });
+    (p.tasks||[]).forEach(function(t){if(t.due)out.push({id:'study:'+t.id,title:t.label||'Task',date:t.due,done:!!t.done,color:'#b099e0',plan:p.title});});
+    (p.milestones||[]).forEach(function(m){if(m.due)out.push({id:'study:'+m.id,title:m.text||'Milestone',date:m.due,done:!!m.done,color:'#b099e0',plan:p.title});});
+  });
+  return out;
+}
 function fmtTime(t){
   if(!t)return '';
   var p=t.split(':'),h=parseInt(p[0]),m=p[1],ap=h>=12?'p':'a';h=h%12||12;
@@ -726,6 +750,7 @@ function renderMini(){
   var evDays={};
   events.forEach(function(e){if(!e.date)return;var p=e.date.split('-');if(+p[0]===y&&(+p[1]-1)===m)evDays[+p[2]]=true;});
   classEvents().forEach(function(e){if(!e.date)return;var p=e.date.split('-');if(+p[0]===y&&(+p[1]-1)===m)evDays[+p[2]]=true;});
+  studyEvents().forEach(function(e){if(!e.date)return;var p=e.date.split('-');if(+p[0]===y&&(+p[1]-1)===m)evDays[+p[2]]=true;});
   var curMonth=(y===base.getFullYear()&&m===base.getMonth());
   var mini='<div class="mini-dow">M</div><div class="mini-dow">T</div><div class="mini-dow">W</div><div class="mini-dow">T</div><div class="mini-dow">F</div><div class="mini-dow">S</div><div class="mini-dow">S</div>';
   for(var i=0;i<startDow;i++)mini+='<div class="mini-d mut"></div>';
@@ -797,6 +822,7 @@ function renderDay(){
   var untimed=all.filter(function(e){return !e.time;});
   var timed=all.filter(function(e){return e.time;}).sort(function(a,b){return (a.time||'').localeCompare(b.time||'');});
   var clsItems=classEvents().filter(function(e){return e.date===iso;});
+  var studyItems=studyEvents().filter(function(e){return e.date===iso;});
 
   var tasksHtml=untimed.map(function(e){
     var col=catColor(e.cat);
@@ -808,6 +834,10 @@ function renderDay(){
     return '<div class="task'+(e.done?' done':'')+'" onclick="location.href=\'classes/\'" style="cursor:pointer" title="'+esc(e.cls)+' — manage in Classes">'+
       '<span class="t-box" style="border-color:'+e.color+';background:'+e.color+';color:#fff;font-size:9px;">🎓</span>'+
       '<span class="tx">'+esc(e.title)+'</span><span class="t-due chip-mut">'+esc(e.cls)+'</span></div>';
+  }).join('')+studyItems.map(function(e){
+    return '<div class="task'+(e.done?' done':'')+'" onclick="location.href=\'self-study/\'" style="cursor:pointer" title="'+esc(e.plan)+' — manage in Self-Study">'+
+      '<span class="t-box" style="border-color:'+e.color+';background:'+e.color+';color:#fff;font-size:9px;">✦</span>'+
+      '<span class="tx">'+esc(e.title)+'</span><span class="t-due chip-mut">'+esc(e.plan)+'</span></div>';
   }).join('');
   if(!tasksHtml) tasksHtml='<div class="qa-empty">No tasks</div>';
 
