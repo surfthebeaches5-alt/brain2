@@ -205,6 +205,9 @@
   }
   .leg-chip.active { opacity: 1; }
   .leg-dot { width: 8px; height: 8px; border-radius: 50%; }
+  .cap-ic { width: 12px; height: 12px; flex-shrink: 0; vertical-align: -2px; }
+  .rep-ic { width: 11px; height: 11px; flex-shrink: 0; vertical-align: -2px; opacity: .8; }
+  .card-ic { width: 12px; height: 12px; flex-shrink: 0; vertical-align: -2px; }
 
   /* ============ MAIN ============ */
   .main {
@@ -316,6 +319,16 @@
   }
   .month-event-chip:hover .chip-del { opacity: 0.6; }
   .chip-del:hover { opacity: 1 !important; }
+  .month-more {
+    font-size: 10px;
+    font-weight: 600;
+    color: var(--muted);
+    padding: 2px 7px;
+    cursor: pointer;
+    border-radius: 6px;
+    transition: all .15s;
+  }
+  .month-more:hover { background: #efe8d6; color: var(--ink); }
 
   /* ============ WEEKLY VIEW ============ */
   .week-grid {
@@ -701,6 +714,9 @@
 /* ============ STATE ============ */
 const STORAGE_KEY = 'lifeCalendar1';   // events — SHARED with dashboard
 const CAT_KEY = 'calCategories1';      // categories — SHARED with dashboard
+const CAP_SVG = '<svg class="cap-ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21.42 10.922a1 1 0 0 0-.019-1.838L12.83 5.18a2 2 0 0 0-1.66 0L2.6 9.08a1 1 0 0 0 0 1.832l8.57 3.908a2 2 0 0 0 1.66 0z"/><path d="M22 10v6"/><path d="M6 12.5V16a6 3 0 0 0 12 0v-3.5"/></svg>';
+const REPEAT_SVG = '<svg class="rep-ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m17 2 4 4-4 4"/><path d="M3 11v-1a4 4 0 0 1 4-4h14"/><path d="m7 22-4-4 4-4"/><path d="M21 13v1a4 4 0 0 1-4 4H3"/></svg>';
+const CARD_SVG = '<svg class="card-ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="20" height="14" x="2" y="5" rx="2"/><line x1="2" x2="22" y1="10" y2="10"/></svg>';
 
 /* Recommended starter set (mapped to the Brain 2.0 hub). Editable via the Categories manager. */
 const DEFAULT_CATS = [
@@ -718,6 +734,19 @@ const DEFAULT_CATS = [
 
 /* Old category ids → new ones, so existing events keep meaning */
 const CAT_MIGRATE = { learning: 'study', tasks: 'personal' };
+
+/* ── HARDWIRED RECURRING REMINDERS ──────────────────────────────────
+   Generated onto the calendar at render (never written to storage).
+   freq:'weekly'  + weekday (0=Sun … 6=Sat)   |   freq:'monthly' + date (1–31)
+   cat  = an existing category id   ·   link (optional) = page opened on click
+   (monthly dates past a short month's end fall on that month's last day)      */
+const RECURRING = [
+  { title: 'Weekly audit', freq: 'weekly',  weekday: 0, cat: 'personal', link: '../weekly-audit/' },
+  { title: 'Monthly plan', freq: 'monthly', date: 1,    cat: 'personal', link: '../monthly/' },
+  // Finance due dates are read live from the Finances page (finTrackerState2) once wired —
+  // add one-offs here only if you want them hardwired, e.g.:
+  // { title: 'Amex due', freq: 'monthly', date: 15, cat: 'finances', link: '../finances/' },
+];
 
 /* On-brand swatch presets the manager can assign */
 const PRESETS = [
@@ -845,6 +874,43 @@ function classForDate(dateStr) {
   if (!showClassEvents) return [];
   return classEvents().filter(e => e.date === dateStr).sort((a,b) => a.title.localeCompare(b.title));
 }
+/* generated recurring reminders — expanded from the RECURRING config at render (never stored) */
+let showRecurring = true;
+function recurringForDate(dateStr) {
+  if (!showRecurring) return [];
+  const d = parseDate(dateStr);
+  const dow = d.getDay();
+  const dom = d.getDate();
+  const lastDom = new Date(d.getFullYear(), d.getMonth()+1, 0).getDate();
+  const out = [];
+  RECURRING.forEach((r, i) => {
+    let hit = false;
+    if (r.freq === 'weekly') hit = (r.weekday === dow);
+    else if (r.freq === 'monthly') hit = (Math.min(r.date, lastDom) === dom);
+    if (hit) out.push({ rid: 'rec' + i + ':' + dateStr, title: r.title, cat: r.cat || 'personal', link: r.link || '' });
+  });
+  return out;
+}
+/* generated card-due overlay — read live from the Finances page store (finTrackerState2), never stored here */
+let showFinance = true;
+function financeCards() {
+  let db;
+  try { db = JSON.parse(localStorage.getItem('finTrackerState2')); } catch(e) { db = null; }
+  if (!db) return [];
+  const cards = Array.isArray(db) ? db : (db.cards || []);
+  return cards.filter(c => c && c.active && c.day);
+}
+function financeForDate(dateStr) {
+  if (!showFinance) return [];
+  const d = parseDate(dateStr);
+  const dom = d.getDate();
+  const lastDom = new Date(d.getFullYear(), d.getMonth()+1, 0).getDate();
+  const thisMonth = (d.getFullYear() === TODAY.getFullYear() && d.getMonth() === TODAY.getMonth());
+  return financeCards()
+    .filter(c => Math.min(c.day, lastDom) === dom)
+    .map(c => ({ fid: 'fin:' + c.id + ':' + dateStr, title: c.name, paid: !!c.paid && thisMonth }))
+    .sort((a,b) => a.title.localeCompare(b.title));
+}
 function formatTime(t) {
   if (!t) return '';
   const p = t.split(':');
@@ -882,10 +948,30 @@ function renderLegend() {
   clsChip.style.background = '#fff';
   clsChip.style.color = '#7a7468';
   clsChip.style.border = '1.5px dashed #c9b6ee';
-  clsChip.innerHTML = '🎓 Classes';
+  clsChip.innerHTML = CAP_SVG + 'Classes';
   clsChip.title = 'Show assignment due dates from the Classes page (read-only)';
   clsChip.addEventListener('click', () => { showClassEvents = !showClassEvents; renderLegend(); render(); });
   el.appendChild(clsChip);
+
+  const recChip = document.createElement('div');
+  recChip.className = 'leg-chip' + (showRecurring ? ' active' : '');
+  recChip.style.background = '#fff';
+  recChip.style.color = '#7a7468';
+  recChip.style.border = '1.5px dashed #c9b6ee';
+  recChip.innerHTML = REPEAT_SVG + 'Recurring';
+  recChip.title = 'Show hardwired recurring reminders (weekly audit, monthly plan, …)';
+  recChip.addEventListener('click', () => { showRecurring = !showRecurring; renderLegend(); render(); });
+  el.appendChild(recChip);
+
+  const finChip = document.createElement('div');
+  finChip.className = 'leg-chip' + (showFinance ? ' active' : '');
+  finChip.style.background = '#fff';
+  finChip.style.color = '#7a7468';
+  finChip.style.border = '1.5px dashed #ddbd5c';
+  finChip.innerHTML = CARD_SVG + 'Card due';
+  finChip.title = 'Show credit-card payment due dates from the Finances page (read-only)';
+  finChip.addEventListener('click', () => { showFinance = !showFinance; renderLegend(); render(); });
+  el.appendChild(finChip);
 }
 
 /* ============ NAV ============ */
@@ -953,12 +1039,17 @@ function renderMonth() {
   const lastDay = new Date(y, m+1, 0);
   const startDow = firstDay.getDay() === 0 ? 6 : firstDay.getDay()-1;
   const totalCells = Math.ceil((startDow + lastDay.getDate()) / 7) * 7;
+  const MAX_MONTH = 3;
 
   for (let i = 0; i < totalCells; i++) {
     const cellDate = new Date(y, m, 1 - startDow + i);
     const isOther = !isSameMonth(cellDate, firstDay);
     const dStr = dateKey(cellDate);
     const dayEvs = eventsForDate(dStr);
+    const recItems = recurringForDate(dStr);
+    const finItems = financeForDate(dStr);
+    const classItems = classForDate(dStr);
+    const totalItems = dayEvs.length + recItems.length + finItems.length + classItems.length;
 
     const cell = document.createElement('div');
     cell.className = 'month-cell' + (isOther?' other-month':'') + (isToday(cellDate)?' today':'');
@@ -976,7 +1067,11 @@ function renderMonth() {
     const evsWrap = document.createElement('div');
     evsWrap.className = 'month-events';
 
-    dayEvs.forEach(ev => {
+    let shown = 0;
+    const capped = totalItems > MAX_MONTH;
+
+    for (const ev of dayEvs) {
+      if (capped && shown >= MAX_MONTH) break;
       const cat = getCat(ev.cat);
       const chip = document.createElement('div');
       chip.className = 'month-event-chip' + (ev.done?' done':'');
@@ -1001,20 +1096,63 @@ function renderMonth() {
       chip.appendChild(textEl);
       chip.appendChild(delEl);
       evsWrap.appendChild(chip);
-    });
+      shown++;
+    }
 
-    classForDate(dStr).forEach(ce => {
+    for (const rc of recItems) {
+      if (capped && shown >= MAX_MONTH) break;
+      const cat = getCat(rc.cat);
+      const rec = document.createElement('div');
+      rec.className = 'month-event-chip';
+      rec.style.background = cat.bg;
+      rec.style.color = cat.text;
+      rec.title = 'Recurring · ' + rc.title;
+      rec.innerHTML = REPEAT_SVG + `<span class="chip-text">${esc(rc.title)}</span>`;
+      if (rc.link) rec.addEventListener('click', e => { e.stopPropagation(); window.location.href = rc.link; });
+      else rec.addEventListener('click', e => e.stopPropagation());
+      evsWrap.appendChild(rec);
+      shown++;
+    }
+
+    for (const fc of finItems) {
+      if (capped && shown >= MAX_MONTH) break;
+      const fcat = getCat('finances');
+      const fe = document.createElement('div');
+      fe.className = 'month-event-chip' + (fc.paid ? ' done' : '');
+      fe.style.background = fcat.bg;
+      fe.style.color = fcat.text;
+      fe.title = 'Card payment due · ' + fc.title + (fc.paid ? ' (paid)' : '') + ' — manage in Finances';
+      fe.innerHTML = CARD_SVG + `<span class="chip-text">${esc(fc.title)}</span>`;
+      fe.addEventListener('click', e => { e.stopPropagation(); window.location.href = '../finances/'; });
+      evsWrap.appendChild(fe);
+      shown++;
+    }
+
+    for (const ce of classItems) {
+      if (capped && shown >= MAX_MONTH) break;
       const cc = document.createElement('div');
       cc.className = 'month-event-chip' + (ce.done ? ' done' : '');
       cc.style.background = '#fff';
       cc.style.color = ce.color;
       cc.style.border = '1px dashed ' + ce.color;
       cc.title = ce.cls + ' · ' + ce.title + ' — manage in Classes';
-      cc.innerHTML = `<span class="chip-text">🎓 ${esc(ce.title)}</span>`;
+      cc.innerHTML = CAP_SVG + `<span class="chip-text">${esc(ce.title)}</span>`;
       cc.addEventListener('click', e => { e.stopPropagation(); window.location.href = '../classes/'; });
       evsWrap.appendChild(cc);
-    });
+      shown++;
+    }
 
+    if (capped) {
+      const more = document.createElement('div');
+      more.className = 'month-more';
+      more.textContent = '+' + (totalItems - shown) + ' more';
+      more.addEventListener('click', e => {
+        e.stopPropagation();
+        currentDate = new Date(cellDate);
+        setView('week');
+      });
+      evsWrap.appendChild(more);
+    }
 
     cell.appendChild(evsWrap);
     body.appendChild(cell);
@@ -1089,6 +1227,30 @@ function renderWeek() {
       evsWrap.appendChild(evEl);
     });
 
+    recurringForDate(dStr).forEach(rc => {
+      const cat = getCat(rc.cat);
+      const rEl = document.createElement('div');
+      rEl.className = 'week-event';
+      rEl.style.background = cat.bg;
+      rEl.style.color = cat.text;
+      rEl.style.cursor = rc.link ? 'pointer' : 'default';
+      rEl.innerHTML = `<div class="ev-body"><div class="ev-title">${REPEAT_SVG} ${esc(rc.title)}</div></div>`;
+      if (rc.link) rEl.addEventListener('click', () => { window.location.href = rc.link; });
+      evsWrap.appendChild(rEl);
+    });
+
+    financeForDate(dStr).forEach(fc => {
+      const fcat = getCat('finances');
+      const fEl = document.createElement('div');
+      fEl.className = 'week-event' + (fc.paid ? ' done' : '');
+      fEl.style.background = fcat.bg;
+      fEl.style.color = fcat.text;
+      fEl.style.cursor = 'pointer';
+      fEl.innerHTML = `<div class="ev-body"><div class="ev-title">${CARD_SVG} ${esc(fc.title)}</div><div class="ev-time">Card payment due${fc.paid ? ' · paid' : ''}</div></div>`;
+      fEl.addEventListener('click', () => { window.location.href = '../finances/'; });
+      evsWrap.appendChild(fEl);
+    });
+
     classForDate(dStr).forEach(ce => {
       const ccEl = document.createElement('div');
       ccEl.className = 'week-event' + (ce.done ? ' done' : '');
@@ -1096,7 +1258,7 @@ function renderWeek() {
       ccEl.style.color = ce.color;
       ccEl.style.border = '1px dashed ' + ce.color;
       ccEl.style.cursor = 'pointer';
-      ccEl.innerHTML = `<div class="ev-body"><div class="ev-title">🎓 ${esc(ce.title)}</div><div class="ev-time">${esc(ce.cls)}</div></div>`;
+      ccEl.innerHTML = `<div class="ev-body"><div class="ev-title">${CAP_SVG} ${esc(ce.title)}</div><div class="ev-time">${esc(ce.cls)}</div></div>`;
       ccEl.addEventListener('click', () => { window.location.href = '../classes/'; });
       evsWrap.appendChild(ccEl);
     });
