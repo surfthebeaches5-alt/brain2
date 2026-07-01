@@ -15,60 +15,63 @@
   --accent:#c9b6ee;--accent-deep:#b099e0;--accent-soft:#ede5fb;
   --paper:#fdfaf4;--paper-line:#e8e0cc;
 }
-html,body{background:var(--bg);font-family:'Plus Jakarta Sans',system-ui,sans-serif;color:var(--ink);min-height:100vh;-webkit-font-smoothing:antialiased;}
+html,body{background:var(--bg);overflow-x:hidden;font-family:'Plus Jakarta Sans',system-ui,sans-serif;color:var(--ink);min-height:100vh;-webkit-font-smoothing:antialiased;}
 
-/* ── TOPBAR ── */
+/* TOPBAR */
 .topbar{background:var(--sidebar);border-bottom:1px solid var(--sidebar-line);padding:16px 32px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:300;}
 .topbar-left{display:flex;align-items:center;gap:14px;}
 .back-btn{display:inline-flex;align-items:center;gap:6px;padding:7px 14px;border:1.5px solid #d9d2bd;border-radius:20px;font-size:12px;color:var(--muted);cursor:pointer;background:transparent;font-family:inherit;text-decoration:none;transition:all .15s;}
 .back-btn:hover{border-color:var(--accent-deep);color:var(--ink);}
 .topbar-title{font-family:'Fraunces',serif;font-size:22px;font-weight:600;letter-spacing:-0.4px;}
-.topbar-right{display:flex;align-items:center;gap:10px;}
+.topbar-right{display:flex;align-items:center;gap:12px;}
 .topbar-date{font-size:11px;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted);font-weight:500;}
-.pdf-btn{padding:8px 18px;border:none;border-radius:20px;background:var(--ink);color:#fff;font-family:inherit;font-size:12px;font-weight:700;cursor:pointer;transition:all .15s;}
-.pdf-btn:hover{background:#2a2218;}
+.pdf-btn{padding:7px 14px;border:1.5px solid var(--line);border-radius:16px;font-size:12px;font-weight:600;color:var(--muted);cursor:pointer;background:transparent;font-family:inherit;transition:all .15s;display:inline-flex;align-items:center;gap:5px;}
+.pdf-btn:hover{border-color:var(--accent-deep);color:var(--ink);}
+.pdf-btn svg{width:13px;height:13px;}
 
-/* ── TOOLBAR ── */
-.toolbar{max-width:860px;margin:0 auto;padding:18px 24px 0;display:flex;gap:8px;align-items:center;}
-.tab-btn{display:flex;align-items:center;gap:7px;padding:9px 18px;border:1.5px solid var(--sidebar-line);border-radius:20px;font-family:inherit;font-size:12px;font-weight:700;cursor:pointer;background:var(--sidebar);color:var(--muted);transition:all .15s;white-space:nowrap;}
-.tab-btn:hover{border-color:var(--accent-deep);color:var(--ink);}
-.tab-btn.active{background:var(--ink);border-color:var(--ink);color:#fff;}
-.phase-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;}
-.tab-sep{width:1px;height:20px;background:var(--sidebar-line);flex-shrink:0;margin:0 2px;}
+/* TAB BAR (standard strip) */
+.tab-bar{background:var(--surface);border-bottom:1px solid var(--line);position:sticky;top:57px;z-index:150;}
+.tab-bar-inner{max-width:860px;margin:0 auto;padding:0 14px;display:flex;align-items:center;overflow-x:auto;}
+.tab-btn{padding:13px 17px;display:inline-flex;align-items:center;gap:7px;font-family:inherit;font-size:12.5px;font-weight:600;cursor:pointer;border:none;background:transparent;color:var(--muted);border-bottom:2.5px solid transparent;margin-bottom:-1px;transition:all .15s;white-space:nowrap;}
+.tab-btn:hover{color:var(--ink);}
+.tab-btn.active{color:var(--ink);border-bottom-color:var(--accent-deep);}
+.tab-btn svg{width:15px;height:15px;flex-shrink:0;}
+.phase-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0;}
+.saved-ind{font-size:10.5px;color:#1a4a44;font-weight:600;margin-left:auto;align-self:center;padding-right:6px;white-space:nowrap;}
 
-/* ── PAPER ── */
+/* PAPER */
 .hub-wrap{max-width:860px;margin:0 auto;padding:0 0 80px;}
-.paper{margin:16px 24px 0;background:var(--paper);box-shadow:0 8px 40px rgba(0,0,0,.1);border-radius:4px 4px 0 0;padding:50px 60px 70px;min-height:600px;}
+.paper{margin:20px 24px 0;background:var(--paper);box-shadow:0 4px 26px rgba(0,0,0,.06);border:1px solid var(--paper-line);border-radius:6px 6px 0 0;padding:50px 60px 70px;min-height:600px;}
 
-/* ── PAGES ── */
 .page{display:none;}.page.active{display:block;}
 
-/* ── COVER ── */
-.cover{text-align:center;padding:32px 0 40px;border-bottom:1px solid var(--paper-line);margin-bottom:44px;}
+/* COVER */
+.cover{text-align:center;padding:28px 0 40px;border-bottom:1px solid var(--paper-line);margin-bottom:44px;}
 .cover-eyebrow{font-size:10px;letter-spacing:5px;text-transform:uppercase;color:var(--muted);font-weight:700;margin-bottom:14px;}
 .cover-title{font-family:'Fraunces',serif;font-size:3.8rem;font-weight:500;letter-spacing:-1px;line-height:1.05;color:var(--ink);}
 .cover-title em{font-style:italic;color:var(--accent-deep);}
 .cover-sub{font-size:11px;letter-spacing:3px;text-transform:uppercase;color:var(--muted);font-weight:700;margin-top:14px;}
+.cover-key{font-size:10.5px;color:var(--muted);margin-top:12px;letter-spacing:.2px;}
 .cover-ornament{color:var(--accent);font-size:1rem;letter-spacing:10px;margin-top:22px;}
 .cover-quote{font-family:'Fraunces',serif;font-size:15px;font-style:italic;color:var(--muted);line-height:1.8;max-width:520px;margin:32px auto 0;}
 .cover-fields{background:var(--warm);border:1px solid var(--paper-line);border-radius:16px;padding:22px 26px;margin-top:32px;display:flex;flex-direction:column;gap:14px;text-align:left;}
 .cover-field-label{font-size:9.5px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);font-weight:700;margin-bottom:4px;}
 
-/* ── CHAPTER HEADER ── */
+/* CHAPTER HEADER */
 .chapter-hdr{margin-bottom:36px;padding-bottom:22px;border-bottom:1px solid var(--paper-line);}
 .chapter-eyebrow{font-size:9.5px;letter-spacing:3px;text-transform:uppercase;color:var(--muted);font-weight:700;margin-bottom:8px;}
 .chapter-title{font-family:'Fraunces',serif;font-size:2.4rem;font-weight:500;letter-spacing:-0.8px;line-height:1.1;color:var(--ink);}
 .chapter-title em{font-style:italic;color:var(--accent-deep);}
 .chapter-desc{font-size:13px;color:var(--muted);line-height:1.75;margin-top:10px;max-width:560px;}
 
-/* ── SECTIONS ── */
+/* SECTIONS */
 .section{margin-bottom:40px;}
-.section-hdr{display:flex;align-items:center;gap:10px;margin-bottom:16px;}
+.section-hdr{display:flex;align-items:center;gap:10px;margin-bottom:14px;}
 .section-badge{background:var(--accent-soft);color:var(--accent-deep);font-size:10px;font-weight:800;letter-spacing:.5px;padding:3px 10px;border-radius:10px;border:1px solid var(--accent);}
 .section-title{font-family:'Fraunces',serif;font-size:18px;font-weight:600;letter-spacing:-.2px;}
 .section-sub{font-size:12px;color:var(--muted);font-style:italic;margin-bottom:14px;line-height:1.6;}
 
-/* ── WRITE FIELDS ── */
+/* WRITE FIELDS */
 .f-label{font-size:9.5px;letter-spacing:1.8px;text-transform:uppercase;color:var(--muted);font-weight:700;margin-bottom:6px;margin-top:14px;display:block;}
 .f-label:first-child{margin-top:0;}
 .write{background:var(--warm);border:1.5px solid var(--paper-line);border-radius:12px;padding:12px 14px;font-family:'Plus Jakarta Sans',system-ui,sans-serif;font-size:13px;line-height:1.75;color:var(--ink);outline:none;width:100%;resize:none;overflow:hidden;display:block;transition:border .15s;}
@@ -80,14 +83,14 @@ html,body{background:var(--bg);font-family:'Plus Jakarta Sans',system-ui,sans-se
 .write.letter{min-height:200px;font-family:'Fraunces',serif;font-style:italic;font-size:15px;line-height:1.9;}
 .write.cover-write{min-height:44px;background:rgba(255,255,255,.6);}
 
-/* ── GRIDS ── */
+/* GRIDS + CARDS */
 .two-col{display:grid;grid-template-columns:1fr 1fr;gap:18px;}
 .three-col{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px;}
-.col-card{background:var(--warm);border:1px solid var(--paper-line);border-radius:14px;padding:16px 18px;}
+.col-card{background:var(--warm);border:1px solid var(--paper-line);border-top:2.5px solid var(--accent);border-radius:14px;padding:16px 18px;}
 .col-card-title{font-family:'Fraunces',serif;font-size:16px;font-weight:600;letter-spacing:-.2px;margin-bottom:3px;}
 .col-card-sub{font-size:11px;color:var(--muted);font-style:italic;margin-bottom:10px;}
 
-/* ── WINS ── */
+/* WINS */
 .win-list{display:flex;flex-direction:column;gap:7px;margin-bottom:10px;}
 .win-row{display:flex;align-items:flex-start;gap:10px;}
 .win-bullet{color:var(--accent-deep);font-size:14px;flex-shrink:0;padding-top:3px;}
@@ -99,7 +102,7 @@ html,body{background:var(--bg);font-family:'Plus Jakarta Sans',system-ui,sans-se
 .add-win{font-size:12px;font-weight:700;color:var(--accent-deep);background:transparent;border:none;cursor:pointer;font-family:inherit;padding:4px 0;margin-top:4px;}
 .add-win:hover{text-decoration:underline;}
 
-/* ── MANIFESTO / MISSION ── */
+/* MANIFESTO / MISSION */
 .manifesto-card{background:linear-gradient(135deg,var(--accent-soft),#f0e8ff);border:1.5px solid var(--accent);border-radius:16px;padding:26px 30px;margin-bottom:20px;}
 .manifesto-intro{font-family:'Fraunces',serif;font-size:15px;font-style:italic;color:var(--accent-deep);margin-bottom:14px;}
 .future-row{display:flex;gap:14px;align-items:flex-start;margin-bottom:12px;}
@@ -107,31 +110,29 @@ html,body{background:var(--bg);font-family:'Plus Jakarta Sans',system-ui,sans-se
 .future-write{flex:1;border:none;border-bottom:1.5px dashed rgba(176,153,224,.4);background:transparent;font-family:'Fraunces',serif;font-style:italic;font-size:14px;color:var(--ink);outline:none;padding:4px 2px;resize:none;overflow:hidden;line-height:1.6;}
 .future-write::placeholder{color:#c0b0d8;font-style:italic;}
 .future-write:focus{border-bottom-color:var(--accent-deep);}
-
 .mission-box{border:2px solid var(--accent-deep);border-radius:16px;padding:26px 30px;text-align:center;margin:18px 0;}
 .mission-label{font-size:9.5px;letter-spacing:3px;text-transform:uppercase;color:var(--accent-deep);font-weight:700;margin-bottom:10px;display:block;}
 
-/* ── REBRAND H1→H2 ── */
+/* REBRAND H1->H2 */
 .rebrand-row{display:grid;grid-template-columns:1fr 1fr;margin-bottom:12px;border-radius:14px;overflow:hidden;border:1px solid var(--paper-line);}
-.rebrand-h1{background:#fce8ef;padding:14px 16px;border-right:1px solid var(--paper-line);}
-.rebrand-h2{background:#e8f5e9;padding:14px 16px;}
-.rebrand-label{font-size:9.5px;font-weight:800;text-transform:uppercase;letter-spacing:1px;color:var(--muted);margin-bottom:7px;}
+.rebrand-h1{background:#fbecef;padding:14px 16px;border-right:1px solid var(--paper-line);}
+.rebrand-h2{background:#ecf5ec;padding:14px 16px;}
+.rebrand-label{font-size:9.5px;font-weight:800;text-transform:uppercase;letter-spacing:1px;color:var(--muted);margin-bottom:7px;display:flex;align-items:center;gap:5px;}
 
-/* ── AUDIT GRID ── */
+/* AUDIT / AESTHETIC GRIDS */
 .audit-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
 .audit-item{background:var(--warm);border:1px solid var(--paper-line);border-radius:12px;padding:14px 16px;}
-.audit-area{font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.8px;color:var(--accent-deep);margin-bottom:8px;}
-
-/* ── AESTHETIC GRID ── */
+.audit-area{font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.8px;color:var(--accent-deep);margin-bottom:8px;display:flex;align-items:center;gap:6px;}
 .aesthetic-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;}
 .aesthetic-item{background:var(--warm);border:1px solid var(--paper-line);border-radius:12px;padding:14px 16px;}
-.aesthetic-label{font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.5px;color:var(--muted);margin-bottom:8px;}
+.aesthetic-label{font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.5px;color:var(--accent-deep);margin-bottom:8px;display:flex;align-items:center;gap:6px;}
+.audit-area svg,.aesthetic-label svg,.rebrand-label svg,.boundary-label svg{flex-shrink:0;}
 
-/* ── HARD BOUNDARY BOX ── */
-.boundary-box{background:#fff5d6;border:1.5px solid #e0c870;border-radius:14px;padding:18px 20px;margin-top:18px;}
-.boundary-label{font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:1px;color:#8a6010;margin-bottom:8px;}
+/* HARD BOUNDARY */
+.boundary-box{background:#fdf3d4;border:1.5px solid #e0c870;border-radius:14px;padding:18px 20px;margin-top:18px;}
+.boundary-label{font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:1px;color:#8a6010;margin-bottom:8px;display:flex;align-items:center;gap:6px;}
 
-/* ── FIRST 30 DAYS ── */
+/* FIRST 30 DAYS */
 .thirty-day-card{background:var(--ink);border-radius:18px;padding:24px 28px;margin-top:24px;}
 .thirty-label{font-size:10px;letter-spacing:2px;text-transform:uppercase;color:rgba(255,255,255,.5);font-weight:700;margin-bottom:16px;}
 .thirty-row{display:flex;align-items:flex-start;gap:12px;margin-bottom:12px;}
@@ -140,24 +141,21 @@ html,body{background:var(--bg);font-family:'Plus Jakarta Sans',system-ui,sans-se
 .thirty-write::placeholder{color:rgba(255,255,255,.3);font-style:italic;}
 .thirty-write:focus{border-bottom-color:var(--accent);}
 
-/* ── HR ── */
 hr.rule{border:none;border-top:1px solid var(--paper-line);margin:30px 0;}
 .ornament{text-align:center;color:var(--accent);font-size:1rem;letter-spacing:10px;margin-top:36px;}
 
-/* ── SAVED ── */
-.saved-ind{font-size:10.5px;color:var(--muted);font-weight:600;margin-left:auto;}
-
 @media(max-width:700px){
-  .paper{padding:28px 22px 40px;margin:12px 14px 0;}
+  .paper{padding:28px 22px 40px;margin:14px 14px 0;}
   .two-col,.three-col,.aesthetic-grid,.audit-grid{grid-template-columns:1fr;}
   .rebrand-row{grid-template-columns:1fr;}
   .rebrand-h1{border-right:none;border-bottom:1px solid var(--paper-line);}
-  .toolbar{flex-wrap:wrap;padding:14px 16px 0;}
+  .cover-title{font-size:2.8rem;}
+  .topbar{padding:14px 18px;}
 }
 @media print{
-  .topbar,.toolbar{display:none!important;}
+  .topbar,.tab-bar{display:none!important;}
   body{background:white!important;}
-  .paper{box-shadow:none!important;border-radius:0!important;padding:20px 28px!important;margin:0!important;}
+  .paper{box-shadow:none!important;border:none!important;border-radius:0!important;padding:20px 28px!important;margin:0!important;}
   .page{display:block!important;}
   .section{page-break-inside:avoid;}
 }
@@ -175,24 +173,19 @@ hr.rule{border:none;border-top:1px solid var(--paper-line);margin:30px 0;}
   </div>
   <div class="topbar-right">
     <span class="topbar-date" id="today-date"></span>
-    <button class="pdf-btn" onclick="savePDF()">↓ Save PDF</button>
+    <button class="pdf-btn" onclick="savePDF()"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" x2="12" y1="15" y2="3"/></svg>Save PDF</button>
   </div>
 </div>
 
 <div class="hub-wrap">
-  <div class="toolbar">
-    <button class="tab-btn active" id="tbtn-cover" onclick="goTab('cover',this)">Cover</button>
-    <div class="tab-sep"></div>
-    <button class="tab-btn" id="tbtn-phase1" onclick="goTab('phase1',this)">
-      <span class="phase-dot" style="background:#f2c4ce;"></span>Phase 1 · The Audit
-    </button>
-    <button class="tab-btn" id="tbtn-phase2" onclick="goTab('phase2',this)">
-      <span class="phase-dot" style="background:var(--accent);"></span>Phase 2 · The Core
-    </button>
-    <button class="tab-btn" id="tbtn-phase3" onclick="goTab('phase3',this)">
-      <span class="phase-dot" style="background:#b8cfb0;"></span>Phase 3 · The Vision
-    </button>
-    <span class="saved-ind" id="saved-ind"></span>
+  <div class="tab-bar">
+    <div class="tab-bar-inner">
+      <button class="tab-btn active" id="tbtn-cover" onclick="goTab('cover',this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>Cover</button>
+      <button class="tab-btn" id="tbtn-phase1" onclick="goTab('phase1',this)"><span class="phase-dot" style="background:#e6a4b4;"></span>1 &middot; Audit</button>
+      <button class="tab-btn" id="tbtn-phase2" onclick="goTab('phase2',this)"><span class="phase-dot" style="background:var(--accent-deep);"></span>2 &middot; Core</button>
+      <button class="tab-btn" id="tbtn-phase3" onclick="goTab('phase3',this)"><span class="phase-dot" style="background:#8fae86;"></span>3 &middot; Vision</button>
+      <span class="saved-ind" id="saved-ind"></span>
+    </div>
   </div>
 
   <div class="paper">
@@ -200,11 +193,12 @@ hr.rule{border:none;border-top:1px solid var(--paper-line);margin:30px 0;}
     <!-- COVER -->
     <div class="page active" id="page-cover">
       <div class="cover">
-        <div class="cover-eyebrow">H2 2026 · July — December</div>
+        <div class="cover-eyebrow">H2 2026 &middot; July &mdash; December</div>
         <div class="cover-title">The Mid-Year<br><em>Pivot</em></div>
-        <div class="cover-sub">Identity · Narrative · Standards · Vision</div>
-        <div class="cover-ornament">✦ ✿ ✦</div>
-        <div class="cover-quote">"When a business rebrands, they leave behind what no longer fits their new vision. That is exactly what you need to do — because if you stick with all of the old, how are you ever going to step into the new?"</div>
+        <div class="cover-sub">Identity &middot; Narrative &middot; Standards &middot; Vision</div>
+        <div class="cover-key">H1 = the first half of 2026 (Jan&ndash;Jun) &nbsp;&middot;&nbsp; H2 = the second half (Jul&ndash;Dec)</div>
+        <div class="cover-ornament">&#10022; &#10047; &#10022;</div>
+        <div class="cover-quote">"When a business rebrands, they leave behind what no longer fits their new vision. That is exactly what you need to do &mdash; because if you stick with all of the old, how are you ever going to step into the new?"</div>
       </div>
       <div class="cover-fields">
         <div>
@@ -220,23 +214,19 @@ hr.rule{border:none;border-top:1px solid var(--paper-line);margin:30px 0;}
           <textarea class="write cover-write" data-save-id="cover_lesson" placeholder="The thing this first half of the year made clear..."></textarea>
         </div>
       </div>
-      <div class="ornament">✦ ✿ ✦</div>
+      <div class="ornament">&#10022; &#10047; &#10022;</div>
     </div>
 
     <!-- PHASE 1: THE AUDIT -->
     <div class="page" id="page-phase1">
       <div class="chapter-hdr">
-        <div class="chapter-eyebrow">Phase 1 · Looking Back</div>
+        <div class="chapter-eyebrow">Phase 1 &middot; Looking Back</div>
         <div class="chapter-title">The <em>Audit</em></div>
         <div class="chapter-desc">Before you step into who you're becoming, you need to see H1 clearly — the wins you actually earned, what you're outgrowing, and what needs to be left behind. Clear the clutter first.</div>
       </div>
 
-      <!-- Small Wins -->
       <div class="section">
-        <div class="section-hdr">
-          <span class="section-badge">1.1</span>
-          <span class="section-title">Every Small Win from H1</span>
-        </div>
+        <div class="section-hdr"><span class="section-badge">1.1</span><span class="section-title">Every Small Win from H1</span></div>
         <p class="section-sub">Add as many as you can. Big, small, trivial, profound. Every single one counts as evidence of who you already are.</p>
         <div class="win-list" id="wins-list"></div>
         <button class="add-win" onclick="addWin()">+ Add a win</button>
@@ -244,27 +234,13 @@ hr.rule{border:none;border-top:1px solid var(--paper-line);margin:30px 0;}
 
       <hr class="rule">
 
-      <!-- Identity Audit -->
       <div class="section">
-        <div class="section-hdr">
-          <span class="section-badge">1.2</span>
-          <span class="section-title">Identity Audit — What No Longer Fits</span>
-        </div>
-        <p class="section-sub">Be ruthlessly honest. The goal isn't to tear yourself down — it's to identify what you're still performing vs. what you're actually becoming.</p>
-        <div class="two-col" style="margin-bottom:16px;">
-          <div>
-            <label class="f-label">What part of my identity feels outdated?</label>
-            <textarea class="write md" data-save-id="audit_outdated" placeholder="The version of you that no longer fits..."></textarea>
-          </div>
-          <div>
-            <label class="f-label">What no longer aligns with my future self?</label>
-            <textarea class="write md" data-save-id="audit_misaligned" placeholder="Beliefs, habits, ways of showing up that are holding you back..."></textarea>
-          </div>
-        </div>
+        <div class="section-hdr"><span class="section-badge">1.2</span><span class="section-title">Identity Audit — What No Longer Fits</span></div>
+        <p class="section-sub">Be ruthlessly honest. The goal isn't to tear yourself down — it's to separate what you're still performing from who you're actually becoming. (The concrete people, spaces, and habits you're leaving belong in 1.3 below.)</p>
         <div class="two-col">
           <div>
-            <label class="f-label">Where have I outgrown my current behavior, people & environments?</label>
-            <textarea class="write md" data-save-id="audit_outgrown" placeholder="Rooms, relationships, patterns you've quietly outgrown..."></textarea>
+            <label class="f-label">What part of my identity feels outdated?</label>
+            <textarea class="write md" data-save-id="audit_outdated" placeholder="The version of her that no longer fits..."></textarea>
           </div>
           <div>
             <label class="f-label">What identity am I still performing that I don't believe in?</label>
@@ -275,25 +251,21 @@ hr.rule{border:none;border-top:1px solid var(--paper-line);margin:30px 0;}
 
       <hr class="rule">
 
-      <!-- Market Exit -->
       <div class="section">
-        <div class="section-hdr">
-          <span class="section-badge">1.3</span>
-          <span class="section-title">The Market Exit — What You're Leaving Behind</span>
-        </div>
+        <div class="section-hdr"><span class="section-badge">1.3</span><span class="section-title">The Market Exit — What You're Leaving Behind</span></div>
         <p class="section-sub">When a business rebrands, they exit markets that don't fit the new vision. You need to do the same — and be specific. Vague exits don't stick.</p>
         <div class="three-col" style="margin-bottom:18px;">
-          <div class="col-card" style="border-top:3px solid #f2c4ce;">
+          <div class="col-card">
             <div class="col-card-title">Ways of Working</div>
             <div class="col-card-sub">Habits, work styles, routines that need to go</div>
             <textarea class="write md" data-save-id="exit_work" placeholder="Overcommitting, people-pleasing at work, shrinking in meetings..."></textarea>
           </div>
-          <div class="col-card" style="border-top:3px solid var(--accent);">
+          <div class="col-card">
             <div class="col-card-title">Relationships & Spaces</div>
             <div class="col-card-sub">People, groups, environments to step back from</div>
             <textarea class="write md" data-save-id="exit_people" placeholder="One-sided friendships, draining social commitments, toxic group chats..."></textarea>
           </div>
-          <div class="col-card" style="border-top:3px solid #b8cfb0;">
+          <div class="col-card">
             <div class="col-card-title">Patterns & Digital Habits</div>
             <div class="col-card-sub">Mental loops, apps, and triggers to exit</div>
             <textarea class="write md" data-save-id="exit_patterns" placeholder="Doomscrolling, comparison spirals, apps that drain your energy..."></textarea>
@@ -303,41 +275,37 @@ hr.rule{border:none;border-top:1px solid var(--paper-line);margin:30px 0;}
         <textarea class="write" data-save-id="exit_convos" placeholder="Narratives, arguments, and internal loops I'm closing out..."></textarea>
 
         <div class="boundary-box">
-          <div class="boundary-label">⚡ The #1 Hard Boundary I'm Setting Tomorrow</div>
-          <p style="font-size:11.5px;color:#8a6010;margin-bottom:10px;font-style:italic;">Be specific. Not "I'll set better limits" — but "I'm stepping back from ___ starting ___."</p>
-          <textarea class="write sh" style="background:rgba(255,255,255,.6);border-color:#e0c870;" data-save-id="exit_boundary" placeholder="The one concrete exit I'm executing this week, and exactly how..."></textarea>
+          <div class="boundary-label"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 14a1 1 0 0 1-.78-1.63l9.9-10.2a.5.5 0 0 1 .86.46l-1.92 6.02A1 1 0 0 0 13 10h7a1 1 0 0 1 .78 1.63l-9.9 10.2a.5.5 0 0 1-.86-.46l1.92-6.02A1 1 0 0 0 11 14z"/></svg>My First Hard Boundary — and when I start it</div>
+          <p style="font-size:11.5px;color:#8a6010;margin-bottom:10px;font-style:italic;">Pick the one exit that matters most, be specific, and date it. Not "I'll set better limits" — but "I'm stepping back from ___, starting ___."</p>
+          <textarea class="write sh" style="background:rgba(255,255,255,.6);border-color:#e0c870;" data-save-id="exit_boundary" placeholder="The first concrete exit I'm committing to — what it is, and the date I start..."></textarea>
         </div>
       </div>
 
-      <div class="ornament">✦ ✿ ✦</div>
+      <div class="ornament">&#10022; &#10047; &#10022;</div>
     </div>
 
     <!-- PHASE 2: THE CORE -->
     <div class="page" id="page-phase2">
       <div class="chapter-hdr">
-        <div class="chapter-eyebrow">Phase 2 · Looking In</div>
+        <div class="chapter-eyebrow">Phase 2 &middot; Looking In</div>
         <div class="chapter-title">The <em>Core</em></div>
         <div class="chapter-desc">This is the internal grounding work. Before you project who you're becoming outward, you need to know what's actually there — your real story, the values you operate from, and the honest inventory of what you contribute.</div>
       </div>
 
-      <!-- Your Story -->
       <div class="section">
-        <div class="section-hdr">
-          <span class="section-badge">2.1</span>
-          <span class="section-title">The Good Parts of Your Story</span>
-        </div>
+        <div class="section-hdr"><span class="section-badge">2.1</span><span class="section-title">The Good Parts of Your Story</span></div>
         <div class="three-col" style="margin-bottom:18px;">
-          <div class="col-card" style="border-top:3px solid #f2c4ce;">
+          <div class="col-card">
             <div class="col-card-title">Your Intentions</div>
             <div class="col-card-sub">What drives you? What do you genuinely care about?</div>
             <textarea class="write md" data-save-id="story_intentions" placeholder="At your core, you are motivated by..."></textarea>
           </div>
-          <div class="col-card" style="border-top:3px solid var(--accent);">
+          <div class="col-card">
             <div class="col-card-title">Your Morals & Values</div>
             <div class="col-card-sub">What do you actually stand for — non-negotiable?</div>
             <textarea class="write md" data-save-id="story_values" placeholder="The principles you live by and won't compromise on..."></textarea>
           </div>
-          <div class="col-card" style="border-top:3px solid #b8cfb0;">
+          <div class="col-card">
             <div class="col-card-title">Your Character</div>
             <div class="col-card-sub">Who are you at your best?</div>
             <textarea class="write md" data-save-id="story_character" placeholder="The qualities people see when you're most yourself..."></textarea>
@@ -345,85 +313,71 @@ hr.rule{border:none;border-top:1px solid var(--paper-line);margin:30px 0;}
         </div>
         <label class="f-label">Your Dreams — uncensored</label>
         <textarea class="write tall" data-save-id="story_dreams" placeholder="What do you actually want? Not what you think you should want — what do you dream about when no one is watching?"></textarea>
-        <label class="f-label">The person you're becoming — how she carries herself</label>
-        <textarea class="write tall" data-save-id="story_dress" placeholder="She walks in and you know immediately she is someone. She wears... she carries herself like... the energy she brings is..."></textarea>
       </div>
 
       <hr class="rule">
 
-      <!-- Personal Culture -->
       <div class="section">
-        <div class="section-hdr">
-          <span class="section-badge">2.2</span>
-          <span class="section-title">Personal Culture — Auditing Your Internal Rules</span>
-        </div>
+        <div class="section-hdr"><span class="section-badge">2.2</span><span class="section-title">Personal Culture — Auditing Your Internal Rules</span></div>
         <p class="section-sub">Like company culture, your personal culture is the invisible set of rules you live by — whether you chose them or they were handed to you. Time to rewrite them.</p>
         <label class="f-label">The Rules I've Been Running On (even the embarrassing ones)</label>
         <textarea class="write tall" data-save-id="culture_oldrules" placeholder="Don't be too loud. Don't take up too much space. Play it safe. Don't disappoint anyone. Be agreeable even when you're not. Shrink yourself so others feel comfortable..."></textarea>
-        <label class="f-label" style="margin-top:18px;">→ The New Rules I'm Running H2 On</label>
+        <label class="f-label" style="margin-top:18px;">&rarr; The New Rules I'm Running H2 On</label>
         <textarea class="write tall" data-save-id="culture_newrules" placeholder="I take up space unapologetically. I speak my mind even when my voice shakes. I choose people who choose me. I rest without guilt. I say no when I mean no..."></textarea>
       </div>
 
       <hr class="rule">
 
-      <!-- Value Proposition -->
       <div class="section">
-        <div class="section-hdr">
-          <span class="section-badge">2.3</span>
-          <span class="section-title">Your Value Proposition — What You Actually Bring</span>
-        </div>
+        <div class="section-hdr"><span class="section-badge">2.3</span><span class="section-title">Your Value Proposition — What You Actually Bring</span></div>
         <p class="section-sub">Once you realize what value you bring, you stop underselling yourself and overgiving yourself. This isn't arrogance — it's inventory.</p>
         <div class="audit-grid">
           <div class="audit-item">
-            <div class="audit-area">💼 Career & Intellect</div>
+            <div class="audit-area"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="20" height="14" x="2" y="7" rx="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg>Career & Intellect</div>
             <textarea class="write sh" data-save-id="val_work" placeholder="What you bring to your work, team, and academic pursuits — at the Chamber, at SAIS..."></textarea>
           </div>
           <div class="audit-item">
-            <div class="audit-area">💕 In Romance</div>
+            <div class="audit-area"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.29 1.49 4.04 3 5.5l7 7Z"/></svg>In Romance</div>
             <textarea class="write sh" data-save-id="val_romance" placeholder="What do you bring to a relationship?"></textarea>
           </div>
           <div class="audit-item">
-            <div class="audit-area">👥 In Friendships</div>
+            <div class="audit-area"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>In Friendships</div>
             <textarea class="write sh" data-save-id="val_friends" placeholder="What do you bring to your friendships?"></textarea>
           </div>
           <div class="audit-item">
-            <div class="audit-area">🌱 To Yourself</div>
+            <div class="audit-area"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 20h10"/><path d="M10 20c5.5-2.5.8-6.4 3-10"/><path d="M9.5 9.4c1.1.8 1.8 2.2 2.3 3.7-2 .4-3.5.4-4.8-.3-1.2-.6-2.3-1.9-3-4.2 2.8-.5 4.4 0 5.5.8z"/><path d="M14.1 6a7 7 0 0 0-1.1 4c1.9-.1 3.3-.6 4.3-1.4 1-1 1.6-2.3 1.7-4.6-2.7.1-4 1-4.9 2z"/></svg>To Yourself</div>
             <textarea class="write sh" data-save-id="val_self" placeholder="What do you bring to your own future, inner child, and goals?"></textarea>
           </div>
         </div>
       </div>
 
-      <div class="ornament">✦ ✿ ✦</div>
+      <div class="ornament">&#10022; &#10047; &#10022;</div>
     </div>
 
     <!-- PHASE 3: THE VISION -->
     <div class="page" id="page-phase3">
       <div class="chapter-hdr">
-        <div class="chapter-eyebrow">Phase 3 · Looking Forward</div>
+        <div class="chapter-eyebrow">Phase 3 &middot; Looking Forward</div>
         <div class="chapter-title">The <em>Vision</em></div>
         <div class="chapter-desc">This is the outward projection. Who are you stepping into for H2? Write it, name it, and ground it in the physical details that make it feel real — because the gap between identity and reality closes the moment you decide.</div>
       </div>
 
-      <!-- New Narrative -->
       <div class="section">
-        <div class="section-hdr">
-          <span class="section-badge">3.1</span>
-          <span class="section-title">The New Narrative</span>
-        </div>
+        <div class="section-hdr"><span class="section-badge">3.1</span><span class="section-title">The New Narrative</span></div>
         <div class="three-col" style="margin-bottom:20px;">
-          <div class="col-card" style="border-top:3px solid #f2c4ce;">
+          <div class="col-card">
             <div class="col-card-title">Known For</div>
-            <div class="col-card-sub">What do you want to be known for in H2?</div>
+            <div class="col-card-sub">Your reputation — the substance people associate with you</div>
             <textarea class="write md" data-save-id="narr_known" placeholder="People know me as someone who..."></textarea>
           </div>
-          <div class="col-card" style="border-top:3px solid var(--accent);">
+          <div class="col-card">
             <div class="col-card-title">Attract</div>
             <div class="col-card-sub">What opportunities, people, energy do you draw in?</div>
             <textarea class="write md" data-save-id="narr_attract" placeholder="The opportunities, people and energy I draw in..."></textarea>
           </div>
-          <div class="col-card" style="border-top:3px solid #b8cfb0;">
+          <div class="col-card">
             <div class="col-card-title">Recognized For</div>
-            <div class="col-card-sub">What do people notice when you walk in?</div>
+            <div class="col-card-sub">Your presence — the immediate impression when you walk in</div>
             <textarea class="write md" data-save-id="narr_recognized" placeholder="When I walk into a room, people notice..."></textarea>
           </div>
         </div>
@@ -431,105 +385,60 @@ hr.rule{border:none;border-top:1px solid var(--paper-line);margin:30px 0;}
           <span class="mission-label">My H2 Mission Statement</span>
           <textarea class="write letter" style="background:transparent;border:none;text-align:center;min-height:70px;" data-save-id="narr_mission" placeholder="My mission for the next 6 months is to..."></textarea>
         </div>
-        <label class="f-label">New Standards — behaviors I am no longer accepting or tolerating</label>
-        <textarea class="write tall" data-save-id="narr_standards" placeholder="From myself: I will no longer accept...&#10;From others: I will no longer tolerate...&#10;In environments: I refuse to stay in spaces that..."></textarea>
       </div>
 
       <hr class="rule">
 
-      <!-- Future Self -->
       <div class="section">
-        <div class="section-hdr">
-          <span class="section-badge">3.2</span>
-          <span class="section-title">Talk Like Your Future Self</span>
-        </div>
+        <div class="section-hdr"><span class="section-badge">3.2</span><span class="section-title">Talk Like Your Future Self</span></div>
         <p class="section-sub">Write 5 statements from the perspective of the woman you are becoming. Present tense. No hedging. No "I'm trying to" — just "I am."</p>
         <div class="manifesto-card">
           <div class="manifesto-intro">I am becoming someone who...</div>
-          <div class="future-row">
-            <span class="future-prompt">Who I am</span>
-            <textarea class="future-write" data-save-id="future_who" placeholder="I am a woman who..." rows="1"></textarea>
-          </div>
-          <div class="future-row">
-            <span class="future-prompt">How I show up</span>
-            <textarea class="future-write" data-save-id="future_showup" placeholder="I show up to every room as..." rows="1"></textarea>
-          </div>
-          <div class="future-row">
-            <span class="future-prompt">What I require</span>
-            <textarea class="future-write" data-save-id="future_require" placeholder="I require..." rows="1"></textarea>
-          </div>
-          <div class="future-row">
-            <span class="future-prompt">My standards</span>
-            <textarea class="future-write" data-save-id="future_standards" placeholder="My standards are..." rows="1"></textarea>
-          </div>
-          <div class="future-row">
-            <span class="future-prompt">What I won't accept</span>
-            <textarea class="future-write" data-save-id="future_wontaccept" placeholder="I will no longer accept..." rows="1"></textarea>
-          </div>
+          <div class="future-row"><span class="future-prompt">Who I am</span><textarea class="future-write" data-save-id="future_who" placeholder="I am a woman who..." rows="1"></textarea></div>
+          <div class="future-row"><span class="future-prompt">How I show up</span><textarea class="future-write" data-save-id="future_showup" placeholder="I show up to every room as..." rows="1"></textarea></div>
+          <div class="future-row"><span class="future-prompt">What I require</span><textarea class="future-write" data-save-id="future_require" placeholder="I require..." rows="1"></textarea></div>
+          <div class="future-row"><span class="future-prompt">My standards</span><textarea class="future-write" data-save-id="future_standards" placeholder="My standards are..." rows="1"></textarea></div>
+          <div class="future-row"><span class="future-prompt">What I won't accept</span><textarea class="future-write" data-save-id="future_wontaccept" placeholder="I will no longer accept..." rows="1"></textarea></div>
         </div>
       </div>
 
       <hr class="rule">
 
-      <!-- Lifestyle Rebrand -->
       <div class="section">
-        <div class="section-hdr">
-          <span class="section-badge">3.3</span>
-          <span class="section-title">Lifestyle Rebrand — H1 → H2</span>
-        </div>
+        <div class="section-hdr"><span class="section-badge">3.3</span><span class="section-title">Lifestyle Rebrand — H1 &rarr; H2</span></div>
         <p class="section-sub">For each moment in your day, map what you're leaving behind in H1 and the elevated version you're stepping into in H2.</p>
         <div class="rebrand-row">
-          <div class="rebrand-h1"><div class="rebrand-label">🌅 Morning — H1 (Leaving Behind)</div><textarea class="write sh" style="background:rgba(255,255,255,.4);border-color:rgba(242,196,206,.5);" data-save-id="rebrand_morn_before" placeholder="Wake up at last second, rush, overwhelmed..."></textarea></div>
-          <div class="rebrand-h2"><div class="rebrand-label">✨ Morning — H2 (Stepping Into)</div><textarea class="write sh" style="background:rgba(255,255,255,.4);border-color:rgba(184,207,176,.5);" data-save-id="rebrand_morn_after" placeholder="Wake up with intention, romanticizing life playlist, made the bed..."></textarea></div>
+          <div class="rebrand-h1"><div class="rebrand-label"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v8"/><path d="m4.93 10.93 1.41 1.41"/><path d="M2 18h2"/><path d="M20 18h2"/><path d="m19.07 10.93-1.41 1.41"/><path d="M22 22H2"/><path d="m8 6 4-4 4 4"/><path d="M16 18a4 4 0 0 0-8 0"/></svg>Morning &middot; leaving behind</div><textarea class="write sh" style="background:rgba(255,255,255,.5);border-color:rgba(230,164,180,.5);" data-save-id="rebrand_morn_before" placeholder="Wake up at last second, rush, overwhelmed..."></textarea></div>
+          <div class="rebrand-h2"><div class="rebrand-label"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>Morning &middot; stepping into</div><textarea class="write sh" style="background:rgba(255,255,255,.5);border-color:rgba(143,174,134,.5);" data-save-id="rebrand_morn_after" placeholder="Wake up with intention, slow playlist, made the bed..."></textarea></div>
         </div>
         <div class="rebrand-row">
-          <div class="rebrand-h1"><div class="rebrand-label">☀️ Work & Energy — H1</div><textarea class="write sh" style="background:rgba(255,255,255,.4);border-color:rgba(242,196,206,.5);" data-save-id="rebrand_commute_before" placeholder="Reactive, scattered, people-pleasing..."></textarea></div>
-          <div class="rebrand-h2"><div class="rebrand-label">✨ Work & Energy — H2</div><textarea class="write sh" style="background:rgba(255,255,255,.4);border-color:rgba(184,207,176,.5);" data-save-id="rebrand_commute_after" placeholder="Intentional, boundaried, operating from a full cup..."></textarea></div>
+          <div class="rebrand-h1"><div class="rebrand-label"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2"/><path d="M12 20v2"/><path d="m4.93 4.93 1.41 1.41"/><path d="m17.66 17.66 1.41 1.41"/><path d="M2 12h2"/><path d="M20 12h2"/><path d="m6.34 17.66-1.41 1.41"/><path d="m19.07 4.93-1.41 1.41"/></svg>Work & Energy &middot; leaving behind</div><textarea class="write sh" style="background:rgba(255,255,255,.5);border-color:rgba(230,164,180,.5);" data-save-id="rebrand_commute_before" placeholder="Reactive, scattered, people-pleasing..."></textarea></div>
+          <div class="rebrand-h2"><div class="rebrand-label"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>Work & Energy &middot; stepping into</div><textarea class="write sh" style="background:rgba(255,255,255,.5);border-color:rgba(143,174,134,.5);" data-save-id="rebrand_commute_after" placeholder="Intentional, boundaried, operating from a full cup..."></textarea></div>
         </div>
         <div class="rebrand-row">
-          <div class="rebrand-h1"><div class="rebrand-label">🌇 Evening — H1</div><textarea class="write sh" style="background:rgba(255,255,255,.4);border-color:rgba(242,196,206,.5);" data-save-id="rebrand_eve_before" placeholder="Scroll until asleep, no wind-down routine..."></textarea></div>
-          <div class="rebrand-h2"><div class="rebrand-label">✨ Evening — H2</div><textarea class="write sh" style="background:rgba(255,255,255,.4);border-color:rgba(184,207,176,.5);" data-save-id="rebrand_eve_after" placeholder="A ritual that belongs to you — skincare, reading, reflection..."></textarea></div>
+          <div class="rebrand-h1"><div class="rebrand-label"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 10V2"/><path d="m4.93 10.93 1.41 1.41"/><path d="M2 18h2"/><path d="M20 18h2"/><path d="m19.07 10.93-1.41 1.41"/><path d="M22 22H2"/><path d="m16 6-4 4-4-4"/><path d="M16 18a4 4 0 0 0-8 0"/></svg>Evening &middot; leaving behind</div><textarea class="write sh" style="background:rgba(255,255,255,.5);border-color:rgba(230,164,180,.5);" data-save-id="rebrand_eve_before" placeholder="Scroll until asleep, no wind-down routine..."></textarea></div>
+          <div class="rebrand-h2"><div class="rebrand-label"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>Evening &middot; stepping into</div><textarea class="write sh" style="background:rgba(255,255,255,.5);border-color:rgba(143,174,134,.5);" data-save-id="rebrand_eve_after" placeholder="A ritual that belongs to you — skincare, reading, reflection..."></textarea></div>
         </div>
         <div class="rebrand-row">
-          <div class="rebrand-h1"><div class="rebrand-label">👥 Social Life — H1</div><textarea class="write sh" style="background:rgba(255,255,255,.4);border-color:rgba(242,196,206,.5);" data-save-id="rebrand_social_before" placeholder="Saying yes to everything, feeling drained after..."></textarea></div>
-          <div class="rebrand-h2"><div class="rebrand-label">✨ Social Life — H2</div><textarea class="write sh" style="background:rgba(255,255,255,.4);border-color:rgba(184,207,176,.5);" data-save-id="rebrand_social_after" placeholder="Intentional, energizing, chosen with care..."></textarea></div>
+          <div class="rebrand-h1"><div class="rebrand-label"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>Social Life &middot; leaving behind</div><textarea class="write sh" style="background:rgba(255,255,255,.5);border-color:rgba(230,164,180,.5);" data-save-id="rebrand_social_before" placeholder="Saying yes to everything, feeling drained after..."></textarea></div>
+          <div class="rebrand-h2"><div class="rebrand-label"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>Social Life &middot; stepping into</div><textarea class="write sh" style="background:rgba(255,255,255,.5);border-color:rgba(143,174,134,.5);" data-save-id="rebrand_social_after" placeholder="Intentional, energizing, chosen with care..."></textarea></div>
         </div>
       </div>
 
       <hr class="rule">
 
-      <!-- Aesthetic -->
       <div class="section">
-        <div class="section-hdr">
-          <span class="section-badge">3.4</span>
-          <span class="section-title">The Visual Rebrand</span>
-        </div>
+        <div class="section-hdr"><span class="section-badge">3.4</span><span class="section-title">The Visual Rebrand</span></div>
         <p class="section-sub">You need at least one tiny physical change to make it feel real — "Oh yeah, I'm her now." Define the sensory identity of who you're becoming.</p>
-        <div class="aesthetic-grid" style="margin-bottom:20px;">
-          <div class="aesthetic-item">
-            <div class="aesthetic-label">💇 Hair</div>
-            <textarea class="write sh" data-save-id="aes_hair" placeholder="Cut, color, style, texture..."></textarea>
-          </div>
-          <div class="aesthetic-item">
-            <div class="aesthetic-label">💄 Makeup & Beauty</div>
-            <textarea class="write sh" data-save-id="aes_makeup" placeholder="A lipstick, a finish, a look that says her..."></textarea>
-          </div>
-          <div class="aesthetic-item">
-            <div class="aesthetic-label">✨ Fragrance</div>
-            <textarea class="write sh" data-save-id="aes_fragrance" placeholder="The scent she wears, the ritual of applying it..."></textarea>
-          </div>
-          <div class="aesthetic-item">
-            <div class="aesthetic-label">👗 Style & Wardrobe</div>
-            <textarea class="write sh" data-save-id="aes_style" placeholder="How does she dress? What does her wardrobe feel like?"></textarea>
-          </div>
-          <div class="aesthetic-item">
-            <div class="aesthetic-label">💍 Jewelry & Accessories</div>
-            <textarea class="write sh" data-save-id="aes_jewelry" placeholder="The daily stack that makes her feel like that girl..."></textarea>
-          </div>
-          <div class="aesthetic-item">
-            <div class="aesthetic-label">🏡 Her Space</div>
-            <textarea class="write sh" data-save-id="aes_space" placeholder="How does her home feel? Smell? Look?"></textarea>
-          </div>
+        <label class="f-label" style="margin-top:0;">The woman you're becoming — how she carries herself</label>
+        <textarea class="write tall" data-save-id="story_dress" placeholder="She walks in and you know immediately she is someone. She wears... she carries herself like... the energy she brings is..."></textarea>
+        <div class="aesthetic-grid" style="margin:18px 0 20px;">
+          <div class="aesthetic-item"><div class="aesthetic-label"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="6" cy="6" r="3"/><path d="M8.12 8.12 12 12"/><path d="M20 4 8.12 15.88"/><circle cx="6" cy="18" r="3"/><path d="M14.8 14.8 20 20"/></svg>Hair</div><textarea class="write sh" data-save-id="aes_hair" placeholder="Cut, color, style, texture..."></textarea></div>
+          <div class="aesthetic-item"><div class="aesthetic-label"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m12 3-1.9 5.8a2 2 0 0 1-1.3 1.3L3 12l5.8 1.9a2 2 0 0 1 1.3 1.3L12 21l1.9-5.8a2 2 0 0 1 1.3-1.3L21 12l-5.8-1.9a2 2 0 0 1-1.3-1.3Z"/></svg>Makeup & Beauty</div><textarea class="write sh" data-save-id="aes_makeup" placeholder="A lipstick, a finish, a look that says her..."></textarea></div>
+          <div class="aesthetic-item"><div class="aesthetic-label"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 16.3c2.2 0 4-1.83 4-4.05 0-1.16-.57-2.26-1.71-3.19S7.29 4.24 7 2c-.29 2.24-1.14 4.13-2.29 5.06S3 11.1 3 12.25c0 2.22 1.8 4.05 4 4.05z"/><path d="M12.56 6.6A11 11 0 0 0 14 3c.5 2.5 2 4.9 4 6.5s3 3.5 3 5.5a7 7 0 0 1-11.9 5"/></svg>Fragrance</div><textarea class="write sh" data-save-id="aes_fragrance" placeholder="The scent she wears, the ritual of applying it..."></textarea></div>
+          <div class="aesthetic-item"><div class="aesthetic-label"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.38 3.46 16 2a4 4 0 0 1-8 0L3.62 3.46a2 2 0 0 0-1.34 2.23l.58 3.47a1 1 0 0 0 .99.84H6v10c0 1.1.9 2 2 2h8a2 2 0 0 0 2-2V10h2.15a1 1 0 0 0 .99-.84l.58-3.47a2 2 0 0 0-1.34-2.23z"/></svg>Style & Wardrobe</div><textarea class="write sh" data-save-id="aes_style" placeholder="How does she dress? What does her wardrobe feel like?"></textarea></div>
+          <div class="aesthetic-item"><div class="aesthetic-label"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 3h12l4 6-10 13L2 9Z"/><path d="M11 3 8 9l4 13 4-13-3-6"/><path d="M2 9h20"/></svg>Jewelry & Accessories</div><textarea class="write sh" data-save-id="aes_jewelry" placeholder="The daily stack that makes her feel like that girl..."></textarea></div>
+          <div class="aesthetic-item"><div class="aesthetic-label"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><path d="M9 22V12h6v10"/></svg>Her Space</div><textarea class="write sh" data-save-id="aes_space" placeholder="How does her home feel? Smell? Look?"></textarea></div>
         </div>
         <label class="f-label">The one physical change that makes it real — specific and dated</label>
         <textarea class="write" data-save-id="aes_firstchange" placeholder="Not 'I'll dress better' — but 'I'm booking that haircut on July 15th' or 'I'm picking up that red lip this weekend'..."></textarea>
@@ -537,41 +446,24 @@ hr.rule{border:none;border-top:1px solid var(--paper-line);margin:30px 0;}
 
       <hr class="rule">
 
-      <!-- Manifesto -->
       <div class="section">
-        <div class="section-hdr">
-          <span class="section-badge">3.5</span>
-          <span class="section-title">My H2 Manifesto</span>
-        </div>
+        <div class="section-hdr"><span class="section-badge">3.5</span><span class="section-title">My H2 Manifesto</span></div>
         <p class="section-sub">Bring it all together. Write it like a letter to yourself that you'll read every month. Present tense. No hedging.</p>
         <textarea class="write letter" data-save-id="manifesto_final" placeholder="In H2 2026, I am the woman who... I no longer... I choose... I show up as... I am done with... I deserve..."></textarea>
       </div>
 
-      <!-- First 30 Days -->
       <div class="section">
-        <div class="section-hdr">
-          <span class="section-badge">3.6</span>
-          <span class="section-title">The First 30 Days</span>
-        </div>
+        <div class="section-hdr"><span class="section-badge">3.6</span><span class="section-title">The First 30 Days</span></div>
         <p class="section-sub">Inspiration fades in 48 hours. Anchor this pivot in three concrete actions you're taking in the next 30 days — specific, scheduled, non-negotiable.</p>
         <div class="thirty-day-card">
           <div class="thirty-label">The First 3 Actions — Specific & Dated</div>
-          <div class="thirty-row">
-            <div class="thirty-num">1</div>
-            <textarea class="thirty-write" data-save-id="thirty_1" placeholder="What exactly, and by when? (e.g. Book haircut appointment — this Friday)" rows="1"></textarea>
-          </div>
-          <div class="thirty-row">
-            <div class="thirty-num">2</div>
-            <textarea class="thirty-write" data-save-id="thirty_2" placeholder="Second concrete action — specific and scheduled..." rows="1"></textarea>
-          </div>
-          <div class="thirty-row">
-            <div class="thirty-num">3</div>
-            <textarea class="thirty-write" data-save-id="thirty_3" placeholder="Third concrete action — what, when, done." rows="1"></textarea>
-          </div>
+          <div class="thirty-row"><div class="thirty-num">1</div><textarea class="thirty-write" data-save-id="thirty_1" placeholder="What exactly, and by when? (e.g. Book haircut appointment — this Friday)" rows="1"></textarea></div>
+          <div class="thirty-row"><div class="thirty-num">2</div><textarea class="thirty-write" data-save-id="thirty_2" placeholder="Second concrete action — specific and scheduled..." rows="1"></textarea></div>
+          <div class="thirty-row"><div class="thirty-num">3</div><textarea class="thirty-write" data-save-id="thirty_3" placeholder="Third concrete action — what, when, done." rows="1"></textarea></div>
         </div>
       </div>
 
-      <div class="ornament">✦ ✿ ✦</div>
+      <div class="ornament">&#10022; &#10047; &#10022;</div>
     </div>
 
   </div><!-- end paper -->
@@ -581,27 +473,27 @@ hr.rule{border:none;border-top:1px solid var(--paper-line);margin:30px 0;}
 var SK='reset2026v2';
 var activeTab='cover';
 var saveTimer=null;
-
 var DAYS_FULL=['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
 var MONTHS_FULL=['January','February','March','April','May','June','July','August','September','October','November','December'];
 var now=new Date();
 document.getElementById('today-date').textContent=DAYS_FULL[now.getDay()]+', '+MONTHS_FULL[now.getMonth()]+' '+now.getDate()+', '+now.getFullYear();
 
-// ── WINS ──
+function autoExpand(el){el.style.height='auto';el.style.height=el.scrollHeight+'px';}
+
+/* WINS */
 function getWins(){var r=localStorage.getItem(SK+'_wins');try{return r?JSON.parse(r):[];}catch(e){return[];}}
 function saveWins(w){localStorage.setItem(SK+'_wins',JSON.stringify(w));}
 function renderWins(){
   var c=document.getElementById('wins-list');c.innerHTML='';
-  var wins=getWins();
-  wins.forEach(function(w,i){
+  getWins().forEach(function(w,i){
     var row=document.createElement('div');row.className='win-row';
-    var bullet=document.createElement('span');bullet.className='win-bullet';bullet.textContent='✦';
+    var bullet=document.createElement('span');bullet.className='win-bullet';bullet.textContent='\u2726';
     var txt=document.createElement('textarea');txt.className='win-text';txt.rows=1;txt.placeholder='A win, big or small...';txt.value=w;
-    txt.oninput=function(){this.style.height='auto';this.style.height=this.scrollHeight+'px';var ws=getWins();ws[i]=this.value;saveWins(ws);};
-    setTimeout(function(){txt.style.height='auto';txt.style.height=txt.scrollHeight+'px';},20);
-    var del=document.createElement('button');del.className='win-del';del.textContent='✕';
+    txt.oninput=function(){autoExpand(this);var ws=getWins();ws[i]=this.value;saveWins(ws);};
+    var del=document.createElement('button');del.className='win-del';del.textContent='\u2715';
     del.onclick=(function(idx){return function(){var ws=getWins();ws.splice(idx,1);saveWins(ws);renderWins();};})(i);
     row.appendChild(bullet);row.appendChild(txt);row.appendChild(del);c.appendChild(row);
+    autoExpand(txt);
   });
 }
 function addWin(){
@@ -609,14 +501,13 @@ function addWin(){
   var rows=document.querySelectorAll('.win-text');if(rows.length)rows[rows.length-1].focus();
 }
 
-// ── SAVE / RESTORE ──
-function autoExpand(el){el.style.height='auto';el.style.height=el.scrollHeight+'px';}
+/* SAVE / RESTORE */
 function saveData(){
   var d={};
   document.querySelectorAll('textarea[data-save-id]').forEach(function(el){d[el.dataset.saveId]=el.value;});
   localStorage.setItem(SK,JSON.stringify(d));
   var ind=document.getElementById('saved-ind');
-  if(ind){ind.textContent='✓ Saved';setTimeout(function(){ind.textContent='';},2000);}
+  if(ind){ind.textContent='Saved \u2713';setTimeout(function(){ind.textContent='';},2000);}
 }
 function restoreData(){
   var raw=localStorage.getItem(SK);if(!raw)return;
@@ -625,39 +516,28 @@ function restoreData(){
     if(d[el.dataset.saveId]!==undefined){el.value=d[el.dataset.saveId];autoExpand(el);}
   });
 }
-function debouncedSave(){
-  clearTimeout(saveTimer);
-  saveTimer=setTimeout(saveData,600);
-}
+function debouncedSave(){clearTimeout(saveTimer);saveTimer=setTimeout(saveData,600);}
 
-// ── TABS ──
+/* TABS */
 function goTab(tab,btn){
-  saveData();
-  activeTab=tab;
+  saveData();activeTab=tab;
   document.querySelectorAll('.page').forEach(function(p){p.classList.remove('active');});
   document.getElementById('page-'+tab).classList.add('active');
   document.querySelectorAll('.tab-btn').forEach(function(b){b.classList.remove('active');});
   btn.classList.add('active');
+  window.scrollTo(0,0);
 }
 
-// ── PDF ──
-function savePDF(){
-  saveData();
-  document.querySelectorAll('.page').forEach(function(p){p.style.display='block';});
-  setTimeout(function(){
-    window.print();
-    document.querySelectorAll('.page').forEach(function(p){p.style.display='';});
-    document.getElementById('page-'+activeTab).classList.add('active');
-  },300);
-}
+/* PDF */
+function savePDF(){window.print();}
 
-// ── INPUT HANDLING ──
+/* INPUT */
 document.querySelector('.paper').addEventListener('input',function(e){
-  if(e.target.tagName==='TEXTAREA'){autoExpand(e.target);}
+  if(e.target.tagName==='TEXTAREA')autoExpand(e.target);
   debouncedSave();
 });
 
-// ── INIT ──
+/* INIT */
 renderWins();
 restoreData();
 </script>
