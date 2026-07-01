@@ -16,7 +16,6 @@
 }
 html,body{background:var(--bg);overflow-x:hidden;font-family:'Plus Jakarta Sans',system-ui,sans-serif;color:var(--ink);min-height:100vh;-webkit-font-smoothing:antialiased;}
 
-/* TOPBAR */
 .topbar{background:var(--sidebar);border-bottom:1px solid var(--sidebar-line);padding:16px 32px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:200;}
 .topbar-left{display:flex;align-items:center;gap:14px;}
 .back-btn{display:inline-flex;align-items:center;gap:6px;padding:7px 14px;border:1.5px solid #d9d2bd;border-radius:20px;font-size:12px;color:var(--muted);cursor:pointer;background:transparent;font-family:inherit;text-decoration:none;transition:all .15s;}
@@ -26,43 +25,46 @@ html,body{background:var(--bg);overflow-x:hidden;font-family:'Plus Jakarta Sans'
 .topbar-date{font-size:11px;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted);font-weight:500;}
 .save-indicator{font-size:11px;font-weight:600;color:#1a4a44;opacity:0;transition:opacity .4s;}
 .save-indicator.show{opacity:1;}
-.pdf-btn{padding:7px 14px;border:1.5px solid var(--line);border-radius:16px;font-size:12px;font-weight:600;color:var(--muted);cursor:pointer;background:transparent;font-family:inherit;transition:all .15s;}
+.pdf-btn{padding:7px 14px;border:1.5px solid var(--line);border-radius:16px;font-size:12px;font-weight:600;color:var(--muted);cursor:pointer;background:transparent;font-family:inherit;transition:all .15s;display:inline-flex;align-items:center;gap:5px;}
 .pdf-btn:hover{border-color:var(--accent-deep);color:var(--ink);}
+.pdf-btn svg{width:13px;height:13px;}
 
-/* MONTH NAV */
-.month-nav{max-width:720px;margin:0 auto;padding:24px 24px 0;display:flex;align-items:center;gap:14px;}
-.month-nav-btn{width:34px;height:34px;border:1.5px solid var(--sidebar-line);border-radius:50%;background:var(--sidebar);cursor:pointer;font-size:14px;color:var(--muted);display:flex;align-items:center;justify-content:center;transition:all .15s;font-family:inherit;}
+.month-nav{max-width:720px;margin:0 auto;padding:16px 24px 4px;display:flex;align-items:center;justify-content:center;gap:12px;}
+.month-nav-btn{width:32px;height:32px;border:1.5px solid var(--sidebar-line);border-radius:50%;background:var(--sidebar);cursor:pointer;color:var(--muted);display:flex;align-items:center;justify-content:center;transition:all .15s;font-family:inherit;flex-shrink:0;}
 .month-nav-btn:hover{border-color:var(--accent-deep);color:var(--ink);}
-.month-label{font-family:'Fraunces',serif;font-size:2rem;font-weight:600;letter-spacing:-0.6px;color:var(--ink);}
+.month-nav-btn svg{width:14px;height:14px;}
+.month-label{font-family:'Fraunces',serif;font-size:1.5rem;font-weight:600;letter-spacing:-0.4px;color:var(--ink);white-space:nowrap;}
 .month-label span{color:var(--accent-deep);}
+.this-month-btn{padding:5px 12px;border:1.5px solid var(--line);border-radius:16px;font-size:11px;font-weight:600;color:var(--muted);cursor:pointer;background:transparent;font-family:inherit;transition:all .15s;white-space:nowrap;}
+.this-month-btn:hover{border-color:var(--accent-deep);color:var(--accent-deep);background:var(--accent-soft);}
+.this-month-btn.hidden{display:none;}
 
-/* TABS */
 .tab-bar{background:var(--surface);border-bottom:1px solid var(--line);position:sticky;top:57px;z-index:150;margin-top:16px;}
-.tab-bar-inner{max-width:720px;margin:0 auto;padding:0 24px;display:flex;}
-.tab-btn{padding:13px 22px;font-family:inherit;font-size:12.5px;font-weight:600;cursor:pointer;border:none;background:transparent;color:var(--muted);border-bottom:2.5px solid transparent;margin-bottom:-1px;transition:all .15s;white-space:nowrap;}
+.tab-bar-inner{max-width:720px;margin:0 auto;padding:0 14px;display:flex;overflow-x:auto;}
+.tab-btn{padding:13px 20px;display:inline-flex;align-items:center;gap:7px;font-family:inherit;font-size:12.5px;font-weight:600;cursor:pointer;border:none;background:transparent;color:var(--muted);border-bottom:2.5px solid transparent;margin-bottom:-1px;transition:all .15s;white-space:nowrap;}
 .tab-btn:hover{color:var(--ink);}
 .tab-btn.active{color:var(--ink);border-bottom-color:var(--accent-deep);}
+.tab-btn svg{width:15px;height:15px;flex-shrink:0;}
 
-/* HUB */
-.hub{max-width:720px;margin:0 auto;padding:32px 24px 80px;overflow-x:hidden;box-sizing:border-box;width:100%;}
+.hub{max-width:720px;margin:0 auto;padding:28px 24px 80px;overflow-x:hidden;box-sizing:border-box;width:100%;}
 .page{display:none;width:100%;box-sizing:border-box;}.page.active{display:block;}
 
-/* PAPER HEADER */
-.paper-header{text-align:center;margin-bottom:36px;padding-bottom:24px;border-bottom:1px solid var(--line);}
-.paper-title{font-family:'Fraunces',serif;font-size:2.4rem;font-weight:600;letter-spacing:-0.8px;line-height:1.1;}
-.paper-title em{font-style:italic;color:var(--accent-deep);}
-.paper-sub{font-size:10px;letter-spacing:2.5px;text-transform:uppercase;color:var(--muted);margin-top:8px;font-weight:600;}
-
-/* SECTION HEADS */
 .sec-title{font-family:'Fraunces',serif;font-size:24px;font-weight:600;letter-spacing:-0.3px;margin-bottom:5px;}
 .sec-sub{font-size:12px;color:var(--muted);font-style:italic;margin-bottom:22px;}
+.phase-tag{display:inline-flex;align-items:center;gap:8px;background:var(--accent-soft);border:1px solid var(--accent);border-radius:20px;padding:6px 15px;margin-bottom:26px;font-size:10.5px;letter-spacing:.4px;color:var(--muted);font-weight:600;}
+.phase-tag svg{width:12px;height:12px;color:var(--accent-deep);flex-shrink:0;}
+.phase-tag b{color:var(--accent-deep);text-transform:uppercase;letter-spacing:1.2px;font-weight:700;}
+.fromto-row{display:flex;align-items:center;gap:10px;}
+.fromto-row input{flex:1;min-width:0;border:1.5px solid var(--line);border-radius:10px;background:var(--warm);font-family:inherit;font-size:13px;color:var(--ink);padding:10px 12px;outline:none;transition:border .15s;}
+.fromto-row input:focus{border-color:var(--accent-deep);}
+.fromto-row input::placeholder{color:#b8b0a8;font-style:italic;}
+.fromto-arrow{color:var(--accent-deep);font-size:16px;flex-shrink:0;}
 .sec-group{margin-bottom:36px;}
 .sec-group-title{font-size:9.5px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);font-weight:700;margin-bottom:14px;display:flex;align-items:center;gap:10px;}
 .sec-group-title::after{content:'';flex:1;height:1px;background:var(--line);}
 hr.rule{border:none;border-top:1px solid var(--line);margin:30px 0;}
 .ornament{text-align:center;color:var(--accent);font-size:1rem;letter-spacing:10px;margin-top:36px;}
 
-/* WRITE FIELDS */
 .write{background:var(--warm);border:1.5px solid var(--line);border-radius:12px;padding:12px 14px;font-family:'Plus Jakarta Sans',system-ui,sans-serif;font-size:13.5px;line-height:1.75;color:var(--ink);outline:none;width:100%;resize:none;overflow:hidden;display:block;transition:border .15s;}
 .write:focus{border-color:var(--accent-deep);}
 .write::placeholder{color:#b8b0a8;font-style:italic;}
@@ -71,31 +73,47 @@ hr.rule{border:none;border-top:1px solid var(--line);margin:30px 0;}
 .field-label{font-size:9.5px;letter-spacing:1.8px;text-transform:uppercase;color:var(--muted);margin-bottom:7px;display:block;font-weight:700;margin-top:16px;}
 .field-label:first-child{margin-top:0;}
 
-/* RATING */
-.rating-wrap{display:flex;align-items:center;gap:10px;margin-bottom:20px;}
-.rating-label{font-size:13px;font-weight:600;}
-.rating-stars{display:flex;gap:3px;}
-.star{font-size:18px;cursor:pointer;color:var(--line);transition:color .1s;}
-.star.filled{color:#e8a0b0;}
-.rating-denom{font-size:11.5px;color:var(--muted);}
+/* SCORE SLIDER (replaces 10-star ratings) */
+.score-row{display:flex;align-items:center;gap:16px;margin-bottom:20px;}
+.score-label{font-size:13px;font-weight:600;flex-shrink:0;}
+.score-slider{flex:1;-webkit-appearance:none;appearance:none;height:6px;border-radius:3px;background:var(--line);outline:none;cursor:pointer;accent-color:var(--accent-deep);min-width:80px;}
+.score-num{font-family:'Fraunces',serif;font-size:24px;font-weight:600;min-width:58px;text-align:right;color:var(--accent-deep);flex-shrink:0;}
+.score-num span{font-size:12px;font-family:'Plus Jakarta Sans',sans-serif;font-weight:400;color:var(--muted);}
 
 /* LIFE WHEEL */
+.wheel-wrap{display:grid;grid-template-columns:minmax(0,330px) 1fr;gap:26px;align-items:start;}
+.radar-wrap{position:sticky;top:118px;}
+.radar-wrap svg{width:100%;height:auto;display:block;}
+.radar-legend{text-align:center;font-size:10px;color:var(--muted);margin-top:4px;}
+.radar-legend b{color:var(--accent-deep);}
 .cat-row{display:flex;align-items:center;gap:10px;padding:9px 0;border-bottom:1px solid var(--line);}
 .cat-row:last-child{border-bottom:none;}
 .cat-swatch{width:10px;height:10px;border-radius:50%;flex-shrink:0;}
-.cat-name{font-size:12.5px;font-weight:600;min-width:130px;}
+.cat-name{font-size:12.5px;font-weight:600;min-width:118px;}
 .cat-slider{flex:1;-webkit-appearance:none;appearance:none;height:5px;border-radius:3px;background:var(--line);outline:none;cursor:pointer;}
-.cat-slider::-webkit-slider-thumb{-webkit-appearance:none;appearance:none;width:17px;height:17px;border-radius:50%;cursor:pointer;border:2.5px solid #fff;box-shadow:0 2px 7px rgba(0,0,0,.18);}
 .cat-score-display{font-family:'Fraunces',serif;font-weight:600;font-size:17px;min-width:26px;text-align:right;flex-shrink:0;}
 
-/* TWO COL */
 .two-col{display:grid;grid-template-columns:1fr 1fr;gap:20px;}
 .col-card{background:var(--warm);border:1px solid var(--line);border-radius:16px;padding:18px 20px;}
-.col-card-title{font-family:'Fraunces',serif;font-size:18px;font-weight:600;margin-bottom:3px;letter-spacing:-.2px;}
+.col-card-title{font-family:'Fraunces',serif;font-size:18px;font-weight:600;margin-bottom:3px;letter-spacing:-.2px;display:flex;align-items:center;gap:8px;}
+.col-card-title svg{width:17px;height:17px;flex-shrink:0;}
 .col-card-sub{font-size:11px;color:var(--muted);font-style:italic;margin-bottom:12px;}
 .col-card .write{background:var(--surface);}
 
-/* GOAL CARDS */
+/* WD LIST (wins / didn't work — weekly-audit pattern) */
+.wd-items{display:flex;flex-direction:column;gap:7px;margin-bottom:12px;}
+.wd-item{display:flex;align-items:flex-start;gap:9px;padding:9px 12px;background:var(--surface);border:1px solid var(--line);border-radius:10px;}
+.wd-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0;margin-top:6px;}
+.wd-item-text{flex:1;font-size:12.5px;line-height:1.5;word-break:break-word;}
+.wd-item-del{background:none;border:none;color:#ccc;cursor:pointer;font-size:11px;padding:1px 4px;border-radius:4px;flex-shrink:0;line-height:1;transition:all .15s;}
+.wd-item-del:hover{color:#a0304a;background:#fce4ec;}
+.wd-add-row{display:flex;gap:8px;}
+.wd-input{flex:1;border:1.5px solid var(--line);border-radius:10px;padding:9px 12px;font-family:inherit;font-size:12.5px;color:var(--ink);background:var(--surface);outline:none;transition:border .15s;}
+.wd-input:focus{border-color:var(--accent-deep);}
+.wd-input::placeholder{color:#b8b0a8;font-style:italic;}
+.wd-add-btn{padding:9px 16px;border:1.5px solid var(--accent);border-radius:10px;background:var(--accent-soft);color:var(--accent-deep);font-family:inherit;font-size:12px;font-weight:700;cursor:pointer;white-space:nowrap;transition:all .15s;}
+.wd-add-btn:hover{background:var(--accent);color:var(--ink);}
+
 .goal-card{padding:20px 22px;border:1px solid var(--line);background:var(--warm);margin-bottom:14px;border-radius:18px;}
 .goal-pill{display:inline-block;background:var(--accent-soft);color:var(--accent-deep);font-size:10px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;padding:4px 12px;border-radius:12px;margin-bottom:14px;border:1px solid var(--accent);}
 .goal-grid{display:grid;grid-template-columns:130px 1fr;gap:10px 14px;align-items:start;}
@@ -104,7 +122,6 @@ hr.rule{border:none;border-top:1px solid var(--line);margin:30px 0;}
 .goal-input:focus{border-bottom-color:var(--accent-deep);}
 .goal-input::placeholder{color:#b8b0a8;font-style:italic;}
 
-/* WEEK THEMES */
 .week-themes-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
 .week-theme-card{background:var(--warm);border:1px solid var(--line);border-radius:14px;padding:14px 16px;}
 .week-badge{display:inline-block;background:var(--accent-soft);color:var(--accent-deep);font-size:10px;font-weight:700;letter-spacing:1px;text-transform:uppercase;padding:3px 10px;border-radius:10px;margin-bottom:10px;border:1px solid var(--accent);}
@@ -112,15 +129,12 @@ hr.rule{border:none;border-top:1px solid var(--line);margin:30px 0;}
 .week-theme-input:focus{border-bottom-color:var(--accent-deep);}
 .week-theme-input::placeholder{color:#b8b0a8;font-style:italic;font-family:'Fraunces',serif;}
 
-/* RESOURCES */
 .res-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;margin-bottom:16px;}
 
-/* FOCUS AREA BOX */
 .focus-box{background:var(--accent-soft);border:1px solid var(--accent);border-radius:18px;padding:20px 24px;margin-bottom:24px;}
 .focus-select{border:1.5px solid var(--accent);border-radius:10px;padding:9px 12px;font-family:inherit;font-size:13px;color:var(--ink);background:var(--surface);outline:none;width:100%;cursor:pointer;transition:border .15s;}
 .focus-select:focus{border-color:var(--accent-deep);}
 
-/* HABIT */
 .habit-group{margin-bottom:22px;}
 .habit-group-title{font-size:9.5px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);font-weight:700;margin-bottom:10px;padding-bottom:5px;border-bottom:1px solid var(--line);}
 .habit-row{display:flex;align-items:center;gap:12px;padding:10px 14px;background:var(--warm);border-radius:11px;border:1px solid var(--line);margin-bottom:7px;}
@@ -128,27 +142,23 @@ hr.rule{border:none;border-top:1px solid var(--line);margin:30px 0;}
 .habit-input{width:100%;border:none;background:transparent;font-family:inherit;font-size:13px;color:var(--ink);outline:none;resize:none;overflow:hidden;min-height:22px;}
 .habit-input::placeholder{color:#b8b0a8;font-style:italic;}
 
-/* OBSTACLE */
 .obstacle-row{display:flex;gap:12px;margin-bottom:10px;align-items:flex-start;}
 .obstacle-num{width:24px;height:24px;border-radius:50%;background:var(--accent-soft);color:var(--accent-deep);font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:6px;border:1px solid var(--accent);}
 
-/* ADHD BOX */
 .adhd-box{background:var(--warm);border:1px solid var(--line);border-radius:16px;padding:18px 22px;margin-top:6px;}
-.adhd-box-title{font-size:9.5px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);font-weight:700;margin-bottom:12px;}
 
-/* NON-NEGS */
 .nonneg-row{display:flex;align-items:flex-start;gap:10px;padding:9px 12px;background:var(--warm);border-radius:11px;border:1px solid var(--line);margin-bottom:7px;}
 .check-box{width:18px;height:18px;border-radius:5px;border:1.5px solid var(--line);flex-shrink:0;cursor:pointer;display:flex;align-items:center;justify-content:center;margin-top:1px;transition:all .15s;}
 .check-box.checked{background:var(--accent-deep);border-color:var(--accent-deep);}
-.check-box.checked::after{content:'✓';color:#fff;font-size:10px;font-weight:700;}
+.check-box.checked::after{content:'\2713';color:#fff;font-size:10px;font-weight:700;}
 .nonneg-text{flex:1;border:none;background:transparent;font-family:inherit;font-size:13px;color:var(--ink);outline:none;resize:none;overflow:hidden;min-height:22px;}
 .nonneg-text::placeholder{color:#b8b0a8;font-style:italic;}
 .nonneg-del{background:none;border:none;font-size:11px;color:#ccc;cursor:pointer;padding:1px 4px;border-radius:4px;flex-shrink:0;line-height:1;margin-top:2px;transition:all .15s;}
 .nonneg-del:hover{color:#a0304a;background:#fce4ec;}
 .add-habit-btn{font-size:11.5px;font-weight:700;color:var(--accent-deep);background:transparent;border:none;cursor:pointer;font-family:inherit;padding:4px 0;transition:color .15s;}
 .add-habit-btn:hover{color:var(--accent);}
+.nonneg-note{font-size:10.5px;color:var(--muted);font-style:italic;margin:-4px 0 10px;}
 
-/* REWARDS */
 .reward-row{display:flex;align-items:center;gap:10px;padding:10px 14px;background:var(--warm);border:1px solid var(--line);border-radius:11px;margin-bottom:8px;}
 .reward-week{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--muted);min-width:56px;flex-shrink:0;}
 .reward-arrow{color:var(--accent-deep);font-size:13px;flex-shrink:0;}
@@ -156,33 +166,29 @@ hr.rule{border:none;border-top:1px solid var(--line);margin:30px 0;}
 .reward-input:focus{border-bottom-color:var(--accent-deep);}
 .reward-input::placeholder{color:#b8b0a8;font-style:italic;}
 
-/* AFFIRMATIONS */
 .affirm-box{background:var(--accent-soft);border:1px solid var(--accent);border-radius:18px;padding:24px 28px;}
 .affirm-row{display:flex;align-items:flex-start;gap:12px;margin-bottom:14px;}
 .affirm-num{font-family:'Fraunces',serif;font-size:20px;color:var(--accent-deep);font-style:italic;flex-shrink:0;width:22px;}
 
-/* MID-MONTH */
 .midmonth-top{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:20px;}
 .midmonth-card{background:var(--warm);border:1px solid var(--line);border-radius:16px;padding:18px 20px;}
 .midmonth-label{font-size:9.5px;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted);font-weight:700;margin-bottom:12px;}
 .track-btns{display:flex;gap:7px;flex-wrap:wrap;}
-.track-btn{padding:6px 14px;border-radius:14px;border:1.5px solid var(--line);background:var(--surface);font-family:inherit;font-size:12px;font-weight:600;cursor:pointer;transition:all .15s;color:var(--muted);}
+.track-btn{padding:6px 13px;border-radius:14px;border:1.5px solid var(--line);background:var(--surface);font-family:inherit;font-size:12px;font-weight:600;cursor:pointer;transition:all .15s;color:var(--muted);display:inline-flex;align-items:center;gap:5px;}
+.track-btn svg{width:13px;height:13px;}
 .track-btn.active-yes{background:#d8eee8;border-color:#a8d8d0;color:#1a4a44;}
 .track-btn.active-partial{background:#fff5d6;border-color:#f6d6a0;color:#6a4a08;}
 .track-btn.active-no{background:#fde0e0;border-color:#f2c4ce;color:#a04040;}
 
-/* BUDGET */
 .budget-row{display:flex;align-items:center;gap:12px;padding:14px 18px;background:var(--warm);border-radius:12px;border:1px solid var(--line);}
 .budget-input{border:none;border-bottom:1.5px solid var(--line);background:transparent;font-family:'Fraunces',serif;font-size:18px;font-weight:600;color:var(--ink);outline:none;width:120px;text-align:left;padding:2px 4px;transition:border .15s;}
 .budget-input:focus{border-bottom-color:var(--accent-deep);}
 
-/* FOCUS BANNER (written by Weekly Audit read) */
-.focus-banner{background:var(--accent-soft);border:1px solid var(--accent);border-radius:14px;padding:12px 18px;margin-bottom:24px;display:flex;align-items:center;gap:10px;}
-.focus-banner-icon{font-size:16px;flex-shrink:0;}
-.focus-banner-text{font-size:12.5px;color:var(--accent-deep);font-weight:600;}
-
 @media(max-width:700px){
-  .two-col,.week-themes-grid,.res-grid,.midmonth-top{grid-template-columns:1fr;}
+  .two-col,.week-themes-grid,.res-grid,.midmonth-top,.wheel-wrap{grid-template-columns:1fr;}
+  .fromto-row{flex-direction:column;align-items:stretch;}
+  .fromto-arrow{align-self:center;transform:rotate(90deg);}
+  .radar-wrap{position:static;max-width:320px;margin:0 auto 8px;}
   .topbar{padding:14px 18px;}
   .hub{padding:24px 14px 80px;}
   .goal-grid{grid-template-columns:90px 1fr;}
@@ -192,6 +198,7 @@ hr.rule{border:none;border-top:1px solid var(--line);margin:30px 0;}
   body{background:white!important;}
   .page{display:block!important;page-break-before:always;}
   .page:first-child{page-break-before:auto;}
+  .radar-wrap{position:static;}
 }
 </style>
 </head>
@@ -206,40 +213,37 @@ hr.rule{border:none;border-top:1px solid var(--line);margin:30px 0;}
     <div class="topbar-title">Monthly Planner</div>
   </div>
   <div class="topbar-right">
-    <span class="save-indicator" id="save-indicator">Saved ✓</span>
+    <span class="save-indicator" id="save-indicator">Saved &#10003;</span>
     <span class="topbar-date" id="today-date"></span>
-    <button class="pdf-btn" onclick="savePDF()">↓ PDF</button>
+    <button class="pdf-btn" onclick="savePDF()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" x2="12" y1="15" y2="3"/></svg>PDF</button>
   </div>
 </div>
 
 <div class="month-nav">
-  <button class="month-nav-btn" onclick="changeMonth(-1)">‹</button>
+  <button class="month-nav-btn" onclick="changeMonth(-1)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg></button>
   <div class="month-label" id="month-label">May <span>2026</span></div>
-  <button class="month-nav-btn" onclick="changeMonth(1)">›</button>
+  <button class="month-nav-btn" onclick="changeMonth(1)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg></button>
+  <button class="this-month-btn hidden" id="this-month-btn" onclick="jumpToThisMonth()">This month</button>
 </div>
 
 <div class="tab-bar">
   <div class="tab-bar-inner">
-    <button class="tab-btn active" onclick="goTab(0,this)">🎯 Strategy</button>
-    <button class="tab-btn" onclick="goTab(1,this)">💪 Mindset</button>
-    <button class="tab-btn" onclick="goTab(2,this)">📋 Retrospective</button>
+    <button class="tab-btn active" onclick="goTab(0,this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76"/></svg>Plan</button>
+    <button class="tab-btn" onclick="goTab(1,this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"/><path d="m9 12 2 2 4-4"/></svg>Prepare</button>
+    <button class="tab-btn" onclick="goTab(2,this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 3-7L3 8"/><path d="M3 3v5h5"/><path d="M12 7v5l3 2"/></svg>Reflect</button>
   </div>
 </div>
 
 <div class="hub">
 
-  <div class="paper-header">
-    <h1 class="paper-title">Monthly <em>Life Planner</em></h1>
-    <div class="paper-sub" id="paper-sub">May 2026</div>
-  </div>
-
-  <!-- ═══ TAB 0: STRATEGY ═══ -->
+  <!-- ===== TAB 0: PLAN (start of month) ===== -->
   <div class="page active" id="p0">
 
-    <div class="sec-group">
-      <div class="sec-title">Focus & Direction</div>
-      <div class="sec-sub">One word. One direction. One month.</div>
+    <div class="phase-tag"><svg viewBox="0 0 12 12" fill="none"><circle cx="6" cy="6" r="5" fill="currentColor"/></svg><b>Start of month</b> &middot; set your direction</div>
 
+    <div class="sec-group">
+      <div class="sec-title">Focus &amp; Direction</div>
+      <div class="sec-sub">One word. One direction. One month.</div>
       <div class="focus-box">
         <div class="two-col">
           <div>
@@ -257,30 +261,20 @@ hr.rule{border:none;border-top:1px solid var(--line);margin:30px 0;}
           </div>
         </div>
       </div>
-
       <label class="field-label">Why this area right now?</label>
       <textarea class="write" data-save-id="focus_why" placeholder="What's pulling you toward this focus? Why does it matter right now?" oninput="autoExpand(this);debouncedSave()"></textarea>
-
-      <label class="field-label">Secondary mini-focus (optional)</label>
-      <textarea class="write short" data-save-id="focus_secondary" placeholder="Something small you can maintain alongside your primary focus..." oninput="autoExpand(this);debouncedSave()"></textarea>
     </div>
 
     <hr class="rule">
 
     <div class="sec-group">
       <div class="sec-group-title">Goal Setting</div>
-
-      <div class="two-col" style="margin-bottom:22px;">
-        <div>
-          <label class="field-label" style="margin-top:0;">Where am I NOW in my focus area?</label>
-          <textarea class="write" data-save-id="goals_current" placeholder="Current state — be honest..." oninput="autoExpand(this);debouncedSave()"></textarea>
-        </div>
-        <div>
-          <label class="field-label" style="margin-top:0;">Where do I want to be by END of month?</label>
-          <textarea class="write" data-save-id="goals_desired" placeholder="Desired state — be specific..." oninput="autoExpand(this);debouncedSave()"></textarea>
-        </div>
+      <label class="field-label" style="margin-top:0;">Starting point &rarr; target</label>
+      <div class="fromto-row" style="margin-bottom:22px;">
+        <input type="text" data-save-id="goals_current" placeholder="Where I am now..." oninput="debouncedSave()">
+        <span class="fromto-arrow">&rarr;</span>
+        <input type="text" data-save-id="goals_desired" placeholder="Where I want to be by month-end..." oninput="debouncedSave()">
       </div>
-
       <div class="goal-card">
         <div class="goal-pill">Goal 1</div>
         <div class="goal-grid">
@@ -311,24 +305,11 @@ hr.rule{border:none;border-top:1px solid var(--line);margin:30px 0;}
 
     <div class="sec-group">
       <div class="sec-group-title">Week Themes</div>
-      <p style="font-size:12px;color:var(--muted);font-style:italic;margin-bottom:16px;">What's the strategic theme or focus for each week? No checklists — just direction.</p>
       <div class="week-themes-grid">
-        <div class="week-theme-card">
-          <span class="week-badge">Week 1 · Days 1–7</span>
-          <input type="text" class="week-theme-input" data-save-id="wk0_theme" placeholder="Theme for this week..." oninput="debouncedSave()">
-        </div>
-        <div class="week-theme-card">
-          <span class="week-badge">Week 2 · Days 8–14</span>
-          <input type="text" class="week-theme-input" data-save-id="wk1_theme" placeholder="Theme for this week..." oninput="debouncedSave()">
-        </div>
-        <div class="week-theme-card">
-          <span class="week-badge">Week 3 · Days 15–21</span>
-          <input type="text" class="week-theme-input" data-save-id="wk2_theme" placeholder="Theme for this week..." oninput="debouncedSave()">
-        </div>
-        <div class="week-theme-card">
-          <span class="week-badge">Week 4 · Days 22–End</span>
-          <input type="text" class="week-theme-input" data-save-id="wk3_theme" placeholder="Theme for this week..." oninput="debouncedSave()">
-        </div>
+        <div class="week-theme-card"><span class="week-badge">Week 1 &middot; Days 1&ndash;7</span><input type="text" class="week-theme-input" data-save-id="wk0_theme" placeholder="Theme for this week..." oninput="debouncedSave()"></div>
+        <div class="week-theme-card"><span class="week-badge">Week 2 &middot; Days 8&ndash;14</span><input type="text" class="week-theme-input" data-save-id="wk1_theme" placeholder="Theme for this week..." oninput="debouncedSave()"></div>
+        <div class="week-theme-card"><span class="week-badge">Week 3 &middot; Days 15&ndash;21</span><input type="text" class="week-theme-input" data-save-id="wk2_theme" placeholder="Theme for this week..." oninput="debouncedSave()"></div>
+        <div class="week-theme-card"><span class="week-badge">Week 4 &middot; Days 22&ndash;End</span><input type="text" class="week-theme-input" data-save-id="wk3_theme" placeholder="Theme for this week..." oninput="debouncedSave()"></div>
       </div>
     </div>
 
@@ -336,20 +317,19 @@ hr.rule{border:none;border-top:1px solid var(--line);margin:30px 0;}
 
     <div class="sec-group">
       <div class="sec-group-title">Resources</div>
-      <p style="font-size:12px;color:var(--muted);font-style:italic;margin-bottom:16px;">What do you need to make this month happen?</p>
       <div class="res-grid">
         <div class="col-card">
-          <div class="col-card-title">🛒 Buy</div>
+          <div class="col-card-title"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color:var(--accent-deep)"><circle cx="8" cy="21" r="1"/><circle cx="19" cy="21" r="1"/><path d="M2.05 2.05h2l2.66 12.42a2 2 0 0 0 2 1.58h9.78a2 2 0 0 0 1.95-1.57l1.65-7.43H5.12"/></svg>Buy</div>
           <div class="col-card-sub">Products, equipment, subscriptions</div>
           <textarea class="write" data-save-id="res_buy" placeholder="What do you need to purchase?" oninput="autoExpand(this);debouncedSave()"></textarea>
         </div>
         <div class="col-card">
-          <div class="col-card-title">📖 Read / Watch / Listen</div>
+          <div class="col-card-title"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color:var(--accent-deep)"><path d="M12 7v14"/><path d="M3 18a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1h5a4 4 0 0 1 4 4 4 4 0 0 1 4-4h5a1 1 0 0 1 1 1v13a1 1 0 0 1-1 1h-6a3 3 0 0 0-3 3 3 3 0 0 0-3-3z"/></svg>Read / Watch / Listen</div>
           <div class="col-card-sub">Books, podcasts, courses</div>
           <textarea class="write" data-save-id="res_consume" placeholder="Content that supports your focus..." oninput="autoExpand(this);debouncedSave()"></textarea>
         </div>
         <div class="col-card">
-          <div class="col-card-title">📅 Schedule / Book</div>
+          <div class="col-card-title"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color:var(--accent-deep)"><rect width="18" height="18" x="3" y="4" rx="2"/><path d="M3 10h18"/><path d="M8 2v4"/><path d="M16 2v4"/></svg>Schedule / Book</div>
           <div class="col-card-sub">Classes, appointments, events</div>
           <textarea class="write" data-save-id="res_schedule" placeholder="What needs to be booked in advance?" oninput="autoExpand(this);debouncedSave()"></textarea>
         </div>
@@ -360,56 +340,24 @@ hr.rule{border:none;border-top:1px solid var(--line);margin:30px 0;}
         <input class="budget-input" type="text" data-save-id="res_budget" placeholder="0" oninput="debouncedSave()">
       </div>
     </div>
-    <hr class="rule">
 
-    <div class="sec-group">
-      <div class="sec-group-title">Mid-Month Check-In · Day 15 Pulse</div>
-      <div class="midmonth-top">
-        <div class="midmonth-card">
-          <div class="midmonth-label">Am I on track?</div>
-          <div class="track-btns">
-            <button class="track-btn" id="track-yes" onclick="setTrack('yes')">✓ Yes</button>
-            <button class="track-btn" id="track-partial" onclick="setTrack('partial')">~ Partially</button>
-            <button class="track-btn" id="track-no" onclick="setTrack('no')">✗ No</button>
-          </div>
-        </div>
-        <div class="midmonth-card">
-          <div class="midmonth-label">Energy level this month</div>
-          <div class="rating-stars" id="energy-rating"></div>
-          <span style="font-size:11px;color:var(--muted);">/10</span>
-        </div>
-      </div>
-      <div class="two-col" style="margin-bottom:16px;">
-        <div>
-          <label class="field-label" style="margin-top:0;">What's working?</label>
-          <textarea class="write" data-save-id="mid_working" placeholder="What momentum do you have?" oninput="autoExpand(this);debouncedSave()"></textarea>
-        </div>
-        <div>
-          <label class="field-label" style="margin-top:0;">What needs adjustment?</label>
-          <textarea class="write" data-save-id="mid_adjust" placeholder="What would you change about your approach?" oninput="autoExpand(this);debouncedSave()"></textarea>
-        </div>
-      </div>
-      <label class="field-label">Do I need to pivot? If so, how?</label>
-      <textarea class="write short" data-save-id="mid_pivot" placeholder="Be honest — is the goal still right, or does something need to shift?" oninput="autoExpand(this);debouncedSave()"></textarea>
-    </div></div>
+    <div class="ornament">&#10022; &#10047; &#10022;</div>
+  </div>
 
-
-    <div class="ornament">✦ ✿ ✦</div>
-  
-  <!-- ═══ TAB 1: MINDSET ═══ -->
+  <!-- ===== TAB 1: PREPARE (start of month) ===== -->
   <div class="page" id="p1">
+
+    <div class="phase-tag"><svg viewBox="0 0 12 12" fill="none"><circle cx="6" cy="6" r="5" fill="currentColor"/></svg><b>Start of month</b> &middot; set yourself up to follow through</div>
 
     <div class="sec-group">
       <div class="sec-title">Habit Stacking</div>
       <div class="sec-sub">Tied to this month's focus. Small and consistent wins.</div>
-
       <div class="habit-group">
         <div class="habit-group-title">Daily Goals</div>
         <div class="habit-row"><span class="habit-category">Physical Win</span><textarea class="habit-input" data-save-id="habit_physical" placeholder="e.g. Morning workout, 8k steps, 3L water..." rows="1" oninput="autoExpand(this);debouncedSave()"></textarea></div>
         <div class="habit-row"><span class="habit-category">Mental Win</span><textarea class="habit-input" data-save-id="habit_mental" placeholder="e.g. 20 min reading, journaling, no phone first hour..." rows="1" oninput="autoExpand(this);debouncedSave()"></textarea></div>
         <div class="habit-row"><span class="habit-category">Spiritual Win</span><textarea class="habit-input" data-save-id="habit_spiritual" placeholder="e.g. Meditation, gratitude list, intentional quiet time..." rows="1" oninput="autoExpand(this);debouncedSave()"></textarea></div>
       </div>
-
       <div class="habit-group">
         <div class="habit-group-title">Weekly Goals</div>
         <div class="habit-row"><span class="habit-category">Social Win</span><textarea class="habit-input" data-save-id="habit_social" placeholder="e.g. Reach out to a friend, attend one event..." rows="1" oninput="autoExpand(this);debouncedSave()"></textarea></div>
@@ -422,24 +370,9 @@ hr.rule{border:none;border-top:1px solid var(--line);margin:30px 0;}
     <hr class="rule">
 
     <div class="sec-group">
-      <div class="sec-group-title">Obstacle Planning</div>
-      <p style="font-size:12px;color:var(--muted);font-style:italic;margin-bottom:16px;">Plan for the hard days before they arrive.</p>
-
-      <label class="field-label" style="margin-top:0;">What might derail me this month?</label>
-      <div style="margin-bottom:16px;">
-        <div class="obstacle-row"><div class="obstacle-num">1</div><textarea class="write short" style="flex:1;" data-save-id="obs1" placeholder="e.g. Busy work week, social events, low energy..." oninput="autoExpand(this);debouncedSave()"></textarea></div>
-        <div class="obstacle-row"><div class="obstacle-num">2</div><textarea class="write short" style="flex:1;" data-save-id="obs2" placeholder="e.g. Perfectionism, comparing to others..." oninput="autoExpand(this);debouncedSave()"></textarea></div>
-        <div class="obstacle-row"><div class="obstacle-num">3</div><textarea class="write short" style="flex:1;" data-save-id="obs3" placeholder="e.g. Skipping rest, overcommitting..." oninput="autoExpand(this);debouncedSave()"></textarea></div>
-      </div>
-
-      <label class="field-label">Prevention strategies</label>
-      <textarea class="write" data-save-id="obs_prevent" placeholder="What will you do in advance to prevent these derailments?" oninput="autoExpand(this);debouncedSave()"></textarea>
-
-      <label class="field-label">If I start to slip, I will...</label>
-      <textarea class="write short" data-save-id="obs_slip" placeholder="Your comeback plan — specific and self-compassionate..." oninput="autoExpand(this);debouncedSave()"></textarea>
-
-      <div class="adhd-box" style="margin-top:20px;">
-        <div class="adhd-box-title">ADHD Considerations</div>
+      <div class="sec-group-title">ADHD Considerations</div>
+      <p style="font-size:12px;color:var(--muted);font-style:italic;margin-bottom:16px;">How you'll make the habits above actually stick — built around the way your brain works.</p>
+      <div class="adhd-box">
         <div class="habit-row" style="margin-bottom:8px;"><span class="habit-category">Novelty</span><textarea class="habit-input" data-save-id="adhd_novelty" placeholder="How will I keep this interesting and avoid boredom?" rows="1" oninput="autoExpand(this);debouncedSave()"></textarea></div>
         <div class="habit-row" style="margin-bottom:8px;"><span class="habit-category">Accountability</span><textarea class="habit-input" data-save-id="adhd_accountability" placeholder="Who or what keeps me on track?" rows="1" oninput="autoExpand(this);debouncedSave()"></textarea></div>
         <div class="habit-row"><span class="habit-category">Visual Reminder</span><textarea class="habit-input" data-save-id="adhd_visual" placeholder="Where will I put a reminder I'll actually see?" rows="1" oninput="autoExpand(this);debouncedSave()"></textarea></div>
@@ -449,9 +382,22 @@ hr.rule{border:none;border-top:1px solid var(--line);margin:30px 0;}
     <hr class="rule">
 
     <div class="sec-group">
-      <div class="sec-group-title">Baseline Non-Negotiables</div>
-      <p style="font-size:12px;color:var(--muted);font-style:italic;margin-bottom:16px;">These continue every month regardless of focus — the habits that are always on.</p>
+      <div class="sec-group-title">Obstacle Planning</div>
+      <label class="field-label" style="margin-top:0;">What might derail me this month?</label>
+      <div style="margin-bottom:16px;">
+        <div class="obstacle-row"><div class="obstacle-num">1</div><textarea class="write short" style="flex:1;" data-save-id="obs1" placeholder="e.g. Busy work week, social events, low energy..." oninput="autoExpand(this);debouncedSave()"></textarea></div>
+        <div class="obstacle-row"><div class="obstacle-num">2</div><textarea class="write short" style="flex:1;" data-save-id="obs2" placeholder="e.g. Perfectionism, comparing to others..." oninput="autoExpand(this);debouncedSave()"></textarea></div>
+        <div class="obstacle-row"><div class="obstacle-num">3</div><textarea class="write short" style="flex:1;" data-save-id="obs3" placeholder="e.g. Skipping rest, overcommitting..." oninput="autoExpand(this);debouncedSave()"></textarea></div>
+      </div>
+      <label class="field-label">How I'll prevent it &mdash; and bounce back if I slip</label>
+      <textarea class="write" data-save-id="obs_prevent" placeholder="Prevention up front, plus your comeback plan — specific and self-compassionate..." oninput="autoExpand(this);debouncedSave()"></textarea>
+    </div>
 
+    <hr class="rule">
+
+    <div class="sec-group">
+      <div class="sec-group-title">Baseline Non-Negotiables</div>
+      <p class="nonneg-note">These carry across every month regardless of focus — the habits that are always on.</p>
       <div class="habit-group">
         <div class="habit-group-title">Daily</div>
         <div id="daily-nonneg"></div>
@@ -473,14 +419,9 @@ hr.rule{border:none;border-top:1px solid var(--line);margin:30px 0;}
 
     <div class="sec-group">
       <div class="sec-group-title">Rewards</div>
-      <label class="field-label" style="margin-top:0;">Weekly mini-rewards — milestone → reward</label>
-      <div style="margin-bottom:20px;">
-        <div class="reward-row"><span class="reward-week">Week 1</span><textarea class="reward-input" data-save-id="rew_w1_milestone" placeholder="Milestone..." rows="1" oninput="autoExpand(this);debouncedSave()"></textarea><span class="reward-arrow">→</span><textarea class="reward-input" data-save-id="rew_w1_reward" placeholder="Reward..." rows="1" oninput="autoExpand(this);debouncedSave()"></textarea></div>
-        <div class="reward-row"><span class="reward-week">Week 2</span><textarea class="reward-input" data-save-id="rew_w2_milestone" placeholder="Milestone..." rows="1" oninput="autoExpand(this);debouncedSave()"></textarea><span class="reward-arrow">→</span><textarea class="reward-input" data-save-id="rew_w2_reward" placeholder="Reward..." rows="1" oninput="autoExpand(this);debouncedSave()"></textarea></div>
-        <div class="reward-row"><span class="reward-week">Week 3</span><textarea class="reward-input" data-save-id="rew_w3_milestone" placeholder="Milestone..." rows="1" oninput="autoExpand(this);debouncedSave()"></textarea><span class="reward-arrow">→</span><textarea class="reward-input" data-save-id="rew_w3_reward" placeholder="Reward..." rows="1" oninput="autoExpand(this);debouncedSave()"></textarea></div>
-        <div class="reward-row"><span class="reward-week">Week 4</span><textarea class="reward-input" data-save-id="rew_w4_milestone" placeholder="Milestone..." rows="1" oninput="autoExpand(this);debouncedSave()"></textarea><span class="reward-arrow">→</span><textarea class="reward-input" data-save-id="rew_w4_reward" placeholder="Reward..." rows="1" oninput="autoExpand(this);debouncedSave()"></textarea></div>
-      </div>
-      <label class="field-label">End of month celebration — if I achieve my monthly goals, I will...</label>
+      <label class="field-label" style="margin-top:0;">Halfway reward &mdash; something to look forward to at the midpoint</label>
+      <textarea class="write short" data-save-id="rew_midpoint" placeholder="A small treat when you hit the halfway mark..." oninput="autoExpand(this);debouncedSave()"></textarea>
+      <label class="field-label">End-of-month celebration &mdash; if I achieve my monthly goals, I will...</label>
       <textarea class="write" data-save-id="rew_monthly" placeholder="Treat yourself to..." oninput="autoExpand(this);debouncedSave()"></textarea>
     </div>
 
@@ -488,7 +429,7 @@ hr.rule{border:none;border-top:1px solid var(--line);margin:30px 0;}
 
     <div class="sec-group">
       <div class="sec-group-title">Monthly Affirmations</div>
-      <p style="font-size:12px;color:var(--muted);font-style:italic;margin-bottom:16px;">Write 1–3 specific to this month's focus. Write them as if already true.</p>
+      <p style="font-size:12px;color:var(--muted);font-style:italic;margin-bottom:16px;">Write 1&ndash;3 specific to this month's focus. Write them as if already true.</p>
       <div class="affirm-box">
         <div class="affirm-row"><span class="affirm-num">1.</span><textarea class="write short" style="flex:1;background:rgba(255,255,255,.6);" data-save-id="affirm1" placeholder="I am..." oninput="autoExpand(this);debouncedSave()"></textarea></div>
         <div class="affirm-row"><span class="affirm-num">2.</span><textarea class="write short" style="flex:1;background:rgba(255,255,255,.6);" data-save-id="affirm2" placeholder="I am..." oninput="autoExpand(this);debouncedSave()"></textarea></div>
@@ -496,41 +437,83 @@ hr.rule{border:none;border-top:1px solid var(--line);margin:30px 0;}
       </div>
     </div>
 
-    <div class="ornament">✦ ✿ ✦</div>
+    <div class="ornament">&#10022; &#10047; &#10022;</div>
   </div>
 
-
-  <!-- ═══ TAB 2: RETROSPECTIVE ═══ -->
+  <!-- ===== TAB 2: REFLECT (mid-month + end) ===== -->
   <div class="page" id="p2">
+
+    <div class="phase-tag"><svg viewBox="0 0 12 12" fill="none"><circle cx="6" cy="6" r="4.3" stroke="currentColor" stroke-width="1.4"/><path d="M6 1.7 A4.3 4.3 0 0 1 6 10.3 Z" fill="currentColor"/></svg><b>Mid-month &amp; end</b> &middot; check in, then look back</div>
+
+    <div class="sec-group">
+      <div class="sec-title">Mid-Month Check-In</div>
+      <div class="sec-sub">Day 15 pulse — a quick course-correction, not a full review.</div>
+      <div class="midmonth-top">
+        <div class="midmonth-card">
+          <div class="midmonth-label">Am I on track?</div>
+          <div class="track-btns">
+            <button class="track-btn" id="track-yes" onclick="setTrack('yes')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>Yes</button>
+            <button class="track-btn" id="track-partial" onclick="setTrack('partial')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" x2="19" y1="12" y2="12"/></svg>Partially</button>
+            <button class="track-btn" id="track-no" onclick="setTrack('no')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" x2="6" y1="6" y2="18"/><line x1="6" x2="18" y1="6" y2="18"/></svg>No</button>
+          </div>
+        </div>
+        <div class="midmonth-card">
+          <div class="midmonth-label">Energy level this month</div>
+          <div class="score-row" style="margin-bottom:0;">
+            <input type="range" min="0" max="10" value="0" class="score-slider" data-save-id="mid_energy" data-score-num="mid_energy-num" oninput="onScoreInput(this)">
+            <span class="score-num" id="mid_energy-num">&mdash;<span>/10</span></span>
+          </div>
+        </div>
+      </div>
+      <div class="two-col" style="margin-bottom:16px;">
+        <div>
+          <label class="field-label" style="margin-top:0;">What's working?</label>
+          <textarea class="write" data-save-id="mid_working" placeholder="What momentum do you have?" oninput="autoExpand(this);debouncedSave()"></textarea>
+        </div>
+        <div>
+          <label class="field-label" style="margin-top:0;">What needs adjustment?</label>
+          <textarea class="write" data-save-id="mid_adjust" placeholder="What would you change about your approach?" oninput="autoExpand(this);debouncedSave()"></textarea>
+        </div>
+      </div>
+      <label class="field-label">Do I need to pivot? If so, how?</label>
+      <textarea class="write short" data-save-id="mid_pivot" placeholder="Be honest — is the goal still right, or does something need to shift?" oninput="autoExpand(this);debouncedSave()"></textarea>
+    </div>
+
+    <hr class="rule">
 
     <div class="sec-group">
       <div class="sec-title">Monthly Review</div>
       <div class="sec-sub">Look back before you leap forward.</div>
-
-      <div class="rating-wrap">
-        <span class="rating-label">Overall month rating:</span>
-        <div class="rating-stars" id="overall-rating"></div>
-        <span class="rating-denom">/10</span>
+      <div class="score-row">
+        <span class="score-label">Overall month rating:</span>
+        <input type="range" min="0" max="10" value="0" class="score-slider" data-save-id="overall_rating" data-score-num="overall_rating-num" oninput="onScoreInput(this)">
+        <span class="score-num" id="overall_rating-num">&mdash;<span>/10</span></span>
       </div>
-
-      <label class="field-label" style="margin-top:0;">Monthly highlight — the single best thing</label>
+      <label class="field-label">Monthly highlight — the single best thing</label>
       <textarea class="write short" data-save-id="review_highlight" placeholder="The single best thing about this month..." oninput="autoExpand(this);debouncedSave()"></textarea>
 
       <hr class="rule">
 
       <div class="two-col" style="margin-bottom:20px;">
         <div class="col-card" style="border-top:3px solid #b8cfb0;">
-          <div class="col-card-title">🏆 Top Wins</div>
+          <div class="col-card-title"><svg viewBox="0 0 24 24" fill="none" stroke="#5e8a55" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"/><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"/><path d="M4 22h16"/><path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22"/><path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22"/><path d="M18 2H6v7a6 6 0 0 0 12 0V2Z"/></svg>Top Wins</div>
           <div class="col-card-sub">What you're proud of</div>
-          <textarea class="write" data-save-id="review_wins" placeholder="— &#10;— &#10;— " oninput="autoExpand(this);debouncedSave()"></textarea>
+          <div class="wd-items" id="wins-list"></div>
+          <div class="wd-add-row">
+            <input class="wd-input" id="wins-input" type="text" placeholder="Add a win..." onkeydown="if(event.key==='Enter'){event.preventDefault();addListItem('wins');}">
+            <button class="wd-add-btn" onclick="addListItem('wins')">+ Add</button>
+          </div>
         </div>
         <div class="col-card" style="border-top:3px solid #f2c4ce;">
-          <div class="col-card-title">🌱 What Didn't Work</div>
+          <div class="col-card-title"><svg viewBox="0 0 24 24" fill="none" stroke="#c25b73" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 20h10"/><path d="M10 20c5.5-2.5.8-6.4 3-10"/><path d="M9.5 9.4c1.1.8 1.8 2.2 2.3 3.7-2 .4-3.5.4-4.8-.3-1.2-.6-2.3-1.9-3-4.2 2.8-.5 4.4 0 5.5.8z"/><path d="M14.1 6a7 7 0 0 0-1.1 4c1.9-.1 3.3-.6 4.3-1.4 1-1 1.6-2.3 1.7-4.6-2.7.1-4 1-4.9 2z"/></svg>What Didn't Work</div>
           <div class="col-card-sub">Learn from it, don't shame it</div>
-          <textarea class="write" data-save-id="review_notwork" placeholder="— &#10;— " oninput="autoExpand(this);debouncedSave()"></textarea>
+          <div class="wd-items" id="notwork-list"></div>
+          <div class="wd-add-row">
+            <input class="wd-input" id="notwork-input" type="text" placeholder="Add a lesson..." onkeydown="if(event.key==='Enter'){event.preventDefault();addListItem('notwork');}">
+            <button class="wd-add-btn" onclick="addListItem('notwork')">+ Add</button>
+          </div>
         </div>
       </div>
-
       <label class="field-label">What did I learn about myself this month?</label>
       <textarea class="write short" data-save-id="review_learned" placeholder="An honest insight about yourself..." oninput="autoExpand(this);debouncedSave()"></textarea>
     </div>
@@ -539,21 +522,28 @@ hr.rule{border:none;border-top:1px solid var(--line);margin:30px 0;}
 
     <div class="sec-group">
       <div class="sec-group-title">Life Wheel — Monthly Average</div>
-      <p style="font-size:12px;color:var(--muted);font-style:italic;margin-bottom:16px;">Rate your average satisfaction this month in each area (1–10)</p>
-      <div id="wheel-grid"></div>
+      <p style="font-size:12px;color:var(--muted);font-style:italic;margin-bottom:16px;">Rate your average satisfaction this month in each area (0&ndash;10). The dashed shape is last month.</p>
+      <div class="wheel-wrap">
+        <div>
+          <div class="radar-wrap" id="radar-wrap"></div>
+          <div class="radar-legend"><b>&#9632; This month</b> &nbsp;·&nbsp; <span style="color:#b8a8d8;">- - Last month</span></div>
+        </div>
+        <div id="wheel-grid"></div>
+      </div>
       <label class="field-label">Which area is calling for attention next month?</label>
       <textarea class="write short" data-save-id="review_attention" placeholder="Based on your ratings, where do you want to focus..." oninput="autoExpand(this);debouncedSave()"></textarea>
     </div>
 
+    <div class="ornament">&#10022; &#10047; &#10022;</div>
+  </div>
 
-    <div class="ornament">✦ ✿ ✦</div>
-
-</div></div><!-- /hub -->
+</div><!-- /hub -->
 
 <script>
 var MF=['January','February','March','April','May','June','July','August','September','October','November','December'];
 var DS=['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
 var SK='monthlyPlanner1';
+var NONNEG_KEY='monthlyPlanner1_nonneg';
 var now=new Date();
 var currentMonth=now.getMonth();
 var currentYear=now.getFullYear();
@@ -561,25 +551,24 @@ var onTrackState='';
 var saveTimer=null;
 
 var CATS=[
-  {label:'Career',            color:'#f2c4ce'},
-  {label:'Finances',          color:'#f7d9b0'},
-  {label:'Health & Fitness',  color:'#b8cfb0'},
-  {label:'Social Life',       color:'#b8d4f0'},
-  {label:'Romance / Dating',  color:'#d4b8e0'},
-  {label:'Learning & Growth', color:'#f0dea0'},
-  {label:'Creative Expression',color:'#f4b8d4'},
-  {label:'Self-Care',         color:'#a8d8d0'},
+  {label:'Career',             short:'Career',   color:'#f2c4ce',dark:'#c25b73'},
+  {label:'Finances',           short:'Money',    color:'#f7d9b0',dark:'#c0863a'},
+  {label:'Health & Fitness',   short:'Health',   color:'#b8cfb0',dark:'#5e8a55'},
+  {label:'Social Life',        short:'Social',   color:'#b8d4f0',dark:'#4f86c0'},
+  {label:'Romance / Dating',   short:'Romance',  color:'#d4b8e0',dark:'#9159b0'},
+  {label:'Learning & Growth',  short:'Learning', color:'#f0dea0',dark:'#b08e2e'},
+  {label:'Creative Expression',short:'Creative', color:'#f4b8d4',dark:'#c25b95'},
+  {label:'Self-Care',          short:'Self-Care',color:'#a8d8d0',dark:'#4f9387'},
 ];
 
 document.getElementById('today-date').textContent=DS[now.getDay()]+', '+MF[now.getMonth()]+' '+now.getDate()+', '+now.getFullYear();
 
-function monthKey(){return SK+'_'+currentYear+'_'+currentMonth;}
+function keyFor(y,m){return SK+'_'+y+'_'+m;}
+function monthKey(){return keyFor(currentYear,currentMonth);}
+function wheelId(c){return 'wheel_'+c.label.replace(/[^a-z]/gi,'').toLowerCase();}
 
-/* ── AUTO EXPAND ── */
 function autoExpand(el){if(!el||el.tagName!=='TEXTAREA')return;el.style.height='auto';el.style.height=el.scrollHeight+'px';}
-function autoExpandAll(){document.querySelectorAll('textarea[data-save-id]').forEach(autoExpand);}
 
-/* ── DEBOUNCE SAVE ── */
 function debouncedSave(){
   clearTimeout(saveTimer);
   saveTimer=setTimeout(function(){
@@ -589,85 +578,151 @@ function debouncedSave(){
   },750);
 }
 
-/* ── RATING ── */
-function buildRating(containerId,saveId,max){
-  var el=document.getElementById(containerId);if(!el)return;
-  el.innerHTML='';
-  var val=parseInt(loadField(saveId))||0;
-  for(var i=1;i<=max;i++){
-    var s=document.createElement('span');s.className='star'+(i<=val?' filled':'');s.textContent='★';
-    s.onclick=(function(v,sid,cid,mx){return function(){saveField(sid,v);buildRating(cid,sid,mx);updateFocusBanner();};})(i,saveId,containerId,max);
-    el.appendChild(s);
-  }
+/* ---- SCORE SLIDERS (overall rating, energy) ---- */
+function onScoreInput(el){
+  var v=parseInt(el.value)||0;
+  var num=document.getElementById(el.dataset.scoreNum);
+  if(num)num.innerHTML=(v||'\u2014')+'<span>/10</span>';
+  debouncedSave();
+}
+function refreshScoreNums(){
+  document.querySelectorAll('.score-slider').forEach(function(el){
+    var v=parseInt(el.value)||0;var num=document.getElementById(el.dataset.scoreNum);
+    if(num)num.innerHTML=(v||'\u2014')+'<span>/10</span>';
+  });
 }
 
-/* ── LIFE WHEEL ── */
+/* ---- LIFE WHEEL RADAR (SVG) ---- */
+function curScores(){return CATS.map(function(c){return parseInt(loadField(wheelId(c)))||0;});}
+function lastScores(){
+  var m=currentMonth-1,y=currentYear;if(m<0){m=11;y--;}
+  var key=keyFor(y,m);
+  return CATS.map(function(c){return parseInt(loadFieldFor(key,wheelId(c)))||0;});
+}
+function radarSVG(scores,last){
+  var N=CATS.length,cx=180,cy=176,R=120,VB=360;
+  function ang(i){return -Math.PI/2+i*2*Math.PI/N;}
+  function pt(i,v){var r=(Math.max(0,Math.min(10,v))/10)*R;return [cx+r*Math.cos(ang(i)),cy+r*Math.sin(ang(i))];}
+  var s='<svg viewBox="0 0 '+VB+' '+VB+'" xmlns="http://www.w3.org/2000/svg">';
+  [2,4,6,8,10].forEach(function(ring){
+    var p=[];for(var i=0;i<N;i++){var q=pt(i,ring);p.push(q[0].toFixed(1)+','+q[1].toFixed(1));}
+    s+='<polygon points="'+p.join(' ')+'" fill="none" stroke="'+(ring===10?'#e0d6c0':'#efe8d6')+'" stroke-width="1"/>';
+  });
+  for(var i=0;i<N;i++){var e=pt(i,10);s+='<line x1="'+cx+'" y1="'+cy+'" x2="'+e[0].toFixed(1)+'" y2="'+e[1].toFixed(1)+'" stroke="#e6dcc6" stroke-width="1"/>';}
+  if(last&&last.some(function(v){return v>0;})){
+    var lp=[];for(var i=0;i<N;i++){var q=pt(i,last[i]||0);lp.push(q[0].toFixed(1)+','+q[1].toFixed(1));}
+    s+='<polygon points="'+lp.join(' ')+'" fill="none" stroke="#b8a8d8" stroke-width="1.5" stroke-dasharray="4 4" opacity="0.7"/>';
+  }
+  if(scores.some(function(v){return v>0;})){
+    var cp=[];for(var i=0;i<N;i++){var q=pt(i,scores[i]||0);cp.push(q[0].toFixed(1)+','+q[1].toFixed(1));}
+    s+='<polygon points="'+cp.join(' ')+'" fill="rgba(176,153,224,0.18)" stroke="#b099e0" stroke-width="2"/>';
+    for(var i=0;i<N;i++){if(!scores[i])continue;var q=pt(i,scores[i]);s+='<circle cx="'+q[0].toFixed(1)+'" cy="'+q[1].toFixed(1)+'" r="3" fill="'+CATS[i].dark+'"/>';}
+  }
+  for(var i=0;i<N;i++){
+    var a=ang(i),lx=cx+(R+20)*Math.cos(a),ly=cy+(R+20)*Math.sin(a);
+    var co=Math.cos(a),anchor=co>0.3?'start':co<-0.3?'end':'middle';
+    s+='<text x="'+lx.toFixed(1)+'" y="'+(ly+3).toFixed(1)+'" text-anchor="'+anchor+'" font-family="Plus Jakarta Sans,sans-serif" font-size="10.5" font-weight="600" fill="'+CATS[i].dark+'">'+CATS[i].short+'</text>';
+  }
+  return s+'</svg>';
+}
+function drawRadar(){
+  var el=document.getElementById('radar-wrap');if(!el)return;
+  el.innerHTML=radarSVG(curScores(),lastScores());
+}
+
 function buildWheelGrid(){
   var el=document.getElementById('wheel-grid');if(!el)return;el.innerHTML='';
   CATS.forEach(function(c){
-    var sid='wheel_'+c.label.replace(/[^a-z]/gi,'').toLowerCase();
+    var sid=wheelId(c);
     var val=parseInt(loadField(sid))||0;
     var row=document.createElement('div');row.className='cat-row';
     row.innerHTML=
       '<div class="cat-swatch" style="background:'+c.color+'"></div>'+
       '<span class="cat-name">'+c.label+'</span>'+
       '<input type="range" min="0" max="10" value="'+val+'" class="cat-slider" id="sl-'+sid+'" style="accent-color:'+c.color+'">'+
-      '<span class="cat-score-display" id="cs-'+sid+'" style="color:'+(val?c.color:'#ccc')+'">'+(val||'—')+'</span>';
+      '<span class="cat-score-display" id="cs-'+sid+'" style="color:'+(val?c.dark:'#ccc')+'">'+(val||'\u2014')+'</span>';
     el.appendChild(row);
     row.querySelector('.cat-slider').addEventListener('input',(function(s,col){return function(){
       var v=parseInt(this.value);
-      var d=document.getElementById('cs-'+s);d.textContent=v||'—';d.style.color=v?col:'#ccc';
-      saveField(s,v);debouncedSave();
-    };})(sid,c.color));
+      var d=document.getElementById('cs-'+s);d.textContent=v||'\u2014';d.style.color=v?col:'#ccc';
+      saveField(s,v);drawRadar();debouncedSave();
+    };})(sid,c.dark));
   });
 }
 
-/* ── TRACK ── */
-function setTrack(val){
-  onTrackState=val;saveField('mid_ontrack',val);
+/* ---- TRACK (mid-month) ---- */
+function paintTrack(val){
   ['yes','partial','no'].forEach(function(v){
     var btn=document.getElementById('track-'+v);if(btn)btn.className='track-btn'+(v===val?' active-'+v:'');
   });
 }
+function setTrack(val){onTrackState=val;saveField('mid_ontrack',val);paintTrack(val);}
 
-/* ── NON-NEGOTIABLES ── */
-function getNonNegs(type){var raw=loadField('nonneg_'+type);try{return raw?JSON.parse(raw):[];}catch(e){return[];}}
-function saveNonNegs(type,items){saveField('nonneg_'+type,JSON.stringify(items));}
+/* ---- WINS / DIDN'T WORK LISTS ---- */
+function listKey(kind){return kind==='wins'?'review_wins_list':'review_notwork_list';}
+function getList(kind){var raw=loadField(listKey(kind));try{return raw?JSON.parse(raw):[];}catch(e){return[];}}
+function saveList(kind,items){saveField(listKey(kind),JSON.stringify(items));}
+function renderList(kind){
+  var c=document.getElementById(kind+'-list');if(!c)return;c.innerHTML='';
+  var dot=kind==='wins'?'#5e8a55':'#c25b73';
+  getList(kind).forEach(function(item){
+    var row=document.createElement('div');row.className='wd-item';
+    row.innerHTML='<div class="wd-dot" style="background:'+dot+'"></div><span class="wd-item-text">'+escHtml(item.text)+'</span>'+
+      '<button class="wd-item-del" onclick="removeListItem(\''+kind+'\',\''+item.id+'\')">\u2715</button>';
+    c.appendChild(row);
+  });
+}
+function addListItem(kind){
+  var inp=document.getElementById(kind+'-input');var t=(inp.value||'').trim();if(!t)return;
+  var items=getList(kind);items.push({id:'i_'+Date.now(),text:t});saveList(kind,items);inp.value='';renderList(kind);
+}
+function removeListItem(kind,id){
+  var items=getList(kind).filter(function(x){return x.id!==id;});saveList(kind,items);renderList(kind);
+}
+function escHtml(s){return String(s||'').replace(/[&<>"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];});}
+
+/* ---- NON-NEGOTIABLES (global across months) ---- */
+function allNonNegs(){var raw=localStorage.getItem(NONNEG_KEY);try{return raw?JSON.parse(raw):{};}catch(e){return{};}}
+function getNonNegs(type){var d=allNonNegs();return d[type]||[];}
+function saveNonNegs(type,items){var d=allNonNegs();d[type]=items;localStorage.setItem(NONNEG_KEY,JSON.stringify(d));}
 function renderNonNegs(type){
   var c=document.getElementById(type+'-nonneg');if(!c)return;c.innerHTML='';
-  var items=getNonNegs(type);
-  items.forEach(function(item,idx){
+  getNonNegs(type).forEach(function(item,idx){
     var row=document.createElement('div');row.className='nonneg-row';
     var box=document.createElement('div');box.className='check-box'+(item.checked?' checked':'');
     box.onclick=(function(t,i){return function(){var its=getNonNegs(t);its[i].checked=!its[i].checked;saveNonNegs(t,its);renderNonNegs(t);};})(type,idx);
     var txt=document.createElement('textarea');txt.className='nonneg-text';txt.placeholder='Add a non-negotiable...';txt.value=item.text||'';txt.rows=1;
     txt.oninput=(function(t,i){return function(){var its=getNonNegs(t);its[i].text=this.value;saveNonNegs(t,its);autoExpand(this);};})(type,idx);
-    var del=document.createElement('button');del.className='nonneg-del';del.textContent='✕';
+    var del=document.createElement('button');del.className='nonneg-del';del.textContent='\u2715';
     del.onclick=(function(t,i){return function(){var its=getNonNegs(t);its.splice(i,1);saveNonNegs(t,its);renderNonNegs(t);};})(type,idx);
     row.appendChild(box);row.appendChild(txt);row.appendChild(del);c.appendChild(row);
     autoExpand(txt);
   });
 }
 function addNonNeg(type){var items=getNonNegs(type);items.push({text:'',checked:false});saveNonNegs(type,items);renderNonNegs(type);}
+function migrateNonNegs(){
+  if(localStorage.getItem(NONNEG_KEY)!==null)return;
+  var d={};['daily','weekly','monthly'].forEach(function(t){
+    var raw=loadField('nonneg_'+t);try{d[t]=raw?JSON.parse(raw):[];}catch(e){d[t]=[];}
+  });
+  localStorage.setItem(NONNEG_KEY,JSON.stringify(d));
+}
 
-/* ── FOCUS BANNER — writes to shared localStorage ── */
+/* ---- FOCUS BANNER (shared with Weekly Audit) ---- */
 function updateFocusBanner(){
   var theme=(document.querySelector('[data-save-id="focus_theme"]')||{}).value||'';
   var area=document.getElementById('focus_area');
-  var areaVal=area?area.value:'';
   var g1=(document.querySelector('[data-save-id="g1_what"]')||{}).value||'';
   var g2=(document.querySelector('[data-save-id="g2_what"]')||{}).value||'';
   var g3=(document.querySelector('[data-save-id="g3_what"]')||{}).value||'';
   var goals=[g1,g2,g3].filter(Boolean);
-  var payload={theme:theme,area:areaVal,goals:goals,month:MF[currentMonth]+' '+currentYear,updated:Date.now()};
+  var payload={theme:theme,area:area?area.value:'',goals:goals,month:MF[currentMonth]+' '+currentYear,updated:Date.now()};
   localStorage.setItem('brain2_focus',JSON.stringify(payload));
 }
 
-/* ── SAVE / LOAD ── */
-function loadField(sid){
-  var raw=localStorage.getItem(monthKey());if(!raw)return'';
-  try{var d=JSON.parse(raw);return d[sid]||'';}catch(e){return'';}
-}
+/* ---- SAVE / LOAD ---- */
+function loadField(sid){return loadFieldFor(monthKey(),sid);}
+function loadFieldFor(key,sid){var raw=localStorage.getItem(key);if(!raw)return'';try{var d=JSON.parse(raw);return d[sid]!==undefined?d[sid]:'';}catch(e){return'';}}
 function saveField(sid,val){
   var raw=localStorage.getItem(monthKey());var d={};
   try{if(raw)d=JSON.parse(raw);}catch(e){}
@@ -680,34 +735,34 @@ function saveData(){
   document.querySelectorAll('input[data-save-id]').forEach(function(el){d[el.dataset.saveId]=el.value;});
   var fa=document.getElementById('focus_area');if(fa)d['focus_area_val']=fa.value;
   d['mid_ontrack']=onTrackState;
-  // wheel scores
-  document.querySelectorAll('.cat-slider').forEach(function(el){
-    var sid=el.id.replace('sl-','');d[sid]=el.value;
-  });
+  document.querySelectorAll('.cat-slider').forEach(function(el){d[el.id.replace('sl-','')]=el.value;});
   localStorage.setItem(monthKey(),JSON.stringify(d));
   updateFocusBanner();
 }
+function migrateLists(){
+  // old single-string wins/notwork -> list items (per month, once)
+  [['review_wins','wins'],['review_notwork','notwork']].forEach(function(pair){
+    var oldStr=loadField(pair[0]);
+    if(oldStr && getList(pair[1]).length===0){
+      var items=oldStr.split(/\n|;|\u2014|-\s/).map(function(t){return t.trim();}).filter(Boolean).map(function(t){return {id:'i_'+Date.now()+Math.random().toString(36).slice(2,6),text:t};});
+      if(items.length)saveList(pair[1],items);
+    }
+  });
+}
 function restoreData(){
-  var raw=localStorage.getItem(monthKey());if(!raw)return;
-  var d={};try{d=JSON.parse(raw);}catch(e){return;}
-  document.querySelectorAll('textarea[data-save-id]').forEach(function(el){
-    if(d[el.dataset.saveId]!==undefined){el.value=d[el.dataset.saveId];autoExpand(el);}
-  });
-  document.querySelectorAll('input[data-save-id]').forEach(function(el){
-    if(d[el.dataset.saveId]!==undefined)el.value=d[el.dataset.saveId];
-  });
-  var fa=document.getElementById('focus_area');if(fa&&d['focus_area_val'])fa.value=d['focus_area_val'];
-  if(d['mid_ontrack'])setTrack(d['mid_ontrack']);
-  // wheel
-  CATS.forEach(function(c){
-    var sid='wheel_'+c.label.replace(/[^a-z]/gi,'').toLowerCase();
-    var sl=document.getElementById('sl-'+sid);var cs=document.getElementById('cs-'+sid);
-    if(sl&&d[sid]!==undefined){sl.value=d[sid];if(cs){cs.textContent=d[sid]||'—';cs.style.color=d[sid]&&d[sid]>0?c.color:'#ccc';}}
-  });
+  var raw=localStorage.getItem(monthKey());var d={};if(raw){try{d=JSON.parse(raw);}catch(e){}}
+  // clear-first to prevent month bleed
+  document.querySelectorAll('textarea[data-save-id]').forEach(function(el){el.value=d[el.dataset.saveId]!==undefined?d[el.dataset.saveId]:'';autoExpand(el);});
+  document.querySelectorAll('input[data-save-id]').forEach(function(el){el.value=d[el.dataset.saveId]!==undefined?d[el.dataset.saveId]:'';});
+  var fa=document.getElementById('focus_area');if(fa)fa.value=d['focus_area_val']||'';
+  onTrackState=d['mid_ontrack']||'';paintTrack(onTrackState);
+  refreshScoreNums();
+  migrateLists();
+  renderList('wins');renderList('notwork');
   renderNonNegs('daily');renderNonNegs('weekly');renderNonNegs('monthly');
 }
 
-/* ── TABS ── */
+/* ---- TABS ---- */
 function goTab(n,btn){
   document.querySelectorAll('.page').forEach(function(p){p.classList.remove('active');});
   document.getElementById('p'+n).classList.add('active');
@@ -716,32 +771,37 @@ function goTab(n,btn){
   saveData();
 }
 
-/* ── MONTH NAV ── */
+/* ---- MONTH NAV ---- */
+function updateThisMonthBtn(){
+  var t=new Date();var isNow=(currentMonth===t.getMonth()&&currentYear===t.getFullYear());
+  var b=document.getElementById('this-month-btn');if(b)b.className='this-month-btn'+(isNow?' hidden':'');
+}
 function switchMonth(){
   document.getElementById('month-label').innerHTML=MF[currentMonth]+' <span>'+currentYear+'</span>';
-  document.getElementById('paper-sub').textContent=MF[currentMonth]+' '+currentYear;
   buildWheelGrid();
-  buildRating('overall-rating','overall_rating',10);
-  buildRating('energy-rating','mid_energy',10);
   restoreData();
+  drawRadar();
+  updateThisMonthBtn();
   document.querySelectorAll('.tab-btn')[0].click();
 }
 function changeMonth(dir){
+  clearTimeout(saveTimer);saveData();
   currentMonth+=dir;
   if(currentMonth<0){currentMonth=11;currentYear--;}
   if(currentMonth>11){currentMonth=0;currentYear++;}
   switchMonth();
 }
-
-/* ── PDF ── */
-function savePDF(){
-  ['p0','p1','p2'].forEach(function(id,i){var p=document.getElementById(id);if(p)p.style.cssText='display:block!important;'+(i>0?'page-break-before:always!important;':'');}); 
-  setTimeout(function(){window.print();['p0','p1','p2'].forEach(function(id){var p=document.getElementById(id);if(p)p.style.cssText=p.classList.contains('active')?'display:block;':'display:none;';});},300);
+function jumpToThisMonth(){
+  clearTimeout(saveTimer);saveData();
+  var t=new Date();currentMonth=t.getMonth();currentYear=t.getFullYear();switchMonth();
 }
 
-/* ── INIT ── */
+/* ---- PDF ---- */
+function savePDF(){window.print();}
+
+/* ---- INIT ---- */
+migrateNonNegs();
 switchMonth();
-document.querySelector('.hub').addEventListener('input',debouncedSave);
 </script>
 </body>
 </html>
