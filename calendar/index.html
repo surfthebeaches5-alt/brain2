@@ -891,8 +891,8 @@ function recurringForDate(dateStr) {
   });
   return out;
 }
-/* generated card-due overlay — read live from the Finances page store (finTrackerState2), never stored here */
-let showFinance = true;
+/* generated card-due overlay — read live from the Finances page store (finTrackerState2), never stored here.
+   Folded under the Finances category: the "Finances" legend chip shows/hides these along with manual finance events. */
 function financeCards() {
   let db;
   try { db = JSON.parse(localStorage.getItem('finTrackerState2')); } catch(e) { db = null; }
@@ -901,7 +901,7 @@ function financeCards() {
   return cards.filter(c => c && c.active && c.day);
 }
 function financeForDate(dateStr) {
-  if (!showFinance) return [];
+  if (activeCategories['finances'] === false) return [];
   const d = parseDate(dateStr);
   const dom = d.getDate();
   const lastDom = new Date(d.getFullYear(), d.getMonth()+1, 0).getDate();
@@ -962,16 +962,6 @@ function renderLegend() {
   recChip.title = 'Show hardwired recurring reminders (weekly audit, monthly plan, …)';
   recChip.addEventListener('click', () => { showRecurring = !showRecurring; renderLegend(); render(); });
   el.appendChild(recChip);
-
-  const finChip = document.createElement('div');
-  finChip.className = 'leg-chip' + (showFinance ? ' active' : '');
-  finChip.style.background = '#fff';
-  finChip.style.color = '#7a7468';
-  finChip.style.border = '1.5px dashed #ddbd5c';
-  finChip.innerHTML = CARD_SVG + 'Card due';
-  finChip.title = 'Show credit-card payment due dates from the Finances page (read-only)';
-  finChip.addEventListener('click', () => { showFinance = !showFinance; renderLegend(); render(); });
-  el.appendChild(finChip);
 }
 
 /* ============ NAV ============ */
@@ -1106,10 +1096,10 @@ function renderMonth() {
       rec.className = 'month-event-chip';
       rec.style.background = cat.bg;
       rec.style.color = cat.text;
+      rec.style.cursor = 'default';
       rec.title = 'Recurring · ' + rc.title;
       rec.innerHTML = REPEAT_SVG + `<span class="chip-text">${esc(rc.title)}</span>`;
-      if (rc.link) rec.addEventListener('click', e => { e.stopPropagation(); window.location.href = rc.link; });
-      else rec.addEventListener('click', e => e.stopPropagation());
+      rec.addEventListener('click', e => e.stopPropagation());
       evsWrap.appendChild(rec);
       shown++;
     }
@@ -1121,9 +1111,10 @@ function renderMonth() {
       fe.className = 'month-event-chip' + (fc.paid ? ' done' : '');
       fe.style.background = fcat.bg;
       fe.style.color = fcat.text;
-      fe.title = 'Card payment due · ' + fc.title + (fc.paid ? ' (paid)' : '') + ' — manage in Finances';
+      fe.style.cursor = 'default';
+      fe.title = 'Card payment due · ' + fc.title + (fc.paid ? ' (paid)' : '');
       fe.innerHTML = CARD_SVG + `<span class="chip-text">${esc(fc.title)}</span>`;
-      fe.addEventListener('click', e => { e.stopPropagation(); window.location.href = '../finances/'; });
+      fe.addEventListener('click', e => e.stopPropagation());
       evsWrap.appendChild(fe);
       shown++;
     }
@@ -1135,9 +1126,10 @@ function renderMonth() {
       cc.style.background = '#fff';
       cc.style.color = ce.color;
       cc.style.border = '1px dashed ' + ce.color;
-      cc.title = ce.cls + ' · ' + ce.title + ' — manage in Classes';
+      cc.style.cursor = 'default';
+      cc.title = ce.cls + ' · ' + ce.title;
       cc.innerHTML = CAP_SVG + `<span class="chip-text">${esc(ce.title)}</span>`;
-      cc.addEventListener('click', e => { e.stopPropagation(); window.location.href = '../classes/'; });
+      cc.addEventListener('click', e => e.stopPropagation());
       evsWrap.appendChild(cc);
       shown++;
     }
@@ -1259,7 +1251,7 @@ function renderWeek() {
       ccEl.style.border = '1px dashed ' + ce.color;
       ccEl.style.cursor = 'pointer';
       ccEl.innerHTML = `<div class="ev-body"><div class="ev-title">${CAP_SVG} ${esc(ce.title)}</div><div class="ev-time">${esc(ce.cls)}</div></div>`;
-      ccEl.addEventListener('click', () => { window.location.href = '../classes/'; });
+      ccEl.addEventListener('click', () => { try { localStorage.setItem('learningTab', 'classes'); } catch(e) {} window.location.href = '../learning/'; });
       evsWrap.appendChild(ccEl);
     });
 
