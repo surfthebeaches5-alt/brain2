@@ -741,8 +741,9 @@ const CAT_MIGRATE = { learning: 'study', tasks: 'personal' };
    cat  = an existing category id   ·   link (optional) = page opened on click
    (monthly dates past a short month's end fall on that month's last day)      */
 const RECURRING = [
-  { title: 'Weekly audit', freq: 'weekly',  weekday: 0, cat: 'personal', link: '../weekly-audit/' },
-  { title: 'Monthly plan', freq: 'monthly', date: 1,    cat: 'personal', link: '../monthly/' },
+  { title: 'Weekly audit', freq: 'weekly',  weekday: 0, cat: 'personal',  link: '../weekly-audit/' },
+  { title: 'Monthly plan', freq: 'monthly', date: 1,    cat: 'personal',  link: '../monthly/' },
+  { title: 'Pay rent',     freq: 'monthly', date: 1,    cat: 'finances' },
   // Finance due dates are read live from the Finances page (finTrackerState2) once wired —
   // add one-offs here only if you want them hardwired, e.g.:
   // { title: 'Amex due', freq: 'monthly', date: 15, cat: 'finances', link: '../finances/' },
