@@ -1119,15 +1119,10 @@ function renderMonth() {
       const fcat = getCat('finances');
       const fe = document.createElement('div');
       fe.className = 'month-event-chip' + (fc.paid ? ' done' : '');
-      if (fc.mid) {
-        // optional mid-cycle payment: outlined chip so it reads as lighter than the firm statement
-        fe.style.background = '#fff';
-        fe.style.color = fcat.text;
-        fe.style.border = '1px dashed ' + fcat.dot;
-      } else {
-        fe.style.background = fcat.bg;
-        fe.style.color = fcat.text;
-      }
+      // both statement and mid-cycle sit in the Finances family — same solid fill,
+      // told apart by the "· mid-cycle" label + tooltip (not by an overlay-style dash)
+      fe.style.background = fcat.bg;
+      fe.style.color = fcat.text;
       fe.style.cursor = 'default';
       fe.title = (fc.mid ? 'Mid-cycle payment · ' : 'Statement due · ') + fc.title + (fc.paid ? ' (paid)' : '');
       fe.innerHTML = CARD_SVG + `<span class="chip-text">${esc(fc.title)}${fc.mid ? ' · mid-cycle' : ''}</span>`;
@@ -1252,14 +1247,8 @@ function renderWeek() {
       const fcat = getCat('finances');
       const fEl = document.createElement('div');
       fEl.className = 'week-event' + (fc.paid ? ' done' : '');
-      if (fc.mid) {
-        fEl.style.background = '#fff';
-        fEl.style.color = fcat.text;
-        fEl.style.border = '1px dashed ' + fcat.dot;
-      } else {
-        fEl.style.background = fcat.bg;
-        fEl.style.color = fcat.text;
-      }
+      fEl.style.background = fcat.bg;
+      fEl.style.color = fcat.text;
       fEl.style.cursor = 'pointer';
       fEl.innerHTML = `<div class="ev-body"><div class="ev-title">${CARD_SVG} ${esc(fc.title)}</div><div class="ev-time">${fc.mid ? 'Mid-cycle payment' : 'Statement due'}${fc.paid ? ' · paid' : ''}</div></div>`;
       fEl.addEventListener('click', () => { window.location.href = '../finances/'; });
