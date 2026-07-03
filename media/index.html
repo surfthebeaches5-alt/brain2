@@ -88,10 +88,14 @@ html,body { background:var(--bg); font-family:'Plus Jakarta Sans',system-ui,sans
 .card-progress-bar { height:6px; background:var(--line); border-radius:4px; overflow:hidden; margin-bottom:4px; }
 .card-progress-fill { height:100%; border-radius:4px; background:linear-gradient(90deg,var(--accent),var(--accent-deep)); transition:width .3s; }
 .card-progress-label { font-size:10.5px; color:var(--muted); }
-.card-progress-controls { display:flex; align-items:center; gap:6px; margin-top:5px; }
+.card-progress-controls { display:flex; align-items:center; gap:6px; margin-top:8px; flex-wrap:wrap; }
 .prog-btn { width:22px; height:22px; border-radius:50%; border:1.5px solid var(--line); background:var(--surface); font-size:12px; cursor:pointer; display:flex; align-items:center; justify-content:center; color:var(--muted); transition:all .15s; font-family:inherit; }
 .prog-btn:hover { border-color:var(--accent-deep); color:var(--ink); background:var(--accent-soft); }
 .prog-count { font-family:'Fraunces',serif; font-size:14px; font-weight:600; color:var(--ink); min-width:32px; text-align:center; }
+.stepper { display:inline-flex; align-items:stretch; height:26px; border:1.5px solid var(--line); border-radius:9px; overflow:hidden; background:var(--surface); flex-shrink:0; }
+.stepper-btn { width:20px; border:none; background:transparent; color:var(--muted); font-size:13px; cursor:pointer; display:flex; align-items:center; justify-content:center; transition:all .12s; font-family:inherit; line-height:1; padding:0; }
+.stepper-btn:hover { background:var(--accent-soft); color:var(--accent-deep); }
+.stepper-val { font-family:'Fraunces',serif; font-size:12px; font-weight:600; color:var(--ink); min-width:24px; padding:0 6px; border-left:1.5px solid var(--line); border-right:1.5px solid var(--line); display:flex; align-items:center; justify-content:center; white-space:nowrap; }
 
 /* ── INLINE ALBUM SONGS ── */
 .album-songs { border-top:1px solid var(--line); background:var(--warm); border-radius:0 0 14px 14px; }
@@ -146,9 +150,9 @@ html,body { background:var(--bg); font-family:'Plus Jakarta Sans',system-ui,sans
 .status-done      { background:#d8eee8; color:#1a4a44; }
 .status-archived  { background:var(--warm); color:var(--muted); }
 
-/* ── LIST CARDS (podcasts only) ── */
+/* ── LIST CARDS (videos) ── */
 .list-view { display:flex; flex-direction:column; gap:8px; }
-.list-card { background:var(--surface); border:1px solid var(--line); border-radius:14px; display:flex; align-items:center; gap:14px; padding:14px 16px; transition:all .15s; position:relative; cursor:pointer; }
+.list-card { background:var(--surface); border:1px solid var(--line); border-radius:12px; display:flex; align-items:center; gap:12px; padding:11px 15px; transition:all .15s; position:relative; cursor:pointer; }
 .list-card:hover { border-color:#d9d2bd; box-shadow:0 4px 12px rgba(0,0,0,.05); }
 .list-card.done { opacity:0.65; }
 .list-icon { width:44px; height:44px; border-radius:10px; display:flex; align-items:center; justify-content:center; font-size:20px; flex-shrink:0; background:var(--warm); border:1px solid var(--line); overflow:hidden; }
@@ -158,6 +162,7 @@ html,body { background:var(--bg); font-family:'Plus Jakarta Sans',system-ui,sans
 .list-meta { font-size:11px; color:var(--muted); margin-top:2px; display:flex; align-items:center; gap:6px; flex-wrap:wrap; }
 .list-meta-dot { width:3px; height:3px; border-radius:50%; background:var(--muted); flex-shrink:0; }
 .list-ep { font-size:10.5px; font-weight:700; color:var(--accent-deep); }
+.list-ep-badge { font-size:11px; font-weight:700; color:var(--accent-deep); background:var(--accent-soft); padding:3px 9px; border-radius:9px; flex-shrink:0; }
 .list-note { font-size:11px; color:var(--muted); font-style:italic; margin-top:2px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
 .list-right { display:flex; align-items:center; gap:8px; flex-shrink:0; }
 .list-stars { display:flex; gap:1px; }
@@ -177,7 +182,7 @@ html,body { background:var(--bg); font-family:'Plus Jakarta Sans',system-ui,sans
 .stats-year-btn:hover { background:var(--warm); }
 .stats-year-label { font-family:'Fraunces',serif; font-size:22px; font-weight:600; letter-spacing:-.4px; }
 .stats-note { font-size:11.5px; color:var(--muted); margin-left:auto; }
-.stats-totals { display:grid; grid-template-columns:repeat(5,1fr); gap:12px; margin-bottom:24px; }
+.stats-totals { display:grid; grid-template-columns:repeat(5,minmax(0,1fr)); gap:12px; margin-bottom:24px; }
 .stats-total-card { background:var(--surface); border:1px solid var(--line); border-radius:16px; padding:18px; text-align:center; transition:all .15s; }
 .stats-total-card:hover { border-color:var(--accent); }
 .stats-total-icon { font-size:28px; margin-bottom:8px; }
@@ -185,7 +190,7 @@ html,body { background:var(--bg); font-family:'Plus Jakarta Sans',system-ui,sans
 .stats-total-label { font-size:10px; letter-spacing:1.5px; text-transform:uppercase; color:var(--muted); margin-top:5px; font-weight:700; }
 .stats-grid-wrap { background:var(--surface); border:1px solid var(--line); border-radius:18px; padding:22px 22px 18px; margin-bottom:16px; }
 .stats-grid-title { font-family:'Fraunces',serif; font-size:17px; font-weight:600; letter-spacing:-.3px; margin-bottom:18px; }
-.stats-month-grid { display:grid; grid-template-columns:90px repeat(12,1fr); gap:5px; align-items:center; }
+.stats-month-grid { display:grid; grid-template-columns:90px repeat(12,minmax(0,1fr)); gap:5px; align-items:center; }
 .stats-row-label { font-size:11.5px; font-weight:600; color:var(--ink); display:flex; align-items:center; gap:6px; }
 .stats-month-head { font-size:9.5px; font-weight:700; text-align:center; letter-spacing:1px; text-transform:uppercase; color:var(--muted); padding-bottom:4px; }
 .stats-month-head.current-month { color:var(--accent-deep); }
@@ -208,6 +213,15 @@ html,body { background:var(--bg); font-family:'Plus Jakarta Sans',system-ui,sans
 /* ── EXTERNAL LINK BTN ── */
 .ext-link-btn{display:inline-flex;align-items:center;gap:5px;padding:7px 14px;border:1.5px solid #d9d2bd;border-radius:20px;font-family:inherit;font-size:11.5px;font-weight:600;color:var(--muted);text-decoration:none;transition:all .15s;white-space:nowrap;flex-shrink:0;background:transparent;}
 .ext-link-btn:hover{border-color:var(--accent-deep);color:var(--ink);background:var(--accent-soft);}
+/* ── ICONS + CARD ARROW (de-emoji pass) ── */
+.ic{width:1em;height:1em;display:inline-block;vertical-align:-0.12em;flex-shrink:0;}
+.section-tab .ic{margin-right:7px;}
+.card-cover-placeholder{font-size:2.6rem;color:var(--muted);opacity:.5;}
+.empty-state-icon{color:var(--muted);opacity:.55;}
+.list-icon{color:var(--muted);}
+.stats-total-icon{color:var(--accent-deep);}
+.card-arrow{position:absolute;top:10px;right:10px;width:26px;height:26px;border-radius:50%;background:rgba(255,255,255,.92);border:1px solid var(--line);display:flex;align-items:center;justify-content:center;color:var(--accent-deep);font-size:13px;opacity:0;transform:translateY(-2px);transition:opacity .15s,transform .15s;pointer-events:none;z-index:5;box-shadow:0 2px 6px rgba(0,0,0,.08);}
+.media-card:hover .card-arrow{opacity:1;transform:translateY(0);}
 /* ── MODAL ── */
 .modal-overlay { display:none; position:fixed; inset:0; background:rgba(0,0,0,.4); backdrop-filter:blur(4px); z-index:300; align-items:center; justify-content:center; padding:20px; }
 .modal-overlay.open { display:flex; animation:fadeIn .2s; }
@@ -233,8 +247,8 @@ html,body { background:var(--bg); font-family:'Plus Jakarta Sans',system-ui,sans
 .m-delete:hover { background:#f8c8c8; }
 
 @media(max-width:900px) {
-  .stats-totals { grid-template-columns:repeat(3,1fr); }
-  .stats-month-grid { grid-template-columns:70px repeat(12,1fr); gap:3px; }
+  .stats-totals { grid-template-columns:repeat(3,minmax(0,1fr)); }
+  .stats-month-grid { grid-template-columns:70px repeat(12,minmax(0,1fr)); gap:3px; }
   .stats-cell { height:28px; font-size:10px; }
 }
 @media(max-width:700px) {
@@ -242,7 +256,7 @@ html,body { background:var(--bg); font-family:'Plus Jakarta Sans',system-ui,sans
   .hub { padding:18px 14px 60px; }
   .section-tabs { padding:0 14px; }
   .section-tab { padding:12px 14px; font-size:11.5px; }
-  .stats-totals { grid-template-columns:repeat(2,1fr); }
+  .stats-totals { grid-template-columns:repeat(2,minmax(0,1fr)); }
   .search-input { min-width:120px; }
   .list-stars { display:none; }
 }
@@ -268,10 +282,10 @@ html,body { background:var(--bg); font-family:'Plus Jakarta Sans',system-ui,sans
     <div class="f-field" id="date-field-wrap" style="display:none;"><label class="f-label" id="date-field-label">Date Completed</label><input class="f-input" id="m-date" type="date"></div>
     <div class="f-field" id="pages-field-wrap" style="display:none;"><label class="f-label">Page Count</label><input class="f-input" id="m-pages" type="number" min="0" placeholder="e.g. 320"></div>
     <div id="podcast-fields-wrap" style="display:none;">
-      <span class="f-section-label">Episode Tracking</span>
+      <span class="f-section-label">Episode / Count (optional)</span>
       <div class="f-row">
-        <div class="f-field"><label class="f-label">Current Episode #</label><input class="f-input" id="m-ep-current" type="number" min="0" placeholder="e.g. 47"></div>
-        <div class="f-field"><label class="f-label">Total Episodes (optional)</label><input class="f-input" id="m-ep-total" type="number" min="0" placeholder="e.g. 200"></div>
+        <div class="f-field"><label class="f-label">Current #</label><input class="f-input" id="m-ep-current" type="number" min="0" placeholder="e.g. 47"></div>
+        <div class="f-field"><label class="f-label">Total (optional)</label><input class="f-input" id="m-ep-total" type="number" min="0" placeholder="e.g. 200"></div>
       </div>
     </div>
     <div id="music-fields-wrap" style="display:none;">
@@ -286,7 +300,7 @@ html,body { background:var(--bg); font-family:'Plus Jakarta Sans',system-ui,sans
         <div class="f-field"><label class="f-label">Total Seasons</label><input class="f-input" id="m-seasons-total" type="number" min="1" placeholder="e.g. 5"></div>
       </div>
     </div>
-    <div class="f-field"><label class="f-label">Cover Image URL <span style="font-weight:400;letter-spacing:0">(right-click any image → Copy Image Address)</span></label><input class="f-input" id="m-cover" type="text" placeholder="Paste image URL..."></div>
+    <div class="f-field" id="cover-field-wrap"><label class="f-label">Cover Image URL <span style="font-weight:400;letter-spacing:0">(right-click any image → Copy Image Address)</span></label><input class="f-input" id="m-cover" type="text" placeholder="Paste image URL..."></div>
     <div class="f-field"><label class="f-label">Link (optional)</label><input class="f-input" id="m-link" type="text" placeholder="Goodreads, Spotify, Substack..."></div>
     <div class="f-field"><label class="f-label">Note (optional)</label><textarea class="f-input f-textarea" id="m-note" placeholder="Your thoughts..."></textarea></div>
     <div class="m-actions">
@@ -311,12 +325,12 @@ html,body { background:var(--bg); font-family:'Plus Jakarta Sans',system-ui,sans
 
 <!-- ── TABS ── -->
 <div class="section-tabs">
-  <button class="section-tab active" id="stab-books"    onclick="setSection('books')">📚 Books</button>
-  <button class="section-tab"        id="stab-podcasts" onclick="setSection('podcasts')">🎙️ Podcasts</button>
-  <button class="section-tab"        id="stab-articles" onclick="setSection('articles')">📰 Articles</button>
-  <button class="section-tab"        id="stab-music"    onclick="setSection('music')">🎵 Albums</button>
-  <button class="section-tab"        id="stab-screen"   onclick="setSection('screen')">🎬 Screen</button>
-  <button class="section-tab"        id="stab-stats"    onclick="setSection('stats')">📊 Stats</button>
+  <button class="section-tab active" id="stab-books"    onclick="setSection('books')"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2Z"/></svg> Books</button>
+  <button class="section-tab"        id="stab-videos" onclick="setSection('videos')"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="m22 8-6 4 6 4V8Z"/><rect width="14" height="12" x="2" y="6" rx="2"/></svg> Videos</button>
+  <button class="section-tab"        id="stab-articles" onclick="setSection('articles')"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M4 22h16a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2H8a2 2 0 0 0-2 2v16a2 2 0 0 1-2 2Zm0 0a2 2 0 0 1-2-2v-9c0-1.1.9-2 2-2h2"/><path d="M18 14h-8"/><path d="M15 18h-5"/><path d="M10 6h8v4h-8Z"/></svg> Articles</button>
+  <button class="section-tab"        id="stab-music"    onclick="setSection('music')"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="2"/></svg> Albums</button>
+  <button class="section-tab"        id="stab-screen"   onclick="setSection('screen')"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="18" x="3" y="3" rx="2"/><path d="M7 3v18"/><path d="M17 3v18"/><path d="M3 7.5h4"/><path d="M17 7.5h4"/><path d="M3 12h18"/><path d="M3 16.5h4"/><path d="M17 16.5h4"/></svg> Screen</button>
+  <button class="section-tab"        id="stab-stats"    onclick="setSection('stats')"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><line x1="12" x2="12" y1="20" y2="10"/><line x1="18" x2="18" y1="20" y2="4"/><line x1="6" x2="6" y1="20" y2="16"/></svg> Stats</button>
 </div>
 
 <div class="hub">
@@ -335,24 +349,36 @@ var MS=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec']
 var MF=['January','February','March','April','May','June','July','August','September','October','November','December'];
 var DAYS=['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
 
+var IC=function(pth){return '<svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round">'+pth+'</svg>';};
+var IC_BOOK=IC('<path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2Z"/>');
+var IC_MIC=IC('<path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" x2="12" y1="19" y2="22"/>');
+var IC_VIDEO=IC('<path d="m22 8-6 4 6 4V8Z"/><rect width="14" height="12" x="2" y="6" rx="2"/>');
+var IC_NEWS=IC('<path d="M4 22h16a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2H8a2 2 0 0 0-2 2v16a2 2 0 0 1-2 2Zm0 0a2 2 0 0 1-2-2v-9c0-1.1.9-2 2-2h2"/><path d="M18 14h-8"/><path d="M15 18h-5"/><path d="M10 6h8v4h-8Z"/>');
+var IC_DISC=IC('<circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="2"/>');
+var IC_FILM=IC('<rect width="18" height="18" x="3" y="3" rx="2"/><path d="M7 3v18"/><path d="M17 3v18"/><path d="M3 7.5h4"/><path d="M17 7.5h4"/><path d="M3 12h18"/><path d="M3 16.5h4"/><path d="M17 16.5h4"/>');
+var IC_STATS=IC('<line x1="12" x2="12" y1="20" y2="10"/><line x1="18" x2="18" y1="20" y2="4"/><line x1="6" x2="6" y1="20" y2="16"/>');
+var IC_CAL=IC('<rect width="18" height="18" x="3" y="4" rx="2"/><line x1="16" x2="16" y1="2" y2="6"/><line x1="8" x2="8" y1="2" y2="6"/><line x1="3" x2="21" y1="10" y2="10"/>');
+var IC_CHEV=IC('<polyline points="6 9 12 15 18 9"/>');
+var IC_ARROW=IC('<line x1="7" y1="17" x2="17" y2="7"/><polyline points="7 7 17 7 17 17"/>');
+
 var SECTIONS={
-  books:{label:'Books',icon:'📚',placeholder:'📖',listView:false,showStars:true,
+  books:{label:'Books',icon:IC_BOOK,placeholder:IC_BOOK,listView:false,showStars:true,
     statuses:[{val:'want',label:'Want to Read',cls:'status-want'},{val:'progress',label:'Reading',cls:'status-progress'},{val:'done',label:'Read',cls:'status-done'}],
     categoryGroups:[{label:'Fiction',cats:['Fiction','Fantasy','Sci-Fi','Dystopian','Thriller','Romance','Young Adult','Classic']},{label:'Nonfiction',cats:['Nonfiction','History','Psychology','Philosophy','Politics','Science','Biography','Self-Help','Essays','Other']}],
     showDate:true,showPages:true,showPodcast:false,showMusic:false,showScreen:false,dateLabel:'Date Read',emptyText:'Your reading list is empty.'},
-  podcasts:{label:'Podcasts',icon:'🎙️',placeholder:'🎙️',listView:true,showStars:true,
-    statuses:[{val:'queue',label:'In Queue',cls:'status-want'},{val:'following',label:'Following',cls:'status-progress'},{val:'archived',label:'Archived',cls:'status-archived'}],
-    categoryGroups:[{label:'Genre',cats:['Philosophy','Personal Development','Journalism','History','Politics','True Crime','Culture','Comedy','Education','Science','Other']}],
-    showDate:false,showPages:false,showPodcast:true,showMusic:false,showScreen:false,dateLabel:'',emptyText:'No podcasts added yet.'},
-  articles:{label:'Articles & Essays',icon:'📰',placeholder:'📝',listView:false,showStars:false,
+  videos:{label:'Videos',icon:IC_VIDEO,placeholder:IC_VIDEO,listView:true,showStars:false,
+    statuses:[{val:'want',label:'Queue',cls:'status-want'},{val:'progress',label:'Watching',cls:'status-progress'},{val:'done',label:'Watched',cls:'status-done'}],
+    categoryGroups:[{label:'Type',cats:['Video Essay','Podcast','Interview','Talk','Lecture','Vlog','Other']}],
+    showDate:true,showPages:false,showPodcast:true,showMusic:false,showScreen:false,dateLabel:'Date Watched',emptyText:'Nothing here to watch yet.'},
+  articles:{label:'Articles & Essays',icon:IC_NEWS,placeholder:IC_NEWS,listView:false,showStars:false,
     statuses:[{val:'want',label:'Want to Read',cls:'status-want'},{val:'progress',label:'Reading',cls:'status-progress'},{val:'done',label:'Read',cls:'status-done'}],
     categoryGroups:[{label:'Type',cats:['Article','Essay','Newsletter','Opinion','Research','Interview','Other']}],
     showDate:true,showPages:false,showPodcast:false,showMusic:false,showScreen:false,dateLabel:'Date Read',emptyText:'No articles or essays added yet.'},
-  music:{label:'Albums',icon:'🎵',placeholder:'🎵',listView:false,showStars:true,
+  music:{label:'Albums',icon:IC_DISC,placeholder:IC_DISC,listView:false,showStars:true,
     statuses:[{val:'want',label:'Want to Listen',cls:'status-want'},{val:'progress',label:'Listening',cls:'status-progress'},{val:'done',label:'Fully Listened',cls:'status-done'}],
     categoryGroups:[{label:'Format',cats:['Album','EP','Mixtape','Live Album','Compilation','Other']}],
     showDate:true,showPages:false,showPodcast:false,showMusic:true,showScreen:false,dateLabel:'Date Listened',emptyText:'No albums added yet.'},
-  screen:{label:'Screen',icon:'🎬',placeholder:'🎬',listView:false,showStars:true,
+  screen:{label:'Screen',icon:IC_FILM,placeholder:IC_FILM,listView:false,showStars:true,
     statuses:[{val:'want',label:'Want to Watch',cls:'status-want'},{val:'progress',label:'Watching',cls:'status-progress'},{val:'done',label:'Watched',cls:'status-done'}],
     categoryGroups:[{label:'Type',cats:['Movie','TV Show','Documentary','Mini-Series','Anime','Short Film','Other']}],
     showDate:true,showPages:false,showPodcast:false,showMusic:false,showScreen:true,dateLabel:'Date Watched',emptyText:'No screen content added yet.'},
@@ -387,10 +413,10 @@ var DEFAULT_DATA={
     {id:'b23',title:'The Last Story of Mina Lee',creator:'Nancy Jooyoun Kim',category:'Fiction',status:'want',rating:0,cover:'',link:'',note:'',date:'',pages:0},
     {id:'b24',title:'Soju Club',creator:'Jinsung Park',category:'Fiction',status:'want',rating:0,cover:'',link:'',note:'',date:'',pages:0},
   ],
-  podcasts:[
-    {id:'p1',title:'The Daily Stoic',creator:'Ryan Holiday',category:'Philosophy',status:'queue',rating:0,cover:'',link:'',note:'',epCurrent:0,epTotal:0},
-    {id:'p2',title:'Philosophize This',creator:'Stephen West',category:'Philosophy',status:'queue',rating:0,cover:'',link:'',note:'',epCurrent:0,epTotal:0},
-    {id:'p3',title:'Mel Robbins Podcast',creator:'Mel Robbins',category:'Personal Development',status:'queue',rating:0,cover:'',link:'',note:'',epCurrent:0,epTotal:0},
+  videos:[
+    {id:'p1',title:'The Daily Stoic',creator:'Ryan Holiday',category:'Podcast',status:'want',rating:0,cover:'',link:'',note:'',epCurrent:0,epTotal:0,date:''},
+    {id:'p2',title:'Philosophize This',creator:'Stephen West',category:'Podcast',status:'want',rating:0,cover:'',link:'',note:'',epCurrent:0,epTotal:0,date:''},
+    {id:'p3',title:'Mel Robbins Podcast',creator:'Mel Robbins',category:'Podcast',status:'want',rating:0,cover:'',link:'',note:'',epCurrent:0,epTotal:0,date:''},
   ],
   articles:[
     {id:'a1',title:"Being single isn't sad, it's fucking...",creator:'Pepper Maria W.',category:'Essay',status:'want',rating:0,cover:'',link:'https://peppermariaw.substack.com/p/being-single-isnt-sad-its-fucking',note:'',date:''},
@@ -427,16 +453,28 @@ var DEFAULT_DATA={
 
 /* ── STATE ── */
 var currentSection='books',currentStatus='all',currentCat='all',searchQuery='',editingId=null,selectedYear=new Date().getFullYear();
-var data={books:[],podcasts:[],articles:[],music:[],screen:[]};
+var data={books:[],videos:[],articles:[],music:[],screen:[]};
 
 function save(){localStorage.setItem(SK,JSON.stringify(data));}
 function load(){
   var raw=localStorage.getItem(SK);
+  var migrated=false;
   if(raw){try{data=JSON.parse(raw);}catch(e){}}
   else{data=JSON.parse(JSON.stringify(DEFAULT_DATA));save();}
+  // Migrate the old "podcasts" section into "videos" (podcasts become one category among many)
+  if(data.podcasts){
+    if(!data.videos||!data.videos.length){
+      data.videos=(data.podcasts||[]).map(function(it){var o=Object.assign({},it);o.category='Podcast';return o;});
+    }
+    delete data.podcasts;migrated=true;
+  }
   Object.keys(SECTIONS).forEach(function(s){if(!data[s])data[s]=[];});
+  // Normalize video statuses to the shared want/progress/done model + ensure a date field
+  var VSTAT={queue:'want',watching:'progress',following:'progress',archived:'done'};
+  (data.videos||[]).forEach(function(v){if(VSTAT[v.status]){v.status=VSTAT[v.status];migrated=true;}if(v.date===undefined){v.date='';}});
   // Migrate: ensure music items have songs array
   (data.music||[]).forEach(function(m){if(!m.songs)m.songs=[];});
+  if(migrated)save();
 }
 function todayStr(){var n=new Date();return n.getFullYear()+'-'+String(n.getMonth()+1).padStart(2,'0')+'-'+String(n.getDate()).padStart(2,'0');}
 function esc(s){return String(s==null?'':s).replace(/[&<>"']/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];});}
@@ -460,10 +498,8 @@ function getFiltered(){
   if(searchQuery){var q=searchQuery.toLowerCase();items=items.filter(function(i){return(i.title||'').toLowerCase().includes(q)||(i.creator||'').toLowerCase().includes(q)||(i.note||'').toLowerCase().includes(q);});}
   // "Next up" sort (all tabs): in-progress first, queued second, completed last.
   // Completed items sort by completion date, most recent first.
-  var order=currentSection==='podcasts'
-    ? {following:0,queue:1,archived:2}
-    : {progress:0,want:1,done:2};
-  var doneKey=currentSection==='podcasts'?'archived':'done';
+  var order={progress:0,want:1,done:2};
+  var doneKey='done';
   items=items.slice().sort(function(a,b){
     var oa=order[a.status]!==undefined?order[a.status]:1;
     var ob=order[b.status]!==undefined?order[b.status]:1;
@@ -521,7 +557,7 @@ function renderControls(){
     ecLink.href='https://episodecalendar.com/en/calendar';
     ecLink.target='_blank';
     ecLink.className='ext-link-btn';
-    ecLink.textContent='📅 Episode Calendar ↗';
+    ecLink.innerHTML=IC_CAL+' Episode Calendar ↗';
     r2.appendChild(ecLink);
   }
   if(currentSection==='books'){
@@ -529,7 +565,7 @@ function renderControls(){
     grLink.href='https://www.goodreads.com/review/list';
     grLink.target='_blank';
     grLink.className='ext-link-btn';
-    grLink.textContent='📚 Goodreads ↗';
+    grLink.innerHTML=IC_BOOK+' Goodreads ↗';
     r2.appendChild(grLink);
   }
   wrap.appendChild(r2);
@@ -592,17 +628,21 @@ function makeGridCard(item,statusMap,sec){
   // Screen progress — inline S/E steppers while watching (done-date already shown by generic block above)
   if(currentSection==='screen'&&item.status!=='done'){
     var epWrap=document.createElement('div');epWrap.className='card-progress-controls';
-    [['S','season'],['E','episode']].forEach(function(pair,pi){
-      if(pi===1){var sep=document.createElement('span');sep.style.cssText='color:#d9d2bd;font-size:12px;margin:0 2px;';sep.textContent='·';epWrap.appendChild(sep);}
-      var lbl=pair[0],field=pair[1];
-      var minus=document.createElement('button');minus.className='prog-btn';minus.textContent='−';
-      minus.onclick=(function(id,f){return function(e){e.stopPropagation();var it=findItem(id);if(!it)return;it[f]=Math.max(1,(it[f]||1)-1);save();renderGrid();};})(item.id,field);
-      var cnt=document.createElement('span');cnt.className='prog-count';cnt.textContent=lbl+(item[field]||1);
-      var plus=document.createElement('button');plus.className='prog-btn';plus.textContent='+';
-      plus.onclick=(function(id,f){return function(e){e.stopPropagation();var it=findItem(id);if(!it)return;it[f]=(it[f]||1)+1;save();renderGrid();};})(item.id,field);
-      epWrap.appendChild(minus);epWrap.appendChild(cnt);epWrap.appendChild(plus);
-    });
-    if(item.seasonsTotal){var tot=document.createElement('span');tot.style.cssText='font-size:10.5px;color:var(--muted);margin-left:4px;';tot.textContent='of '+item.seasonsTotal+' seasons';epWrap.appendChild(tot);}
+    var makeStepper=function(field,prefix,withTotal){
+      var pill=document.createElement('div');pill.className='stepper';
+      var minus=document.createElement('button');minus.type='button';minus.className='stepper-btn';minus.textContent='−';minus.setAttribute('aria-label',prefix+' down');
+      minus.onclick=(function(f){return function(e){e.stopPropagation();var it=findItem(item.id);if(!it)return;it[f]=Math.max(1,(it[f]||1)-1);save();renderGrid();};})(field);
+      var val=document.createElement('span');val.className='stepper-val';
+      var txt=prefix+(item[field]||1);
+      if(withTotal&&item.seasonsTotal)txt+='/'+item.seasonsTotal;
+      val.textContent=txt;
+      var plus=document.createElement('button');plus.type='button';plus.className='stepper-btn';plus.textContent='+';plus.setAttribute('aria-label',prefix+' up');
+      plus.onclick=(function(f){return function(e){e.stopPropagation();var it=findItem(item.id);if(!it)return;it[f]=(it[f]||1)+1;save();renderGrid();};})(field);
+      pill.appendChild(minus);pill.appendChild(val);pill.appendChild(plus);
+      return pill;
+    };
+    epWrap.appendChild(makeStepper('season','S',true));
+    epWrap.appendChild(makeStepper('episode','E',false));
     body.appendChild(epWrap);
   }
   if(item.note){var note=document.createElement('div');note.className='card-note';note.textContent=item.note;body.appendChild(note);}
@@ -629,6 +669,7 @@ function makeGridCard(item,statusMap,sec){
   dotsActions.push({label:'Delete',danger:true,fn:(function(id){return function(){if(confirm('Remove?'))deleteItem(id);};})(item.id)});
   actions.appendChild(makeDots(dotsActions));
   card.appendChild(actions);
+  var arrow=document.createElement('div');arrow.className='card-arrow';arrow.innerHTML=IC_ARROW;card.appendChild(arrow);
   card.onclick=(function(id){return function(){openEditModal(id);};})(item.id);
   return card;
 }
@@ -648,7 +689,7 @@ function makeAlbumSongs(item){
   var headerLeft=document.createElement('div');headerLeft.className='album-songs-header';
   headerLeft.textContent='Track List';
   if(songCount>0){var countBadge=document.createElement('span');countBadge.className='album-songs-count';countBadge.textContent=songCount+' song'+(songCount!==1?'s':'');headerLeft.appendChild(countBadge);}
-  var chevron=document.createElement('span');chevron.className='album-songs-chevron'+(isOpen?' open':'');chevron.textContent='▼';
+  var chevron=document.createElement('span');chevron.className='album-songs-chevron'+(isOpen?' open':'');chevron.innerHTML=IC_CHEV;
   toggle.appendChild(headerLeft);toggle.appendChild(chevron);
   section.appendChild(toggle);
 
@@ -693,31 +734,22 @@ function makeAlbumSongs(item){
   return section;
 }
 
-/* ── LIST CARD (podcasts) ── */
+/* ── LIST CARD (videos) ── */
 function makeListCard(item,statusMap,sec){
-  var card=document.createElement('div');card.className='list-card'+(item.status==='done'?' done':'');
-  // Icon / cover
-  var iconDiv=document.createElement('div');iconDiv.className='list-icon';
-  if(item.cover){var img=document.createElement('img');img.src=item.cover;img.alt=item.title;img.onerror=function(){iconDiv.textContent=sec.icon;};iconDiv.appendChild(img);}
-  else{iconDiv.textContent=sec.icon;}
-  card.appendChild(iconDiv);
-  // Body
+  var card=document.createElement('div');card.className='list-card'+(item.status==='archived'?' done':'');
+  // Body: title + creator · category  (+ optional note)
   var body=document.createElement('div');body.className='list-body';
   var title=document.createElement('div');title.className='list-title';title.textContent=item.title;body.appendChild(title);
   var meta=document.createElement('div');meta.className='list-meta';
   if(item.creator){var cr=document.createElement('span');cr.textContent=item.creator;meta.appendChild(cr);var dot=document.createElement('span');dot.className='list-meta-dot';meta.appendChild(dot);}
   var catS=document.createElement('span');catS.textContent=item.category;meta.appendChild(catS);
-  if(currentSection==='podcasts'&&item.epCurrent){var d2=document.createElement('span');d2.className='list-meta-dot';meta.appendChild(d2);var ep=document.createElement('span');ep.className='list-ep';ep.textContent='Ep '+item.epCurrent+(item.epTotal?'/'+item.epTotal:'');meta.appendChild(ep);}
+  if(item.status==='done'&&item.date){var dsep=document.createElement('span');dsep.className='list-meta-dot';meta.appendChild(dsep);var dv=document.createElement('span');dv.className='list-ep';var dt=new Date(item.date+'T00:00:00');dv.textContent='\u2713 '+MS[dt.getMonth()]+' '+dt.getDate();meta.appendChild(dv);}
   body.appendChild(meta);
   if(item.note){var noteEl=document.createElement('div');noteEl.className='list-note';noteEl.textContent=item.note;body.appendChild(noteEl);}
   card.appendChild(body);
-  // Right
+  // Right: optional episode badge + status pill + menu
   var right=document.createElement('div');right.className='list-right';
-  if(sec.showStars){
-    var starsDiv=document.createElement('div');starsDiv.className='list-stars';
-    for(var s=1;s<=5;s++){var star=document.createElement('span');star.className='list-star'+(s<=item.rating?' filled':'');star.textContent='★';star.onclick=(function(id,sv){return function(e){e.stopPropagation();rateItem(id,sv);};})(item.id,s);starsDiv.appendChild(star);}
-    right.appendChild(starsDiv);
-  }
+  if(item.epCurrent){var ep=document.createElement('span');ep.className='list-ep-badge';ep.textContent='Ep '+item.epCurrent+(item.epTotal?'/'+item.epTotal:'');right.appendChild(ep);}
   var statuses=sec.statuses;var ci=statuses.findIndex(function(s){return s.val===item.status;});var ns=statuses[(ci+1)%statuses.length];
   var curSt=statusMap[item.status]||{label:item.status,cls:'status-want'};
   var cycleB=document.createElement('button');cycleB.className='status-cycle-btn '+curSt.cls;
@@ -759,11 +791,9 @@ function renderStatsTab(){
   function mc(sec,yr,mo){var m=String(mo+1).padStart(2,'0');var p=yr+'-'+m;return(data[sec]||[]).filter(function(i){return i.status==='done'&&i.date&&i.date.startsWith(p);}).length;}
   function yt(sec,yr){return(data[sec]||[]).filter(function(i){return i.status==='done'&&i.date&&i.date.startsWith(String(yr));}).length;}
   // Totals
-  var types=[{key:'books',icon:'📚',label:'Books'},{key:'articles',icon:'📰',label:'Articles'},{key:'screen',icon:'🎬',label:'Shows & Films'},{key:'music',icon:'🎵',label:'Albums'}];
-  var totalEp=(data.podcasts||[]).reduce(function(s,p){return s+(p.epCurrent||0);},0);
+  var types=[{key:'books',icon:IC_BOOK,label:'Books'},{key:'articles',icon:IC_NEWS,label:'Articles'},{key:'screen',icon:IC_FILM,label:'Shows & Films'},{key:'music',icon:IC_DISC,label:'Albums'},{key:'videos',icon:IC_VIDEO,label:'Videos'}];
   var tg=document.createElement('div');tg.className='stats-totals';
   types.forEach(function(t){var card=document.createElement('div');card.className='stats-total-card';card.innerHTML='<div class="stats-total-icon">'+t.icon+'</div><div class="stats-total-num">'+yt(t.key,selectedYear)+'</div><div class="stats-total-label">'+t.label+'</div>';tg.appendChild(card);});
-  var pc=document.createElement('div');pc.className='stats-total-card';pc.innerHTML='<div class="stats-total-icon">🎙️</div><div class="stats-total-num">'+totalEp+'</div><div class="stats-total-label">Episodes Logged</div>';tg.appendChild(pc);
   grid.appendChild(tg);
   // Heatmap
   var hw=document.createElement('div');hw.className='stats-grid-wrap';
@@ -785,20 +815,13 @@ function renderStatsTab(){
     });
   });
   hw.appendChild(hg);grid.appendChild(hw);
-  // Podcasts
-  var pw=document.createElement('div');pw.className='stats-podcast-wrap';
-  var pt=document.createElement('div');pt.className='stats-podcast-title';pt.textContent='🎙️ Podcast Episodes Logged';pw.appendChild(pt);
-  var following=(data.podcasts||[]).filter(function(p){return p.status!=='archived'&&p.epCurrent>0;});
-  if(!following.length){var em=document.createElement('div');em.className='stats-empty';em.innerHTML='<strong>No episodes tracked yet</strong>Log your current episode number on any podcast.';pw.appendChild(em);}
-  else{var pl=document.createElement('div');pl.className='stats-podcast-list';following.sort(function(a,b){return(b.epCurrent||0)-(a.epCurrent||0);});following.forEach(function(p){var row=document.createElement('div');row.className='stats-podcast-row';row.innerHTML='<div class="stats-podcast-name">'+esc(p.title)+(p.creator?'<br><span style="font-weight:400;font-size:11px;color:var(--muted)">'+esc(p.creator)+'</span>':'')+'</div><div style="text-align:right"><div class="stats-podcast-ep">'+p.epCurrent+'</div><div class="stats-podcast-ep-label">episodes</div></div>';pl.appendChild(row);});pw.appendChild(pl);}
-  grid.appendChild(pw);
 }
 
 /* ── ITEM ACTIONS ── */
 function rateItem(id,rating){var item=findItem(id);if(!item)return;item.rating=item.rating===rating?0:rating;save();renderGrid();}
 function cycleStatus(id,ns){
   var item=findItem(id);if(!item)return;item.status=ns;
-  if(ns==='done'&&!item.date&&['books','screen','articles','music'].includes(currentSection))item.date=todayStr();
+  if(ns==='done'&&!item.date&&['books','screen','articles','music','videos'].includes(currentSection))item.date=todayStr();
   save();render();
 }
 function deleteItem(id){data[currentSection]=data[currentSection].filter(function(i){return i.id!==id;});save();render();}
@@ -809,9 +832,10 @@ function showModalFields(sec){
   document.getElementById('date-field-wrap').style.display=sd?'block':'none';
   if(sd)document.getElementById('date-field-label').textContent=SECTIONS[sec].dateLabel||'Date Completed';
   document.getElementById('pages-field-wrap').style.display=sec==='books'?'block':'none';
-  document.getElementById('podcast-fields-wrap').style.display=sec==='podcasts'?'block':'none';
+  document.getElementById('podcast-fields-wrap').style.display=sec==='videos'?'block':'none';
   document.getElementById('music-fields-wrap').style.display=sec==='music'?'block':'none';
   document.getElementById('screen-fields-wrap').style.display=sec==='screen'?'block':'none';
+  document.getElementById('cover-field-wrap').style.display=sec==='videos'?'none':'block';
 }
 function buildStatusOptions(sec,selected){var sel=document.getElementById('m-status');sel.innerHTML='';SECTIONS[sec].statuses.forEach(function(s){var o=document.createElement('option');o.value=s.val;o.textContent=s.label;if(s.val===selected)o.selected=true;sel.appendChild(o);});}
 function buildCategoryOptions(sec,selected){var sel=document.getElementById('m-category');sel.innerHTML='';allCats(sec).forEach(function(c){var o=document.createElement('option');o.value=c;o.textContent=c;if(c===selected)o.selected=true;sel.appendChild(o);});}
