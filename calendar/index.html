@@ -907,10 +907,19 @@ function financeForDate(dateStr) {
   const dom = d.getDate();
   const lastDom = new Date(d.getFullYear(), d.getMonth()+1, 0).getDate();
   const thisMonth = (d.getFullYear() === TODAY.getFullYear() && d.getMonth() === TODAY.getMonth());
-  return financeCards()
-    .filter(c => Math.min(c.day, lastDom) === dom)
-    .map(c => ({ fid: 'fin:' + c.id + ':' + dateStr, title: c.name, paid: !!c.paid && thisMonth }))
-    .sort((a,b) => a.title.localeCompare(b.title));
+  const out = [];
+  financeCards().forEach(c => {
+    // Statement due date (firm) — from card.day / card.paid
+    if (Math.min(c.day, lastDom) === dom) {
+      out.push({ fid: 'fin:' + c.id + ':' + dateStr, title: c.name, paid: !!c.paid && thisMonth, mid: false });
+    }
+    // Mid-cycle payment (optional) — from card.day2 / card.paid2
+    if (c.day2 && Math.min(c.day2, lastDom) === dom) {
+      out.push({ fid: 'finm:' + c.id + ':' + dateStr, title: c.name, paid: !!c.paid2 && thisMonth, mid: true });
+    }
+  });
+  // same card name: statement before its mid-cycle
+  return out.sort((a,b) => a.title.localeCompare(b.title) || (a.mid === b.mid ? 0 : (a.mid ? 1 : -1)));
 }
 function formatTime(t) {
   if (!t) return '';
@@ -1110,11 +1119,18 @@ function renderMonth() {
       const fcat = getCat('finances');
       const fe = document.createElement('div');
       fe.className = 'month-event-chip' + (fc.paid ? ' done' : '');
-      fe.style.background = fcat.bg;
-      fe.style.color = fcat.text;
+      if (fc.mid) {
+        // optional mid-cycle payment: outlined chip so it reads as lighter than the firm statement
+        fe.style.background = '#fff';
+        fe.style.color = fcat.text;
+        fe.style.border = '1px dashed ' + fcat.dot;
+      } else {
+        fe.style.background = fcat.bg;
+        fe.style.color = fcat.text;
+      }
       fe.style.cursor = 'default';
-      fe.title = 'Card payment due · ' + fc.title + (fc.paid ? ' (paid)' : '');
-      fe.innerHTML = CARD_SVG + `<span class="chip-text">${esc(fc.title)}</span>`;
+      fe.title = (fc.mid ? 'Mid-cycle payment · ' : 'Statement due · ') + fc.title + (fc.paid ? ' (paid)' : '');
+      fe.innerHTML = CARD_SVG + `<span class="chip-text">${esc(fc.title)}${fc.mid ? ' · mid-cycle' : ''}</span>`;
       fe.addEventListener('click', e => e.stopPropagation());
       evsWrap.appendChild(fe);
       shown++;
@@ -1236,10 +1252,16 @@ function renderWeek() {
       const fcat = getCat('finances');
       const fEl = document.createElement('div');
       fEl.className = 'week-event' + (fc.paid ? ' done' : '');
-      fEl.style.background = fcat.bg;
-      fEl.style.color = fcat.text;
+      if (fc.mid) {
+        fEl.style.background = '#fff';
+        fEl.style.color = fcat.text;
+        fEl.style.border = '1px dashed ' + fcat.dot;
+      } else {
+        fEl.style.background = fcat.bg;
+        fEl.style.color = fcat.text;
+      }
       fEl.style.cursor = 'pointer';
-      fEl.innerHTML = `<div class="ev-body"><div class="ev-title">${CARD_SVG} ${esc(fc.title)}</div><div class="ev-time">Card payment due${fc.paid ? ' · paid' : ''}</div></div>`;
+      fEl.innerHTML = `<div class="ev-body"><div class="ev-title">${CARD_SVG} ${esc(fc.title)}</div><div class="ev-time">${fc.mid ? 'Mid-cycle payment' : 'Statement due'}${fc.paid ? ' · paid' : ''}</div></div>`;
       fEl.addEventListener('click', () => { window.location.href = '../finances/'; });
       evsWrap.appendChild(fEl);
     });
