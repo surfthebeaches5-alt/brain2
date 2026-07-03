@@ -29,28 +29,15 @@ html, body { background: var(--bg); font-family: 'Plus Jakarta Sans', system-ui,
 .sec-title { font-size: 9.5px; letter-spacing: 2px; text-transform: uppercase; color: var(--muted); font-weight: 700; margin-bottom: 12px; display: flex; align-items: center; gap: 10px; }
 .sec-title::after { content: ''; flex: 1; height: 1px; background: var(--line); }
 
-/* Banner */
-.upcoming-banner { background: var(--accent-soft); border: 1.5px solid var(--accent); border-radius: 18px; padding: 20px 26px; margin-bottom: 24px; }
-.banner-label { font-size: 9.5px; letter-spacing: 2px; text-transform: uppercase; color: var(--accent-deep); font-weight: 700; margin-bottom: 10px; }
-.banner-items { display: flex; align-items: center; gap: 18px; flex-wrap: wrap; }
-.banner-item { flex: 1; min-width: 110px; }
-.banner-item-sub { font-size: 9.5px; color: var(--muted); font-weight: 600; margin-bottom: 2px; }
-.banner-card-name { font-family: 'Fraunces', serif; font-size: 15px; font-weight: 600; letter-spacing: -.2px; }
-.banner-due { font-size: 10.5px; color: var(--muted); margin-top: 3px; }
-.banner-due a { color: var(--accent-deep); text-decoration: none; font-weight: 600; }
-.banner-due a:hover { text-decoration: underline; }
-.banner-divider { width: 1px; height: 36px; background: var(--accent); opacity: .4; flex-shrink: 0; }
-.banner-empty { font-size: 13px; color: var(--muted); font-style: italic; }
-
 /* Layout */
 .main-layout { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; align-items: start; }
 
 /* Cards */
 .card { background: var(--surface); border: 1px solid var(--line); border-radius: 18px; padding: 20px 22px; }
-.card-blush  { border-top: 3px solid #f2c4ce; }
-.card-sage   { border-top: 3px solid #a7b384; }
-.card-lav    { border-top: 3px solid var(--accent); }
-.card-peach  { border-top: 3px solid #f6c89e; }
+.card-blush  { border-top: 3px solid #b099e0; } /* Credit Cards — lilac */
+.card-sage   { border-top: 3px solid #6f9cc4; } /* Banks — dusty blue */
+.card-lav    { border-top: 3px solid #5fa8a0; } /* Investments — teal */
+.card-peach  { border-top: 3px solid #cf9b7a; } /* Tools — terracotta */
 
 .card-label { font-size: 9.5px; letter-spacing: 1.8px; text-transform: uppercase; color: var(--muted); font-weight: 700; margin-bottom: 3px; }
 .card-title { font-family: 'Fraunces', serif; font-size: 18px; font-weight: 600; letter-spacing: -.3px; margin-bottom: 16px; }
@@ -59,7 +46,14 @@ html, body { background: var(--bg); font-family: 'Plus Jakarta Sans', system-ui,
 .add-btn:hover { transform: translateY(-1px); }
 
 /* CC rows */
-.cc-row { display: flex; align-items: center; gap: 9px; padding: 11px 0; border-bottom: 1px solid var(--line); }
+.cc-row { padding: 11px 0; border-bottom: 1px solid var(--line); }
+.cc-main { display: flex; align-items: center; gap: 9px; }
+.cc-mid { display: flex; align-items: center; gap: 8px; margin: 9px 0 1px 19px; padding: 7px 11px; background: var(--warm); border: 1px solid var(--line); border-radius: 10px; }
+.cc-mid-tag { font-size: 8px; letter-spacing: .6px; text-transform: uppercase; font-weight: 700; color: var(--accent-deep); background: var(--accent-soft); padding: 2px 7px; border-radius: 6px; flex-shrink: 0; }
+.cc-mid-date { font-size: 10.5px; font-weight: 600; color: var(--muted); flex: 1; }
+.paid-btn.sm { padding: 3px 8px; font-size: 10px; }
+.cp-mid { font-size: 10.5px; color: var(--muted); font-weight: 600; margin-top: 9px; }
+.cp-mid b { font-family: 'Fraunces', serif; font-size: 12px; color: var(--accent-deep); font-weight: 600; }
 .cc-row:last-child { border-bottom: none; }
 .cc-row.inactive { opacity: .42; }
 .cc-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; border: 1.5px solid rgba(0,0,0,.08); }
@@ -133,6 +127,21 @@ html, body { background: var(--bg); font-family: 'Plus Jakarta Sans', system-ui,
 
 @media (max-width: 900px) { .main-layout { grid-template-columns: 1fr; } }
 @media (max-width: 700px) { .topbar { padding: 14px 18px; } .hub { padding: 18px 14px 60px; } }
+
+/* card add/edit, progress, arrows, inactive divider */
+.ar-ic { width:11px; height:11px; vertical-align:-1px; margin-left:2px; }
+.card-progress { margin-bottom: 14px; }
+.cp-row { display:flex; align-items:center; justify-content:space-between; margin-bottom:7px; }
+.cp-label { font-size:10.5px; font-weight:600; color:var(--muted); letter-spacing:.3px; }
+.cp-count { font-family:'Fraunces',serif; font-size:14px; font-weight:600; color:var(--ink); }
+.cp-bar { height:7px; background:var(--line); border-radius:5px; overflow:hidden; }
+.cp-fill { height:100%; background:var(--accent-deep); border-radius:5px; transition:width .3s; }
+.cc-divider { font-size:8.5px; letter-spacing:1.5px; text-transform:uppercase; color:var(--muted); font-weight:700; padding:12px 0 6px; border-top:1px dashed var(--line); margin-top:6px; }
+.swatch-row { display:flex; gap:9px; flex-wrap:wrap; margin-bottom:16px; }
+.swatch { width:28px; height:28px; border-radius:50%; cursor:pointer; border:2px solid var(--line); transition:transform .12s; }
+.swatch:hover { transform:scale(1.08); }
+.swatch.sel { border-color:var(--ink); box-shadow:0 0 0 2px #fff, 0 0 0 3.5px var(--ink); }
+@media (max-width:700px){ .cc-actions{ gap:4px; } .portal-btn{ padding:5px 9px; } .paid-btn{ padding:5px 9px; } .dots-btn{ width:30px; height:30px; } }
 </style>
 </head>
 <body>
@@ -159,6 +168,33 @@ html, body { background: var(--bg); font-family: 'Plus Jakarta Sans', system-ui,
   </div>
 </div>
 
+<!-- Card Modal -->
+<div class="modal-bg" id="card-modal">
+  <div class="modal-box">
+    <div class="modal-title" id="card-modal-title">Add Card</div>
+    <label class="f-label">Card Name</label>
+    <input class="f-input" id="card-name" type="text" placeholder="e.g. Chase Sapphire">
+    <label class="f-label">Statement Due Day</label>
+    <input class="f-input" id="card-day" type="number" min="1" max="31" placeholder="1–31">
+    <label class="f-label">Mid-Cycle Payment Day <span style="font-weight:400;letter-spacing:0;text-transform:none;font-size:9px;">(optional)</span></label>
+    <input class="f-input" id="card-day2" type="number" min="1" max="31" placeholder="1–31" style="margin-bottom:5px;">
+    <div style="font-size:10px;color:var(--muted);margin-bottom:14px;line-height:1.4;">An optional second payment mid-cycle to keep your utilization low.</div>
+    <label class="f-label">Portal URL <span style="font-weight:400;letter-spacing:0;text-transform:none;font-size:9px;">(optional)</span></label>
+    <input class="f-input" id="card-url" type="url" placeholder="https://...">
+    <label class="f-label">Color</label>
+    <div class="swatch-row" id="card-swatches"></div>
+    <div class="check-row">
+      <input type="checkbox" id="card-active" checked>
+      <label for="card-active">Active</label>
+    </div>
+    <div class="modal-actions">
+      <button class="m-btn m-cancel" id="card-cancel">Cancel</button>
+      <button class="m-btn m-del" id="card-delete" style="display:none">Delete</button>
+      <button class="m-btn m-save" id="card-save">Save</button>
+    </div>
+  </div>
+</div>
+
 <!-- Topbar -->
 <div class="topbar">
   <div class="topbar-left">
@@ -173,7 +209,6 @@ html, body { background: var(--bg); font-family: 'Plus Jakarta Sans', system-ui,
 
 <div class="hub">
   <div class="reset-notice" id="reset-notice">✓ New month — all cards reset to unpaid</div>
-  <div class="upcoming-banner" id="upcoming-banner"></div>
 
   <div class="main-layout">
 
@@ -181,8 +216,14 @@ html, body { background: var(--bg); font-family: 'Plus Jakarta Sans', system-ui,
     <div>
       <div class="sec-title">Credit Cards</div>
       <div class="card card-blush">
-        <div class="card-label">Due Dates & Portals</div>
-        <div class="card-title">All Cards</div>
+        <div class="card-head-row">
+          <div>
+            <div class="card-label">Due Dates & Portals</div>
+            <div class="card-title" style="margin-bottom:0">All Cards</div>
+          </div>
+          <button class="add-btn" onclick="openAddCard()">+ Add</button>
+        </div>
+        <div class="card-progress" id="card-progress"></div>
         <div id="cc-list"></div>
       </div>
     </div>
@@ -243,33 +284,38 @@ var CARD_SK = 'finTrackerState2';
 var MS = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
 var MF = ['January','February','March','April','May','June','July','August','September','October','November','December'];
 var DS = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+var ARROW_SVG = '<svg class="ar-ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 7h10v10"/><path d="M7 17 17 7"/></svg>';
 
 var DEFAULT_CARDS = [
-  {id:'c0', name:'Chase Sapphire Preferred', day:22, url:'https://secure.chase.com/web/auth/dashboard#/dashboard/overview', color:'#f2c4ce', active:true,  paid:false},
-  {id:'c1', name:'Marriott Bonvoy',          day:12, url:'https://secure.chase.com/web/auth/dashboard#/dashboard/overview', color:'#f7d9b0', active:true,  paid:false},
-  {id:'c2', name:'Venture X',                day:28, url:'https://myaccounts.capitalone.com/#/accountSummary',              color:'#d4b8e0', active:true,  paid:false},
-  {id:'c3', name:'Bilt Blue Card',           day:5,  url:'https://www.bilt.com',                                           color:'#b8d4f0', active:true,  paid:false},
-  {id:'c4', name:'Citi AAdvantage Platinum', day:1,  url:'https://www.citi.com/',                                          color:'#b8cfb0', active:true,  paid:false},
-  {id:'c5', name:'AAdvantage Aviator',       day:18, url:'https://www.aviatormastercard.com/servicing/home',               color:'#e0cec8', active:false, paid:false},
-  {id:'c6', name:'Discover',                 day:24, url:'https://card.discover.com/web/achome/homepage',                  color:'#c8c8d8', active:false, paid:false},
+  {id:'c0', name:'Chase Sapphire Preferred', day:22, url:'https://secure.chase.com/web/auth/dashboard#/dashboard/overview', color:'#f2c4ce', active:true,  paid:false, paid2:false, day2:7},
+  {id:'c1', name:'Marriott Bonvoy',          day:12, url:'https://secure.chase.com/web/auth/dashboard#/dashboard/overview', color:'#f7d9b0', active:true,  paid:false, paid2:false, day2:27},
+  {id:'c2', name:'Venture X',                day:28, url:'https://myaccounts.capitalone.com/#/accountSummary',              color:'#d4b8e0', active:true,  paid:false, paid2:false, day2:13},
+  {id:'c3', name:'Bilt Blue Card',           day:5,  url:'https://www.bilt.com',                                           color:'#b8d4f0', active:true,  paid:false, paid2:false, day2:20},
+  {id:'c4', name:'Citi AAdvantage Platinum', day:1,  url:'https://www.citi.com/',                                          color:'#b8cfb0', active:true,  paid:false, paid2:false, day2:16},
+  {id:'c5', name:'AAdvantage Aviator',       day:18, url:'https://www.aviatormastercard.com/servicing/home',               color:'#e0cec8', active:false, paid:false, paid2:false, day2:3},
+  {id:'c6', name:'Discover',                 day:24, url:'https://card.discover.com/web/achome/homepage',                  color:'#c8c8d8', active:false, paid:false, paid2:false, day2:9},
 ];
 
 var cards = [];
+var midCycleSeeded = false;
+function midFromStatement(day) { var m = (parseInt(day, 10) || 1) + 15; if (m > 30) m -= 30; if (m > 28) m = 28; if (m < 1) m = 1; return m; }
 
 function monthKey() {
   var n = new Date(); return n.getFullYear() + '-' + (n.getMonth() + 1);
 }
 function saveCards() {
-  localStorage.setItem(CARD_SK, JSON.stringify({ cards: cards, lastReset: monthKey() }));
+  localStorage.setItem(CARD_SK, JSON.stringify({ cards: cards, lastReset: monthKey(), midCycleSeeded: midCycleSeeded }));
 }
 function loadCards() {
   var raw = localStorage.getItem(CARD_SK);
   if (!raw) {
     cards = JSON.parse(JSON.stringify(DEFAULT_CARDS));
+    midCycleSeeded = true;
     return;
   }
   try {
     var s = JSON.parse(raw);
+    midCycleSeeded = !!s.midCycleSeeded;
     // New format
     if (s.cards && Array.isArray(s.cards)) {
       cards = s.cards;
@@ -286,11 +332,18 @@ function loadCards() {
     cards.forEach(function(c) {
       if (!c.id) c.id = 'c' + Date.now() + Math.random().toString(36).slice(2,5);
       if (c.paid === undefined) c.paid = false;
+      if (c.paid2 === undefined) c.paid2 = false;
       if (c.active === undefined) c.active = true;
     });
+    // One-time: seed a mid-cycle day for existing cards from their statement day (editable afterward)
+    if (!midCycleSeeded) {
+      cards.forEach(function(c) { if (c.day2 == null) c.day2 = midFromStatement(c.day); });
+      midCycleSeeded = true;
+      saveCards();
+    }
     // Monthly reset
     if (s.lastReset && s.lastReset !== monthKey()) {
-      cards.forEach(function(c) { c.paid = false; });
+      cards.forEach(function(c) { c.paid = false; c.paid2 = false; });
       saveCards();
       var n = document.getElementById('reset-notice');
       n.style.display = 'flex';
@@ -298,6 +351,7 @@ function loadCards() {
     }
   } catch(e) {
     cards = JSON.parse(JSON.stringify(DEFAULT_CARDS));
+    midCycleSeeded = true;
   }
 }
 
@@ -321,7 +375,7 @@ function urgency(d) {
 }
 function sortedCards() {
   return cards.map(function(c) {
-    return { id:c.id, name:c.name, day:c.day, url:c.url, color:c.color, active:c.active, paid:c.paid, d:daysUntil(c.day) };
+    return { id:c.id, name:c.name, day:c.day, day2:c.day2, url:c.url, color:c.color, active:c.active, paid:c.paid, paid2:c.paid2, d:daysUntil(c.day) };
   }).sort(function(a, b) {
     if (a.active && !b.active) return -1;
     if (!a.active && b.active) return 1;
@@ -329,82 +383,95 @@ function sortedCards() {
   });
 }
 
-/* RENDER BANNER */
-function renderBanner() {
-  var el = document.getElementById('upcoming-banner');
-  var top = sortedCards().filter(function(c) { return c.active && !c.paid; }).slice(0, 3);
-  if (!top.length) {
-    el.innerHTML = '<div class="banner-label">Next Up ✦</div><div class="banner-empty">All active cards paid this month ✓</div>';
-    return;
-  }
-  var items = top.map(function(c, i) {
-    return (i > 0 ? '<div class="banner-divider"></div>' : '') +
-      '<div class="banner-item">' +
-        '<div class="banner-item-sub">Due in ' + c.d + ' day' + (c.d !== 1 ? 's' : '') + '</div>' +
-        '<div class="banner-card-name">' + esc(c.name) + '</div>' +
-        '<div class="banner-due">' + dueDateStr(c.day) +
-          (c.url ? ' · <a href="' + esc(c.url) + '" target="_blank">Pay ↗</a>' : '') +
-        '</div>' +
-      '</div>';
-  }).join('');
-  el.innerHTML = '<div class="banner-label">Next Up ✦</div><div class="banner-items">' + items + '</div>';
-}
-
 /* RENDER CARDS */
 function renderCards() {
   var list = document.getElementById('cc-list');
   list.innerHTML = '';
-  sortedCards().forEach(function(c) {
+  var sorted = sortedCards();
+  var dividerShown = false;
+  sorted.forEach(function(c) {
+    if (!c.active && !dividerShown) {
+      var dv = document.createElement('div'); dv.className = 'cc-divider'; dv.textContent = 'Inactive';
+      list.appendChild(dv); dividerShown = true;
+    }
     var u = urgency(c.d);
     var row = document.createElement('div');
     row.className = 'cc-row' + (c.active ? '' : ' inactive');
 
-    var urgBadge = (c.active && !c.paid) ? '<span class="cc-urgency ' + u.cls + '">' + u.label + '</span>' : '';
+    var main = document.createElement('div'); main.className = 'cc-main';
+    var dot = document.createElement('div'); dot.className = 'cc-dot'; dot.style.background = c.color;
+    var info = document.createElement('div'); info.className = 'cc-info';
+    info.innerHTML = '<div class="cc-name">' + esc(c.name) + '</div><div class="cc-due">Statement due ' + dueDateStr(c.day) + '</div>';
 
-    row.innerHTML =
-      '<div class="cc-dot" style="background:' + c.color + '"></div>' +
-      '<div class="cc-info">' +
-        '<div class="cc-name">' + esc(c.name) + '</div>' +
-        '<div class="cc-due">Due ' + dueDateStr(c.day) + '</div>' +
-      '</div>' +
-      urgBadge +
-      '<div class="cc-actions">' +
-        (c.url ? '<a href="' + esc(c.url) + '" target="_blank" class="portal-btn">Portal ↗</a>' : '') +
-        '<button class="paid-btn ' + (c.paid ? 'paid-yes' : 'paid-no') + '" data-id="' + c.id + '" data-action="paid">' +
-          (c.paid ? '✓ Paid' : 'Unpaid') +
-        '</button>' +
-        '<button class="active-btn ' + (c.active ? 'is-active' : 'is-inactive') + '" data-id="' + c.id + '" data-action="active">' +
-          (c.active ? 'Active' : 'Inactive') +
-        '</button>' +
-        '<button class="del-x" data-id="' + c.id + '" data-action="delete" title="Delete card">✕</button>' +
-      '</div>';
+    var actions = document.createElement('div'); actions.className = 'cc-actions';
+    if (c.active && !c.paid) {
+      var badge = document.createElement('span'); badge.className = 'cc-urgency ' + u.cls; badge.textContent = u.label;
+      actions.appendChild(badge);
+    }
+    var paidBtn = document.createElement('button');
+    paidBtn.className = 'paid-btn ' + (c.paid ? 'paid-yes' : 'paid-no');
+    paidBtn.textContent = c.paid ? '✓ Paid' : 'Unpaid';
+    paidBtn.onclick = (function(id){ return function(){ var card = cards.find(function(x){return x.id===id;}); if(card){ card.paid = !card.paid; saveCards(); renderCards(); } }; })(c.id);
+    actions.appendChild(paidBtn);
+    if (c.url) {
+      var portal = document.createElement('a');
+      portal.className = 'portal-btn'; portal.href = c.url; portal.target = '_blank';
+      portal.innerHTML = 'Portal ' + ARROW_SVG;
+      actions.appendChild(portal);
+    }
+    var dw = document.createElement('div'); dw.className = 'dots-wrap';
+    var db = document.createElement('button'); db.className = 'dots-btn'; db.textContent = '\u00b7\u00b7\u00b7';
+    var dm = document.createElement('div'); dm.className = 'dots-menu';
+    var editItem = document.createElement('button'); editItem.className = 'dots-item'; editItem.textContent = 'Edit';
+    editItem.onclick = (function(id){ return function(e){ e.stopPropagation(); dm.classList.remove('open'); openEditCard(id); }; })(c.id);
+    var actItem = document.createElement('button'); actItem.className = 'dots-item'; actItem.textContent = c.active ? 'Make Inactive' : 'Make Active';
+    actItem.onclick = (function(id){ return function(e){ e.stopPropagation(); dm.classList.remove('open'); var card=cards.find(function(x){return x.id===id;}); if(card){ card.active = !card.active; saveCards(); renderCards(); } }; })(c.id);
+    var delItem = document.createElement('button'); delItem.className = 'dots-item red'; delItem.textContent = 'Delete';
+    delItem.onclick = (function(id){ return function(e){ e.stopPropagation(); dm.classList.remove('open'); var card=cards.find(function(x){return x.id===id;}); if(card && confirm('Delete "'+card.name+'"?\n\nTip: use Make Inactive to keep it for reference.')){ cards = cards.filter(function(x){return x.id!==id;}); saveCards(); renderCards(); } }; })(c.id);
+    dm.appendChild(editItem); dm.appendChild(actItem); dm.appendChild(delItem);
+    db.onclick = function(e){ e.stopPropagation(); document.querySelectorAll('.dots-menu.open').forEach(function(m){ if(m!==dm) m.classList.remove('open'); }); dm.classList.toggle('open'); };
+    dw.appendChild(db); dw.appendChild(dm);
+    actions.appendChild(dw);
+
+    main.appendChild(dot); main.appendChild(info); main.appendChild(actions);
+    row.appendChild(main);
+
+    /* optional mid-cycle payment sub-row */
+    if (c.day2) {
+      var mid = document.createElement('div'); mid.className = 'cc-mid';
+      var tag = document.createElement('span'); tag.className = 'cc-mid-tag'; tag.textContent = 'Mid-cycle';
+      var mdate = document.createElement('span'); mdate.className = 'cc-mid-date'; mdate.textContent = dueDateStr(c.day2);
+      var mBtn = document.createElement('button');
+      mBtn.className = 'paid-btn sm ' + (c.paid2 ? 'paid-yes' : 'paid-no');
+      mBtn.textContent = c.paid2 ? '✓ Paid' : 'Log payment';
+      mBtn.onclick = (function(id){ return function(){ var card = cards.find(function(x){return x.id===id;}); if(card){ card.paid2 = !card.paid2; saveCards(); renderCards(); } }; })(c.id);
+      mid.appendChild(tag); mid.appendChild(mdate); mid.appendChild(mBtn);
+      row.appendChild(mid);
+    }
 
     list.appendChild(row);
   });
+  renderProgress();
 }
 
-/* Card actions via event delegation */
-document.getElementById('cc-list').addEventListener('click', function(e) {
-  var btn = e.target.closest('[data-action]');
-  if (!btn) return;
-  var id = btn.dataset.id;
-  var action = btn.dataset.action;
-  var card = cards.find(function(c) { return c.id === id; });
-  if (!card) return;
-
-  if (action === 'paid') {
-    card.paid = !card.paid;
-    saveCards(); renderCards(); renderBanner();
-  } else if (action === 'active') {
-    card.active = !card.active;
-    saveCards(); renderCards(); renderBanner();
-  } else if (action === 'delete') {
-    if (confirm('Delete "' + card.name + '"?\n\nTip: use Inactive to keep it for reference.')) {
-      cards = cards.filter(function(c) { return c.id !== id; });
-      saveCards(); renderCards(); renderBanner();
-    }
-  }
-});
+function renderProgress() {
+  var el = document.getElementById('card-progress');
+  if (!el) return;
+  var active = cards.filter(function(c){ return c.active; });
+  var total = active.length;
+  if (!total) { el.innerHTML = ''; return; }
+  var paid = active.filter(function(c){ return c.paid; }).length;
+  var pct = Math.round(paid / total * 100);
+  var withMid = active.filter(function(c){ return c.day2; });
+  var midDone = withMid.filter(function(c){ return c.paid2; }).length;
+  var midLine = withMid.length
+    ? '<div class="cp-mid">Mid-cycle payments <b>' + midDone + ' / ' + withMid.length + '</b> this month</div>'
+    : '';
+  el.innerHTML =
+    '<div class="cp-row"><span class="cp-label">Statements paid this month</span><span class="cp-count">' + paid + ' / ' + total + '</span></div>' +
+    '<div class="cp-bar"><div class="cp-fill" style="width:' + pct + '%"></div></div>' +
+    midLine;
+}
 
 /* RESOURCE DATA */
 var RES_SK = 'finResources1';
@@ -462,7 +529,7 @@ function renderResList(elId, items, type) {
     openA.className = 'open-btn' + (item.primary ? ' primary' : '');
     openA.href = item.url || '#';
     openA.target = '_blank';
-    openA.textContent = 'Open ↗';
+    openA.innerHTML = 'Open '+ARROW_SVG;
     right.appendChild(openA);
 
     /* dots menu */
@@ -555,12 +622,88 @@ document.getElementById('res-cancel').onclick = closeResModal;
 document.getElementById('res-save').onclick = saveResModal;
 document.getElementById('res-delete').onclick = deleteResFromModal;
 document.getElementById('res-modal').addEventListener('click', function(e) { if (e.target === this) closeResModal(); });
-document.addEventListener('keydown', function(e) { if (e.key === 'Escape') closeResModal(); });
+document.addEventListener('keydown', function(e) { if (e.key === 'Escape') { closeResModal(); closeCardModal(); } });
 document.addEventListener('click', function(e) {
   if (!e.target.closest('.dots-wrap')) {
     document.querySelectorAll('.dots-menu.open').forEach(function(m) { m.classList.remove('open'); });
   }
 });
+
+/* CARD MODAL */
+var CARD_COLORS = ['#b099e0','#f2c4ce','#f7d9b0','#d4b8e0','#b8d4f0','#b8cfb0','#e0cec8','#c8c8d8','#a7cbb0','#f6c89e'];
+var editCardId = null, selectedColor = CARD_COLORS[0];
+
+function renderSwatches() {
+  var wrap = document.getElementById('card-swatches'); wrap.innerHTML = '';
+  CARD_COLORS.forEach(function(col) {
+    var sw = document.createElement('div');
+    sw.className = 'swatch' + (col === selectedColor ? ' sel' : '');
+    sw.style.background = col;
+    sw.onclick = function() { selectedColor = col; renderSwatches(); };
+    wrap.appendChild(sw);
+  });
+}
+function openAddCard() {
+  editCardId = null; selectedColor = CARD_COLORS[0];
+  document.getElementById('card-modal-title').textContent = 'Add Card';
+  document.getElementById('card-name').value = '';
+  document.getElementById('card-day').value = '';
+  document.getElementById('card-day2').value = '';
+  document.getElementById('card-url').value = '';
+  document.getElementById('card-active').checked = true;
+  document.getElementById('card-delete').style.display = 'none';
+  renderSwatches();
+  document.getElementById('card-modal').classList.add('open');
+  setTimeout(function(){ document.getElementById('card-name').focus(); }, 100);
+}
+function openEditCard(id) {
+  var c = cards.find(function(x){ return x.id === id; });
+  if (!c) return;
+  editCardId = id; selectedColor = c.color || CARD_COLORS[0];
+  document.getElementById('card-modal-title').textContent = 'Edit Card';
+  document.getElementById('card-name').value = c.name;
+  document.getElementById('card-day').value = c.day;
+  document.getElementById('card-day2').value = c.day2 || '';
+  document.getElementById('card-url').value = c.url || '';
+  document.getElementById('card-active').checked = c.active !== false;
+  document.getElementById('card-delete').style.display = 'inline-flex';
+  renderSwatches();
+  document.getElementById('card-modal').classList.add('open');
+}
+function closeCardModal() {
+  document.getElementById('card-modal').classList.remove('open');
+  editCardId = null;
+}
+function saveCardModal() {
+  var name = document.getElementById('card-name').value.trim();
+  if (!name) { document.getElementById('card-name').focus(); return; }
+  var day = parseInt(document.getElementById('card-day').value, 10);
+  if (!day || day < 1) day = 1;
+  if (day > 31) day = 31;
+  var d2raw = document.getElementById('card-day2').value.trim();
+  var day2 = d2raw ? parseInt(d2raw, 10) : null;
+  if (day2 !== null) { if (!day2 || day2 < 1) day2 = 1; if (day2 > 31) day2 = 31; }
+  var url = document.getElementById('card-url').value.trim();
+  var active = document.getElementById('card-active').checked;
+  if (editCardId) {
+    var c = cards.find(function(x){ return x.id === editCardId; });
+    if (c) { c.name = name; c.day = day; c.day2 = day2; c.url = url; c.color = selectedColor; c.active = active; }
+  } else {
+    cards.push({ id:'c' + Date.now() + Math.random().toString(36).slice(2,5), name:name, day:day, day2:day2, url:url, color:selectedColor, active:active, paid:false, paid2:false });
+  }
+  saveCards(); closeCardModal(); renderCards();
+}
+function deleteCardFromModal() {
+  if (!editCardId) return;
+  var c = cards.find(function(x){ return x.id === editCardId; });
+  if (!c || !confirm('Delete "' + c.name + '"?')) return;
+  cards = cards.filter(function(x){ return x.id !== editCardId; });
+  saveCards(); closeCardModal(); renderCards();
+}
+document.getElementById('card-cancel').onclick = closeCardModal;
+document.getElementById('card-save').onclick = saveCardModal;
+document.getElementById('card-delete').onclick = deleteCardFromModal;
+document.getElementById('card-modal').addEventListener('click', function(e){ if (e.target === this) closeCardModal(); });
 
 /* UTILS */
 function esc(s) {
@@ -575,7 +718,6 @@ document.getElementById('today-date').textContent = DS[now.getDay()] + ', ' + MF
 
 loadCards();
 loadRes();
-renderBanner();
 renderCards();
 renderAllRes();
 </script>
