@@ -224,7 +224,7 @@
   }
   .month-header-row {
     display: grid;
-    grid-template-columns: repeat(7, 1fr);
+    grid-template-columns: repeat(7, minmax(0, 1fr));
     background: #faf6ec;
     border-bottom: 1.5px solid var(--line);
   }
@@ -239,10 +239,11 @@
   }
   .month-body {
     display: grid;
-    grid-template-columns: repeat(7, 1fr);
+    grid-template-columns: repeat(7, minmax(0, 1fr));
   }
   .month-cell {
     min-height: 110px;
+    min-width: 0;
     border-right: 1px solid var(--line);
     border-bottom: 1px solid var(--line);
     padding: 8px;
@@ -333,11 +334,12 @@
   /* ============ WEEKLY VIEW ============ */
   .week-grid {
     display: grid;
-    grid-template-columns: repeat(7, 1fr);
+    grid-template-columns: repeat(7, minmax(0, 1fr));
     gap: 10px;
   }
   .week-col {
     background: var(--surface);
+    min-width: 0;
     border: 1px solid var(--line);
     border-radius: 14px;
     overflow: hidden;
