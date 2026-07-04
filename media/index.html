@@ -113,9 +113,11 @@ html,body { background:var(--bg); font-family:'Plus Jakarta Sans',system-ui,sans
 .album-song-name { flex:1; font-size:12px; font-family:inherit; color:var(--ink); border:none; background:transparent; outline:none; min-width:0; }
 .album-song-name::placeholder { color:#c9beb4; font-style:italic; }
 .album-song-name:focus { border-bottom:1.5px solid var(--accent-deep); }
-.album-song-stars { display:flex; gap:1px; flex-shrink:0; }
-.album-song-star { font-size:12px; cursor:pointer; color:#e0d8c8; transition:color .1s; line-height:1; }
-.album-song-star.filled { color:var(--accent-deep); }
+.album-song-fav { background:none; border:none; cursor:pointer; padding:2px 3px; color:#d8cfc0; flex-shrink:0; display:flex; align-items:center; line-height:1; transition:color .12s; }
+.album-song-fav svg { width:15px; height:15px; fill:none; stroke:currentColor; }
+.album-song-fav:hover { color:var(--accent-deep); }
+.album-song-fav.on { color:var(--accent-deep); }
+.album-song-fav.on svg { fill:currentColor; }
 .album-song-del { background:none; border:none; font-size:10px; color:#ccc; cursor:pointer; padding:2px 3px; flex-shrink:0; transition:color .1s; }
 .album-song-del:hover { color:#c44; }
 .album-add-song { margin-top:8px; width:100%; padding:7px; border:1.5px dashed var(--line); border-radius:10px; font-size:11.5px; font-weight:600; color:var(--muted); background:transparent; cursor:pointer; font-family:inherit; transition:all .15s; }
@@ -385,6 +387,7 @@ var SECTIONS={
 };
 
 function allCats(sec){var o=[];SECTIONS[sec].categoryGroups.forEach(function(g){g.cats.forEach(function(c){o.push(c);});});return o;}
+var SCREEN_SERIES=['TV Show','Mini-Series','Anime'];
 
 var DEFAULT_DATA={
   books:[
@@ -473,7 +476,7 @@ function load(){
   var VSTAT={queue:'want',watching:'progress',following:'progress',archived:'done'};
   (data.videos||[]).forEach(function(v){if(VSTAT[v.status]){v.status=VSTAT[v.status];migrated=true;}if(v.date===undefined){v.date='';}});
   // Migrate: ensure music items have songs array
-  (data.music||[]).forEach(function(m){if(!m.songs)m.songs=[];});
+  (data.music||[]).forEach(function(m){if(!m.songs)m.songs=[];m.songs.forEach(function(sg){if(sg.fav===undefined){sg.fav=((sg.rating||0)>=4);migrated=true;}});});
   if(migrated)save();
 }
 function todayStr(){var n=new Date();return n.getFullYear()+'-'+String(n.getMonth()+1).padStart(2,'0')+'-'+String(n.getDate()).padStart(2,'0');}
@@ -615,18 +618,8 @@ function makeGridCard(item,statusMap,sec){
   }
   // Date (books/screen/music/articles when done)
   if(sec.showDate&&item.status==='done'&&item.date){var dd=document.createElement('div');dd.className='card-date';var d=new Date(item.date+'T00:00:00');dd.textContent='✓ '+MS[d.getMonth()]+' '+d.getDate()+', '+d.getFullYear();body.appendChild(dd);}
-  // Music progress bar
-  if(currentSection==='music'&&(item.tracksTotal>0||item.songs&&item.songs.length>0)){
-    var total=item.tracksTotal||(item.songs?item.songs.length:0);
-    if(total>0){
-      var pct=Math.min(100,Math.round((item.songs?item.songs.length:0)/total*100));
-      var pw=document.createElement('div');pw.className='card-progress';
-      pw.innerHTML='<div class="card-progress-bar"><div class="card-progress-fill" style="width:'+pct+'%"></div></div><div class="card-progress-label">'+(item.songs?item.songs.length:0)+' / '+total+' tracks tracked</div>';
-      body.appendChild(pw);
-    }
-  }
   // Screen progress — inline S/E steppers while watching (done-date already shown by generic block above)
-  if(currentSection==='screen'&&item.status!=='done'){
+  if(currentSection==='screen'&&item.status!=='done'&&SCREEN_SERIES.indexOf(item.category)>=0){
     var epWrap=document.createElement('div');epWrap.className='card-progress-controls';
     var makeStepper=function(field,prefix,withTotal){
       var pill=document.createElement('div');pill.className='stepper';
@@ -680,6 +673,7 @@ function makeAlbumSongs(item){
   section.onclick=function(e){e.stopPropagation();};
 
   var songCount=(item.songs&&item.songs.length)||0;
+  var favCount=(item.songs||[]).filter(function(sg){return sg.fav;}).length;
   // Remember open/closed state per album
   var stateKey='albumOpen_'+item.id;
   var isOpen=sessionStorage.getItem(stateKey)==='1';
@@ -688,7 +682,8 @@ function makeAlbumSongs(item){
   var toggle=document.createElement('div');toggle.className='album-songs-toggle';
   var headerLeft=document.createElement('div');headerLeft.className='album-songs-header';
   headerLeft.textContent='Track List';
-  if(songCount>0){var countBadge=document.createElement('span');countBadge.className='album-songs-count';countBadge.textContent=songCount+' song'+(songCount!==1?'s':'');headerLeft.appendChild(countBadge);}
+  var badgeText=favCount>0?(favCount+' favorite'+(favCount!==1?'s':'')):(songCount>0?(songCount+' song'+(songCount!==1?'s':'')):'');
+  if(badgeText){var countBadge=document.createElement('span');countBadge.className='album-songs-count';countBadge.textContent=badgeText;headerLeft.appendChild(countBadge);}
   var chevron=document.createElement('span');chevron.className='album-songs-chevron'+(isOpen?' open':'');chevron.innerHTML=IC_CHEV;
   toggle.appendChild(headerLeft);toggle.appendChild(chevron);
   section.appendChild(toggle);
@@ -706,19 +701,16 @@ function makeAlbumSongs(item){
         var nameInput=document.createElement('input');nameInput.className='album-song-name';nameInput.type='text';nameInput.value=song.name||'';nameInput.placeholder='Song title...';
         nameInput.oninput=(function(itemId,idx){return function(){var it=(data.music||[]).find(function(i){return i.id===itemId;});if(it&&it.songs[idx]!==undefined)it.songs[idx].name=this.value;};})(item.id,si);
         nameInput.onblur=function(){save();};
-        var stars=document.createElement('div');stars.className='album-song-stars';
-        for(var s=1;s<=5;s++){
-          var star=document.createElement('span');star.className='album-song-star'+(s<=(song.rating||0)?' filled':'');star.textContent='★';
-          star.onclick=(function(itemId,idx,sv){return function(){var it=(data.music||[]).find(function(i){return i.id===itemId;});if(!it||!it.songs[idx])return;it.songs[idx].rating=it.songs[idx].rating===sv?0:sv;save();renderGrid();};})(item.id,si,s);
-          stars.appendChild(star);
-        }
+        var fav=document.createElement('button');fav.className='album-song-fav'+(song.fav?' on':'');fav.title=song.fav?'Remove favorite':'Mark as favorite';
+        fav.innerHTML='<svg viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.29 1.49 4.04 3 5.5l7 7Z"/></svg>';
+        fav.onclick=(function(itemId,idx){return function(){var it=(data.music||[]).find(function(i){return i.id===itemId;});if(!it||!it.songs[idx])return;it.songs[idx].fav=!it.songs[idx].fav;save();renderGrid();};})(item.id,si);
         var del=document.createElement('button');del.className='album-song-del';del.textContent='✕';
         del.onclick=(function(itemId,idx){return function(){var it=(data.music||[]).find(function(i){return i.id===itemId;});if(!it)return;it.songs.splice(idx,1);save();renderGrid();};})(item.id,si);
-        row.appendChild(num);row.appendChild(nameInput);row.appendChild(stars);row.appendChild(del);body.appendChild(row);
+        row.appendChild(num);row.appendChild(nameInput);row.appendChild(fav);row.appendChild(del);body.appendChild(row);
       });
     }
     var addB=document.createElement('button');addB.className='album-add-song';addB.textContent='+ Add Song';
-    addB.onclick=function(){var it=(data.music||[]).find(function(i){return i.id===item.id;});if(!it)return;if(!it.songs)it.songs=[];it.songs.push({name:'',rating:0});save();renderGrid();sessionStorage.setItem(stateKey,'1');};
+    addB.onclick=function(){var it=(data.music||[]).find(function(i){return i.id===item.id;});if(!it)return;if(!it.songs)it.songs=[];it.songs.push({name:'',fav:false});save();renderGrid();sessionStorage.setItem(stateKey,'1');};
     body.appendChild(addB);
   }
 
