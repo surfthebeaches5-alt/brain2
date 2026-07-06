@@ -30,7 +30,6 @@ html,body{background:var(--bg);font-family:'Plus Jakarta Sans',system-ui,sans-se
 .wrap{max-width:1060px;margin:0 auto;padding:30px 32px 80px;}
 @media(max-width:560px){.wrap{padding:22px 18px 60px}}
 .page-head{margin-bottom:20px;}
-.page-eyebrow{font-size:9.5px;letter-spacing:3px;text-transform:uppercase;color:var(--muted);font-weight:700;margin-bottom:8px;}
 .page-head h1{font-family:'Fraunces',serif;font-size:2.2rem;font-weight:500;letter-spacing:.2px;line-height:1.1;}
 .page-head p{color:var(--muted);font-size:.9rem;margin-top:6px;max-width:640px;line-height:1.55;}
 
@@ -67,12 +66,7 @@ html,body{background:var(--bg);font-family:'Plus Jakarta Sans',system-ui,sans-se
 .mod-open{font-size:.76rem;font-weight:700;color:var(--muted);transition:color .15s;}
 .mod-tile:hover .mod-open{color:var(--accent-deep);}
 
-/* ── HOW IT WORKSS ── */
-.note-card{margin-top:22px;background:var(--surface);border:1px dashed var(--sidebar-line);border-radius:16px;padding:18px 22px;display:flex;gap:14px;align-items:flex-start;}
-.note-icon{width:34px;height:34px;border-radius:50%;background:var(--accent-soft);color:var(--accent-deep);display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:15px;}
-.note-body h3{font-family:'Fraunces',serif;font-size:1rem;font-weight:600;margin-bottom:4px;}
-.note-body p{font-size:.82rem;color:var(--muted);line-height:1.55;}
-.note-body b{color:var(--ink);font-weight:600;}
+/* ── HOW IT WORKS ── */
 </style>
 </head>
 <body>
@@ -85,14 +79,12 @@ html,body{background:var(--bg);font-family:'Plus Jakarta Sans',system-ui,sans-se
     </a>
     <span class="topbar-title">Stoic Girl Workbook</span>
   </div>
-  <span class="topbar-date">8 Modules · 31 Exercises</span>
+  <span class="topbar-date" id="today-date"></span>
 </div>
 
 <div class="wrap">
   <div class="page-head">
-    <div class="page-eyebrow">The Stoic Girl Starter Pack</div>
     <h1>Your interactive workbook</h1>
-    <p>Eight modules that take you from understanding your own mind to living it out in modern life. Open a module to read and work through its exercises — everything you type saves automatically.</p>
   </div>
 
   <div class="statsbar">
@@ -101,7 +93,6 @@ html,body{background:var(--bg);font-family:'Plus Jakarta Sans',system-ui,sans-se
     <div class="stat"><div class="stat-num">31</div><div class="stat-label">Exercises</div></div>
     <div class="stat-divider"></div>
     <div class="stat"><div class="stat-num">125</div><div class="stat-label">Pages</div></div>
-    <div class="stats-note"><b>Pick up where you left off</b> — each module remembers your answers on this device.</div>
   </div>
 
   <div class="mod-grid">
@@ -180,14 +171,13 @@ html,body{background:var(--bg);font-family:'Plus Jakarta Sans',system-ui,sans-se
 
   </div>
 
-  <div class="note-card">
-    <div class="note-icon">✦</div>
-    <div class="note-body">
-      <h3>How saving works</h3>
-      <p>Each module keeps your answers <b>automatically in this browser</b> — close the tab and they'll be waiting next time. Inside any module, use <b>Export</b> to download your answers as a backup file, or <b>Print</b> to save the whole module as a PDF.</p>
-    </div>
-  </div>
 </div>
 
+<script>
+  var DAYS=['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+  var MONTHS=['January','February','March','April','May','June','July','August','September','October','November','December'];
+  var n=new Date();
+  document.getElementById('today-date').textContent=DAYS[n.getDay()]+', '+MONTHS[n.getMonth()]+' '+n.getDate()+', '+n.getFullYear();
+</script>
 </body>
 </html>
