@@ -210,7 +210,9 @@ body.collapsed .sb-link{justify-content:center;padding:9px 0;}
 .qa-crow .qa-in{margin-bottom:0;flex:1;min-width:0;}
 .qa-crow #qa-time{flex:0 0 96px;}
 .qa-crow .qa-save{flex-shrink:0;}
-.qa-foot{display:flex;justify-content:flex-end;margin-top:9px;}
+.qa-foot{display:flex;justify-content:space-between;align-items:center;margin-top:9px;}
+.qa-toggle{border:none;background:transparent;color:var(--accent-deep);font-size:11.5px;font-weight:700;cursor:pointer;font-family:inherit;padding:2px 5px;border-radius:6px;}
+.qa-toggle:hover{background:var(--accent-soft);}
 .qa .sched{margin-top:2px;}
 .qa-top{margin-bottom:4px;}
 
@@ -756,8 +758,9 @@ function renderRightPanel(){
 function goMiniToday(){ miniOffset=0; openDay(dateKey(new Date())); }
 
 /* ── day view: tap any day to SEE that day's Tasks & Schedule. "+ Add" reveals the form on demand ── */
-var dayIso=null, lastCatSel='personal';
-function openDay(iso){ dayIso=iso; renderMini(); renderDay(); }
+var dayIso=null, lastCatSel='personal', composeOpen=false;
+function openDay(iso){ dayIso=iso; composeOpen=false; renderMini(); renderDay(); }
+function toggleCompose(){ composeOpen=!composeOpen; renderDay(); if(composeOpen){var t=document.getElementById('qa-title'); if(t)t.focus();} }
 function closeDay(){ dayIso=null; document.getElementById('quick-add').innerHTML=''; }
 function addCalEvent(evt){
   var d=lsGet('lifeCalendar1');
@@ -836,16 +839,17 @@ function renderDay(){
   if(schedHtml) secHtml+='<div class="qa-sec">Schedule</div><div class="sched">'+schedHtml+'</div>';
   if(!secHtml) secHtml='<div class="qa-empty">Nothing for this day yet</div>';
 
-  host.innerHTML='<div class="qa">'+secHtml+
-    '<div class="qa-compose">'+
+  var composeHtml=composeOpen?('<div class="qa-compose">'+
       '<input id="qa-title" class="qa-in" placeholder="New item \u2014 add a time to schedule it" autocomplete="off" onkeydown="if(event.key===\'Enter\')saveDayEvent()">'+
       '<div class="qa-crow">'+
         '<input id="qa-time" type="time" class="qa-in">'+
         '<select id="qa-cat" class="qa-in">'+opts+'</select>'+
         '<button class="qa-save" onclick="saveDayEvent()">Add</button>'+
       '</div>'+
-    '</div>'+
-    '<div class="qa-foot"><a class="qa-more" href="calendar/">Open Calendar \u2192</a></div>'+
+    '</div>'):'';
+
+  host.innerHTML='<div class="qa">'+secHtml+composeHtml+
+    '<div class="qa-foot"><button class="qa-toggle" onclick="toggleCompose()">'+(composeOpen?'Done':'+ Add')+'</button><a class="qa-more" href="calendar/">Open Calendar \u2192</a></div>'+
   '</div>';
 }
 function toggleCalDone(id){
