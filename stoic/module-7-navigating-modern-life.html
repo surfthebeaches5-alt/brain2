@@ -1,0 +1,1248 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Stoic Girl Starter Pack — Module 7: Navigating Modern Life</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Archivo:wght@500;600;700;800;900&family=Playfair+Display:ital,wght@0,500;0,600;1,400;1,500;1,600&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --coral:#D64C63;
+    --coral-deep:#C23A54;
+    --coral-mid:#DD5B70;
+    --coral-soft:#E796A6;
+    --coral-faint:#F0C4CE;
+    --cream:#F6F0E7;
+    --cream-card:#FBF7F0;
+    --cream-deep:#EFE7DA;
+    --ink-on-red:#F5ECDD;
+    --ink-on-red-soft:#EAD9C6;
+    --line:rgba(214,76,99,.30);
+    --line-soft:rgba(214,76,99,.18);
+    --dot:rgba(214,76,99,.35);
+    --font-display:"Archivo Black",sans-serif;
+    --font-heavy:"Archivo",sans-serif;
+    --font-serif:"Playfair Display",serif;
+    --font-body:"Inter",sans-serif;
+    --shadow:0 18px 50px -28px rgba(150,40,60,.55);
+    --pagew:940px;
+  }
+
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{
+    margin:0;
+    background:
+      radial-gradient(1200px 600px at 15% -5%, #FBF6EE 0%, transparent 60%),
+      radial-gradient(1000px 700px at 100% 100%, #F3EADD 0%, transparent 55%),
+      var(--cream);
+    color:var(--coral);
+    font-family:var(--font-body);
+    -webkit-font-smoothing:antialiased;
+    line-height:1.5;
+    padding-bottom:80px;
+  }
+
+  /* ---------- Toolbar ---------- */
+  .toolbar{
+    position:sticky;top:0;z-index:50;
+    background:rgba(246,240,231,.86);
+    backdrop-filter:blur(14px);
+    border-bottom:1px solid var(--line);
+  }
+  .toolbar-inner{
+    max-width:var(--pagew);margin:0 auto;
+    display:flex;align-items:center;gap:14px;
+    padding:11px 26px;flex-wrap:wrap;
+  }
+  .brand{display:flex;align-items:center;gap:9px;margin-right:auto}
+  .brand .wordmark{
+    font-family:var(--font-heavy);font-weight:900;
+    font-size:16px;letter-spacing:.005em;color:var(--coral);
+    line-height:1;
+  }
+  @media(max-width:520px){.brand .wordmark{font-size:14px}}
+
+  .jump{
+    font-family:var(--font-body);font-size:12.5px;font-weight:500;
+    color:var(--coral);background:var(--cream-card);
+    border:1px solid var(--line);border-radius:999px;
+    padding:7px 12px;cursor:pointer;appearance:none;
+  }
+  .tbtn{
+    font-family:var(--font-body);font-size:12.5px;font-weight:600;
+    color:var(--coral);background:var(--cream-card);
+    border:1px solid var(--line);border-radius:999px;
+    padding:7px 13px;cursor:pointer;transition:.15s;
+    display:inline-flex;align-items:center;gap:6px;
+  }
+  .tbtn:hover{background:var(--coral);color:var(--ink-on-red);border-color:var(--coral)}
+  .tbtn.primary{background:var(--coral);color:var(--ink-on-red);border-color:var(--coral)}
+  .tbtn.primary:hover{background:var(--coral-deep)}
+  .saved{font-size:11.5px;color:var(--coral-soft);min-width:60px;opacity:0;transition:opacity .3s}
+  .saved.show{opacity:1}
+
+  /* ---------- Page shell ---------- */
+  .wrap{max-width:var(--pagew);margin:0 auto;padding:34px 26px 0}
+  .page{
+    position:relative;
+    background:var(--cream-card);
+    border:1px solid var(--line-soft);
+    border-radius:8px;
+    box-shadow:var(--shadow);
+    padding:46px 54px 40px;
+    margin:0 0 34px;
+    scroll-margin-top:78px;
+    overflow:hidden;
+  }
+  .page.red{
+    background:linear-gradient(160deg,#DB5067 0%, #D2455E 60%, #C63D57 100%);
+    color:var(--ink-on-red);border-color:transparent;
+  }
+
+  /* running head */
+  .runhead{
+    display:flex;align-items:center;justify-content:space-between;
+    font-size:11px;letter-spacing:.05em;color:var(--coral-soft);
+    margin-bottom:30px;
+  }
+  .red .runhead{color:var(--ink-on-red-soft)}
+  .runhead .tag{font-family:var(--font-serif);font-style:italic;font-size:15px;letter-spacing:.02em;opacity:.9}
+  .dots{display:flex;gap:5px;align-items:center}
+  .dots i{width:8px;height:8px;border-radius:50%;border:1.4px solid var(--dot);display:block}
+  .red .dots i{border-color:rgba(245,236,221,.6)}
+  .dots i.on{background:var(--coral);border-color:var(--coral)}
+  .red .dots i.on{background:var(--ink-on-red);border-color:var(--ink-on-red)}
+  .seal{width:18px;height:18px;color:var(--coral-soft)}
+  .red .seal{color:var(--ink-on-red-soft)}
+
+  /* footers */
+  .runfoot{
+    display:flex;align-items:flex-end;justify-content:space-between;
+    margin-top:34px;font-size:10.5px;color:var(--coral-soft);
+  }
+  .red .runfoot{color:var(--ink-on-red-soft)}
+  .runfoot .motto{font-style:italic;font-family:var(--font-serif);font-size:12px;line-height:1.3;max-width:180px}
+  .runfoot .cred b{font-family:var(--font-heavy);font-weight:800;color:var(--coral)}
+  .red .runfoot .cred b{color:var(--ink-on-red)}
+  .runfoot .pg{font-family:var(--font-heavy);font-weight:800;font-size:16px;color:var(--coral-soft)}
+  .red .runfoot .pg{color:var(--ink-on-red-soft)}
+
+  /* ---------- Typography ---------- */
+  .eyebrow{font-family:var(--font-serif);font-style:italic;font-weight:500;font-size:26px;color:var(--coral-mid);margin:0 0 2px}
+  .display{
+    font-family:var(--font-display);
+    font-size:clamp(34px,6vw,62px);line-height:.94;
+    letter-spacing:-.01em;color:var(--coral);margin:0;
+    text-transform:uppercase;
+  }
+  .display.sm{font-size:clamp(30px,5vw,46px)}
+  .display.sm.tight{font-size:clamp(26px,4vw,38px)}
+  .red .display{color:var(--ink-on-red)}
+  .kicker{
+    font-family:var(--font-body);font-weight:600;font-size:19px;
+    line-height:1.15;color:var(--coral-deep);margin:0 0 10px;letter-spacing:-.01em;
+  }
+  .colsub{font-family:var(--font-body);font-weight:700;font-size:13px;color:var(--coral-deep);margin:14px 0 5px;line-height:1.2}
+  p{margin:0 0 11px}
+  .body{font-size:13.5px;line-height:1.62;color:var(--coral);text-align:justify;hyphens:auto}
+  .body em{font-style:italic;color:var(--coral-deep)}
+  .body strong{font-weight:700;color:var(--coral-deep)}
+  .lead{font-size:14px}
+  .cap{font-size:11px;color:var(--coral-soft);font-style:italic;font-family:var(--font-serif)}
+
+  .cols{column-gap:34px}
+  .cols.c2{column-count:2}
+  .cols.c3{column-count:3}
+  @media(max-width:820px){.cols.c2,.cols.c3{column-count:1}}
+  .colblock{break-inside:avoid;margin-bottom:20px}
+
+  hr.rule{border:none;border-top:1px solid var(--line);margin:24px 0}
+
+  /* callout */
+  .callout{
+    border:1px solid var(--line);border-radius:7px;
+    padding:16px 16px 15px;background:rgba(214,76,99,.045);
+    font-size:11.5px;line-height:1.5;
+  }
+  .callout .ct{display:flex;align-items:center;gap:8px;font-weight:700;color:var(--coral-deep);margin-bottom:7px}
+  .callout .ct svg{width:15px;height:15px;flex:none}
+  .callout p:last-child{margin-bottom:0}
+
+  /* quote */
+  blockquote.frankl{
+    border-left:3px solid var(--coral);margin:8px 0 12px;padding:4px 0 4px 15px;
+    font-family:var(--font-serif);font-style:italic;font-size:14px;line-height:1.5;color:var(--coral-deep);
+  }
+
+  ul.tick{list-style:none;margin:8px 0;padding:0}
+  ul.tick li{position:relative;padding:0 0 8px 16px;font-size:12.5px;line-height:1.45;font-style:italic}
+  ul.tick li::before{content:"";position:absolute;left:0;top:8px;width:5px;height:5px;border-radius:50%;background:var(--coral-soft)}
+
+  ul.clist{list-style:none;margin:8px 0;padding:0}
+  ul.clist li{position:relative;padding:0 0 8px 16px;font-size:12.5px;line-height:1.5}
+  ul.clist li::before{content:"";position:absolute;left:0;top:8px;width:5px;height:5px;border-radius:50%;background:var(--coral-soft)}
+  ul.clist strong{color:var(--coral-deep);font-weight:700}
+
+  /* pillars */
+  ol.pillars{margin:6px 0 0;padding:0;list-style:none;counter-reset:p}
+  ol.pillars li{counter-increment:p;position:relative;padding:0 0 14px 30px;break-inside:avoid}
+  ol.pillars li::before{
+    content:counter(p)".";position:absolute;left:0;top:0;
+    font-family:var(--font-heavy);font-weight:800;color:var(--coral);font-size:14px;
+  }
+  ol.pillars b{color:var(--coral-deep)}
+  ol.pillars span{display:block;font-size:12.5px;line-height:1.5;margin-top:2px}
+
+  .quote-inline{font-family:var(--font-serif);font-style:italic;font-size:14px;line-height:1.5;color:var(--coral-deep);margin:8px 0}
+
+  /* ---------- Exercise fields ---------- */
+  .purpose-bar{
+    border:1px solid var(--line);border-radius:6px;padding:12px 16px;
+    display:flex;gap:26px;flex-wrap:wrap;font-size:11px;line-height:1.45;margin:0 0 4px;
+    max-width:430px;
+  }
+  .purpose-bar b{color:var(--coral-deep);font-weight:700}
+  .exhead{display:flex;justify-content:space-between;align-items:flex-start;gap:24px;flex-wrap:wrap}
+
+  .field-label{font-family:var(--font-body);font-weight:700;font-size:13px;color:var(--coral-deep);margin:0 0 3px}
+  .field-label .qh{font-weight:500;font-style:italic;color:var(--coral-mid);font-family:var(--font-serif);font-size:14px}
+  .field-sub{font-size:11.5px;color:var(--coral-mid);margin:0 0 7px}
+
+  .lines{
+    width:100%;border:none;outline:none;resize:vertical;
+    background:transparent;color:var(--coral-deep);
+    font-family:var(--font-body);font-size:13px;line-height:28px;
+    background-image:repeating-linear-gradient(transparent,transparent 27px,var(--line) 27px,var(--line) 28px);
+    padding:0;min-height:56px;
+  }
+  .lines::placeholder{color:var(--coral-faint);font-style:italic}
+
+  .boxfield{
+    width:100%;border:1px solid var(--line);border-radius:6px;
+    background:var(--cream);padding:11px 13px;outline:none;resize:vertical;
+    font-family:var(--font-body);font-size:12.5px;line-height:1.5;color:var(--coral-deep);
+    min-height:96px;
+  }
+  .boxfield::placeholder{color:var(--coral-faint);font-style:italic}
+  .boxfield:focus,.lines:focus{box-shadow:0 0 0 2px rgba(214,76,99,.18)}
+
+  .fill{border:none;border-bottom:1px dotted var(--line);background:transparent;outline:none;color:var(--coral-deep);font-family:var(--font-body);font-size:12.5px;min-width:120px}
+  .fill::placeholder{color:var(--coral-faint)}
+
+  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:22px 34px}
+  @media(max-width:720px){.grid2{grid-template-columns:1fr}}
+
+  .prompt-block{margin-bottom:6px}
+  .prompt-group-title{font-family:var(--font-body);font-weight:700;color:var(--coral-deep);font-size:13.5px;margin:20px 0 10px;letter-spacing:.01em}
+
+  .hint-box{
+    border:1px solid var(--line);border-radius:7px;padding:14px 15px;background:rgba(214,76,99,.045);
+    font-size:11.5px;line-height:1.45;max-width:280px;
+  }
+  .hint-box .ct{display:flex;align-items:center;gap:8px;font-weight:700;color:var(--coral-deep);margin-bottom:8px}
+  .hint-box .ct svg{width:15px;height:15px}
+  .hint-box ul{margin:0;padding-left:16px}
+  .hint-box li{margin-bottom:5px}
+
+  .center{text-align:center}
+  .ready{font-family:var(--font-serif);font-style:italic;font-size:15px;color:var(--coral-mid);margin-top:26px;text-align:right}
+
+  .spacer{height:8px}
+  .divider-hero{min-height:520px;display:flex;flex-direction:column;justify-content:center}
+  .divider-hero .eyebrow{color:var(--ink-on-red);opacity:.9}
+  .divider-hero .subtitle{font-family:var(--font-body);font-weight:600;font-size:22px;color:var(--ink-on-red);margin-top:10px}
+
+  /* toast */
+  #toast{
+    position:fixed;left:50%;bottom:26px;transform:translateX(-50%) translateY(20px);
+    background:var(--coral-deep);color:var(--ink-on-red);padding:11px 20px;border-radius:999px;
+    font-size:13px;font-weight:600;box-shadow:var(--shadow);opacity:0;pointer-events:none;
+    transition:.28s;z-index:80;
+  }
+  #toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+
+  /* ---- shared components (cards, pills, scales, emblems) ---- */
+  .virtue-emblem{width:62px;flex:none}
+  .virtue-emblem svg{width:100%;height:auto;display:block}
+
+  .vcard{border:1px solid var(--line);border-radius:8px;padding:18px 20px;break-inside:avoid}
+  .vcard .vhead{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;margin-bottom:8px}
+  .vcard .vhead h4{font-family:var(--font-heavy);font-weight:800;font-size:16px;letter-spacing:.03em;color:var(--coral);margin:0;text-transform:uppercase}
+  .vcard .vemb{width:42px;flex:none}
+  .vcard .vemb svg{width:100%;height:auto;display:block}
+  .vcard .vq{font-size:12px;color:var(--coral-mid);margin:12px 0 2px;font-weight:500}
+
+  /* single-select pill options (reuse [data-scale] single-select JS) */
+  .opts{display:inline-flex;gap:6px;flex-wrap:wrap;margin:4px 0;vertical-align:middle}
+  .opt{border:1.4px solid var(--line);border-radius:999px;padding:4px 13px;font-size:12px;font-weight:600;color:var(--coral);cursor:pointer;transition:.12s;user-select:none}
+  .opt:hover{background:rgba(214,76,99,.08)}
+  .opt.on{background:var(--coral);color:var(--ink-on-red);border-color:var(--coral)}
+  .opt.sm{padding:2px 9px;font-size:11px}
+
+  /* compact numbered scale */
+  .numscale{display:inline-flex;gap:5px;align-items:flex-end}
+  .ns-item{display:flex;flex-direction:column;align-items:center;gap:2px}
+  .ns-item em{font-size:9px;font-style:normal;color:var(--coral-soft)}
+  .scale-dot.sm{width:15px;height:15px;border-width:1.4px}
+
+  /* checkboxes */
+  .chk-group{margin-bottom:6px}
+  .chk-group h5{font-family:var(--font-body);font-weight:700;font-size:13px;color:var(--coral-deep);margin:0 0 8px}
+  .chk{display:flex;align-items:flex-start;gap:8px;font-size:12px;line-height:1.4;color:var(--coral);cursor:pointer;margin-bottom:6px;user-select:none}
+  .chk .box{flex:none;width:14px;height:14px;border:1.5px solid var(--coral);border-radius:3px;margin-top:1px;position:relative;transition:.12s}
+  .chk.on .box{background:var(--coral)}
+  .chk.on .box::after{content:"";position:absolute;left:3.5px;top:.5px;width:4px;height:8px;border:solid var(--cream-card);border-width:0 2px 2px 0;transform:rotate(45deg)}
+  .chk:hover .box{box-shadow:0 0 0 3px rgba(214,76,99,.12)}
+  .chk .other-in{border:none;border-bottom:1px dotted var(--line);background:transparent;outline:none;color:var(--coral-deep);font-family:var(--font-body);font-size:12px;flex:1;min-width:80px}
+
+  /* 1-10 scale */
+  .scale{display:flex;align-items:center;gap:7px;margin:8px 0;flex-wrap:wrap}
+  .scale-dot{width:20px;height:20px;border-radius:50%;border:1.6px solid var(--coral);cursor:pointer;transition:.12s;position:relative}
+  .scale-dot:hover{background:rgba(214,76,99,.15)}
+  .scale-dot.on{background:var(--coral)}
+  .scale-labels{display:flex;justify-content:space-between;font-size:11px;color:var(--coral-soft);max-width:250px;margin-top:2px}
+
+  /* log / weekly tables */
+  table.logtable{width:100%;border-collapse:collapse;font-size:11.5px;margin-top:10px}
+  table.logtable th{text-align:left;font-weight:700;font-size:10px;letter-spacing:.05em;text-transform:uppercase;color:var(--coral-deep);padding:8px;border:1px solid var(--line);background:rgba(214,76,99,.06);vertical-align:middle}
+  table.logtable td{padding:6px 8px;border:1px solid var(--line-soft);vertical-align:top}
+  table.logtable .day{font-weight:700;color:var(--coral-deep);font-size:12px;white-space:nowrap}
+  table.logtable input.cell-in,table.logtable textarea.cell-in{border:none;background:transparent;outline:none;color:var(--coral-deep);font-family:var(--font-body);font-size:11.5px;width:100%;resize:none;line-height:1.4;min-width:60px}
+  @media(max-width:760px){table.logtable{display:block;overflow-x:auto}}
+
+  .inl-label{font-weight:600;color:var(--coral-deep);font-size:12px;display:inline-block;margin-bottom:2px}
+  .two-cols{display:grid;gap:30px;align-items:start}
+  @media(max-width:720px){.two-cols{grid-template-columns:1fr!important}}
+  .qlabel{font-family:var(--font-body);font-weight:700;font-size:13px;color:var(--coral-deep);display:block;margin-bottom:2px}
+  .qlabel.sm{font-size:12px}
+  .field{margin-bottom:12px}
+
+  /* habit loop diagram */
+  .loopwrap{max-width:250px;margin:8px 0}
+  .loopwrap svg{width:100%;height:auto;display:block}
+  .loopwrap text{font-family:var(--font-serif);font-style:italic;fill:var(--coral)}
+
+  @media print{
+    body{background:#fff;padding:0}
+    .toolbar,#toast{display:none}
+    .wrap{max-width:none;padding:0}
+    .page{box-shadow:none;border:none;border-radius:0;page-break-after:always;padding:34px 40px}
+    .page.red{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+    .lines,.boxfield{background:#fff}
+  }
+</style>
+</head>
+<body>
+
+<!-- ============ TOOLBAR ============ -->
+<div class="toolbar">
+  <div class="toolbar-inner">
+    <div class="brand">
+      <span class="wordmark">The Stoic Girl Starter Pack</span>
+    </div>
+    <select class="jump" id="jump" aria-label="Jump to section">
+      <option value="">Jump to…</option>
+      <option value="p-divider">Module 7 · Navigating Modern Life</option>
+      <option value="p-a1">Why Ancient Wisdom Still Works</option>
+      <option value="p-a2">Social Media &amp; Comparison</option>
+      <option value="p-a3">Career Anxiety</option>
+      <option value="p-a4">Dating in the Apps Era</option>
+      <option value="p-a5">FOMO &amp; Decision Fatigue</option>
+      <option value="p-a6">Information Overload</option>
+      <option value="p-exintro">Module 7 Exercises</option>
+      <option value="p-ex1">Ex 7.1 · Digital Comparison Reframe</option>
+      <option value="p-ex2a">Ex 7.2 · Career Value Sorting (1/2)</option>
+      <option value="p-ex2b">Ex 7.2 · Career Value Sorting (2/2)</option>
+      <option value="p-ex3a">Ex 7.3 · Rejection Recovery (1/2)</option>
+      <option value="p-ex3b">Ex 7.3 · Rejection Recovery (2/2)</option>
+      <option value="p-ex4a">Ex 7.4 · Preferred Indifferents List (1/2)</option>
+      <option value="p-ex4b">Ex 7.4 · Preferred Indifferents List (2/2)</option>
+    </select>
+    <span class="saved" id="savedMsg">saved ✓</span>
+    <button class="tbtn" id="btnExport" title="Download your answers as a file">Export</button>
+    <button class="tbtn" id="btnPrint" title="Print or save as PDF">Print</button>
+    <button class="tbtn" id="btnReset" title="Clear all answers">Reset</button>
+  </div>
+</div>
+
+<div class="wrap">
+<!-- ============ MODULE 7 DIVIDER (p.95) ============ -->
+<section class="page red" id="p-divider">
+  <div class="runhead">
+    <span>The Stoic Girl Starter Pack</span>
+    <div class="dots"><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+  </div>
+  <div class="divider-hero">
+    <p class="eyebrow" style="font-size:34px;margin-bottom:6px">Module 7:</p>
+    <h1 class="display" style="font-size:clamp(38px,8vw,78px)">Navigating Modern Life</h1>
+    <p class="subtitle">with Ancient Wisdom</p>
+  </div>
+  <div class="runfoot">
+    <span class="motto">The mind may race, but the wisdom stays still.</span>
+    <span class="pg">95</span>
+  </div>
+</section>
+
+<!-- ============ WHY ANCIENT WISDOM STILL WORKS (p.96) ============ -->
+<section class="page" id="p-a1">
+  <div class="runhead"><span>07–Navigating Modern Life</span><span class="tag">/edu/</span>
+    <div class="dots"><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i></i></div>
+  </div>
+  <h1 class="display sm">Why Ancient Wisdom<br>Still Works For<br>Modern Problems</h1>
+  <div class="cols c3" style="margin-top:30px">
+    <div class="colblock">
+      <h3 class="kicker">Applying What You've Learned</h3>
+      <p class="body">You've already built a solid foundation in Stoic principles: understanding what you can and can't control, developing your character through the four virtues, regulating emotions wisely, and building healthy relationships.</p>
+      <p class="body">This module takes those same tools and applies them to the specific challenges of living in 2025 (and beyond).</p>
+      <p class="body">Instead of learning new concepts, you'll see how the wisdom you've already developed can help you navigate everything from social media comparison to career anxiety with greater peace and clarity.</p>
+    </div>
+    <div class="colblock">
+      <h3 class="kicker">Same Human Nature, Different Packaging</h3>
+      <p class="body">While the Stoics didn't have to deal with Instagram or dating apps, they understood something fundamental: <em>human nature doesn't change</em>.</p>
+      <p class="body">The core challenges we face, like comparison, rejection, uncertainty, or the pursuit of status, are the same ones humans have grappled with for millennia. Only the delivery method has changed (and might be amplified).</p>
+    </div>
+    <div class="colblock">
+      <h3 class="kicker">The Stoic Advantage in an Over-Stimulated World</h3>
+      <p class="body">Stoicism is particularly relevant now because it teaches you to:</p>
+      <ul class="clist">
+        <li>Find your worth <em>internally</em> when everything around you promotes external validation</li>
+        <li>Make decisions from your <em>values</em> when you're overwhelmed with options</li>
+        <li>Stay grounded when information and opinions come at you constantly</li>
+        <li>Build real confidence when comparison opportunities are endless</li>
+      </ul>
+    </div>
+  </div>
+  <div class="runfoot"><span class="motto">The mind may race, but the wisdom stays still.</span><span class="pg">96</span></div>
+</section>
+
+<!-- ============ SOCIAL MEDIA & COMPARISON (p.97) ============ -->
+<section class="page" id="p-a2">
+  <div class="runhead"><span>07–Navigating Modern Life</span><span class="tag">/edu/</span>
+    <div class="dots"><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i></i></div>
+  </div>
+  <h1 class="display sm">Social Media &amp;<br>Comparison: Learning<br>What Really Matters</h1>
+  <div class="cols c3" style="margin-top:30px">
+    <div class="colblock">
+      <h3 class="kicker">The Comparison Trap Goes Digital</h3>
+      <p class="body">Social media has turned comparison into a 24/7 available activity.</p>
+      <p class="body">You can now compare your morning face to someone's accurately done or filtered make-up, your relationship's Tuesday night to someone's anniversary celebration, your career progress to someone else's curated day-in-the-life.</p>
+      <p class="body">It's pretty much comparison on steroids, and our brains weren't designed to handle this much social information.</p>
+      <p class="colsub">Now why does comparison hurt so much?</p>
+      <p class="body">Comparison triggers your brain's threat detection system because <em>it interprets social "falling behind" as actual danger</em>. Understanding this helps you recognize comparison thoughts as outdated survival mechanisms, <em>not accurate assessments of your life's value</em>. And btw, it's completely normal having to remind yourself of this over and over again.</p>
+    </div>
+    <div class="colblock">
+      <h3 class="kicker">Knowing What Actually Determines Your Worth</h3>
+      <p class="body">The Stoics had a helpful way of categorizing things in life.</p>
+      <p class="body">They recognized that some things truly affect your well-being and character (like how you treat others, your personal growth, living according to your values), while other things are what they called <strong>"preferred indifferents"</strong>: things that are nice to have but don't actually determine your worth or happiness.</p>
+      <p class="body">Most of what you see on social media falls into this category of preferred indifferents:</p>
+      <ul class="clist">
+        <li><strong>Likes and followers:</strong> nice to have, but not determinants of your worth</li>
+        <li><strong>Others' achievements:</strong> great for them, but not reflections on your value</li>
+        <li><strong>Aesthetic perfection:</strong> pleasant to look at, but not necessary for happiness</li>
+        <li><strong>Relationship status:</strong> one form of connection, but not the only valuable one</li>
+      </ul>
+    </div>
+    <div class="colblock">
+      <h3 class="kicker">Practical Digital Wisdom</h3>
+      <p class="body">When you catch yourself in comparison mode:</p>
+      <ul class="clist">
+        <li><strong>Pause and ask:</strong> "Is this person's highlight reel affecting my sense of self-worth?"</li>
+        <li><strong>Remember:</strong> you're seeing a curated moment, not a complete life (!)</li>
+        <li><strong>Redirect:</strong> "What would wisdom / courage / justice / temperance look like in my actual situation right now?"</li>
+        <li><strong>Practice gratitude:</strong> for your own life's hidden blessings that don't make it to social media</li>
+      </ul>
+    </div>
+  </div>
+  <div class="runfoot"><span class="motto">The mind may race, but the wisdom stays still.</span><span class="pg">97</span></div>
+</section>
+
+<!-- ============ CAREER ANXIETY (p.98) ============ -->
+<section class="page" id="p-a3">
+  <div class="runhead"><span>07–Navigating Modern Life</span><span class="tag">/edu/</span>
+    <div class="dots"><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i></i></div>
+  </div>
+  <h1 class="display sm">Career Anxiety:<br>Ambition vs. Attachment<br>To Outcomes</h1>
+  <div class="cols c3" style="margin-top:30px">
+    <div class="colblock">
+      <h3 class="kicker">The Modern Career Pressure Cooker</h3>
+      <p class="body">Today's career landscape promotes a level of anxiety that would most definitely make the Stoics raise their eyebrows.</p>
+      <p class="body">You're told to "follow your passion," "disrupt industries," and "optimize everything" while also achieving work-life balance, making a meaningful impact, and probably having a side hustle. It's <em>exhausting</em> just thinking about this.</p>
+    </div>
+    <div class="colblock">
+      <h3 class="kicker">Stoic Ambition vs. Anxious Striving</h3>
+      <p class="body">There's nothing wrong with wanting professional success, but the Stoics distinguished between healthy ambition and attachment-driven striving:</p>
+      <p class="colsub">Healthy Stoic Ambition:</p>
+      <ul class="clist">
+        <li>Focuses on what you can control (your effort, skills, character)</li>
+        <li>Driven by internal values and the desire to contribute</li>
+        <li>Measures success by growth and integrity</li>
+        <li>Accepts that outcomes involve factors beyond your control</li>
+      </ul>
+      <p class="colsub">Anxious Attachment Striving:</p>
+      <ul class="clist">
+        <li>Focuses on what you can't control (recognition, promotions, others' opinions)</li>
+        <li>Driven by fear, comparison, and external validation needs</li>
+        <li>Measures success only by external markers</li>
+        <li>Creates anxiety because it depends on uncontrollable factors</li>
+      </ul>
+    </div>
+    <div class="colblock">
+      <h3 class="kicker">Intrinsic vs. Extrinsic Motivation in Career</h3>
+      <p class="colsub">Intrinsic motivations (aligned with Stoic principles):</p>
+      <ul class="clist">
+        <li>Mastery and skill development</li>
+        <li>Contributing meaningfully to others</li>
+        <li>Personal growth and learning</li>
+        <li>Living according to your values</li>
+      </ul>
+      <p class="colsub">Extrinsic motivations (preferred indifferents):</p>
+      <ul class="clist">
+        <li>Salary and status symbols</li>
+        <li>Recognition and praise</li>
+        <li>Competition and ranking</li>
+        <li>Others' perception of success</li>
+      </ul>
+      <p class="body">What we're getting at here is that you can of course still want promotions, raises, and recognition. But you should try to hold them lightly, as preferred indifferents. <em>Your peace doesn't depend on getting them, and your identity isn't shattered if you don't.</em></p>
+    </div>
+  </div>
+  <div class="runfoot"><span class="motto">The mind may race, but the wisdom stays still.</span><span class="pg">98</span></div>
+</section>
+
+<!-- ============ DATING IN THE APPS ERA (p.99) ============ -->
+<section class="page" id="p-a4">
+  <div class="runhead"><span>07–Navigating Modern Life</span><span class="tag">/edu/</span>
+    <div class="dots"><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i></i></div>
+  </div>
+  <h1 class="display sm">Dating In The Apps<br>Era: Self-Worth Beyond<br>External Validation</h1>
+  <div class="cols c3" style="margin-top:30px">
+    <div class="colblock">
+      <h3 class="kicker">Modern Dating's Validation Rollercoaster</h3>
+      <p class="body">Dating apps have turned romantic connection into a marketplace where your worth feels measured by swipes, matches, and message responses.</p>
+      <p class="body">It's like having your self-esteem constantly evaluated by strangers who know nothing about your character, humor, or heart.</p>
+      <p class="body">Remember that every "no" (whether it's no swipe, no second date, or no relationship) is information about compatibility, not a judgment on your worth as a human being. Others' preferences about you are neither yours to control, nor do they determine your value (!).</p>
+    </div>
+    <div class="colblock">
+      <h3 class="kicker">The Stoic Approach to Romantic Rejection</h3>
+      <p class="body">Another thing to keep in mind is the distinction we made in Module 5 about relationships, which can also be applied to dating:</p>
+      <ul class="clist">
+        <li><strong>Attachment-based dating:</strong> <em>"I need this person to like me to feel worthy"</em></li>
+        <li><strong>Love-based dating:</strong> <em>"I'm curious about genuine connection with someone who appreciates who I am"</em></li>
+      </ul>
+      <p class="colsub">Your value is NOT determined by:</p>
+      <ul class="clist">
+        <li>How many matches you get</li>
+        <li>Whether someone texts back quickly</li>
+        <li>How your relationship looks on social media</li>
+        <li>Whether you're in a relationship at all</li>
+      </ul>
+      <p class="colsub">Instead, your value comes from:</p>
+      <ul class="clist">
+        <li>How you treat yourself and others</li>
+        <li>Your character development and growth</li>
+        <li>Your capacity for genuine connection</li>
+        <li>Your contributions to the world</li>
+      </ul>
+    </div>
+    <div class="colblock">
+      <h3 class="kicker">Practical Stoicism for Dating</h3>
+      <ul class="clist">
+        <li><strong>Before dates:</strong> set intentions about how you want to show up, not outcomes you want to achieve</li>
+        <li><strong>During rejection:</strong> remember it's about compatibility, not your worth</li>
+        <li><strong>In relationships:</strong> practice loving without attachment — wanting the best for someone even if it's not with you</li>
+      </ul>
+    </div>
+  </div>
+  <div class="runfoot"><span class="motto">The mind may race, but the wisdom stays still.</span><span class="pg">99</span></div>
+</section>
+
+<!-- ============ FOMO & DECISION FATIGUE (p.100) ============ -->
+<section class="page" id="p-a5">
+  <div class="runhead"><span>07–Navigating Modern Life</span><span class="tag">/edu/</span>
+    <div class="dots"><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i></i></div>
+  </div>
+  <h1 class="display sm">FOMO &amp; Decision<br>Fatigue: Choosing<br>Your Battles Wisely</h1>
+  <div class="cols c3" style="margin-top:30px">
+    <div class="colblock">
+      <h3 class="kicker">The Paradox of Infinite Options</h3>
+      <p class="body">Previous generations had limited choices in most areas of life, which had downsides but also provided clarity.</p>
+      <p class="body">Now you can choose from thousands of career paths, hundreds of potential partners, endless entertainment options, and countless ways to spend your time.</p>
+      <p class="body">Choice is freedom, but infinite choice is paralysis.</p>
+      <p class="body">Fear of Missing Out (FOMO) happens when you treat experiences, opportunities, and social events <em>as if missing them would fundamentally diminish your life</em>. The Stoic perspective: most experiences are (you guessed it) preferred indifferents — nice to have, but your happiness doesn't depend on them.</p>
+    </div>
+    <div class="colblock">
+      <h3 class="kicker">The Stoic Art of Prioritizing</h3>
+      <p class="body">Since you can't do everything, wisdom lies in conscious choice-making:</p>
+      <ul class="clist">
+        <li><strong>Values-based filtering:</strong> <em>Does this opportunity align with who I want to be?</em></li>
+        <li><strong>Energy auditing:</strong> <em>Do I have the emotional / physical capacity for this?</em></li>
+        <li><strong>Opportunity cost awareness:</strong> <em>What am I saying no to by saying yes to this?</em></li>
+      </ul>
+      <p class="body">Every choice you make depletes your mental energy slightly. The Stoics practiced simplicity not because they were boring, but because they understood that <em>decision-making energy is finite</em> and should be spent on what matters most.</p>
+    </div>
+    <div class="colblock">
+      <h3 class="kicker">Practical Anti-FOMO Strategies</h3>
+      <ul class="clist">
+        <li><strong>Present moment appreciation:</strong> fully engage with what you've chosen rather than mentally cataloging what you're missing</li>
+        <li><strong>Enough mindset:</strong> recognize when you have sufficient experiences, possessions, or opportunities</li>
+        <li><strong>Values anchoring:</strong> use your core principles to filter opportunities rather than trying to evaluate each one independently</li>
+      </ul>
+    </div>
+  </div>
+  <div class="runfoot"><span class="motto">The mind may race, but the wisdom stays still.</span><span class="pg">100</span></div>
+</section>
+
+<!-- ============ INFORMATION OVERLOAD (p.101) ============ -->
+<section class="page" id="p-a6">
+  <div class="runhead"><span>07–Navigating Modern Life</span><span class="tag">/edu/</span>
+    <div class="dots"><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i></i></div>
+  </div>
+  <h1 class="display sm">Information Overload:<br>Curating Your<br>Mental Diet</h1>
+  <div class="cols c3" style="margin-top:30px">
+    <div class="colblock">
+      <h3 class="kicker">The Firehose of Information</h3>
+      <p class="body">You have access to more information in a day than previous generations encountered in months or even during their whole lifespan. News, opinions, educational content, entertainment, social updates… It's all available constantly.</p>
+      <p class="body">While information can be empowering, <em>information overload creates anxiety, decision paralysis, and a constant sense that you're not staying informed enough</em>.</p>
+      <p class="body">But just as you choose what food to put in your body, <em>you can choose what information to put in your mind</em>. If we apply this to stoic practices, it's all about being intentional: consume information that helps you live virtuously, and avoid content that stirs up unhelpful emotions.</p>
+    </div>
+    <div class="colblock">
+      <h3 class="kicker">Information Categories Through a Stoic Lens</h3>
+      <p class="colsub">Helpful Information:</p>
+      <ul class="clist">
+        <li>Practical knowledge that improves your decision-making</li>
+        <li>Content that inspires virtuous action</li>
+        <li>Information directly relevant to your responsibilities</li>
+        <li>Educational material that develops wisdom</li>
+      </ul>
+      <p class="colsub">Neutral Information:</p>
+      <ul class="clist">
+        <li>Entertainment that truly relaxes you</li>
+        <li>Social updates from people you genuinely care about</li>
+        <li>News that keeps you reasonably informed without overwhelming you</li>
+      </ul>
+      <p class="colsub">Harmful Information:</p>
+      <ul class="clist">
+        <li>Content designed to make you angry or afraid</li>
+        <li>Information that promotes comparison or inadequacy</li>
+        <li>News about events you cannot influence and that don't affect your choices</li>
+        <li>Social media that consistently makes you feel worse about yourself</li>
+      </ul>
+    </div>
+    <div class="colblock">
+      <h3 class="kicker">Creating Your Information Boundaries</h3>
+      <ul class="clist">
+        <li><strong>Time limits:</strong> specific windows for news and social media rather than constant access</li>
+        <li><strong>Source curation:</strong> choose a few trusted sources rather than consuming from everywhere</li>
+        <li><strong>Purpose clarity:</strong> ask <em>"Why am I seeking this information?"</em> before consuming</li>
+        <li><strong>Emotional check-ins:</strong> notice how different content affects your mood and energy</li>
+      </ul>
+      <p class="body">Here's another reminder: you don't need to have an opinion about <em>everything</em> happening in the world.</p>
+      <p class="body">You don't need to stay updated on every trend, controversy, or piece of breaking news. <em>Strategic ignorance</em> (consciously choosing not to consume certain information) is a form of wisdom, not laziness.</p>
+    </div>
+  </div>
+  <div class="runfoot"><span class="motto">The mind may race, but the wisdom stays still.</span><span class="pg">101</span></div>
+</section>
+
+<!-- ============ MODULE 7 EXERCISES INTRO (p.102) ============ -->
+<section class="page" id="p-exintro">
+  <div class="runhead"><span>07–Navigating Modern Life</span><span class="tag">/ex/</span>
+    <div class="dots"><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i></i></div>
+  </div>
+  <div class="grid2" style="align-items:center;margin-top:30px">
+    <div><h1 class="display">Module 7<br>Exercises</h1></div>
+    <div>
+      <p class="body">Now that you understand how Stoic principles apply to contemporary life, it's time to practice using these tools on your specific modern struggles.</p>
+      <p class="body">These exercises take the wisdom you've already built and focus it on the challenges that didn't exist 2000 years ago but follow the same human patterns.</p>
+      <div class="colblock" style="margin-top:16px">
+        <p class="body"><strong>1. Digital Comparison Reframe</strong><br><span style="font-style:italic;color:var(--coral-mid);font-size:12.5px">This tool helps you identify what triggers comparison on social media and transform those moments of envy into opportunities for self-awareness and growth. Instead of feeling bad about comparison, you'll learn to use it as information.</span></p>
+        <p class="body" style="margin-top:11px"><strong>2. Career Value Sorting</strong><br><span style="font-style:italic;color:var(--coral-mid);font-size:12.5px">This exercise separates your professional goals into what's internally motivated (aligned with your values) versus externally motivated (dependent on others' opinions or circumstances). This anchors your ambition in virtue rather than validation.</span></p>
+        <p class="body" style="margin-top:11px"><strong>3. Rejection Recovery</strong><br><span style="font-style:italic;color:var(--coral-mid);font-size:12.5px">This exercise provides a Stoic framework for processing any type of rejection: from dating to job applications to social situations. You'll learn to see rejection as information about compatibility, not judgment on your worth.</span></p>
+        <p class="body" style="margin-top:11px"><strong>4. Preferred Indifferents List</strong><br><span style="font-style:italic;color:var(--coral-mid);font-size:12.5px">This tool helps you identify things in your life that are nice to have but not necessary for your happiness or worth. This practice loosens your grip on external validation and reminds you what actually matters.</span></p>
+      </div>
+      <hr class="rule">
+      <p class="body" style="font-size:12.5px">These exercises work together to help you navigate modern life with ancient wisdom. You're applying the Stoic tools you already have to the specific challenges of living in a hyperconnected, comparison-heavy, and validation-seeking world.</p>
+    </div>
+  </div>
+  <div class="runfoot"><span class="motto">The mind may race, but the wisdom stays still.</span><span class="pg">102</span></div>
+</section>
+
+<!-- ============ EX 7.1 DIGITAL COMPARISON REFRAME (p.103) ============ -->
+<section class="page" id="p-ex1">
+  <div class="runhead"><span>07–Navigating Modern Life</span><span class="tag">/ex 7.1/</span>
+    <div class="dots"><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i></i></div>
+  </div>
+  <div class="exhead">
+    <div style="flex:1;min-width:260px">
+      <h1 class="display sm">Digital<br>Comparison<br>Reframe</h1>
+      <p class="body" style="max-width:440px;margin-top:12px">Comparison is inevitable; what matters is how you respond to it. This exercise transforms those sting-y moments into opportunities for growth and self-understanding.</p>
+    </div>
+    <div class="purpose-bar">
+      <div><b>Purpose:</b> Transform social media comparison triggers into opportunities for self-awareness and growth, using Stoic principles to find freedom from envy.</div>
+      <div><b>Time estimate:</b> 10–15 minutes</div>
+    </div>
+  </div>
+  <hr class="rule" style="margin:22px 0 22px">
+  <p class="field-label">1) IDENTIFYING YOUR COMPARISON TRIGGERS</p>
+  <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:22px 30px;margin-top:10px">
+    <div>
+      <p class="colsub">1. Recent Comparison Moment</p>
+      <p class="field-sub">Think of a recent time when you saw something (on social media) that made you feel bad about yourself. What was it?</p>
+      <textarea class="lines" data-field="71_recent" style="min-height:56px"></textarea>
+    </div>
+    <div>
+      <p class="colsub">2. The Immediate Reaction</p>
+      <p class="field-sub">What emotions came up when you saw this? <em>(Check all that apply)</em></p>
+      <div class="chk" data-check="71_em_envy"><span class="box"></span><span>Envy / jealousy</span></div>
+      <div class="chk" data-check="71_em_inadequacy"><span class="box"></span><span>Inadequacy</span></div>
+      <div class="chk" data-check="71_em_sadness"><span class="box"></span><span>Sadness</span></div>
+      <div class="chk" data-check="71_em_anger"><span class="box"></span><span>Anger / frustration</span></div>
+      <div class="chk" data-check="71_em_anxiety"><span class="box"></span><span>Anxiety about your own life</span></div>
+      <div class="chk" data-check="71_em_shame"><span class="box"></span><span>Shame about not being "enough"</span></div>
+      <div class="chk" data-check="71_em_other"><span class="box"></span><span>Other:</span><input class="other-in" type="text" data-field="71_em_other_txt"></div>
+    </div>
+    <div>
+      <p class="colsub">3. The Comparison Story</p>
+      <p class="field-sub">What story did your mind immediately create about this person vs. your life?</p>
+      <p class="cap">Examples: "They have everything figured out and I'm still struggling" or "They're so much more successful / attractive / happy than me"</p>
+      <textarea class="lines" data-field="71_story" style="min-height:44px"></textarea>
+    </div>
+  </div>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:22px 30px;margin-top:18px">
+    <div>
+      <p class="colsub">4. Unpacking the Trigger</p>
+      <p class="field-sub">What specific element triggered you?</p>
+      <div class="chk" data-check="71_tr_appear"><span class="box"></span><span>Their appearance / attractiveness</span></div>
+      <div class="chk" data-check="71_tr_rel"><span class="box"></span><span>Their relationship / family situation</span></div>
+      <div class="chk" data-check="71_tr_career"><span class="box"></span><span>Career success or recognition</span></div>
+      <div class="chk" data-check="71_tr_travel"><span class="box"></span><span>Travel / experiences</span></div>
+      <div class="chk" data-check="71_tr_material"><span class="box"></span><span>Material possessions</span></div>
+      <div class="chk" data-check="71_tr_social"><span class="box"></span><span>Social connections / popularity</span></div>
+      <div class="chk" data-check="71_tr_creative"><span class="box"></span><span>Creative work or talents</span></div>
+      <div class="chk" data-check="71_tr_lifestyle"><span class="box"></span><span>Lifestyle / daily life aesthetic</span></div>
+      <div class="chk" data-check="71_tr_other"><span class="box"></span><span>Other:</span><input class="other-in" type="text" data-field="71_tr_other_txt"></div>
+    </div>
+    <div>
+      <p class="colsub">5. The Deeper Want</p>
+      <div class="field"><label class="qlabel sm">What does this comparison reveal about what you want in your own life?</label><textarea class="lines" data-field="71_want" style="min-height:44px"></textarea></div>
+      <div class="field"><label class="qlabel sm">What value or need is this highlighting for you?</label><textarea class="lines" data-field="71_need" style="min-height:44px"></textarea></div>
+    </div>
+  </div>
+
+  <p class="field-label" style="margin-top:24px">2) STOIC REFRAME</p>
+  <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:22px 30px;margin-top:10px">
+    <div>
+      <p class="colsub">1. From Comparison to Gratitude</p>
+      <p class="field-sub">What in your own life are you taking for granted that others might envy?</p>
+      <textarea class="lines" data-field="71_gratitude" style="min-height:56px"></textarea>
+    </div>
+    <div>
+      <p class="colsub">2. From Envy to Inspiration</p>
+      <p class="field-sub">If you choose to be inspired rather than envious, what might this person's example motivate you to do differently?</p>
+      <textarea class="lines" data-field="71_inspiration" style="min-height:56px"></textarea>
+    </div>
+    <div>
+      <p class="colsub">3. From Judgment to Compassion</p>
+      <p class="field-sub">What kind wishes could you send to this person instead of envious thoughts?</p>
+      <textarea class="lines" data-field="71_compassion" style="min-height:56px"></textarea>
+    </div>
+  </div>
+  <div class="field" style="margin-top:16px">
+    <label class="qlabel"><b>4.</b> The next time I feel triggered by comparison, I will:</label>
+    <p class="cap">Example: "…pause and ask 'What is this telling me about what I value?'"</p>
+    <textarea class="lines" data-field="71_nexttime" style="min-height:28px"></textarea>
+  </div>
+  <div class="runfoot"><span class="motto">The mind may race, but the wisdom stays still.</span><span class="pg">103</span></div>
+</section>
+
+<!-- ============ EX 7.2 CAREER VALUE SORTING 1/2 (p.104) ============ -->
+<section class="page" id="p-ex2a">
+  <div class="runhead"><span>07–Navigating Modern Life</span><span class="tag">/ex 7.2/</span>
+    <div class="dots"><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i></i></div>
+  </div>
+  <div class="exhead">
+    <div style="flex:1;min-width:260px">
+      <h1 class="display sm">Career<br>Value<br>Sorting (1/2)</h1>
+      <p class="body" style="max-width:440px;margin-top:12px">There's nothing wrong with wanting professional success; the question is whether your ambitions serve your character or your ego. This exercise helps you sort the difference.</p>
+    </div>
+    <div class="purpose-bar">
+      <div><b>Purpose:</b> Separate your professional goals into intrinsic versus extrinsic motivations to anchor your ambition in virtue rather than external validation.</div>
+      <div><b>Time estimate:</b> 20–25 minutes</div>
+    </div>
+  </div>
+  <hr class="rule" style="margin:22px 0 22px">
+  <p class="field-label">1) CURRENT CAREER ASSESSMENT</p>
+  <p class="colsub" style="margin-top:8px">1. Your Professional Situation</p>
+  <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:18px 30px">
+    <div class="field"><label class="qlabel sm">Where are you currently in your career journey?</label><textarea class="lines" data-field="72_where" style="min-height:44px"></textarea></div>
+    <div class="field"><label class="qlabel sm">What aspects of your work life are going well?</label><textarea class="lines" data-field="72_wellgoing" style="min-height:44px"></textarea></div>
+    <div class="field"><label class="qlabel sm">What aspects create the most stress or dissatisfaction?</label><textarea class="lines" data-field="72_stress" style="min-height:44px"></textarea></div>
+  </div>
+  <div class="field"><label class="qlabel sm">List your professional goals <em style="font-weight:400;color:var(--coral-soft)">(everything you want professionally)</em>:</label><textarea class="lines" data-field="72_goals" style="min-height:44px"></textarea></div>
+
+  <p class="colsub" style="margin-top:18px">2. Goal Motivation Sorting <em style="font-weight:400;color:var(--coral-mid)">(for your two biggest goals, identify the driving motivation)</em></p>
+  <div class="grid2" style="margin-top:8px;align-items:start">
+    <div>
+      <div class="field"><label class="qlabel sm">Goal 1: <input class="fill" type="text" data-field="72_goal1" style="min-width:150px"></label></div>
+      <p class="colsub" style="font-size:12px">Intrinsic Motivations <em style="font-weight:400;color:var(--coral-mid)">(check all that apply)</em>:</p>
+      <div class="chk" data-check="72_g1_i_growth"><span class="box"></span><span>Personal growth and skill development</span></div>
+      <div class="chk" data-check="72_g1_i_contrib"><span class="box"></span><span>Contributing meaningfully to others</span></div>
+      <div class="chk" data-check="72_g1_i_creative"><span class="box"></span><span>Creative expression and innovation</span></div>
+      <div class="chk" data-check="72_g1_i_learning"><span class="box"></span><span>Learning and intellectual stimulation</span></div>
+      <div class="chk" data-check="72_g1_i_values"><span class="box"></span><span>Living according to my values</span></div>
+      <div class="chk" data-check="72_g1_i_mastery"><span class="box"></span><span>Building mastery in something I care about</span></div>
+      <div class="chk" data-check="72_g1_i_impact"><span class="box"></span><span>Making a positive impact</span></div>
+      <div class="chk" data-check="72_g1_i_other"><span class="box"></span><span>Other:</span><input class="other-in" type="text" data-field="72_g1_i_other_txt"></div>
+      <p class="colsub" style="font-size:12px;margin-top:10px">Extrinsic Motivations <em style="font-weight:400;color:var(--coral-mid)">(check all that apply)</em>:</p>
+      <div class="chk" data-check="72_g1_e_salary"><span class="box"></span><span>Salary and financial rewards</span></div>
+      <div class="chk" data-check="72_g1_e_status"><span class="box"></span><span>Status and prestige</span></div>
+      <div class="chk" data-check="72_g1_e_recog"><span class="box"></span><span>Recognition and praise from others</span></div>
+      <div class="chk" data-check="72_g1_e_compete"><span class="box"></span><span>Competition and ranking against peers</span></div>
+      <div class="chk" data-check="72_g1_e_percept"><span class="box"></span><span>Others' perception of my success</span></div>
+      <div class="chk" data-check="72_g1_e_social"><span class="box"></span><span>Social media / public validation</span></div>
+      <div class="chk" data-check="72_g1_e_family"><span class="box"></span><span>Family or societal expectations</span></div>
+      <div class="chk" data-check="72_g1_e_other"><span class="box"></span><span>Other:</span><input class="other-in" type="text" data-field="72_g1_e_other_txt"></div>
+      <div class="field" style="margin-top:8px"><label class="qlabel sm">What's the strongest driving force behind this goal?</label><textarea class="lines" data-field="72_g1_force" style="min-height:28px"></textarea></div>
+    </div>
+    <div>
+      <div class="field"><label class="qlabel sm">Goal 2: <input class="fill" type="text" data-field="72_goal2" style="min-width:150px"></label></div>
+      <p class="colsub" style="font-size:12px">Intrinsic Motivations <em style="font-weight:400;color:var(--coral-mid)">(check all that apply)</em>:</p>
+      <div class="chk" data-check="72_g2_i_growth"><span class="box"></span><span>Personal growth and skill development</span></div>
+      <div class="chk" data-check="72_g2_i_contrib"><span class="box"></span><span>Contributing meaningfully to others</span></div>
+      <div class="chk" data-check="72_g2_i_creative"><span class="box"></span><span>Creative expression and innovation</span></div>
+      <div class="chk" data-check="72_g2_i_learning"><span class="box"></span><span>Learning and intellectual stimulation</span></div>
+      <div class="chk" data-check="72_g2_i_values"><span class="box"></span><span>Living according to my values</span></div>
+      <div class="chk" data-check="72_g2_i_mastery"><span class="box"></span><span>Building mastery in something I care about</span></div>
+      <div class="chk" data-check="72_g2_i_impact"><span class="box"></span><span>Making a positive impact</span></div>
+      <div class="chk" data-check="72_g2_i_other"><span class="box"></span><span>Other:</span><input class="other-in" type="text" data-field="72_g2_i_other_txt"></div>
+      <p class="colsub" style="font-size:12px;margin-top:10px">Extrinsic Motivations <em style="font-weight:400;color:var(--coral-mid)">(check all that apply)</em>:</p>
+      <div class="chk" data-check="72_g2_e_salary"><span class="box"></span><span>Salary and financial rewards</span></div>
+      <div class="chk" data-check="72_g2_e_status"><span class="box"></span><span>Status and prestige</span></div>
+      <div class="chk" data-check="72_g2_e_recog"><span class="box"></span><span>Recognition and praise from others</span></div>
+      <div class="chk" data-check="72_g2_e_compete"><span class="box"></span><span>Competition and ranking against peers</span></div>
+      <div class="chk" data-check="72_g2_e_percept"><span class="box"></span><span>Others' perception of my success</span></div>
+      <div class="chk" data-check="72_g2_e_social"><span class="box"></span><span>Social media / public validation</span></div>
+      <div class="chk" data-check="72_g2_e_family"><span class="box"></span><span>Family or societal expectations</span></div>
+      <div class="chk" data-check="72_g2_e_other"><span class="box"></span><span>Other:</span><input class="other-in" type="text" data-field="72_g2_e_other_txt"></div>
+      <div class="field" style="margin-top:8px"><label class="qlabel sm">What's the strongest driving force behind this goal?</label><textarea class="lines" data-field="72_g2_force" style="min-height:28px"></textarea></div>
+    </div>
+  </div>
+  <div class="runfoot"><span class="motto">The mind may race, but the wisdom stays still.</span><span class="pg">104</span></div>
+</section>
+
+<!-- ============ EX 7.2 CAREER VALUE SORTING 2/2 (p.105) ============ -->
+<section class="page" id="p-ex2b">
+  <div class="runhead"><span>07–Navigating Modern Life</span><span class="tag">/ex 7.2/</span>
+    <div class="dots"><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i></i></div>
+  </div>
+  <div class="exhead">
+    <div style="flex:1;min-width:260px"><h1 class="display sm">Career<br>Value<br>Sorting (2/2)</h1></div>
+    <div class="purpose-bar">
+      <div><b>Purpose:</b> Separate your professional goals into intrinsic versus extrinsic motivations to anchor your ambition in virtue rather than external validation.</div>
+      <div><b>Time estimate:</b> 20–25 minutes</div>
+    </div>
+  </div>
+  <hr class="rule" style="margin:22px 0 22px">
+  <p class="field-label">2) VALUES ALIGNMENT ANALYSIS</p>
+  <div style="display:grid;grid-template-columns:1fr 1fr 300px;gap:22px 30px;margin-top:10px;align-items:start">
+    <div>
+      <p class="colsub">1. Your Core Professional Values</p>
+      <div class="field"><label class="qlabel sm">What do you most want your work to represent about who you are?</label><textarea class="lines" data-field="72_core_rep" style="min-height:44px"></textarea></div>
+      <div class="field"><label class="qlabel sm">When you imagine your ideal career, what values would it embody?</label><textarea class="lines" data-field="72_core_embody" style="min-height:44px"></textarea></div>
+    </div>
+    <div>
+      <p class="colsub">2. Goal-Value Alignment Check</p>
+      <div class="field"><label class="qlabel sm">Which of your goals most clearly aligns with your stated values?</label><textarea class="lines" data-field="72_align_yes" style="min-height:44px"></textarea></div>
+      <div class="field"><label class="qlabel sm">Which goals might be more about external validation than internal fulfillment?</label><textarea class="lines" data-field="72_align_ext" style="min-height:44px"></textarea></div>
+    </div>
+    <div class="callout">
+      <div class="ct"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="7" r="3"/><circle cx="7" cy="15" r="3"/><circle cx="17" cy="15" r="3"/></svg>Reframing Career "Success"</div>
+      <p style="font-weight:700;color:var(--coral-deep);margin:0 0 2px">Traditional Success Metrics <em style="font-weight:400">(external measures)</em></p>
+      <ul style="margin:0 0 8px;padding-left:16px"><li>Salary level</li><li>Job title / position</li><li>Company prestige</li><li>Awards or recognition</li><li>Social media professional image</li><li>Others' perception of your success</li></ul>
+      <p style="font-weight:700;color:var(--coral-deep);margin:0 0 2px">Stoic Success Metrics <em style="font-weight:400">(internal measures)</em></p>
+      <ul style="margin:0;padding-left:16px"><li>Growth in skills and wisdom</li><li>Integrity in professional decisions</li><li>Positive impact on others</li><li>Alignment with personal values</li><li>Resilience through challenges</li><li>Quality of work relationships</li></ul>
+    </div>
+  </div>
+
+  <p class="field-label" style="margin-top:24px">3) STOIC CAREER FRAMEWORK</p>
+  <div class="grid2" style="margin-top:10px;align-items:start">
+    <div>
+      <p class="colsub">1. What You Can Control in Your Career</p>
+      <p class="field-sub"><em>Energy reflection — check what you focus on:</em></p>
+      <div class="chk" data-check="72_can_effort"><span class="box"></span><span>Your effort and work quality</span></div>
+      <div class="chk" data-check="72_can_skills"><span class="box"></span><span>Your skills development</span></div>
+      <div class="chk" data-check="72_can_rel"><span class="box"></span><span>Your professional relationships</span></div>
+      <div class="chk" data-check="72_can_integrity"><span class="box"></span><span>Your integrity and character at work</span></div>
+      <div class="chk" data-check="72_can_setbacks"><span class="box"></span><span>How you respond to setbacks</span></div>
+      <div class="chk" data-check="72_can_growth"><span class="box"></span><span>Your learning and growth mindset</span></div>
+      <div class="chk" data-check="72_can_other"><span class="box"></span><span>Other:</span><input class="other-in" type="text" data-field="72_can_other_txt"></div>
+      <p class="colsub" style="margin-top:12px">2. What You Cannot Control in Your Career</p>
+      <p class="field-sub"><em>Energy reflection — check what you focus on:</em></p>
+      <div class="chk" data-check="72_cant_promo"><span class="box"></span><span>Whether you get specific promotions</span></div>
+      <div class="chk" data-check="72_cant_recog"><span class="box"></span><span>Others' recognition of your work</span></div>
+      <div class="chk" data-check="72_cant_econ"><span class="box"></span><span>Economic conditions and job market</span></div>
+      <div class="chk" data-check="72_cant_company"><span class="box"></span><span>Company decisions and restructuring</span></div>
+      <div class="chk" data-check="72_cant_colleague"><span class="box"></span><span>Colleagues' success or advancement</span></div>
+      <div class="chk" data-check="72_cant_industry"><span class="box"></span><span>Industry changes and disruption</span></div>
+      <div class="chk" data-check="72_cant_other"><span class="box"></span><span>Other:</span><input class="other-in" type="text" data-field="72_cant_other_txt"></div>
+    </div>
+    <div>
+      <div class="field"><p class="colsub">3. Your Personal Success Definition</p><label class="qlabel sm">Based on this reflection (also have a look at the flower box), how do you want to define career success for yourself?</label><textarea class="lines" data-field="72_success_def" style="min-height:56px"></textarea></div>
+      <div class="field"><p class="colsub">4. Your Career Intention</p><label class="qlabel sm">How do you want to show up at work this week to embody your values?</label><textarea class="lines" data-field="72_intention" style="min-height:56px"></textarea></div>
+      <div class="field"><p class="colsub">5. When Career Anxiety Hits</p><label class="qlabel sm">What will you remind yourself of when you start comparing your career progress to others?</label><textarea class="lines" data-field="72_anxiety_remind" style="min-height:56px"></textarea></div>
+    </div>
+  </div>
+  <div class="runfoot"><span class="motto">The mind may race, but the wisdom stays still.</span><span class="pg">105</span></div>
+</section>
+
+<!-- ============ EX 7.3 REJECTION RECOVERY 1/2 (p.106) ============ -->
+<section class="page" id="p-ex3a">
+  <div class="runhead"><span>07–Navigating Modern Life</span><span class="tag">/ex 7.3/</span>
+    <div class="dots"><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i></i></div>
+  </div>
+  <div class="exhead">
+    <div style="flex:1;min-width:260px">
+      <h1 class="display sm">Rejection<br>Recovery<br>(1/2)</h1>
+      <p class="body" style="max-width:440px;margin-top:12px">Rejection stings because our brains interpret it as social danger. But rejection is actually information about fit, timing, and compatibility (…not about your fundamental worth as a person).</p>
+    </div>
+    <div class="purpose-bar">
+      <div><b>Purpose:</b> Process any type of rejection using Stoic principles to see it as information about compatibility rather than judgment on your worth.</div>
+      <div><b>Time estimate:</b> 15–20 minutes</div>
+    </div>
+  </div>
+  <hr class="rule" style="margin:22px 0 22px">
+  <p class="field-label">1) PROCESSING YOUR REJECTION EXPERIENCE</p>
+  <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:22px 30px;margin-top:10px;align-items:start">
+    <div>
+      <p class="colsub">1. The Rejection Situation</p>
+      <div class="field"><label class="qlabel sm">What rejection are you processing? <em style="font-weight:400;color:var(--coral-soft)">(dating, job, social, creative, etc.)</em></label><textarea class="lines" data-field="73_situation" style="min-height:28px"></textarea></div>
+      <div class="field"><label class="qlabel sm">Briefly describe what happened:</label><textarea class="lines" data-field="73_describe" style="min-height:56px"></textarea></div>
+    </div>
+    <div>
+      <p class="colsub">2. Initial Emotional Response</p>
+      <p class="field-sub">What emotions came up immediately after the rejection? <em>(Check all that apply)</em></p>
+      <div class="chk" data-check="73_em_sad"><span class="box"></span><span>Sadness / disappointment</span></div>
+      <div class="chk" data-check="73_em_anger"><span class="box"></span><span>Anger / frustration</span></div>
+      <div class="chk" data-check="73_em_shame"><span class="box"></span><span>Shame / embarrassment</span></div>
+      <div class="chk" data-check="73_em_confusion"><span class="box"></span><span>Confusion</span></div>
+      <div class="chk" data-check="73_em_relief"><span class="box"></span><span>Relief (sometimes rejection clarifies things)</span></div>
+      <div class="chk" data-check="73_em_determination"><span class="box"></span><span>Determination to try again</span></div>
+      <div class="chk" data-check="73_em_selfdoubt"><span class="box"></span><span>Self-doubt about your worth</span></div>
+      <div class="chk" data-check="73_em_other"><span class="box"></span><span>Other:</span><input class="other-in" type="text" data-field="73_em_other_txt"></div>
+    </div>
+    <div>
+      <p class="colsub">3. The Stories Your Mind Created</p>
+      <div class="field"><label class="qlabel sm">What did your inner critic tell you about why this rejection happened?</label><textarea class="lines" data-field="73_critic" style="min-height:44px"></textarea></div>
+      <div class="field"><label class="qlabel sm">What did it say about your worth, attractiveness, or capabilities?</label><textarea class="lines" data-field="73_critic2" style="min-height:44px"></textarea></div>
+    </div>
+  </div>
+
+  <p class="field-label" style="margin-top:24px">2) STOIC PERSPECTIVE SHIFT</p>
+  <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:22px 30px;margin-top:10px;align-items:start">
+    <div>
+      <p class="colsub">1. Reality vs. Interpretation</p>
+      <div class="field"><label class="qlabel sm">What are the objective facts of what happened (no interpretation)?</label><textarea class="lines" data-field="73_facts" style="min-height:44px"></textarea></div>
+      <div class="field"><label class="qlabel sm">What stories or meanings did you add to those facts?</label><textarea class="lines" data-field="73_meanings" style="min-height:44px"></textarea></div>
+    </div>
+    <div>
+      <p class="colsub">2. Factors Outside Your Control</p>
+      <div class="field"><label class="qlabel sm">What circumstances beyond your control might have influenced this outcome?</label><textarea class="lines" data-field="73_factors" style="min-height:44px"></textarea>
+        <p class="cap">Examples: "Their current life situation," "Timing," "Their personal preferences," "Other candidates / options they had"</p></div>
+    </div>
+    <div>
+      <p class="colsub">3. Information Over Judgment</p>
+      <div class="field"><label class="qlabel sm">What might this rejection tell you about compatibility, fit, or timing?</label><textarea class="lines" data-field="73_info" style="min-height:44px"></textarea></div>
+      <div class="field"><label class="qlabel sm">How might this rejection actually be protecting you from a poor fit?</label><textarea class="lines" data-field="73_protecting" style="min-height:44px"></textarea></div>
+    </div>
+  </div>
+  <div class="runfoot"><span class="motto">The mind may race, but the wisdom stays still.</span><span class="pg">106</span></div>
+</section>
+
+<!-- ============ EX 7.3 REJECTION RECOVERY 2/2 (p.107) ============ -->
+<section class="page" id="p-ex3b">
+  <div class="runhead"><span>07–Navigating Modern Life</span><span class="tag">/ex 7.3/</span>
+    <div class="dots"><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i></i></div>
+  </div>
+  <div class="exhead">
+    <div style="flex:1;min-width:260px"><h1 class="display sm">Rejection<br>Recovery<br>(2/2)</h1></div>
+    <div class="purpose-bar">
+      <div><b>Purpose:</b> Process any type of rejection using Stoic principles to see it as information about compatibility rather than judgment on your worth.</div>
+      <div><b>Time estimate:</b> 15–20 minutes</div>
+    </div>
+  </div>
+  <hr class="rule" style="margin:22px 0 22px">
+  <p class="field-label">2) STOIC PERSPECTIVE SHIFT (CONT.)</p>
+  <p class="colsub" style="margin-top:8px">4. Your Worth vs. Their Choice</p>
+  <p class="field-sub">List 5 things that determine your worth as a person:</p>
+  <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px 30px">
+    <div class="field"><label class="qlabel sm">1.</label><textarea class="lines" data-field="73_worth1" style="min-height:24px"></textarea></div>
+    <div class="field"><label class="qlabel sm">2.</label><textarea class="lines" data-field="73_worth2" style="min-height:24px"></textarea></div>
+    <div class="field"><label class="qlabel sm">3.</label><textarea class="lines" data-field="73_worth3" style="min-height:24px"></textarea></div>
+    <div class="field"><label class="qlabel sm">4.</label><textarea class="lines" data-field="73_worth4" style="min-height:24px"></textarea></div>
+    <div class="field"><label class="qlabel sm">5.</label><textarea class="lines" data-field="73_worth5" style="min-height:24px"></textarea></div>
+  </div>
+  <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-top:6px">
+    <span class="qlabel sm" style="margin:0">Is someone else's preference or choice about you on that list?</span>
+    <div class="opts"><span class="opt" data-scale="73_worth_list" data-val="Yes">Yes</span><span class="opt" data-scale="73_worth_list" data-val="No">No</span></div>
+  </div>
+
+  <p class="field-label" style="margin-top:22px">3) LEARNING AND GROWTH OPPORTUNITIES</p>
+  <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:22px 30px;margin-top:10px;align-items:start">
+    <div>
+      <p class="colsub">1. What This Experience Taught You</p>
+      <div class="field"><label class="qlabel sm">What did you learn about yourself through this process?</label><textarea class="lines" data-field="73_learn_self" style="min-height:44px"></textarea></div>
+      <div class="field"><label class="qlabel sm">What did you learn about what you want or need?</label><textarea class="lines" data-field="73_learn_want" style="min-height:44px"></textarea></div>
+      <div class="field"><label class="qlabel sm">How did you show courage by putting yourself out there?</label><textarea class="lines" data-field="73_learn_courage" style="min-height:44px"></textarea></div>
+    </div>
+    <div>
+      <p class="colsub">2. Character Strengths You Demonstrated</p>
+      <div class="chk" data-check="73_str_courage"><span class="box"></span><span>Courage <em style="font-style:italic;color:var(--coral-soft)">(for trying / applying / asking)</em></span></div>
+      <div class="chk" data-check="73_str_resilience"><span class="box"></span><span>Resilience <em style="font-style:italic;color:var(--coral-soft)">(for handling the outcome)</em></span></div>
+      <div class="chk" data-check="73_str_wisdom"><span class="box"></span><span>Wisdom <em style="font-style:italic;color:var(--coral-soft)">(for learning from the experience)</em></span></div>
+      <div class="chk" data-check="73_str_justice"><span class="box"></span><span>Justice <em style="font-style:italic;color:var(--coral-soft)">(for treating others fairly)</em></span></div>
+      <div class="chk" data-check="73_str_other"><span class="box"></span><span>Other:</span><input class="other-in" type="text" data-field="73_str_other_txt"></div>
+      <div class="field" style="margin-top:12px"><p class="colsub">3. Moving Forward with Wisdom</p><label class="qlabel sm">Based on this experience, what might you adjust in future similar situations?</label><textarea class="lines" data-field="73_forward" style="min-height:44px"></textarea></div>
+    </div>
+    <div>
+      <p class="colsub">4. Self-Compassion Practice</p>
+      <div class="field"><label class="qlabel sm">What would you tell a dear friend experiencing this same rejection?</label><textarea class="lines" data-field="73_friend" style="min-height:44px"></textarea></div>
+      <div class="field"><label class="qlabel sm">How can you offer yourself that same kindness?</label><textarea class="lines" data-field="73_kindness" style="min-height:44px"></textarea></div>
+      <div class="field"><label class="qlabel sm">What do you want to do next in this area of life?</label><textarea class="lines" data-field="73_next" style="min-height:44px"></textarea></div>
+    </div>
+  </div>
+  <div class="runfoot"><span class="motto">The mind may race, but the wisdom stays still.</span><span class="pg">107</span></div>
+</section>
+
+<!-- ============ EX 7.4 PREFERRED INDIFFERENTS LIST 1/2 (p.108) ============ -->
+<section class="page" id="p-ex4a">
+  <div class="runhead"><span>07–Navigating Modern Life</span><span class="tag">/ex 7.4/</span>
+    <div class="dots"><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i></i></div>
+  </div>
+  <div class="exhead">
+    <div style="flex:1;min-width:260px">
+      <h1 class="display sm tight">Preferred<br>Indifferents<br>List (1/2)</h1>
+      <p class="body" style="max-width:440px;margin-top:12px">Preferred indifferents are things that are pleasant to have but don't determine your worth or happiness. Identifying them helps you enjoy them without being controlled by them.</p>
+    </div>
+    <div class="purpose-bar">
+      <div><b>Purpose:</b> Create a personal list of things that are nice to have but not necessary for your happiness or worth, loosening your grip on external validation.</div>
+      <div><b>Time estimate:</b> 15–20 minutes</div>
+    </div>
+  </div>
+  <hr class="rule" style="margin:22px 0 22px">
+  <p class="field-label">1) UNDERSTANDING PREFERRED INDIFFERENTS</p>
+  <div class="field" style="margin-top:8px"><label class="qlabel sm">Why might it be helpful to identify preferred indifferents in your life?</label><textarea class="lines" data-field="74_why" style="min-height:44px"></textarea></div>
+
+  <p class="field-label" style="margin-top:18px">2) BUILDING YOUR PERSONAL LIST</p>
+  <div class="grid2" style="margin-top:10px;align-items:start">
+    <div class="chk-group">
+      <p class="colsub">Social / Relationship Preferred Indifferents</p>
+      <p class="field-sub"><em>Things related to how others see and treat you. Check all that apply to your life.</em></p>
+      <div class="chk" data-check="74_s_compliments"><span class="box"></span><span>Compliments on your appearance</span></div>
+      <div class="chk" data-check="74_s_likes"><span class="box"></span><span>Social media likes and comments</span></div>
+      <div class="chk" data-check="74_s_invited"><span class="box"></span><span>Being invited to social events</span></div>
+      <div class="chk" data-check="74_s_approval"><span class="box"></span><span>Others' approval of your choices</span></div>
+      <div class="chk" data-check="74_s_recognition"><span class="box"></span><span>Recognition for your achievements</span></div>
+      <div class="chk" data-check="74_s_successful"><span class="box"></span><span>Being seen as successful by family / friends</span></div>
+      <div class="chk" data-check="74_s_agree"><span class="box"></span><span>Having others agree with your opinions</span></div>
+      <div class="chk" data-check="74_s_attractive"><span class="box"></span><span>Being considered attractive or desirable</span></div>
+      <div class="chk" data-check="74_s_birthday"><span class="box"></span><span>Others remembering your birthday / special events</span></div>
+      <div class="chk" data-check="74_s_advice"><span class="box"></span><span>Being the person others come to for advice</span></div>
+      <div class="chk" data-check="74_s_other"><span class="box"></span><span>Other:</span><input class="other-in" type="text" data-field="74_s_other_txt"></div>
+    </div>
+    <div class="chk-group">
+      <p class="colsub">Professional / Achievement Preferred Indifferents</p>
+      <p class="field-sub"><em>Career and accomplishment-related things. Check all that apply to your life.</em></p>
+      <div class="chk" data-check="74_p_promoted"><span class="box"></span><span>Getting promoted or recognized at work</span></div>
+      <div class="chk" data-check="74_p_title"><span class="box"></span><span>Having a prestigious job title</span></div>
+      <div class="chk" data-check="74_p_salary"><span class="box"></span><span>Earning a specific salary amount</span></div>
+      <div class="chk" data-check="74_p_seen"><span class="box"></span><span>Others seeing you as successful</span></div>
+      <div class="chk" data-check="74_p_awards"><span class="box"></span><span>Awards or public recognition</span></div>
+      <div class="chk" data-check="74_p_expert"><span class="box"></span><span>Being considered an expert in your field</span></div>
+      <div class="chk" data-check="74_p_featured"><span class="box"></span><span>Having work featured or published</span></div>
+      <div class="chk" data-check="74_p_linkedin"><span class="box"></span><span>LinkedIn endorsements and connections</span></div>
+      <div class="chk" data-check="74_p_speaking"><span class="box"></span><span>Speaking opportunities or invitations</span></div>
+      <div class="chk" data-check="74_p_advice"><span class="box"></span><span>Others asking for your professional advice</span></div>
+      <div class="chk" data-check="74_p_other"><span class="box"></span><span>Other:</span><input class="other-in" type="text" data-field="74_p_other_txt"></div>
+    </div>
+  </div>
+  <div class="grid2" style="margin-top:16px;align-items:start">
+    <div class="chk-group">
+      <p class="colsub">Lifestyle / Material Preferred Indifferents</p>
+      <p class="field-sub"><em>Physical comforts and possessions. Check all that apply to your life.</em></p>
+      <div class="chk" data-check="74_l_home"><span class="box"></span><span>Having a beautiful or impressive home</span></div>
+      <div class="chk" data-check="74_l_clothes"><span class="box"></span><span>Wearing fashionable or expensive clothes</span></div>
+      <div class="chk" data-check="74_l_tech"><span class="box"></span><span>Owning the latest technology</span></div>
+      <div class="chk" data-check="74_l_vacations"><span class="box"></span><span>Taking Instagram-worthy vacations</span></div>
+      <div class="chk" data-check="74_l_car"><span class="box"></span><span>Having a reliable or impressive car</span></div>
+      <div class="chk" data-check="74_l_luxury"><span class="box"></span><span>Being able to afford luxury experiences</span></div>
+      <div class="chk" data-check="74_l_neighborhood"><span class="box"></span><span>Living in a desirable neighborhood</span></div>
+      <div class="chk" data-check="74_l_organized"><span class="box"></span><span>Having a perfectly organized / decorated space</span></div>
+      <div class="chk" data-check="74_l_quality"><span class="box"></span><span>Owning high-quality possessions</span></div>
+      <div class="chk" data-check="74_l_security"><span class="box"></span><span>Financial security beyond basic needs</span></div>
+      <div class="chk" data-check="74_l_other"><span class="box"></span><span>Other:</span><input class="other-in" type="text" data-field="74_l_other_txt"></div>
+    </div>
+    <div class="chk-group">
+      <p class="colsub">Physical / Health Preferred Indifferents</p>
+      <p class="field-sub"><em>Appearance and physical condition things. Check all that apply to your life.</em></p>
+      <div class="chk" data-check="74_h_bodysize"><span class="box"></span><span>Having a specific body size or shape</span></div>
+      <div class="chk" data-check="74_h_attractive"><span class="box"></span><span>Others finding you physically attractive</span></div>
+      <div class="chk" data-check="74_h_skin"><span class="box"></span><span>Having clear skin or perfect hair</span></div>
+      <div class="chk" data-check="74_h_fit"><span class="box"></span><span>Being seen as fit or athletic</span></div>
+      <div class="chk" data-check="74_h_sizes"><span class="box"></span><span>Wearing certain clothing sizes</span></div>
+      <div class="chk" data-check="74_h_noissues"><span class="box"></span><span>Having no visible health issues</span></div>
+      <div class="chk" data-check="74_h_youthful"><span class="box"></span><span>Being considered youthful for your age</span></div>
+      <div class="chk" data-check="74_h_features"><span class="box"></span><span>Having physical features you prefer</span></div>
+      <div class="chk" data-check="74_h_compliment"><span class="box"></span><span>Others complimenting your appearance</span></div>
+      <div class="chk" data-check="74_h_photos"><span class="box"></span><span>Feeling confident in photos</span></div>
+      <div class="chk" data-check="74_h_other"><span class="box"></span><span>Other:</span><input class="other-in" type="text" data-field="74_h_other_txt"></div>
+    </div>
+  </div>
+  <div class="runfoot"><span class="motto">The mind may race, but the wisdom stays still.</span><span class="pg">108</span></div>
+</section>
+
+<!-- ============ EX 7.4 PREFERRED INDIFFERENTS LIST 2/2 (p.109) ============ -->
+<section class="page" id="p-ex4b">
+  <div class="runhead"><span>07–Navigating Modern Life</span><span class="tag">/ex 7.4/</span>
+    <div class="dots"><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i></i></div>
+  </div>
+  <div class="exhead">
+    <div style="flex:1;min-width:260px"><h1 class="display sm tight">Preferred<br>Indifferents<br>List (2/2)</h1></div>
+    <div class="purpose-bar">
+      <div><b>Purpose:</b> Create a personal list of things that are nice to have but not necessary for your happiness or worth, loosening your grip on external validation.</div>
+      <div><b>Time estimate:</b> 15–20 minutes</div>
+    </div>
+  </div>
+  <hr class="rule" style="margin:22px 0 22px">
+  <p class="field-label">2) REFLECTION ON YOUR LIST</p>
+  <div class="grid2" style="margin-top:10px;align-items:start">
+    <div>
+      <p class="colsub">Awareness Building</p>
+      <div class="field"><label class="qlabel sm">Which categories had the most items checked?</label><textarea class="lines" data-field="74_r_categories" style="min-height:44px"></textarea></div>
+      <div class="field"><label class="qlabel sm">Which items on your list do you currently give the most mental energy to?</label><textarea class="lines" data-field="74_r_energy" style="min-height:44px"></textarea></div>
+    </div>
+    <div>
+      <p class="colsub">The Attachment Test</p>
+      <div class="field"><label class="qlabel sm">Which preferred indifferents would be hardest for you to lose or not have?</label><textarea class="lines" data-field="74_r_hardest" style="min-height:44px"></textarea></div>
+      <div class="field"><label class="qlabel sm">What does this tell you about where you might be too attached?</label><textarea class="lines" data-field="74_r_attached" style="min-height:44px"></textarea></div>
+    </div>
+  </div>
+
+  <p class="field-label" style="margin-top:22px">3) PRACTICING DETACHMENT</p>
+  <div class="grid2" style="margin-top:10px;align-items:start">
+    <div>
+      <p class="colsub">1. Reframing Practice</p>
+      <p class="field-sub">Choose one item from your list that you often worry about. How would you reframe it?</p>
+      <div class="field"><label class="qlabel sm">Item:</label><textarea class="lines" data-field="74_reframe_item" style="min-height:24px"></textarea></div>
+      <div class="field"><label class="qlabel sm">Reframe: <em style="font-weight:400;color:var(--coral-soft)">This is nice to have, but my worth / happiness doesn't depend on it because…</em></label><textarea class="lines" data-field="74_reframe_text" style="min-height:56px"></textarea></div>
+      <p class="colsub" style="margin-top:12px">3. Gratitude for Preferred Indifferents You Have</p>
+      <p class="field-sub">List 3 preferred indifferents you currently enjoy that you can appreciate without being attached to:</p>
+      <div class="field"><label class="qlabel sm">1.</label><textarea class="lines" data-field="74_grat1" style="min-height:24px"></textarea></div>
+      <div class="field"><label class="qlabel sm">2.</label><textarea class="lines" data-field="74_grat2" style="min-height:24px"></textarea></div>
+      <div class="field"><label class="qlabel sm">3.</label><textarea class="lines" data-field="74_grat3" style="min-height:24px"></textarea></div>
+    </div>
+    <div>
+      <p class="colsub">2. What Actually Matters</p>
+      <div class="field"><label class="qlabel sm">If you couldn't have any of the preferred indifferents on your list, what would still make your life meaningful?</label><textarea class="lines" data-field="74_matters" style="min-height:80px"></textarea></div>
+      <p class="colsub" style="margin-top:12px">4. Regular Practice</p>
+      <div class="field"><label class="qlabel sm">This week, when you catch yourself seeking or worrying about preferred indifferents, you will remind yourself:</label><textarea class="lines" data-field="74_regular" style="min-height:80px"></textarea></div>
+    </div>
+  </div>
+  <div class="runfoot"><span class="motto">The mind may race, but the wisdom stays still.</span><span class="pg">109</span></div>
+</section>
+</div><!-- /wrap -->
+
+<div id="toast"></div>
+
+<script>
+(function(){
+  var STORE = "blussomly_stoic_m7_v1";
+  var savedMsg = document.getElementById("savedMsg");
+  var toast = document.getElementById("toast");
+  var saveTimer=null, msgTimer=null;
+
+  function fields(){ return Array.prototype.slice.call(document.querySelectorAll("[data-field]")); }
+  function checks(){ return Array.prototype.slice.call(document.querySelectorAll("[data-check]")); }
+  function scaleDots(){ return Array.prototype.slice.call(document.querySelectorAll("[data-scale]")); }
+
+  function collect(){
+    var data={text:{},checks:{},scale:{}};
+    fields().forEach(function(el){ data.text[el.dataset.field]=el.value; });
+    checks().forEach(function(el){ data.checks[el.dataset.check]=el.classList.contains("on"); });
+    scaleDots().forEach(function(el){ if(el.classList.contains("on")) data.scale[el.dataset.scale]=el.dataset.val; });
+    return data;
+  }
+
+  function apply(data){
+    if(!data) return;
+    if(data.text) fields().forEach(function(el){ if(data.text[el.dataset.field]!=null){el.value=data.text[el.dataset.field]; autosize(el);} });
+    if(data.checks) checks().forEach(function(el){ el.classList.toggle("on", !!data.checks[el.dataset.check]); });
+    if(data.scale) scaleDots().forEach(function(el){ el.classList.toggle("on", data.scale[el.dataset.scale]===el.dataset.val); });
+  }
+
+  function save(){
+    try{ localStorage.setItem(STORE, JSON.stringify(collect())); }catch(e){}
+    if(savedMsg){ savedMsg.classList.add("show"); clearTimeout(msgTimer); msgTimer=setTimeout(function(){savedMsg.classList.remove("show");},1400); }
+  }
+  function queueSave(){ clearTimeout(saveTimer); saveTimer=setTimeout(save,400); }
+
+  function load(){
+    try{ var raw=localStorage.getItem(STORE); if(raw) apply(JSON.parse(raw)); }catch(e){}
+  }
+
+  function autosize(el){
+    if(el.tagName!=="TEXTAREA") return;
+    el.style.height="auto";
+    el.style.height=Math.max(el.scrollHeight, parseInt(getComputedStyle(el).minHeight)||28)+"px";
+  }
+
+  function showToast(t){ toast.textContent=t; toast.classList.add("show"); setTimeout(function(){toast.classList.remove("show");},1800); }
+
+  // wire fields
+  fields().forEach(function(el){
+    autosize(el);
+    el.addEventListener("input",function(){ autosize(el); queueSave(); });
+  });
+  // wire checkboxes
+  checks().forEach(function(el){
+    el.addEventListener("click",function(e){ if(e.target.classList.contains("other-in")) return; el.classList.toggle("on"); save(); });
+  });
+  // wire scale / pill single-select (single select per group)
+  scaleDots().forEach(function(el){
+    el.addEventListener("click",function(){ var g=el.dataset.scale; scaleDots().forEach(function(o){ if(o.dataset.scale===g) o.classList.toggle("on", o===el); }); save(); });
+  });
+
+  // jump nav
+  document.getElementById("jump").addEventListener("change",function(e){
+    var id=e.target.value; if(!id) return;
+    var t=document.getElementById(id); if(t) t.scrollIntoView({behavior:"smooth",block:"start"});
+    e.target.selectedIndex=0;
+  });
+
+  // export
+  document.getElementById("btnExport").addEventListener("click",function(){
+    var blob=new Blob([JSON.stringify(collect(),null,2)],{type:"application/json"});
+    var a=document.createElement("a");
+    var d=new Date().toISOString().slice(0,10);
+    a.href=URL.createObjectURL(blob); a.download="stoic-starter-module7-"+d+".json";
+    document.body.appendChild(a); a.click(); a.remove();
+    showToast("Answers exported ✓");
+  });
+
+  // print
+  document.getElementById("btnPrint").addEventListener("click",function(){ window.print(); });
+
+  // reset
+  document.getElementById("btnReset").addEventListener("click",function(){
+    if(!confirm("Clear all your answers on every page? This can't be undone (export first if you want a copy).")) return;
+    fields().forEach(function(el){ el.value=""; autosize(el); });
+    checks().forEach(function(el){ el.classList.remove("on"); });
+    scaleDots().forEach(function(el){ el.classList.remove("on"); });
+    save(); showToast("Cleared");
+  });
+
+  load();
+})();
+</script>
+</body>
+</html>

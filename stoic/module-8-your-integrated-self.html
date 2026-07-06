@@ -1,0 +1,1138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Stoic Girl Starter Pack — Module 8: Your Integrated Self</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Archivo:wght@500;600;700;800;900&family=Playfair+Display:ital,wght@0,500;0,600;1,400;1,500;1,600&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --coral:#D64C63;
+    --coral-deep:#C23A54;
+    --coral-mid:#DD5B70;
+    --coral-soft:#E796A6;
+    --coral-faint:#F0C4CE;
+    --cream:#F6F0E7;
+    --cream-card:#FBF7F0;
+    --cream-deep:#EFE7DA;
+    --ink-on-red:#F5ECDD;
+    --ink-on-red-soft:#EAD9C6;
+    --line:rgba(214,76,99,.30);
+    --line-soft:rgba(214,76,99,.18);
+    --dot:rgba(214,76,99,.35);
+    --font-display:"Archivo Black",sans-serif;
+    --font-heavy:"Archivo",sans-serif;
+    --font-serif:"Playfair Display",serif;
+    --font-body:"Inter",sans-serif;
+    --shadow:0 18px 50px -28px rgba(150,40,60,.55);
+    --pagew:940px;
+  }
+
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{
+    margin:0;
+    background:
+      radial-gradient(1200px 600px at 15% -5%, #FBF6EE 0%, transparent 60%),
+      radial-gradient(1000px 700px at 100% 100%, #F3EADD 0%, transparent 55%),
+      var(--cream);
+    color:var(--coral);
+    font-family:var(--font-body);
+    -webkit-font-smoothing:antialiased;
+    line-height:1.5;
+    padding-bottom:80px;
+  }
+
+  /* ---------- Toolbar ---------- */
+  .toolbar{
+    position:sticky;top:0;z-index:50;
+    background:rgba(246,240,231,.86);
+    backdrop-filter:blur(14px);
+    border-bottom:1px solid var(--line);
+  }
+  .toolbar-inner{
+    max-width:var(--pagew);margin:0 auto;
+    display:flex;align-items:center;gap:14px;
+    padding:11px 26px;flex-wrap:wrap;
+  }
+  .brand{display:flex;align-items:center;gap:9px;margin-right:auto}
+  .brand .wordmark{
+    font-family:var(--font-heavy);font-weight:900;
+    font-size:16px;letter-spacing:.005em;color:var(--coral);
+    line-height:1;
+  }
+  @media(max-width:520px){.brand .wordmark{font-size:14px}}
+
+  .jump{
+    font-family:var(--font-body);font-size:12.5px;font-weight:500;
+    color:var(--coral);background:var(--cream-card);
+    border:1px solid var(--line);border-radius:999px;
+    padding:7px 12px;cursor:pointer;appearance:none;
+  }
+  .tbtn{
+    font-family:var(--font-body);font-size:12.5px;font-weight:600;
+    color:var(--coral);background:var(--cream-card);
+    border:1px solid var(--line);border-radius:999px;
+    padding:7px 13px;cursor:pointer;transition:.15s;
+    display:inline-flex;align-items:center;gap:6px;
+  }
+  .tbtn:hover{background:var(--coral);color:var(--ink-on-red);border-color:var(--coral)}
+  .tbtn.primary{background:var(--coral);color:var(--ink-on-red);border-color:var(--coral)}
+  .tbtn.primary:hover{background:var(--coral-deep)}
+  .saved{font-size:11.5px;color:var(--coral-soft);min-width:60px;opacity:0;transition:opacity .3s}
+  .saved.show{opacity:1}
+
+  /* ---------- Page shell ---------- */
+  .wrap{max-width:var(--pagew);margin:0 auto;padding:34px 26px 0}
+  .page{
+    position:relative;
+    background:var(--cream-card);
+    border:1px solid var(--line-soft);
+    border-radius:8px;
+    box-shadow:var(--shadow);
+    padding:46px 54px 40px;
+    margin:0 0 34px;
+    scroll-margin-top:78px;
+    overflow:hidden;
+  }
+  .page.red{
+    background:linear-gradient(160deg,#DB5067 0%, #D2455E 60%, #C63D57 100%);
+    color:var(--ink-on-red);border-color:transparent;
+  }
+
+  /* running head */
+  .runhead{
+    display:flex;align-items:center;justify-content:space-between;
+    font-size:11px;letter-spacing:.05em;color:var(--coral-soft);
+    margin-bottom:30px;
+  }
+  .red .runhead{color:var(--ink-on-red-soft)}
+  .runhead .tag{font-family:var(--font-serif);font-style:italic;font-size:15px;letter-spacing:.02em;opacity:.9}
+  .dots{display:flex;gap:5px;align-items:center}
+  .dots i{width:8px;height:8px;border-radius:50%;border:1.4px solid var(--dot);display:block}
+  .red .dots i{border-color:rgba(245,236,221,.6)}
+  .dots i.on{background:var(--coral);border-color:var(--coral)}
+  .red .dots i.on{background:var(--ink-on-red);border-color:var(--ink-on-red)}
+  .seal{width:18px;height:18px;color:var(--coral-soft)}
+  .red .seal{color:var(--ink-on-red-soft)}
+
+  /* footers */
+  .runfoot{
+    display:flex;align-items:flex-end;justify-content:space-between;
+    margin-top:34px;font-size:10.5px;color:var(--coral-soft);
+  }
+  .red .runfoot{color:var(--ink-on-red-soft)}
+  .runfoot .motto{font-style:italic;font-family:var(--font-serif);font-size:12px;line-height:1.3;max-width:180px}
+  .runfoot .cred b{font-family:var(--font-heavy);font-weight:800;color:var(--coral)}
+  .red .runfoot .cred b{color:var(--ink-on-red)}
+  .runfoot .pg{font-family:var(--font-heavy);font-weight:800;font-size:16px;color:var(--coral-soft)}
+  .red .runfoot .pg{color:var(--ink-on-red-soft)}
+
+  /* ---------- Typography ---------- */
+  .eyebrow{font-family:var(--font-serif);font-style:italic;font-weight:500;font-size:26px;color:var(--coral-mid);margin:0 0 2px}
+  .display{
+    font-family:var(--font-display);
+    font-size:clamp(34px,6vw,62px);line-height:.94;
+    letter-spacing:-.01em;color:var(--coral);margin:0;
+    text-transform:uppercase;
+  }
+  .display.sm{font-size:clamp(30px,5vw,46px)}
+  .display.sm.tight{font-size:clamp(26px,4vw,38px)}
+  .red .display{color:var(--ink-on-red)}
+  .kicker{
+    font-family:var(--font-body);font-weight:600;font-size:19px;
+    line-height:1.15;color:var(--coral-deep);margin:0 0 10px;letter-spacing:-.01em;
+  }
+  .colsub{font-family:var(--font-body);font-weight:700;font-size:13px;color:var(--coral-deep);margin:14px 0 5px;line-height:1.2}
+  p{margin:0 0 11px}
+  .body{font-size:13.5px;line-height:1.62;color:var(--coral);text-align:justify;hyphens:auto}
+  .body em{font-style:italic;color:var(--coral-deep)}
+  .body strong{font-weight:700;color:var(--coral-deep)}
+  .lead{font-size:14px}
+  .cap{font-size:11px;color:var(--coral-soft);font-style:italic;font-family:var(--font-serif)}
+
+  .cols{column-gap:34px}
+  .cols.c2{column-count:2}
+  .cols.c3{column-count:3}
+  @media(max-width:820px){.cols.c2,.cols.c3{column-count:1}}
+  .colblock{break-inside:avoid;margin-bottom:20px}
+
+  hr.rule{border:none;border-top:1px solid var(--line);margin:24px 0}
+
+  /* callout */
+  .callout{
+    border:1px solid var(--line);border-radius:7px;
+    padding:16px 16px 15px;background:rgba(214,76,99,.045);
+    font-size:11.5px;line-height:1.5;
+  }
+  .callout .ct{display:flex;align-items:center;gap:8px;font-weight:700;color:var(--coral-deep);margin-bottom:7px}
+  .callout .ct svg{width:15px;height:15px;flex:none}
+  .callout p:last-child{margin-bottom:0}
+
+  /* quote */
+  blockquote.frankl{
+    border-left:3px solid var(--coral);margin:8px 0 12px;padding:4px 0 4px 15px;
+    font-family:var(--font-serif);font-style:italic;font-size:14px;line-height:1.5;color:var(--coral-deep);
+  }
+
+  ul.tick{list-style:none;margin:8px 0;padding:0}
+  ul.tick li{position:relative;padding:0 0 8px 16px;font-size:12.5px;line-height:1.45;font-style:italic}
+  ul.tick li::before{content:"";position:absolute;left:0;top:8px;width:5px;height:5px;border-radius:50%;background:var(--coral-soft)}
+
+  ul.clist{list-style:none;margin:8px 0;padding:0}
+  ul.clist li{position:relative;padding:0 0 8px 16px;font-size:12.5px;line-height:1.5}
+  ul.clist li::before{content:"";position:absolute;left:0;top:8px;width:5px;height:5px;border-radius:50%;background:var(--coral-soft)}
+  ul.clist strong{color:var(--coral-deep);font-weight:700}
+
+  /* pillars */
+  ol.pillars{margin:6px 0 0;padding:0;list-style:none;counter-reset:p}
+  ol.pillars li{counter-increment:p;position:relative;padding:0 0 14px 30px;break-inside:avoid}
+  ol.pillars li::before{
+    content:counter(p)".";position:absolute;left:0;top:0;
+    font-family:var(--font-heavy);font-weight:800;color:var(--coral);font-size:14px;
+  }
+  ol.pillars b{color:var(--coral-deep)}
+  ol.pillars span{display:block;font-size:12.5px;line-height:1.5;margin-top:2px}
+
+  .quote-inline{font-family:var(--font-serif);font-style:italic;font-size:14px;line-height:1.5;color:var(--coral-deep);margin:8px 0}
+
+  /* ---------- Exercise fields ---------- */
+  .purpose-bar{
+    border:1px solid var(--line);border-radius:6px;padding:12px 16px;
+    display:flex;gap:26px;flex-wrap:wrap;font-size:11px;line-height:1.45;margin:0 0 4px;
+    max-width:430px;
+  }
+  .purpose-bar b{color:var(--coral-deep);font-weight:700}
+  .exhead{display:flex;justify-content:space-between;align-items:flex-start;gap:24px;flex-wrap:wrap}
+
+  .field-label{font-family:var(--font-body);font-weight:700;font-size:13px;color:var(--coral-deep);margin:0 0 3px}
+  .field-label .qh{font-weight:500;font-style:italic;color:var(--coral-mid);font-family:var(--font-serif);font-size:14px}
+  .field-sub{font-size:11.5px;color:var(--coral-mid);margin:0 0 7px}
+
+  .lines{
+    width:100%;border:none;outline:none;resize:vertical;
+    background:transparent;color:var(--coral-deep);
+    font-family:var(--font-body);font-size:13px;line-height:28px;
+    background-image:repeating-linear-gradient(transparent,transparent 27px,var(--line) 27px,var(--line) 28px);
+    padding:0;min-height:56px;
+  }
+  .lines::placeholder{color:var(--coral-faint);font-style:italic}
+
+  .boxfield{
+    width:100%;border:1px solid var(--line);border-radius:6px;
+    background:var(--cream);padding:11px 13px;outline:none;resize:vertical;
+    font-family:var(--font-body);font-size:12.5px;line-height:1.5;color:var(--coral-deep);
+    min-height:96px;
+  }
+  .boxfield::placeholder{color:var(--coral-faint);font-style:italic}
+  .boxfield:focus,.lines:focus{box-shadow:0 0 0 2px rgba(214,76,99,.18)}
+
+  .fill{border:none;border-bottom:1px dotted var(--line);background:transparent;outline:none;color:var(--coral-deep);font-family:var(--font-body);font-size:12.5px;min-width:120px}
+  .fill::placeholder{color:var(--coral-faint)}
+
+  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:22px 34px}
+  @media(max-width:720px){.grid2{grid-template-columns:1fr}}
+
+  .prompt-block{margin-bottom:6px}
+  .prompt-group-title{font-family:var(--font-body);font-weight:700;color:var(--coral-deep);font-size:13.5px;margin:20px 0 10px;letter-spacing:.01em}
+
+  .hint-box{
+    border:1px solid var(--line);border-radius:7px;padding:14px 15px;background:rgba(214,76,99,.045);
+    font-size:11.5px;line-height:1.45;max-width:280px;
+  }
+  .hint-box .ct{display:flex;align-items:center;gap:8px;font-weight:700;color:var(--coral-deep);margin-bottom:8px}
+  .hint-box .ct svg{width:15px;height:15px}
+  .hint-box ul{margin:0;padding-left:16px}
+  .hint-box li{margin-bottom:5px}
+
+  .center{text-align:center}
+  .ready{font-family:var(--font-serif);font-style:italic;font-size:15px;color:var(--coral-mid);margin-top:26px;text-align:right}
+
+  .spacer{height:8px}
+  .divider-hero{min-height:520px;display:flex;flex-direction:column;justify-content:center}
+  .divider-hero .eyebrow{color:var(--ink-on-red);opacity:.9}
+  .divider-hero .subtitle{font-family:var(--font-body);font-weight:600;font-size:22px;color:var(--ink-on-red);margin-top:10px}
+
+  /* toast */
+  #toast{
+    position:fixed;left:50%;bottom:26px;transform:translateX(-50%) translateY(20px);
+    background:var(--coral-deep);color:var(--ink-on-red);padding:11px 20px;border-radius:999px;
+    font-size:13px;font-weight:600;box-shadow:var(--shadow);opacity:0;pointer-events:none;
+    transition:.28s;z-index:80;
+  }
+  #toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+
+  /* ---- shared components (cards, pills, scales, emblems) ---- */
+  .virtue-emblem{width:62px;flex:none}
+  .virtue-emblem svg{width:100%;height:auto;display:block}
+
+  .vcard{border:1px solid var(--line);border-radius:8px;padding:18px 20px;break-inside:avoid}
+  .vcard .vhead{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;margin-bottom:8px}
+  .vcard .vhead h4{font-family:var(--font-heavy);font-weight:800;font-size:16px;letter-spacing:.03em;color:var(--coral);margin:0;text-transform:uppercase}
+  .vcard .vemb{width:42px;flex:none}
+  .vcard .vemb svg{width:100%;height:auto;display:block}
+  .vcard .vq{font-size:12px;color:var(--coral-mid);margin:12px 0 2px;font-weight:500}
+
+  /* single-select pill options (reuse [data-scale] single-select JS) */
+  .opts{display:inline-flex;gap:6px;flex-wrap:wrap;margin:4px 0;vertical-align:middle}
+  .opt{border:1.4px solid var(--line);border-radius:999px;padding:4px 13px;font-size:12px;font-weight:600;color:var(--coral);cursor:pointer;transition:.12s;user-select:none}
+  .opt:hover{background:rgba(214,76,99,.08)}
+  .opt.on{background:var(--coral);color:var(--ink-on-red);border-color:var(--coral)}
+  .opt.sm{padding:2px 9px;font-size:11px}
+
+  /* compact numbered scale */
+  .numscale{display:inline-flex;gap:5px;align-items:flex-end}
+  .ns-item{display:flex;flex-direction:column;align-items:center;gap:2px}
+  .ns-item em{font-size:9px;font-style:normal;color:var(--coral-soft)}
+  .scale-dot.sm{width:15px;height:15px;border-width:1.4px}
+
+  /* checkboxes */
+  .chk-group{margin-bottom:6px}
+  .chk-group h5{font-family:var(--font-body);font-weight:700;font-size:13px;color:var(--coral-deep);margin:0 0 8px}
+  .chk{display:flex;align-items:flex-start;gap:8px;font-size:12px;line-height:1.4;color:var(--coral);cursor:pointer;margin-bottom:6px;user-select:none}
+  .chk .box{flex:none;width:14px;height:14px;border:1.5px solid var(--coral);border-radius:3px;margin-top:1px;position:relative;transition:.12s}
+  .chk.on .box{background:var(--coral)}
+  .chk.on .box::after{content:"";position:absolute;left:3.5px;top:.5px;width:4px;height:8px;border:solid var(--cream-card);border-width:0 2px 2px 0;transform:rotate(45deg)}
+  .chk:hover .box{box-shadow:0 0 0 3px rgba(214,76,99,.12)}
+  .chk .other-in{border:none;border-bottom:1px dotted var(--line);background:transparent;outline:none;color:var(--coral-deep);font-family:var(--font-body);font-size:12px;flex:1;min-width:80px}
+
+  /* 1-10 scale */
+  .scale{display:flex;align-items:center;gap:7px;margin:8px 0;flex-wrap:wrap}
+  .scale-dot{width:20px;height:20px;border-radius:50%;border:1.6px solid var(--coral);cursor:pointer;transition:.12s;position:relative}
+  .scale-dot:hover{background:rgba(214,76,99,.15)}
+  .scale-dot.on{background:var(--coral)}
+  .scale-labels{display:flex;justify-content:space-between;font-size:11px;color:var(--coral-soft);max-width:250px;margin-top:2px}
+
+  /* log / weekly tables */
+  table.logtable{width:100%;border-collapse:collapse;font-size:11.5px;margin-top:10px}
+  table.logtable th{text-align:left;font-weight:700;font-size:10px;letter-spacing:.05em;text-transform:uppercase;color:var(--coral-deep);padding:8px;border:1px solid var(--line);background:rgba(214,76,99,.06);vertical-align:middle}
+  table.logtable td{padding:6px 8px;border:1px solid var(--line-soft);vertical-align:top}
+  table.logtable .day{font-weight:700;color:var(--coral-deep);font-size:12px;white-space:nowrap}
+  table.logtable input.cell-in,table.logtable textarea.cell-in{border:none;background:transparent;outline:none;color:var(--coral-deep);font-family:var(--font-body);font-size:11.5px;width:100%;resize:none;line-height:1.4;min-width:60px}
+  @media(max-width:760px){table.logtable{display:block;overflow-x:auto}}
+
+  .inl-label{font-weight:600;color:var(--coral-deep);font-size:12px;display:inline-block;margin-bottom:2px}
+  .two-cols{display:grid;gap:30px;align-items:start}
+  @media(max-width:720px){.two-cols{grid-template-columns:1fr!important}}
+  .qlabel{font-family:var(--font-body);font-weight:700;font-size:13px;color:var(--coral-deep);display:block;margin-bottom:2px}
+  .qlabel.sm{font-size:12px}
+  .field{margin-bottom:12px}
+
+  /* habit loop diagram */
+  .loopwrap{max-width:250px;margin:8px 0}
+  .loopwrap svg{width:100%;height:auto;display:block}
+  .loopwrap text{font-family:var(--font-serif);font-style:italic;fill:var(--coral)}
+
+  /* integration map */
+  .imap{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;margin-top:14px;align-items:stretch}
+  @media(max-width:760px){.imap{grid-template-columns:1fr}}
+  .imap-card{border:1.4px solid var(--line);border-radius:8px;padding:12px 14px}
+  .imap-card h5{font-family:var(--font-heavy);font-weight:800;font-size:11.5px;letter-spacing:.03em;text-transform:uppercase;color:var(--coral);margin:0 0 8px;line-height:1.2}
+  .imap-card .mlab{font-weight:700;font-size:10.5px;color:var(--coral-deep);margin:8px 0 0}
+  .imap-card textarea{min-height:26px}
+  .imap-hub{border:1.6px solid var(--coral);border-radius:50%;aspect-ratio:1;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;padding:22px}
+  .imap-hub h5{font-family:var(--font-heavy);font-weight:800;font-size:12px;letter-spacing:.03em;text-transform:uppercase;color:var(--coral);margin:0 0 6px}
+  .imap-hub textarea{text-align:center}
+  @media(max-width:760px){.imap-hub{aspect-ratio:auto;border-radius:12px;padding:16px}}
+
+  @media print{
+    body{background:#fff;padding:0}
+    .toolbar,#toast{display:none}
+    .wrap{max-width:none;padding:0}
+    .page{box-shadow:none;border:none;border-radius:0;page-break-after:always;padding:34px 40px}
+    .page.red{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+    .lines,.boxfield{background:#fff}
+  }
+</style>
+</head>
+<body>
+
+<!-- ============ TOOLBAR ============ -->
+<div class="toolbar">
+  <div class="toolbar-inner">
+    <div class="brand">
+      <span class="wordmark">The Stoic Girl Starter Pack</span>
+    </div>
+    <select class="jump" id="jump" aria-label="Jump to section">
+      <option value="">Jump to…</option>
+      <option value="p-divider">Module 8 · Your Integrated Self</option>
+      <option value="p-a1">Who You Are When Life Gets Hard</option>
+      <option value="p-a2">Self-Compassion Meets Stoic Discipline</option>
+      <option value="p-a3">Growth Mindset with Ancient Wisdom</option>
+      <option value="p-a4">Resilience Building</option>
+      <option value="p-exintro">Module 8 Exercises</option>
+      <option value="p-ex1">Ex 8.1 · Future Self Visualization (1/2)</option>
+      <option value="p-ex1b">Ex 8.1 · Future Self Visualization (2/2)</option>
+      <option value="p-ex2a">Ex 8.2 · Before &amp; After Self-Reflection (1/3)</option>
+      <option value="p-ex2b">Ex 8.2 · Before &amp; After Self-Reflection (2/3)</option>
+      <option value="p-ex2c">Ex 8.2 · Before &amp; After Self-Reflection (3/3)</option>
+      <option value="p-ex3a">Ex 8.3 · Virtue-Driven Action Plan (1/2)</option>
+      <option value="p-ex3b">Ex 8.3 · Virtue-Driven Action Plan (2/2)</option>
+      <option value="p-ex4a">Ex 8.4 · Integration Map (1/3)</option>
+      <option value="p-ex4b">Ex 8.4 · My Integration Map</option>
+      <option value="p-ex4c">Ex 8.4 · Integration Map (3/3)</option>
+    </select>
+    <span class="saved" id="savedMsg">saved ✓</span>
+    <button class="tbtn" id="btnExport" title="Download your answers as a file">Export</button>
+    <button class="tbtn" id="btnPrint" title="Print or save as PDF">Print</button>
+    <button class="tbtn" id="btnReset" title="Clear all answers">Reset</button>
+  </div>
+</div>
+
+<div class="wrap">
+<!-- ============ MODULE 8 DIVIDER (p.110) ============ -->
+<section class="page red" id="p-divider">
+  <div class="runhead">
+    <span>The Stoic Girl Starter Pack</span>
+    <div class="dots"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+  </div>
+  <div class="divider-hero">
+    <p class="eyebrow" style="font-size:34px;margin-bottom:6px">Module 8:</p>
+    <h1 class="display" style="font-size:clamp(38px,8vw,80px)">Your Integrated Self</h1>
+    <p class="subtitle">Identity Beyond Circumstance</p>
+  </div>
+  <div class="runfoot">
+    <span class="motto">Strength grows in the spaces between storms.</span>
+    <span class="pg">110</span>
+  </div>
+</section>
+
+<!-- ============ WHO YOU ARE WHEN LIFE GETS HARD (p.111) ============ -->
+<section class="page" id="p-a1">
+  <div class="runhead"><span>08–Your Integrated Self</span><span class="tag">/edu/</span>
+    <div class="dots"><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i></div>
+  </div>
+  <h1 class="display sm">Who You Are<br>When Life<br>Gets Hard</h1>
+  <div class="cols c3" style="margin-top:30px">
+    <div class="colblock">
+      <h3 class="kicker">The Real Test of Character</h3>
+      <p class="body">Anyone can be kind when everything is going well, patient when life is easy, or brave when there's no real risk involved.</p>
+      <p class="body">Your <em>true character</em> emerges in how you respond when things fall apart, when you're stressed, when you're disappointed, or when no one is watching. That's the person you're building through this work.</p>
+    </div>
+    <div class="colblock">
+      <h3 class="kicker">Identity vs. Circumstances</h3>
+      <p class="body">Most people tie their sense of self to their circumstances: their job title, relationship status, achievements, or current life phase.</p>
+      <p class="body">But circumstances change constantly! The Stoics understood that true identity comes from <em>character traits that remain consistent</em> regardless of external conditions.</p>
+    </div>
+    <div class="colblock">
+      <h3 class="kicker">What You've Been Building</h3>
+      <p class="body">Through the previous modules, you haven't just been learning techniques; you've been building a version of yourself who:</p>
+      <ul class="tick">
+        <li>Responds from wisdom rather than reactivity</li>
+        <li>Acts from courage despite fear</li>
+        <li>Treats herself and others with justice and fairness</li>
+        <li>Finds balance and moderation in a chaotic world</li>
+        <li>Regulates emotions while still feeling deeply</li>
+        <li>Maintains boundaries while staying open to connection</li>
+      </ul>
+    </div>
+  </div>
+  <div class="callout" style="max-width:560px;margin:22px auto 0">
+    <div class="ct" style="justify-content:center"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="7" r="3"/><circle cx="7" cy="15" r="3"/><circle cx="17" cy="15" r="3"/></svg>It sounds super cheesy, but it's true</div>
+    <p style="margin:0;text-align:center">The emotionally resilient, philosophically grounded person you want to become isn't some future version of yourself you need to transform into. <em>She already exists within you. You've been practicing being her.</em> Now it's about consistency and integration.</p>
+  </div>
+  <div class="runfoot"><span class="motto">Strength grows in the spaces between storms.</span><span class="pg">111</span></div>
+</section>
+
+<!-- ============ SELF-COMPASSION MEETS STOIC DISCIPLINE (p.112) ============ -->
+<section class="page" id="p-a2">
+  <div class="runhead"><span>08–Your Integrated Self</span><span class="tag">/edu/</span>
+    <div class="dots"><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i></div>
+  </div>
+  <h1 class="display sm">Self-Compassion<br>Meets Stoic Discipline:<br>The Balance</h1>
+  <div class="cols c3" style="margin-top:30px">
+    <div class="colblock">
+      <h3 class="kicker">The False Choice Between Soft and Strong</h3>
+      <p class="body">Our culture often presents self-compassion and discipline as opposites: either you're gentle with yourself (and potentially weak) or you're disciplined with yourself (and potentially harsh).</p>
+      <p class="body">Stoic practice reveals this as a false choice. <em>True strength requires both self-discipline and self-compassion.</em></p>
+      <p class="colsub">Self-Compassion in Stoic Terms:</p>
+      <p class="body">Rather than bathing in self-pity or making excuses for poor choices, self-compassion is about <em>treating yourself with the same kindness you'd show a good friend who's struggling</em>. This includes:</p>
+      <ul class="clist">
+        <li><strong>Acknowledging your humanity:</strong> you will make mistakes, have setbacks, and sometimes act from your worst rather than best self</li>
+        <li><strong>Speaking to yourself kindly:</strong> the voice in your head can be encouraging rather than critical</li>
+        <li><strong>Learning without shame:</strong> mistakes become information rather than evidence of your inadequacy</li>
+      </ul>
+    </div>
+    <div class="colblock">
+      <h3 class="kicker">Stoic Discipline in Compassionate Terms</h3>
+      <p class="body">Discipline isn't about punishing yourself into better behavior. It's about <em>loving yourself enough to act in ways that serve your highest good, even when you don't feel like it</em>. This includes:</p>
+      <ul class="clist">
+        <li><strong>Choosing your responses consciously:</strong> instead of reacting automatically</li>
+        <li><strong>Following through on commitments to yourself:</strong> because your word to yourself matters (!)</li>
+        <li><strong>Practicing daily:</strong> because character is built through consistent small choices</li>
+      </ul>
+    </div>
+    <div class="colblock">
+      <h3 class="kicker">The Integration</h3>
+      <p class="body">When you mess up (and you will), self-compassion helps you acknowledge the mistake without spiraling into shame, while stoic discipline helps you take responsibility and choose differently next time.</p>
+      <p class="body">When you're struggling with a challenge, self-compassion validates the difficulty while stoic discipline reminds you of your capacity to handle it.</p>
+      <p class="colsub">What this looks like on a daily basis:</p>
+      <ul class="clist">
+        <li>You can be disappointed in a choice you made while still speaking to yourself kindly</li>
+        <li>You can maintain boundaries while understanding why others might push back</li>
+        <li>You can practice emotional regulation while honoring the validity of your feelings</li>
+        <li>You can work toward goals while accepting the uncertainty of outcomes</li>
+      </ul>
+    </div>
+  </div>
+  <div class="runfoot"><span class="motto">Strength grows in the spaces between storms.</span><span class="pg">112</span></div>
+</section>
+
+<!-- ============ GROWTH MINDSET (p.113) ============ -->
+<section class="page" id="p-a3">
+  <div class="runhead"><span>08–Your Integrated Self</span><span class="tag">/edu/</span>
+    <div class="dots"><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i></div>
+  </div>
+  <h1 class="display sm">Growth Mindset With<br>Ancient Wisdom: Learning<br>From Setbacks</h1>
+  <div class="cols c3" style="margin-top:30px">
+    <div class="colblock">
+      <h3 class="kicker">Reframing Failure as Philosophy</h3>
+      <p class="body">Every setback, mistake, and disappointment is an <em>opportunity</em> to practice stoic principles.</p>
+      <p class="body">The ancient philosophers didn't see challenges as problems to solve but as training grounds for character development.</p>
+      <p class="body"><em>Your worst days are actually your most important days for growth.</em></p>
+      <p class="body">When something doesn't go as planned, instead of asking "Why me?" or "How can I fix this?", ask:</p>
+      <ul class="clist">
+        <li><strong>Wisdom:</strong> <em>"What can I learn from this situation?"</em></li>
+        <li><strong>Courage:</strong> <em>"How can I respond bravely despite feeling scared or disappointed?"</em></li>
+        <li><strong>Justice:</strong> <em>"How can I treat myself and others fairly through this challenge?"</em></li>
+        <li><strong>Temperance:</strong> <em>"What's the balanced response that avoids extremes?"</em></li>
+      </ul>
+    </div>
+    <div class="colblock">
+      <h3 class="kicker">Obstacles as the Path</h3>
+      <p class="body">The famous Stoic principle <em>"the impediment to action advances action; what stands in the way becomes the way"</em> isn't just philosophical poetry, but also practical psychology.</p>
+      <p class="body">Research shows that people who view challenges as opportunities for growth develop greater resilience and life satisfaction than those who see them as threats to avoid (think back to the <em>Locus of Control</em> that we talked about in Module 2!).</p>
+      <p class="body">Nassim Taleb coined the term <strong>"antifragility"</strong> to describe systems that get stronger from stress rather than just surviving it.</p>
+      <p class="body">Through stoic practice, you become antifragile: not just resilient in the face of challenges, but actually strengthened by them.</p>
+    </div>
+    <div class="colblock">
+      <h3 class="kicker">Practical Growth Mindset with Stoic Framework</h3>
+      <ul class="clist">
+        <li><strong>When you fail:</strong> "This is feedback about my approach, not evidence of my inadequacy"</li>
+        <li><strong>When you're rejected:</strong> "This is information about fit, not judgment on my worth"</li>
+        <li><strong>When you're criticized:</strong> "This might contain useful information for my growth"</li>
+        <li><strong>When you're overwhelmed:</strong> "This is an opportunity to practice my emotional regulation tools"</li>
+        <li><strong>When you're uncertain:</strong> "This is a chance to practice comfort with the unknown"</li>
+      </ul>
+    </div>
+  </div>
+  <div class="runfoot"><span class="motto">Strength grows in the spaces between storms.</span><span class="pg">113</span></div>
+</section>
+
+<!-- ============ RESILIENCE BUILDING (p.114) ============ -->
+<section class="page" id="p-a4">
+  <div class="runhead"><span>08–Your Integrated Self</span><span class="tag">/edu/</span>
+    <div class="dots"><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i></div>
+  </div>
+  <div class="exhead" style="align-items:flex-start">
+    <h1 class="display sm" style="flex:1;min-width:280px">Resilience Building:<br>How To Bounce<br>Back Stronger</h1>
+    <div class="callout" style="max-width:320px">
+      <div class="ct"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="7" r="3"/><circle cx="7" cy="15" r="3"/><circle cx="17" cy="15" r="3"/></svg>A helpful way to think about it</div>
+      <p style="margin:0">Like a financial emergency fund, resilience is built gradually through daily deposits of good practices. Each time you choose wisdom over reactivity, each morning intention you set, each evening reflection you complete… These are all deposits in your resilience account!</p>
+    </div>
+  </div>
+  <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:30px 34px;margin-top:26px;align-items:start">
+    <div>
+      <h3 class="kicker">What Resilience Actually Means</h3>
+      <p class="body">We're not about becoming "tough enough" to handle anything without being affected. We're here to <em>build resilience</em>. Now what does that mean?</p>
+      <p class="body">Resilience is the skill of <em>absorbing impact without becoming the impact</em>.</p>
+      <p class="body">So instead of obsessing over keeping the Jenga tower upright, <em>we get good at rebuilding it</em>. Because every time it falls, we learn. And each time, it stands just a little steadier.</p>
+      <p class="body">We can look at resilience through different lenses:</p>
+    </div>
+    <div>
+      <h3 class="kicker">The Components of Stoic Resilience</h3>
+      <p class="colsub">Cognitive Resilience:</p>
+      <ul class="clist">
+        <li>Questioning automatic thoughts instead of believing them immediately</li>
+        <li>Reframing challenges as opportunities for virtue practice</li>
+        <li>Maintaining perspective during intense emotional moments</li>
+        <li>Distinguishing between what you can and cannot control</li>
+      </ul>
+      <p class="colsub">Emotional Resilience:</p>
+      <ul class="clist">
+        <li>Feeling emotions fully without being controlled by them</li>
+        <li>Using emotion regulation tools when overwhelmed</li>
+        <li>Maintaining self-compassion during difficult periods</li>
+        <li>Building distress tolerance skills</li>
+      </ul>
+      <p class="colsub">Behavioral Resilience:</p>
+      <ul class="clist">
+        <li>Continuing to act from your values even when it's hard</li>
+        <li>Maintaining important routines and practices during stress</li>
+        <li>Seeking support when needed without shame</li>
+        <li>Taking care of your physical and mental health consistently</li>
+      </ul>
+    </div>
+    <div>
+      <p class="colsub" style="margin-top:38px">Social Resilience:</p>
+      <ul class="clist">
+        <li>Maintaining healthy boundaries during challenging relationships</li>
+        <li>Communicating needs and feelings clearly under stress</li>
+        <li>Building and maintaining supportive connections</li>
+        <li>Contributing to others' well-being even when you're struggling</li>
+      </ul>
+      <p class="colsub">Spiritual / Philosophical Resilience:</p>
+      <ul class="clist">
+        <li>Maintaining connection to meaning and purpose during dark periods</li>
+        <li>Remembering your values when external circumstances are chaotic</li>
+        <li>Finding ways to contribute and grow regardless of personal challenges</li>
+        <li>Maintaining hope and curiosity about the future</li>
+      </ul>
+      <p class="body">…Do you now see how <em>everything</em> we've been covering in this workbook has been to build resilience one way or another?</p>
+    </div>
+  </div>
+  <div class="runfoot"><span class="motto">Strength grows in the spaces between storms.</span><span class="pg">114</span></div>
+</section>
+
+<!-- ============ MODULE 8 EXERCISES INTRO (p.115) ============ -->
+<section class="page" id="p-exintro">
+  <div class="runhead"><span>08–Your Integrated Self</span><span class="tag">/ex/</span>
+    <div class="dots"><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i></div>
+  </div>
+  <div class="grid2" style="align-items:center;margin-top:30px">
+    <div><h1 class="display">Module 8<br>Exercises</h1></div>
+    <div>
+      <p class="body">You've made it to the final practice part! Here, we want to take some time to recognize how much you've already grown and create a clear vision for who you're continuing to become.</p>
+      <p class="body">These exercises help you see your progress, integrate your learning, and plan your ongoing journey.</p>
+      <div class="colblock" style="margin-top:16px">
+        <p class="body"><strong>1. Future Self Visualization</strong><br><span style="font-style:italic;color:var(--coral-mid);font-size:12.5px">This tool helps you describe your emotionally resilient self in concrete detail: what she thinks, feels, and chooses differently. This anchors your growth in a clear identity rather than vague goals.</span></p>
+        <p class="body" style="margin-top:11px"><strong>2. Before &amp; After Self-Reflection</strong><br><span style="font-style:italic;color:var(--coral-mid);font-size:12.5px">This exercise captures who you were when you started this workbook versus who you're becoming now. Sometimes we don't realize how much we've changed until we explicitly compare our past and present selves.</span></p>
+        <p class="body" style="margin-top:11px"><strong>3. Virtue-Driven Action Plan</strong><br><span style="font-style:italic;color:var(--coral-mid);font-size:12.5px">This exercise takes one area of your life and creates specific next steps based on the four Stoic virtues. This bridges all your insights into practical implementation.</span></p>
+        <p class="body" style="margin-top:11px"><strong>4. Integration Map</strong><br><span style="font-style:italic;color:var(--coral-mid);font-size:12.5px">This tool creates a visual overview of how different modules have influenced your growth and identity. It's both a celebration of your progress and a reference for ongoing development.</span></p>
+      </div>
+      <hr class="rule">
+      <p class="body" style="font-size:12.5px">I know it's tempting, but I'd kindly ask you not to skip these exercises. It's important to recognize the person you've already started becoming and commit to continuing that growth (because as we've learned by now, it's all about ongoing practiceee — and these exercises set you up for your next steps).</p>
+    </div>
+  </div>
+  <div class="runfoot"><span class="motto">Strength grows in the spaces between storms.</span><span class="pg">115</span></div>
+</section>
+
+<!-- ============ EX 8.1 FUTURE SELF VISUALIZATION 1/2 (p.116) ============ -->
+<section class="page" id="p-ex1">
+  <div class="runhead"><span>08–Your Integrated Self</span><span class="tag">/ex 8.1/</span>
+    <div class="dots"><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i></div>
+  </div>
+  <div class="exhead">
+    <div style="flex:1;min-width:260px"><h1 class="display sm">Future<br>Self<br>Visualization (1/2)</h1></div>
+    <div class="purpose-bar">
+      <div><b>Purpose:</b> Create a detailed vision of your emotionally resilient self to anchor ongoing growth in a clear identity rather than vague goals.</div>
+      <div><b>Time estimate:</b> 20–25 minutes</div>
+    </div>
+  </div>
+  <div style="display:flex;justify-content:space-between;gap:24px;flex-wrap:wrap;align-items:center;margin-top:14px">
+    <p class="body" style="max-width:460px;margin:0">Good news! The person you're becoming through this work isn't a fantasy. She's a real possibility that becomes more likely each time you practice these principles. Let's get specific about who she is.</p>
+    <div class="loopwrap" style="max-width:210px">
+        <svg viewBox="0 0 220 152" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+          <defs><marker id="triA" markerWidth="9" markerHeight="9" refX="5" refY="4" orient="auto-start-reverse"><path d="M1 1 L7.5 4 L1 7 Z" fill="#D64C63"/></marker></defs>
+          <text x="110" y="20" text-anchor="middle" font-size="15" font-style="italic" font-family="Playfair Display, serif" fill="#D64C63">Thoughts</text>
+          <text x="36" y="146" text-anchor="middle" font-size="15" font-style="italic" font-family="Playfair Display, serif" fill="#D64C63">Behaviors</text>
+          <text x="184" y="146" text-anchor="middle" font-size="15" font-style="italic" font-family="Playfair Display, serif" fill="#D64C63">Feelings</text>
+          <path d="M96 30 L52 120" fill="none" stroke="#D64C63" stroke-width="1.6" marker-start="url(#triA)" marker-end="url(#triA)"/>
+          <path d="M124 30 L168 120" fill="none" stroke="#D64C63" stroke-width="1.6" marker-start="url(#triA)" marker-end="url(#triA)"/>
+          <path d="M60 132 L160 132" fill="none" stroke="#D64C63" stroke-width="1.6" marker-start="url(#triA)" marker-end="url(#triA)"/>
+        </svg>
+      </div>
+  </div>
+  <hr class="rule" style="margin:20px 0 18px">
+  <p class="field-label">1) YOUR FUTURE SELF'S INNER WORLD</p>
+  <p class="field-sub" style="margin-top:4px">Imagine yourself 6 months from now, having consistently practiced the principles in this workbook. This future version of you has integrated these tools into her daily life (on some days this involves active journaling or returning to one of the exercises, on others it is more about reminding herself of a Stoic principle or mindset shift). She's not perfect, but she's noticeably different in how she approaches challenges.</p>
+  <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:18px 30px;margin-top:12px;align-items:start">
+    <div>
+      <p class="colsub">How She Thinks</p>
+      <div class="field"><label class="qlabel sm">When faced with a stressful situation, what goes through her mind first?</label><textarea class="lines" data-field="81_think1" style="min-height:44px"></textarea></div>
+      <div class="field"><label class="qlabel sm">How does she talk to herself when she makes a mistake?</label><textarea class="lines" data-field="81_think2" style="min-height:44px"></textarea></div>
+      <div class="field"><label class="qlabel sm">What's her relationship with uncertainty and things she can't control?</label><textarea class="lines" data-field="81_think3" style="min-height:44px"></textarea></div>
+      <div class="field"><label class="qlabel sm">How does she process criticism or feedback?</label><textarea class="lines" data-field="81_think4" style="min-height:44px"></textarea></div>
+    </div>
+    <div>
+      <p class="colsub">How She Feels</p>
+      <div class="field"><label class="qlabel sm">She still experiences difficult emotions, but how does she relate to them differently?</label><textarea class="lines" data-field="81_feel1" style="min-height:44px"></textarea></div>
+      <div class="field"><label class="qlabel sm">What's changed about how long she stays in emotional overwhelm?</label><textarea class="lines" data-field="81_feel2" style="min-height:44px"></textarea></div>
+      <div class="field"><label class="qlabel sm">How does she experience anxiety, sadness, or anger now?</label><textarea class="lines" data-field="81_feel3" style="min-height:44px"></textarea></div>
+      <div class="field"><label class="qlabel sm">What does emotional regulation look like for her daily?</label><textarea class="lines" data-field="81_feel4" style="min-height:44px"></textarea></div>
+    </div>
+    <div>
+      <p class="colsub">How She Chooses</p>
+      <div class="field"><label class="qlabel sm">When faced with a difficult decision, what's her process?</label><textarea class="lines" data-field="81_choose1" style="min-height:44px"></textarea></div>
+      <div class="field"><label class="qlabel sm">How does she handle situations that used to trigger reactive responses?</label><textarea class="lines" data-field="81_choose2" style="min-height:44px"></textarea></div>
+      <div class="field"><label class="qlabel sm">What does she do when she feels the urge to people-please or avoid conflict?</label><textarea class="lines" data-field="81_choose3" style="min-height:44px"></textarea></div>
+      <div class="field"><label class="qlabel sm">How does she prioritize when she's feeling overwhelmed?</label><textarea class="lines" data-field="81_choose4" style="min-height:44px"></textarea></div>
+    </div>
+  </div>
+  <div class="runfoot"><span class="motto">Strength grows in the spaces between storms.</span><span class="pg">116</span></div>
+</section>
+
+<!-- ============ EX 8.1 FUTURE SELF VISUALIZATION 2/2 (p.117) ============ -->
+<section class="page" id="p-ex1b">
+  <div class="runhead"><span>08–Your Integrated Self</span><span class="tag">/ex 8.1/</span>
+    <div class="dots"><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i></div>
+  </div>
+  <div class="exhead">
+    <div style="flex:1;min-width:260px">
+      <h1 class="display sm">Future<br>Self<br>Visualization (2/2)</h1>
+      <p class="body" style="max-width:440px;margin-top:12px">Good news! The person you're becoming through this work isn't a fantasy. She's a real possibility that becomes more likely each time you practice these principles. Let's get specific about who she is.</p>
+    </div>
+    <div class="purpose-bar">
+      <div><b>Purpose:</b> Create a detailed vision of your emotionally resilient self to anchor ongoing growth in a clear identity rather than vague goals.</div>
+      <div><b>Time estimate:</b> 20–25 minutes</div>
+    </div>
+  </div>
+  <hr class="rule" style="margin:22px 0 22px">
+  <p class="field-label">2) YOUR FUTURE SELF'S DAILY LIFE</p>
+  <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:18px 30px;margin-top:10px">
+    <div class="field"><p class="colsub">Morning Routine</p><label class="qlabel sm">How does she start her day? What's her mindset?</label><textarea class="lines" data-field="81_morning" style="min-height:56px"></textarea></div>
+    <div class="field"><p class="colsub">Evening Wind-Down</p><label class="qlabel sm">How does she process her day and prepare for rest?</label><textarea class="lines" data-field="81_evening" style="min-height:56px"></textarea></div>
+    <div class="field"><p class="colsub">Self-Care</p><label class="qlabel sm">What does taking care of herself look like for her?</label><textarea class="lines" data-field="81_selfcare" style="min-height:56px"></textarea></div>
+  </div>
+
+  <p class="field-label" style="margin-top:22px">3) THE BRIDGE TO YOUR FUTURE SELF</p>
+  <div class="grid2" style="margin-top:10px;align-items:start">
+    <div class="field"><p class="colsub">What She Would Tell Current You</p><label class="qlabel sm">If your future self could send you a message of encouragement, what would she say?</label><textarea class="lines" data-field="81_tell" style="min-height:56px"></textarea></div>
+    <div class="field"><p class="colsub">The Most Important Change</p><label class="qlabel sm">What's the single most significant difference between who you are now and this future version?</label><textarea class="lines" data-field="81_change" style="min-height:56px"></textarea></div>
+    <div class="field"><p class="colsub">Living from Your Future Self Today</p><label class="qlabel sm">What's one way you can embody this future self in the next week?</label><textarea class="lines" data-field="81_living" style="min-height:56px"></textarea></div>
+    <div class="field"><p class="colsub">Your Future Self Mantra</p><label class="qlabel sm">What phrase or reminder would help you act from this future identity when you're struggling?</label><textarea class="lines" data-field="81_mantra" style="min-height:56px"></textarea></div>
+  </div>
+  <div class="runfoot"><span class="motto">Strength grows in the spaces between storms.</span><span class="pg">117</span></div>
+</section>
+
+<!-- ============ EX 8.2 BEFORE & AFTER SELF-REFLECTION 1/3 (p.118) ============ -->
+<section class="page" id="p-ex2a">
+  <div class="runhead"><span>08–Your Integrated Self</span><span class="tag">/ex 8.2/</span>
+    <div class="dots"><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i></div>
+  </div>
+  <div class="exhead">
+    <div style="flex:1;min-width:260px">
+      <h1 class="display sm">Before &amp; After<br>Self-Reflection<br>(1/3)</h1>
+      <p class="body" style="max-width:440px;margin-top:12px">Sometimes we don't realize how much we've changed until we explicitly compare our past and present selves. This reflection helps you see the growth that might be invisible to you.</p>
+    </div>
+    <div class="purpose-bar">
+      <div><b>Purpose:</b> Recognize and celebrate the progress you've made by explicitly comparing who you were before this workbook to who you're becoming now.</div>
+      <div><b>Time estimate:</b> 25–30 minutes</div>
+    </div>
+  </div>
+  <hr class="rule" style="margin:22px 0 22px">
+  <p class="field-label">1) SETTING THE BASELINE</p>
+  <div class="field" style="margin-top:6px"><label class="qlabel sm">Think back to when you first started this workbook. What was going on in your life? What prompted you to begin this work?</label><textarea class="lines" data-field="82_baseline" style="min-height:44px"></textarea></div>
+
+  <p class="field-label" style="margin-top:18px">2) LIFE AREAS: THEN VS. NOW</p>
+  <p class="colsub" style="margin-top:8px">Emotional Regulation: Before</p>
+  <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px 30px">
+    <div class="field"><label class="qlabel sm">1. How did you typically handle overwhelming emotions?</label><textarea class="lines" data-field="82_er_b1" style="min-height:44px"></textarea></div>
+    <div class="field"><label class="qlabel sm">2. What happened when you felt anxious, angry, or deeply sad?</label><textarea class="lines" data-field="82_er_b2" style="min-height:44px"></textarea></div>
+    <div class="field"><label class="qlabel sm">3. How long did it usually take you to recover from emotional setbacks?</label><textarea class="lines" data-field="82_er_b3" style="min-height:44px"></textarea></div>
+  </div>
+  <p class="colsub" style="margin-top:10px">Emotional Regulation: Now</p>
+  <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px 30px">
+    <div class="field"><label class="qlabel sm">1. How do you approach intense emotions differently?</label><textarea class="lines" data-field="82_er_n1" style="min-height:44px"></textarea></div>
+    <div class="field"><label class="qlabel sm">2. What tools do you use that you didn't have before?</label><textarea class="lines" data-field="82_er_n2" style="min-height:44px"></textarea></div>
+    <div class="field"><label class="qlabel sm">3. What's changed about your emotional recovery time?</label><textarea class="lines" data-field="82_er_n3" style="min-height:44px"></textarea></div>
+  </div>
+  <p class="colsub" style="margin-top:14px">Relationships: Before</p>
+  <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px 30px">
+    <div class="field"><label class="qlabel sm">1. How did you handle conflict in relationships?</label><textarea class="lines" data-field="82_rel_b1" style="min-height:44px"></textarea></div>
+    <div class="field"><label class="qlabel sm">2. What was your relationship with boundaries like?</label><textarea class="lines" data-field="82_rel_b2" style="min-height:44px"></textarea></div>
+    <div class="field"><label class="qlabel sm">3. How did you respond when people disappointed you?</label><textarea class="lines" data-field="82_rel_b3" style="min-height:44px"></textarea></div>
+  </div>
+  <p class="colsub" style="margin-top:10px">Relationships: Now</p>
+  <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px 30px">
+    <div class="field"><label class="qlabel sm">1. What's different about how you approach relationship challenges?</label><textarea class="lines" data-field="82_rel_n1" style="min-height:44px"></textarea></div>
+    <div class="field"><label class="qlabel sm">2. How has your boundary-setting evolved?</label><textarea class="lines" data-field="82_rel_n2" style="min-height:44px"></textarea></div>
+    <div class="field"><label class="qlabel sm">3. What's changed about how you handle disappointment in relationships?</label><textarea class="lines" data-field="82_rel_n3" style="min-height:44px"></textarea></div>
+  </div>
+  <div class="runfoot"><span class="motto">Strength grows in the spaces between storms.</span><span class="pg">118</span></div>
+</section>
+
+<!-- ============ EX 8.2 BEFORE & AFTER SELF-REFLECTION 2/3 (p.119) ============ -->
+<section class="page" id="p-ex2b">
+  <div class="runhead"><span>08–Your Integrated Self</span><span class="tag">/ex 8.2/</span>
+    <div class="dots"><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i></div>
+  </div>
+  <div class="exhead">
+    <div style="flex:1;min-width:260px"><h1 class="display sm">Before &amp; After<br>Self-Reflection<br>(2/3)</h1></div>
+    <div class="purpose-bar">
+      <div><b>Purpose:</b> Recognize and celebrate the progress you've made by explicitly comparing who you were before this workbook to who you're becoming now.</div>
+      <div><b>Time estimate:</b> 25–30 minutes</div>
+    </div>
+  </div>
+  <hr class="rule" style="margin:22px 0 22px">
+  <p class="field-label">2) LIFE AREAS: THEN VS. NOW (CONT.)</p>
+  <p class="colsub" style="margin-top:8px">Self-Talk: Before</p>
+  <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px 30px">
+    <div class="field"><label class="qlabel sm">1. What was the typical tone of your inner voice?</label><textarea class="lines" data-field="82_st_b1" style="min-height:44px"></textarea></div>
+    <div class="field"><label class="qlabel sm">2. How did you talk to yourself after making mistakes?</label><textarea class="lines" data-field="82_st_b2" style="min-height:44px"></textarea></div>
+    <div class="field"><label class="qlabel sm">3. What did your inner critic sound like?</label><textarea class="lines" data-field="82_st_b3" style="min-height:44px"></textarea></div>
+  </div>
+  <p class="colsub" style="margin-top:10px">Self-Talk: Now</p>
+  <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px 30px">
+    <div class="field"><label class="qlabel sm">1. How do you speak to yourself differently?</label><textarea class="lines" data-field="82_st_n1" style="min-height:44px"></textarea></div>
+    <div class="field"><label class="qlabel sm">2. What's changed about your post-mistake self-talk?</label><textarea class="lines" data-field="82_st_n2" style="min-height:44px"></textarea></div>
+    <div class="field"><label class="qlabel sm">3. How have you transformed your relationship with your inner critic?</label><textarea class="lines" data-field="82_st_n3" style="min-height:44px"></textarea></div>
+  </div>
+  <p class="colsub" style="margin-top:14px">Daily Life: Before</p>
+  <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px 30px">
+    <div class="field"><label class="qlabel sm">1. What did a typical stressful day look like for you?</label><textarea class="lines" data-field="82_dl_b1" style="min-height:44px"></textarea></div>
+    <div class="field"><label class="qlabel sm">2. How did you handle overwhelming to-do lists or pressure?</label><textarea class="lines" data-field="82_dl_b2" style="min-height:44px"></textarea></div>
+    <div class="field"><label class="qlabel sm">3. What was your relationship with social media and comparison like?</label><textarea class="lines" data-field="82_dl_b3" style="min-height:44px"></textarea></div>
+  </div>
+  <p class="colsub" style="margin-top:10px">Daily Life: Now</p>
+  <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px 30px">
+    <div class="field"><label class="qlabel sm">1. How do you navigate stressful days differently?</label><textarea class="lines" data-field="82_dl_n1" style="min-height:44px"></textarea></div>
+    <div class="field"><label class="qlabel sm">2. What's changed about how you handle pressure and overwhelm?</label><textarea class="lines" data-field="82_dl_n2" style="min-height:44px"></textarea></div>
+    <div class="field"><label class="qlabel sm">3. How has your relationship with social media and comparison evolved?</label><textarea class="lines" data-field="82_dl_n3" style="min-height:44px"></textarea></div>
+  </div>
+  <div class="runfoot"><span class="motto">Strength grows in the spaces between storms.</span><span class="pg">119</span></div>
+</section>
+
+<!-- ============ EX 8.2 BEFORE & AFTER SELF-REFLECTION 3/3 (p.120) ============ -->
+<section class="page" id="p-ex2c">
+  <div class="runhead"><span>08–Your Integrated Self</span><span class="tag">/ex 8.2/</span>
+    <div class="dots"><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i></div>
+  </div>
+  <div class="exhead">
+    <div style="flex:1;min-width:260px"><h1 class="display sm">Before &amp; After<br>Self-Reflection<br>(3/3)</h1></div>
+    <div class="purpose-bar">
+      <div><b>Purpose:</b> Recognize and celebrate the progress you've made by explicitly comparing who you were before this workbook to who you're becoming now.</div>
+      <div><b>Time estimate:</b> 25–30 minutes</div>
+    </div>
+  </div>
+  <hr class="rule" style="margin:22px 0 22px">
+  <p class="field-label">3) CELEBRATING GROWTH</p>
+  <div class="grid2" style="margin-top:10px;align-items:start">
+    <div>
+      <div class="field"><p class="colsub">Biggest Transformation</p><label class="qlabel sm">What's the most significant change you've noticed in yourself?</label><textarea class="lines" data-field="82_big" style="min-height:56px"></textarea></div>
+      <div class="field"><p class="colsub">Progress in Progress</p><label class="qlabel sm">What area are you still working on that's showing gradual improvement?</label><textarea class="lines" data-field="82_progress" style="min-height:56px"></textarea></div>
+      <div class="field"><p class="colsub">Evidence of Change</p><label class="qlabel sm">What external feedback or evidence shows that you've changed? <em style="font-weight:400;color:var(--coral-soft)">(comments from others, different outcomes in situations, etc.)</em></label><textarea class="lines" data-field="82_evidence" style="min-height:56px"></textarea></div>
+    </div>
+    <div>
+      <div class="field"><p class="colsub">Unexpected Growth</p><label class="qlabel sm">What improvement surprised you the most?</label><textarea class="lines" data-field="82_unexpected" style="min-height:56px"></textarea></div>
+      <div class="field"><p class="colsub">Tools That Stuck</p><label class="qlabel sm">Which practices or concepts from the workbook have become most natural for you?</label><textarea class="lines" data-field="82_tools" style="min-height:56px"></textarea></div>
+      <div class="field"><p class="colsub">Ongoing Areas of Growth</p>
+        <label class="qlabel sm">1. What aspects of yourself are you still developing?</label><textarea class="lines" data-field="82_ongoing1" style="min-height:44px"></textarea>
+        <label class="qlabel sm" style="margin-top:8px;display:block">2. How do you feel about being a work in progress?</label><textarea class="lines" data-field="82_ongoing2" style="min-height:44px"></textarea></div>
+    </div>
+  </div>
+  <div class="runfoot"><span class="motto">Strength grows in the spaces between storms.</span><span class="pg">120</span></div>
+</section>
+
+<!-- ============ EX 8.3 VIRTUE-DRIVEN ACTION PLAN 1/2 (p.121) ============ -->
+<section class="page" id="p-ex3a">
+  <div class="runhead"><span>08–Your Integrated Self</span><span class="tag">/ex 8.3/</span>
+    <div class="dots"><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i></div>
+  </div>
+  <div class="exhead">
+    <div style="flex:1;min-width:260px">
+      <h1 class="display sm">Virtue-Driven<br>Action<br>Plan (1/2)</h1>
+      <p class="body" style="max-width:440px;margin-top:12px">You've learned the principles. Now it's time to apply them systematically to one specific area of your life. This creates a bridge between philosophical understanding and practical change.</p>
+    </div>
+    <div class="purpose-bar">
+      <div><b>Purpose:</b> Choose one area of life and create specific next steps based on the four Stoic virtues, bridging insights into practical implementation.</div>
+      <div><b>Time estimate:</b> 15–20 minutes</div>
+    </div>
+  </div>
+  <hr class="rule" style="margin:22px 0 22px">
+  <p class="field-label">1) CHOOSING YOUR FOCUS AREA</p>
+  <div style="display:grid;grid-template-columns:1fr 1.4fr;gap:30px;margin-top:8px;align-items:start">
+    <div class="chk-group">
+      <p class="colsub">Select Your Focus <em style="font-weight:400;color:var(--coral-mid)">(choose one)</em></p>
+      <div class="chk" data-check="83_focus_career"><span class="box"></span><span>Career / Professional development</span></div>
+      <div class="chk" data-check="83_focus_romantic"><span class="box"></span><span>Romantic relationship</span></div>
+      <div class="chk" data-check="83_focus_family"><span class="box"></span><span>Family relationships</span></div>
+      <div class="chk" data-check="83_focus_friends"><span class="box"></span><span>Friendships and social connections</span></div>
+      <div class="chk" data-check="83_focus_health"><span class="box"></span><span>Health and self-care</span></div>
+      <div class="chk" data-check="83_focus_financial"><span class="box"></span><span>Financial wellness</span></div>
+      <div class="chk" data-check="83_focus_habits"><span class="box"></span><span>Personal habits and routines</span></div>
+      <div class="chk" data-check="83_focus_creative"><span class="box"></span><span>Creative pursuits</span></div>
+      <div class="chk" data-check="83_focus_community"><span class="box"></span><span>Community involvement</span></div>
+      <div class="chk" data-check="83_focus_other"><span class="box"></span><span>Other:</span><input class="other-in" type="text" data-field="83_focus_other_txt"></div>
+    </div>
+    <div>
+      <p class="colsub">Current State Assessment</p>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px 24px">
+        <div class="field"><label class="qlabel sm">What's currently going well in this area?</label><textarea class="lines" data-field="83_well" style="min-height:44px"></textarea></div>
+        <div class="field"><label class="qlabel sm">What challenges or frustrations are you experiencing?</label><textarea class="lines" data-field="83_challenges" style="min-height:44px"></textarea></div>
+      </div>
+      <div class="field"><label class="qlabel sm">What would you like to see change or improve?</label><textarea class="lines" data-field="83_change" style="min-height:44px"></textarea></div>
+    </div>
+  </div>
+
+  <p class="field-label" style="margin-top:22px">2) VIRTUE-BASED ACTION PLANNING</p>
+  <p class="colsub" style="margin-top:8px;text-transform:none">WISDOM <em style="font-weight:400;color:var(--coral-mid)">(What would wisdom look like in this area?)</em></p>
+  <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px 30px">
+    <div class="field"><label class="qlabel sm">1. What do you need to understand better about this area of your life?</label><textarea class="lines" data-field="83_w_q1" style="min-height:40px"></textarea></div>
+    <div class="field"><label class="qlabel sm">2. What assumptions might you be making that you should question?</label><textarea class="lines" data-field="83_w_q2" style="min-height:40px"></textarea></div>
+    <div class="field"><label class="qlabel sm">3. Where could you seek advice / education / different perspectives?</label><textarea class="lines" data-field="83_w_q3" style="min-height:40px"></textarea></div>
+  </div>
+  <p class="colsub" style="margin-top:4px">Wisdom-Based Actions to Take</p>
+  <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:4px 30px">
+    <div class="field"><label class="qlabel sm">1.</label><textarea class="lines" data-field="83_w_a1" style="min-height:24px"></textarea></div>
+    <div class="field"><label class="qlabel sm">2.</label><textarea class="lines" data-field="83_w_a2" style="min-height:24px"></textarea></div>
+    <div class="field"><label class="qlabel sm">3.</label><textarea class="lines" data-field="83_w_a3" style="min-height:24px"></textarea></div>
+  </div>
+  <p class="cap">Example: "Ask three people I respect for their perspective on…"</p>
+
+  <p class="colsub" style="margin-top:12px;text-transform:none">COURAGE <em style="font-weight:400;color:var(--coral-mid)">(What would courage look like in this area?)</em></p>
+  <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px 30px">
+    <div class="field"><label class="qlabel sm">1. What conversations, decisions, or actions have you been putting off?</label><textarea class="lines" data-field="83_c_q1" style="min-height:40px"></textarea></div>
+    <div class="field"><label class="qlabel sm">2. What are you afraid might happen if you take brave action?</label><textarea class="lines" data-field="83_c_q2" style="min-height:40px"></textarea></div>
+    <div class="field"><label class="qlabel sm">3. What would change if you acted despite the fear?</label><textarea class="lines" data-field="83_c_q3" style="min-height:40px"></textarea></div>
+  </div>
+  <p class="colsub" style="margin-top:4px">Courage-Based Actions to Take</p>
+  <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:4px 30px">
+    <div class="field"><label class="qlabel sm">1.</label><textarea class="lines" data-field="83_c_a1" style="min-height:24px"></textarea></div>
+    <div class="field"><label class="qlabel sm">2.</label><textarea class="lines" data-field="83_c_a2" style="min-height:24px"></textarea></div>
+    <div class="field"><label class="qlabel sm">3.</label><textarea class="lines" data-field="83_c_a3" style="min-height:24px"></textarea></div>
+  </div>
+  <p class="cap">Example: "Have the conversation I've been avoiding about…"</p>
+  <div class="runfoot"><span class="motto">Strength grows in the spaces between storms.</span><span class="pg">121</span></div>
+</section>
+
+<!-- ============ EX 8.3 VIRTUE-DRIVEN ACTION PLAN 2/2 (p.122) ============ -->
+<section class="page" id="p-ex3b">
+  <div class="runhead"><span>08–Your Integrated Self</span><span class="tag">/ex 8.3/</span>
+    <div class="dots"><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i></div>
+  </div>
+  <div class="exhead">
+    <div style="flex:1;min-width:260px"><h1 class="display sm">Virtue-Driven<br>Action<br>Plan (2/2)</h1></div>
+    <div class="purpose-bar">
+      <div><b>Purpose:</b> Choose one area of life and create specific next steps based on the four Stoic virtues, bridging insights into practical implementation.</div>
+      <div><b>Time estimate:</b> 15–20 minutes</div>
+    </div>
+  </div>
+  <hr class="rule" style="margin:22px 0 22px">
+  <p class="field-label">2) VIRTUE-BASED ACTION PLANNING (CONT.)</p>
+  <p class="colsub" style="margin-top:8px;text-transform:none">JUSTICE <em style="font-weight:400;color:var(--coral-mid)">(What would justice look like in this area?)</em></p>
+  <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px 30px">
+    <div class="field"><label class="qlabel sm">1. Where might you be giving too much or too little in this area?</label><textarea class="lines" data-field="83_j_q1" style="min-height:40px"></textarea></div>
+    <div class="field"><label class="qlabel sm">2. What boundaries need to be set or maintained?</label><textarea class="lines" data-field="83_j_q2" style="min-height:40px"></textarea></div>
+    <div class="field"><label class="qlabel sm">3. How can you treat yourself and others more fairly?</label><textarea class="lines" data-field="83_j_q3" style="min-height:40px"></textarea></div>
+  </div>
+  <p class="colsub" style="margin-top:4px">Justice-Based Actions to Take</p>
+  <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:4px 30px">
+    <div class="field"><label class="qlabel sm">1.</label><textarea class="lines" data-field="83_j_a1" style="min-height:24px"></textarea></div>
+    <div class="field"><label class="qlabel sm">2.</label><textarea class="lines" data-field="83_j_a2" style="min-height:24px"></textarea></div>
+    <div class="field"><label class="qlabel sm">3.</label><textarea class="lines" data-field="83_j_a3" style="min-height:24px"></textarea></div>
+  </div>
+  <p class="cap">Examples: "Set a boundary around…" or "Ask for what I need in…"</p>
+
+  <p class="colsub" style="margin-top:12px;text-transform:none">TEMPERANCE <em style="font-weight:400;color:var(--coral-mid)">(What would temperance look like in this area?)</em></p>
+  <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px 30px">
+    <div class="field"><label class="qlabel sm">1. Where are you going to extremes (too much or too little effort, attention, etc.)?</label><textarea class="lines" data-field="83_t_q1" style="min-height:40px"></textarea></div>
+    <div class="field"><label class="qlabel sm">2. What would a more balanced approach look like?</label><textarea class="lines" data-field="83_t_q2" style="min-height:40px"></textarea></div>
+    <div class="field"><label class="qlabel sm">3. Where do you need more moderation or sustainable practices?</label><textarea class="lines" data-field="83_t_q3" style="min-height:40px"></textarea></div>
+  </div>
+  <p class="colsub" style="margin-top:4px">Temperance-Based Actions to Take</p>
+  <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:4px 30px">
+    <div class="field"><label class="qlabel sm">1.</label><textarea class="lines" data-field="83_t_a1" style="min-height:24px"></textarea></div>
+    <div class="field"><label class="qlabel sm">2.</label><textarea class="lines" data-field="83_t_a2" style="min-height:24px"></textarea></div>
+    <div class="field"><label class="qlabel sm">3.</label><textarea class="lines" data-field="83_t_a3" style="min-height:24px"></textarea></div>
+  </div>
+  <p class="cap">Examples: "Create more balance by…" or "Practice moderation in…"</p>
+
+  <p class="field-label" style="margin-top:20px">3) IMPLEMENTATION PLANNING</p>
+  <p class="field-sub" style="margin-top:4px"><strong>Priority Actions</strong> <em>(choose the two most important ones from all categories)</em>:</p>
+  <div style="display:grid;grid-template-columns:1.4fr 1fr 1fr;gap:8px 20px;align-items:end">
+    <div class="field"><label class="qlabel sm">1. Action:</label><textarea class="lines" data-field="83_pri1_action" style="min-height:24px"></textarea></div>
+    <div class="field"><label class="qlabel sm">When:</label><textarea class="lines" data-field="83_pri1_when" style="min-height:24px"></textarea></div>
+    <div class="field"><label class="qlabel sm">Virtue it represents:</label><textarea class="lines" data-field="83_pri1_virtue" style="min-height:24px"></textarea></div>
+    <div class="field"><label class="qlabel sm">2. Action:</label><textarea class="lines" data-field="83_pri2_action" style="min-height:24px"></textarea></div>
+    <div class="field"><label class="qlabel sm">When:</label><textarea class="lines" data-field="83_pri2_when" style="min-height:24px"></textarea></div>
+    <div class="field"><label class="qlabel sm">Virtue it represents:</label><textarea class="lines" data-field="83_pri2_virtue" style="min-height:24px"></textarea></div>
+  </div>
+  <div class="grid2" style="margin-top:10px">
+    <div class="field"><label class="qlabel sm">Potential obstacles and how I'll handle them:</label><textarea class="lines" data-field="83_obstacles" style="min-height:44px"></textarea></div>
+    <div class="field"><label class="qlabel sm">What success would look like in 3 months:</label><textarea class="lines" data-field="83_success" style="min-height:44px"></textarea></div>
+  </div>
+  <div class="runfoot"><span class="motto">Strength grows in the spaces between storms.</span><span class="pg">122</span></div>
+</section>
+
+<!-- ============ EX 8.4 INTEGRATION MAP 1/3 (p.123) ============ -->
+<section class="page" id="p-ex4a">
+  <div class="runhead"><span>08–Your Integrated Self</span><span class="tag">/ex 8.4/</span>
+    <div class="dots"><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i></div>
+  </div>
+  <div class="exhead">
+    <div style="flex:1;min-width:260px">
+      <h1 class="display sm">Integration<br>Map<br>(1/3)</h1>
+      <p class="body" style="max-width:440px;margin-top:12px">This visual map shows how different aspects of your learning connect to create the person you're becoming. It's both a celebration of your progress and a reference for ongoing growth.</p>
+    </div>
+    <div class="purpose-bar">
+      <div><b>Purpose:</b> Create a visual overview of how different modules have influenced your growth and identity, providing both celebration and reference for ongoing development.</div>
+      <div><b>Time estimate:</b> 25–30 minutes</div>
+    </div>
+  </div>
+  <hr class="rule" style="margin:22px 0 22px">
+  <p class="field-label">1) CREATING THE MAP</p>
+  <p class="field-sub" style="margin-top:4px">You'll find an Integration Map on the next page. Use the questions below to fill in each part of the map. Once that's done, answer the reflection questions on the third page of this exercise to tie it all together.</p>
+  <div class="callout" style="margin-top:12px;max-width:none">
+    <div class="ct">1. Central Identity Hub</div>
+    <p style="margin:0">Inside the central circle, write 3–5 core qualities that describe your evolving identity <em>(examples: "emotionally intelligent," "courageous," "authentic," "wise," "compassionate"…)</em></p>
+  </div>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px 30px;margin-top:14px">
+    <div><p class="colsub" style="margin-top:0">Module 1 — The Foundation</p><ul class="tick" style="margin-top:2px"><li>Key learning: what was your biggest insight about yourself?</li><li>How it changed you: how did understanding your thought patterns affect your daily life?</li><li>A tool you still use: which exercise or concept do you return to?</li></ul></div>
+    <div><p class="colsub" style="margin-top:0">Module 2 — The Dichotomy of Control</p><ul class="tick" style="margin-top:2px"><li>Key learning: what did you learn about what you can / can't control?</li><li>How it changed you: how has your energy management improved?</li><li>A tool you still use: which boundary or energy practice serves you most?</li></ul></div>
+    <div><p class="colsub">Module 3 — The Four Virtues</p><ul class="tick" style="margin-top:2px"><li>Key learning: which virtue resonated most strongly with you?</li><li>How it changed you: how do you make decisions differently now?</li><li>A tool you still use: how do you apply virtue-thinking daily?</li></ul></div>
+    <div><p class="colsub">Module 4 — Emotional Regulation</p><ul class="tick" style="margin-top:2px"><li>Key learning: what changed about your relationship with difficult emotions?</li><li>How it changed you: how do you handle emotional intensity differently?</li><li>A tool you still use: which regulation technique has become most natural?</li></ul></div>
+    <div><p class="colsub">Module 5 — Relationships</p><ul class="tick" style="margin-top:2px"><li>Key learning: what shifted in how you approach relationships?</li><li>How it changed you: how do your relationships feel different now?</li><li>A tool you still use: which boundary or communication skill serves you most?</li></ul></div>
+    <div><p class="colsub">Module 6 — Daily Practices</p><ul class="tick" style="margin-top:2px"><li>Key learning: what did you discover about building sustainable habits?</li><li>How it changed you: how have your daily rhythms shifted?</li><li>A tool you still use: which practice has become most automatic?</li></ul></div>
+    <div><p class="colsub">Module 7 — Navigating Modern Life</p><ul class="tick" style="margin-top:2px"><li>Key learning: how do you navigate modern challenges differently?</li><li>How it changed you: what's changed about your relationship with social media / career pressure?</li><li>A tool you still use: which modern application helps you most?</li></ul></div>
+    <div><p class="colsub">Cross-Connections</p><ul class="tick" style="margin-top:2px"><li>Identify 2–3 connections between different modules by drawing lines between them.</li><li>Add a quick note on how the respective modules work together or reinforce each other.</li></ul></div>
+  </div>
+  <div class="runfoot"><span class="motto">Strength grows in the spaces between storms.</span><span class="pg">123</span></div>
+</section>
+
+<!-- ============ EX 8.4 MY INTEGRATION MAP (p.124) ============ -->
+<section class="page" id="p-ex4b">
+  <div class="runhead"><span>08–Your Integrated Self</span><span class="tag">/ex 8.4/</span>
+    <div class="dots"><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i></div>
+  </div>
+  <h1 class="display sm">My Integration Map</h1>
+  <div class="imap">
+    <div class="imap-card"><h5>Module 1:<br>The Foundation</h5><p class="mlab">Key Learning</p><textarea class="lines" data-field="84_m1_learning"></textarea><p class="mlab">How This Changed Me</p><textarea class="lines" data-field="84_m1_changed"></textarea><p class="mlab">Tool</p><textarea class="lines" data-field="84_m1_tool"></textarea></div>
+    <div class="imap-card"><h5>Module 2:<br>The Dichotomy of Control</h5><p class="mlab">Key Learning</p><textarea class="lines" data-field="84_m2_learning"></textarea><p class="mlab">How This Changed Me</p><textarea class="lines" data-field="84_m2_changed"></textarea><p class="mlab">Tool</p><textarea class="lines" data-field="84_m2_tool"></textarea></div>
+    <div class="imap-card"><h5>Module 3:<br>The Four Virtues</h5><p class="mlab">Key Learning</p><textarea class="lines" data-field="84_m3_learning"></textarea><p class="mlab">How This Changed Me</p><textarea class="lines" data-field="84_m3_changed"></textarea><p class="mlab">Tool</p><textarea class="lines" data-field="84_m3_tool"></textarea></div>
+    <div class="imap-card"><h5>Module 4:<br>Emotional Regulation</h5><p class="mlab">Key Learning</p><textarea class="lines" data-field="84_m4_learning"></textarea><p class="mlab">How This Changed Me</p><textarea class="lines" data-field="84_m4_changed"></textarea><p class="mlab">Tool</p><textarea class="lines" data-field="84_m4_tool"></textarea></div>
+    <div class="imap-hub"><h5>Who I'm<br>Becoming:</h5><textarea class="lines" data-field="84_becoming" style="min-height:80px"></textarea></div>
+    <div class="imap-card"><h5>Module 5:<br>Relationships</h5><p class="mlab">Key Learning</p><textarea class="lines" data-field="84_m5_learning"></textarea><p class="mlab">How This Changed Me</p><textarea class="lines" data-field="84_m5_changed"></textarea><p class="mlab">Tool</p><textarea class="lines" data-field="84_m5_tool"></textarea></div>
+    <div class="imap-card"><h5>Module 6:<br>Daily Practices</h5><p class="mlab">Key Learning</p><textarea class="lines" data-field="84_m6_learning"></textarea><p class="mlab">How This Changed Me</p><textarea class="lines" data-field="84_m6_changed"></textarea><p class="mlab">Tool</p><textarea class="lines" data-field="84_m6_tool"></textarea></div>
+    <div class="imap-card"><h5>Module 7:<br>Navigating Modern Life</h5><p class="mlab">Key Learning</p><textarea class="lines" data-field="84_m7_learning"></textarea><p class="mlab">How This Changed Me</p><textarea class="lines" data-field="84_m7_changed"></textarea><p class="mlab">Tool</p><textarea class="lines" data-field="84_m7_tool"></textarea></div>
+    <div class="imap-hub"><h5>My Growth<br>Mantra:</h5><textarea class="lines" data-field="84_map_mantra" style="min-height:80px"></textarea></div>
+  </div>
+  <div class="runfoot"><span class="motto">Strength grows in the spaces between storms.</span><span class="pg">124</span></div>
+</section>
+
+<!-- ============ EX 8.4 INTEGRATION MAP 3/3 (p.125) ============ -->
+<section class="page" id="p-ex4c">
+  <div class="runhead"><span>08–Your Integrated Self</span><span class="tag">/ex 8.4/</span>
+    <div class="dots"><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i></div>
+  </div>
+  <div class="exhead">
+    <div style="flex:1;min-width:260px"><h1 class="display sm">Integration<br>Map<br>(3/3)</h1></div>
+    <div class="purpose-bar">
+      <div><b>Purpose:</b> Create a visual overview of how different modules have influenced your growth and identity, providing both celebration and reference for ongoing development.</div>
+      <div><b>Time estimate:</b> 25–30 minutes</div>
+    </div>
+  </div>
+  <hr class="rule" style="margin:22px 0 22px">
+  <p class="field-label">1) REFLECTION QUESTIONS</p>
+  <div class="grid2" style="margin-top:10px;align-items:start">
+    <div>
+      <p class="colsub">1. Your Strongest Growth Areas</p>
+      <div class="field"><label class="qlabel sm">Which 2–3 modules created the most significant change for you?</label><textarea class="lines" data-field="84r_strong1" style="min-height:44px"></textarea></div>
+      <div class="field"><label class="qlabel sm">Why do you think these areas were most transformative?</label><textarea class="lines" data-field="84r_strong2" style="min-height:44px"></textarea></div>
+      <p class="colsub" style="margin-top:12px">3. The Integrated You</p>
+      <div class="field"><label class="qlabel sm">Looking at this map, what do you notice about how all these pieces fit together?</label><textarea class="lines" data-field="84r_integrated1" style="min-height:44px"></textarea></div>
+      <div class="field"><label class="qlabel sm">How does it feel to see your progress visualized this way?</label><textarea class="lines" data-field="84r_integrated2" style="min-height:44px"></textarea></div>
+      <p class="colsub" style="margin-top:12px">4. Moving Forward</p>
+      <div class="field"><label class="qlabel sm">What from this map do you want to remember when you face future challenges?</label><textarea class="lines" data-field="84r_remember" style="min-height:44px"></textarea></div>
+      <div class="field"><label class="qlabel sm">Create a growth mantra that captures the essence of who you've become and who you're continuing to become:</label><textarea class="lines" data-field="84r_mantra" style="min-height:44px"></textarea></div>
+    </div>
+    <div>
+      <p class="colsub">2. Areas for Continued Growth</p>
+      <div class="field"><label class="qlabel sm">Which modules do you want to revisit or deepen?</label><textarea class="lines" data-field="84r_continued1" style="min-height:44px"></textarea></div>
+      <div class="field"><label class="qlabel sm">What skills do you want to strengthen further?</label><textarea class="lines" data-field="84r_continued2" style="min-height:44px"></textarea></div>
+      <p class="colsub" style="margin-top:12px">&nbsp;</p>
+      <div class="field"><label class="qlabel sm">What's the story this map tells about your growth journey?</label><textarea class="lines" data-field="84r_story" style="min-height:44px"></textarea></div>
+      <p class="colsub" style="margin-top:64px">&nbsp;</p>
+      <div class="field"><label class="qlabel sm">How can you use this integration to continue growing?</label><textarea class="lines" data-field="84r_use" style="min-height:44px"></textarea></div>
+    </div>
+  </div>
+  <div class="runfoot"><span class="motto">Strength grows in the spaces between storms.</span><span class="pg">125</span></div>
+</section>
+</div><!-- /wrap -->
+
+<div id="toast"></div>
+
+<script>
+(function(){
+  var STORE = "blussomly_stoic_m8_v1";
+  var savedMsg = document.getElementById("savedMsg");
+  var toast = document.getElementById("toast");
+  var saveTimer=null, msgTimer=null;
+
+  function fields(){ return Array.prototype.slice.call(document.querySelectorAll("[data-field]")); }
+  function checks(){ return Array.prototype.slice.call(document.querySelectorAll("[data-check]")); }
+  function scaleDots(){ return Array.prototype.slice.call(document.querySelectorAll("[data-scale]")); }
+
+  function collect(){
+    var data={text:{},checks:{},scale:{}};
+    fields().forEach(function(el){ data.text[el.dataset.field]=el.value; });
+    checks().forEach(function(el){ data.checks[el.dataset.check]=el.classList.contains("on"); });
+    scaleDots().forEach(function(el){ if(el.classList.contains("on")) data.scale[el.dataset.scale]=el.dataset.val; });
+    return data;
+  }
+
+  function apply(data){
+    if(!data) return;
+    if(data.text) fields().forEach(function(el){ if(data.text[el.dataset.field]!=null){el.value=data.text[el.dataset.field]; autosize(el);} });
+    if(data.checks) checks().forEach(function(el){ el.classList.toggle("on", !!data.checks[el.dataset.check]); });
+    if(data.scale) scaleDots().forEach(function(el){ el.classList.toggle("on", data.scale[el.dataset.scale]===el.dataset.val); });
+  }
+
+  function save(){
+    try{ localStorage.setItem(STORE, JSON.stringify(collect())); }catch(e){}
+    if(savedMsg){ savedMsg.classList.add("show"); clearTimeout(msgTimer); msgTimer=setTimeout(function(){savedMsg.classList.remove("show");},1400); }
+  }
+  function queueSave(){ clearTimeout(saveTimer); saveTimer=setTimeout(save,400); }
+
+  function load(){
+    try{ var raw=localStorage.getItem(STORE); if(raw) apply(JSON.parse(raw)); }catch(e){}
+  }
+
+  function autosize(el){
+    if(el.tagName!=="TEXTAREA") return;
+    el.style.height="auto";
+    el.style.height=Math.max(el.scrollHeight, parseInt(getComputedStyle(el).minHeight)||28)+"px";
+  }
+
+  function showToast(t){ toast.textContent=t; toast.classList.add("show"); setTimeout(function(){toast.classList.remove("show");},1800); }
+
+  // wire fields
+  fields().forEach(function(el){
+    autosize(el);
+    el.addEventListener("input",function(){ autosize(el); queueSave(); });
+  });
+  // wire checkboxes
+  checks().forEach(function(el){
+    el.addEventListener("click",function(e){ if(e.target.classList.contains("other-in")) return; el.classList.toggle("on"); save(); });
+  });
+  // wire scale / pill single-select (single select per group)
+  scaleDots().forEach(function(el){
+    el.addEventListener("click",function(){ var g=el.dataset.scale; scaleDots().forEach(function(o){ if(o.dataset.scale===g) o.classList.toggle("on", o===el); }); save(); });
+  });
+
+  // jump nav
+  document.getElementById("jump").addEventListener("change",function(e){
+    var id=e.target.value; if(!id) return;
+    var t=document.getElementById(id); if(t) t.scrollIntoView({behavior:"smooth",block:"start"});
+    e.target.selectedIndex=0;
+  });
+
+  // export
+  document.getElementById("btnExport").addEventListener("click",function(){
+    var blob=new Blob([JSON.stringify(collect(),null,2)],{type:"application/json"});
+    var a=document.createElement("a");
+    var d=new Date().toISOString().slice(0,10);
+    a.href=URL.createObjectURL(blob); a.download="stoic-starter-module8-"+d+".json";
+    document.body.appendChild(a); a.click(); a.remove();
+    showToast("Answers exported ✓");
+  });
+
+  // print
+  document.getElementById("btnPrint").addEventListener("click",function(){ window.print(); });
+
+  // reset
+  document.getElementById("btnReset").addEventListener("click",function(){
+    if(!confirm("Clear all your answers on every page? This can't be undone (export first if you want a copy).")) return;
+    fields().forEach(function(el){ el.value=""; autosize(el); });
+    checks().forEach(function(el){ el.classList.remove("on"); });
+    scaleDots().forEach(function(el){ el.classList.remove("on"); });
+    save(); showToast("Cleared");
+  });
+
+  load();
+})();
+</script>
+</body>
+</html>
