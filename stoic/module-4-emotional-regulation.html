@@ -1,0 +1,1312 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Stoic Girl Starter Pack — Module 4: Emotional Regulation</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Archivo:wght@500;600;700;800;900&family=Playfair+Display:ital,wght@0,500;0,600;1,400;1,500;1,600&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --coral:#D64C63;
+    --coral-deep:#C23A54;
+    --coral-mid:#DD5B70;
+    --coral-soft:#E796A6;
+    --coral-faint:#F0C4CE;
+    --cream:#F6F0E7;
+    --cream-card:#FBF7F0;
+    --cream-deep:#EFE7DA;
+    --ink-on-red:#F5ECDD;
+    --ink-on-red-soft:#EAD9C6;
+    --line:rgba(214,76,99,.30);
+    --line-soft:rgba(214,76,99,.18);
+    --dot:rgba(214,76,99,.35);
+    --font-display:"Archivo Black",sans-serif;
+    --font-heavy:"Archivo",sans-serif;
+    --font-serif:"Playfair Display",serif;
+    --font-body:"Inter",sans-serif;
+    --shadow:0 18px 50px -28px rgba(150,40,60,.55);
+    --pagew:940px;
+  }
+
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{
+    margin:0;
+    background:
+      radial-gradient(1200px 600px at 15% -5%, #FBF6EE 0%, transparent 60%),
+      radial-gradient(1000px 700px at 100% 100%, #F3EADD 0%, transparent 55%),
+      var(--cream);
+    color:var(--coral);
+    font-family:var(--font-body);
+    -webkit-font-smoothing:antialiased;
+    line-height:1.5;
+    padding-bottom:80px;
+  }
+
+  /* ---------- Toolbar ---------- */
+  .toolbar{
+    position:sticky;top:0;z-index:50;
+    background:rgba(246,240,231,.86);
+    backdrop-filter:blur(14px);
+    border-bottom:1px solid var(--line);
+  }
+  .toolbar-inner{
+    max-width:var(--pagew);margin:0 auto;
+    display:flex;align-items:center;gap:14px;
+    padding:11px 26px;flex-wrap:wrap;
+  }
+  .brand{display:flex;align-items:center;gap:9px;margin-right:auto}
+  .brand .wordmark{
+    font-family:var(--font-heavy);font-weight:900;
+    font-size:16px;letter-spacing:.005em;color:var(--coral);
+    line-height:1;
+  }
+  @media(max-width:520px){.brand .wordmark{font-size:14px}}
+
+  .jump{
+    font-family:var(--font-body);font-size:12.5px;font-weight:500;
+    color:var(--coral);background:var(--cream-card);
+    border:1px solid var(--line);border-radius:999px;
+    padding:7px 12px;cursor:pointer;appearance:none;
+  }
+  .tbtn{
+    font-family:var(--font-body);font-size:12.5px;font-weight:600;
+    color:var(--coral);background:var(--cream-card);
+    border:1px solid var(--line);border-radius:999px;
+    padding:7px 13px;cursor:pointer;transition:.15s;
+    display:inline-flex;align-items:center;gap:6px;
+  }
+  .tbtn:hover{background:var(--coral);color:var(--ink-on-red);border-color:var(--coral)}
+  .tbtn.primary{background:var(--coral);color:var(--ink-on-red);border-color:var(--coral)}
+  .tbtn.primary:hover{background:var(--coral-deep)}
+  .saved{font-size:11.5px;color:var(--coral-soft);min-width:60px;opacity:0;transition:opacity .3s}
+  .saved.show{opacity:1}
+
+  /* ---------- Page shell ---------- */
+  .wrap{max-width:var(--pagew);margin:0 auto;padding:34px 26px 0}
+  .page{
+    position:relative;
+    background:var(--cream-card);
+    border:1px solid var(--line-soft);
+    border-radius:8px;
+    box-shadow:var(--shadow);
+    padding:46px 54px 40px;
+    margin:0 0 34px;
+    scroll-margin-top:78px;
+    overflow:hidden;
+  }
+  .page.red{
+    background:linear-gradient(160deg,#DB5067 0%, #D2455E 60%, #C63D57 100%);
+    color:var(--ink-on-red);border-color:transparent;
+  }
+
+  /* running head */
+  .runhead{
+    display:flex;align-items:center;justify-content:space-between;
+    font-size:11px;letter-spacing:.05em;color:var(--coral-soft);
+    margin-bottom:30px;
+  }
+  .red .runhead{color:var(--ink-on-red-soft)}
+  .runhead .tag{font-family:var(--font-serif);font-style:italic;font-size:15px;letter-spacing:.02em;opacity:.9}
+  .dots{display:flex;gap:5px;align-items:center}
+  .dots i{width:8px;height:8px;border-radius:50%;border:1.4px solid var(--dot);display:block}
+  .red .dots i{border-color:rgba(245,236,221,.6)}
+  .dots i.on{background:var(--coral);border-color:var(--coral)}
+  .red .dots i.on{background:var(--ink-on-red);border-color:var(--ink-on-red)}
+  .seal{width:18px;height:18px;color:var(--coral-soft)}
+  .red .seal{color:var(--ink-on-red-soft)}
+
+  /* footers */
+  .runfoot{
+    display:flex;align-items:flex-end;justify-content:space-between;
+    margin-top:34px;font-size:10.5px;color:var(--coral-soft);
+  }
+  .red .runfoot{color:var(--ink-on-red-soft)}
+  .runfoot .motto{font-style:italic;font-family:var(--font-serif);font-size:12px;line-height:1.3;max-width:150px}
+  .runfoot .cred b{font-family:var(--font-heavy);font-weight:800;color:var(--coral)}
+  .red .runfoot .cred b{color:var(--ink-on-red)}
+  .runfoot .pg{font-family:var(--font-heavy);font-weight:800;font-size:16px;color:var(--coral-soft)}
+  .red .runfoot .pg{color:var(--ink-on-red-soft)}
+
+  /* ---------- Typography ---------- */
+  .eyebrow{font-family:var(--font-serif);font-style:italic;font-weight:500;font-size:26px;color:var(--coral-mid);margin:0 0 2px}
+  .display{
+    font-family:var(--font-display);
+    font-size:clamp(34px,6vw,62px);line-height:.94;
+    letter-spacing:-.01em;color:var(--coral);margin:0;
+    text-transform:uppercase;
+  }
+  .display.sm{font-size:clamp(30px,5vw,46px)}
+  .red .display{color:var(--ink-on-red)}
+  .kicker{
+    font-family:var(--font-body);font-weight:600;font-size:19px;
+    line-height:1.15;color:var(--coral-deep);margin:0 0 10px;letter-spacing:-.01em;
+  }
+  p{margin:0 0 11px}
+  .body{font-size:13.5px;line-height:1.62;color:var(--coral);text-align:justify;hyphens:auto}
+  .body em{font-style:italic;color:var(--coral-deep)}
+  .body strong{font-weight:700;color:var(--coral-deep)}
+  .lead{font-size:14px}
+  .cap{font-size:11px;color:var(--coral-soft);font-style:italic;font-family:var(--font-serif)}
+
+  .cols{column-gap:34px}
+  .cols.c2{column-count:2}
+  .cols.c3{column-count:3}
+  @media(max-width:820px){.cols.c2,.cols.c3{column-count:1}}
+  .colblock{break-inside:avoid;margin-bottom:20px}
+
+  hr.rule{border:none;border-top:1px solid var(--line);margin:24px 0}
+
+  /* callout */
+  .callout{
+    border:1px solid var(--line);border-radius:7px;
+    padding:16px 16px 15px;background:rgba(214,76,99,.045);
+    font-size:11.5px;line-height:1.5;
+  }
+  .callout .ct{display:flex;align-items:center;gap:8px;font-weight:700;color:var(--coral-deep);margin-bottom:7px}
+  .callout .ct svg{width:15px;height:15px;flex:none}
+  .callout p:last-child{margin-bottom:0}
+
+  /* quote */
+  blockquote.frankl{
+    border-left:3px solid var(--coral);margin:8px 0 12px;padding:4px 0 4px 15px;
+    font-family:var(--font-serif);font-style:italic;font-size:14px;line-height:1.5;color:var(--coral-deep);
+  }
+
+  /* numbered lessons */
+  .lessons{display:grid;grid-template-columns:1fr 1fr;gap:26px 40px;margin-top:6px}
+  @media(max-width:720px){.lessons{grid-template-columns:1fr}}
+  .lesson{display:grid;grid-template-columns:38px 1fr;gap:12px;break-inside:avoid}
+  .lesson .n{font-family:var(--font-serif);font-size:40px;line-height:.8;color:var(--coral-soft);font-weight:500}
+  .lesson h4{font-family:var(--font-body);font-weight:700;font-size:13.5px;color:var(--coral-deep);margin:6px 0 5px;line-height:1.15}
+  .lesson p{font-size:12px;line-height:1.5;margin:0;color:var(--coral)}
+
+  /* philosopher cards */
+  .phils{display:flex;flex-direction:column;gap:20px}
+  .phil{display:grid;grid-template-columns:82px 1fr;gap:16px;align-items:start;break-inside:avoid}
+  .phil .frame{
+    width:82px;height:96px;border:1px solid var(--line-soft);border-radius:10px;
+    background:rgba(214,76,99,.05);overflow:hidden;display:block;
+  }
+  .phil .frame svg{width:100%;height:100%;display:block;padding:6px}
+  .phil h4{font-family:var(--font-body);font-weight:700;font-size:14px;color:var(--coral-deep);margin:0 0 4px}
+  .phil p{font-size:12px;line-height:1.5;margin:0}
+
+  /* pillars */
+  ol.pillars{margin:6px 0 0;padding:0;list-style:none;counter-reset:p}
+  ol.pillars li{counter-increment:p;position:relative;padding:0 0 14px 30px;break-inside:avoid}
+  ol.pillars li::before{
+    content:counter(p)".";position:absolute;left:0;top:0;
+    font-family:var(--font-heavy);font-weight:800;color:var(--coral);font-size:14px;
+  }
+  ol.pillars b{color:var(--coral-deep)}
+  ol.pillars span{display:block;font-size:12.5px;line-height:1.5;margin-top:2px}
+
+  ul.tick{list-style:none;margin:8px 0;padding:0}
+  ul.tick li{position:relative;padding:0 0 8px 16px;font-size:12.5px;line-height:1.45;font-style:italic}
+  ul.tick li::before{content:"";position:absolute;left:0;top:8px;width:5px;height:5px;border-radius:50%;background:var(--coral-soft)}
+
+  .twosys{display:flex;flex-direction:column;gap:14px;margin:8px 0}
+  .twosys .sys{border:1px solid var(--line);border-radius:6px;padding:12px 14px}
+  .twosys .sys b{display:block;color:var(--coral-deep);font-size:13px;margin-bottom:3px}
+  .twosys .sys span{font-size:12px}
+
+  /* brain frames */
+  .brainframe{width:110px;border:1px solid var(--line);border-radius:5px;padding:8px;background:rgba(214,76,99,.05);margin:0 0 6px}
+  .brainframe svg{width:100%;display:block;padding:4px}
+
+  /* CBT triangle mini */
+  .triangle-mini{width:210px;margin:6px auto 4px;display:block}
+  .triangle-mini text{font-family:var(--font-serif);font-style:italic;fill:var(--coral-deep);font-size:12px}
+
+  /* ---------- Exercise fields ---------- */
+  .purpose-bar{
+    border:1px solid var(--line);border-radius:6px;padding:12px 16px;
+    display:flex;gap:26px;flex-wrap:wrap;font-size:11px;line-height:1.45;margin:0 0 4px;
+    max-width:430px;
+  }
+  .purpose-bar b{color:var(--coral-deep);font-weight:700}
+  .exhead{display:flex;justify-content:space-between;align-items:flex-start;gap:24px;flex-wrap:wrap}
+
+  .field-label{font-family:var(--font-body);font-weight:700;font-size:13px;color:var(--coral-deep);margin:0 0 3px}
+  .field-label .qh{font-weight:500;font-style:italic;color:var(--coral-mid);font-family:var(--font-serif);font-size:14px}
+  .field-sub{font-size:11.5px;color:var(--coral-mid);margin:0 0 7px}
+
+  .lines{
+    width:100%;border:none;outline:none;resize:vertical;
+    background:transparent;color:var(--coral-deep);
+    font-family:var(--font-body);font-size:13px;line-height:28px;
+    background-image:repeating-linear-gradient(transparent,transparent 27px,var(--line) 27px,var(--line) 28px);
+    padding:0;min-height:56px;
+  }
+  .lines::placeholder{color:var(--coral-faint);font-style:italic}
+
+  .boxfield{
+    width:100%;border:1px solid var(--line);border-radius:6px;
+    background:var(--cream);padding:11px 13px;outline:none;resize:vertical;
+    font-family:var(--font-body);font-size:12.5px;line-height:1.5;color:var(--coral-deep);
+    min-height:96px;
+  }
+  .boxfield::placeholder{color:var(--coral-faint);font-style:italic}
+  .boxfield:focus,.lines:focus{box-shadow:0 0 0 2px rgba(214,76,99,.18)}
+
+  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:22px 34px}
+  @media(max-width:720px){.grid2{grid-template-columns:1fr}}
+
+  .prompt-block{margin-bottom:6px}
+  .prompt-group-title{font-family:var(--font-body);font-weight:700;color:var(--coral-deep);font-size:13.5px;margin:20px 0 10px;letter-spacing:.01em}
+
+  /* tracker worksheet */
+  .tracker-triangle{position:relative;max-width:640px;margin:6px auto}
+  .tracker-triangle svg{width:100%;display:block;overflow:visible}
+  .tt-box{
+    border:1px solid var(--line);border-radius:6px;background:var(--cream);
+    padding:10px 12px;
+  }
+  .tt-box .field-sub{margin-bottom:6px}
+  .tt-box textarea{min-height:70px}
+  .tt-grid{display:grid;grid-template-columns:1fr 1fr;gap:24px;margin-top:14px}
+  @media(max-width:720px){.tt-grid{grid-template-columns:1fr}}
+
+  /* distortions table */
+  table.dist{width:100%;border-collapse:collapse;font-size:11.5px;margin-top:8px}
+  table.dist th{
+    text-align:left;font-family:var(--font-body);font-weight:700;font-size:11px;
+    letter-spacing:.08em;text-transform:uppercase;color:var(--coral-deep);
+    padding:9px 12px;border:1px solid var(--line);background:rgba(214,76,99,.06);
+  }
+  table.dist td{padding:9px 12px;border:1px solid var(--line-soft);vertical-align:top;line-height:1.4}
+  table.dist td.name{font-weight:700;color:var(--coral-deep);width:20%}
+  table.dist td.ex{font-style:italic;color:var(--coral-mid);width:32%}
+  table.dist tr:nth-child(even) td{background:rgba(214,76,99,.028)}
+
+  /* bingo grid */
+  .bingo{display:grid;grid-template-columns:repeat(4,1fr);gap:0;border:1px solid var(--coral);border-radius:8px;overflow:hidden;margin:10px 0 6px}
+  .bingo .cell{
+    border:.5px solid var(--line);min-height:92px;padding:12px 10px;
+    display:flex;align-items:center;justify-content:center;text-align:center;
+    font-weight:600;font-size:12px;color:var(--coral-deep);line-height:1.25;
+    cursor:pointer;position:relative;transition:.15s;user-select:none;
+  }
+  .bingo .cell small{display:block;font-weight:500;font-size:10px;color:var(--coral-soft);margin-top:2px;font-style:italic}
+  .bingo .cell:hover{background:rgba(214,76,99,.06)}
+  .bingo .cell.circled{background:rgba(214,76,99,.10)}
+  .bingo .cell.circled::after{
+    content:"";position:absolute;inset:10px 8px;border:2px solid var(--coral);
+    border-radius:50%;pointer-events:none;
+    box-shadow:0 1px 0 rgba(194,58,84,.25);
+  }
+  @media(max-width:640px){.bingo{grid-template-columns:repeat(2,1fr)}}
+
+  .reflect3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:26px;margin-top:16px}
+  @media(max-width:820px){.reflect3{grid-template-columns:1fr}}
+  .reflect3 .ex-title{font-family:var(--font-body);font-weight:700;color:var(--coral-deep);font-size:13px;margin-bottom:8px}
+  .reflect3 .mini-label{font-size:11.5px;color:var(--coral-mid);margin:10px 0 3px;font-weight:500}
+
+  .hint-box{
+    border:1px solid var(--line);border-radius:7px;padding:14px 15px;background:rgba(214,76,99,.045);
+    font-size:11.5px;line-height:1.45;max-width:280px;
+  }
+  .hint-box .ct{display:flex;align-items:center;gap:8px;font-weight:700;color:var(--coral-deep);margin-bottom:8px}
+  .hint-box .ct svg{width:15px;height:15px}
+  .hint-box ul{margin:0;padding-left:16px}
+  .hint-box li{margin-bottom:5px}
+
+  .center{text-align:center}
+  .ready{font-family:var(--font-serif);font-style:italic;font-size:15px;color:var(--coral-mid);margin-top:26px;text-align:right}
+
+  .spacer{height:8px}
+  .divider-hero{min-height:520px;display:flex;flex-direction:column;justify-content:center}
+  .divider-hero .eyebrow{color:var(--ink-on-red);opacity:.9}
+  .divider-hero .subtitle{font-family:var(--font-body);font-weight:600;font-size:22px;color:var(--ink-on-red);margin-top:10px}
+
+  /* toast */
+  #toast{
+    position:fixed;left:50%;bottom:26px;transform:translateX(-50%) translateY(20px);
+    background:var(--coral-deep);color:var(--ink-on-red);padding:11px 20px;border-radius:999px;
+    font-size:13px;font-weight:600;box-shadow:var(--shadow);opacity:0;pointer-events:none;
+    transition:.28s;z-index:80;
+  }
+  #toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+
+  /* ---- shared interactive components ---- */
+  .shipframe{
+    width:120px;height:120px;border:1px solid var(--line-soft);border-radius:10px;
+    background:rgba(214,76,99,.05);display:grid;place-items:center;overflow:hidden;flex:none;
+  }
+  .shipframe svg{width:100%;height:100%;padding:10px;display:block}
+
+  .domain-list{list-style:none;margin:6px 0 0;padding:0}
+  .domain-list li{position:relative;padding:0 0 8px 15px;font-size:12.5px;line-height:1.45}
+  .domain-list li::before{content:"";position:absolute;left:0;top:8px;width:5px;height:5px;border-radius:50%;background:var(--coral-soft)}
+  .domain-h{font-family:var(--font-serif);font-style:italic;font-size:13px;color:var(--coral-mid);margin:0 0 4px}
+
+  .swap{margin-bottom:16px;break-inside:avoid}
+  .swap .row{display:grid;grid-template-columns:18px 1fr;gap:8px;margin-bottom:7px}
+  .swap .mk{font-family:var(--font-heavy);font-weight:800;font-size:15px;line-height:1.2}
+  .swap .mk.x{color:var(--coral-soft)}
+  .swap .mk.p{color:var(--coral)}
+  .swap .lbl{font-weight:700;font-size:12px;color:var(--coral-deep)}
+  .swap .q{font-style:italic;font-family:var(--font-serif);font-size:13px;color:var(--coral-mid);display:block;margin-top:1px}
+
+  /* concentric control circles */
+  .circles-wrap{display:flex;gap:30px;flex-wrap:wrap;align-items:flex-start}
+  .circles-svg{flex:none;width:330px;max-width:100%}
+  .circles-svg text{font-family:var(--font-body);font-weight:700;font-size:12px;letter-spacing:.06em;fill:var(--coral-deep);text-transform:uppercase}
+  .ring-fields{flex:1;min-width:230px;display:flex;flex-direction:column;gap:12px}
+  .ring-field label{display:block;font-weight:700;font-size:12.5px;color:var(--coral-deep);margin-bottom:4px}
+  .ring-field label span{font-weight:500;font-style:italic;color:var(--coral-mid);font-family:var(--font-serif);font-size:12px}
+
+  /* checkboxes */
+  .chk-group{margin-bottom:6px}
+  .chk-group h5{font-family:var(--font-body);font-weight:700;font-size:13px;color:var(--coral-deep);margin:0 0 8px}
+  .chk{display:flex;align-items:flex-start;gap:8px;font-size:12px;line-height:1.4;color:var(--coral);cursor:pointer;margin-bottom:6px;user-select:none}
+  .chk .box{flex:none;width:14px;height:14px;border:1.5px solid var(--coral);border-radius:3px;margin-top:1px;position:relative;transition:.12s}
+  .chk.on .box{background:var(--coral)}
+  .chk.on .box::after{content:"";position:absolute;left:3.5px;top:.5px;width:4px;height:8px;border:solid var(--cream-card);border-width:0 2px 2px 0;transform:rotate(45deg)}
+  .chk:hover .box{box-shadow:0 0 0 3px rgba(214,76,99,.12)}
+  .chk .other-in{border:none;border-bottom:1px dotted var(--line);background:transparent;outline:none;color:var(--coral-deep);font-family:var(--font-body);font-size:12px;flex:1;min-width:80px}
+
+  /* 1-10 scale */
+  .scale{display:flex;align-items:center;gap:7px;margin:8px 0}
+  .scale-dot{width:20px;height:20px;border-radius:50%;border:1.6px solid var(--coral);cursor:pointer;transition:.12s;position:relative}
+  .scale-dot:hover{background:rgba(214,76,99,.15)}
+  .scale-dot.on{background:var(--coral)}
+  .scale-labels{display:flex;justify-content:space-between;font-size:11px;color:var(--coral-soft);max-width:250px;margin-top:2px}
+
+  /* ---- shared components (cards, pills, scales) ---- */
+  .virtue-emblem{width:62px;flex:none}
+  .virtue-emblem svg{width:100%;height:auto;display:block}
+
+  .vcard{border:1px solid var(--line);border-radius:8px;padding:18px 20px;break-inside:avoid}
+  .vcard .vhead{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;margin-bottom:8px}
+  .vcard .vhead h4{font-family:var(--font-heavy);font-weight:800;font-size:16px;letter-spacing:.03em;color:var(--coral);margin:0;text-transform:uppercase}
+  .vcard .vemb{width:42px;flex:none}
+  .vcard .vemb svg{width:100%;height:auto;display:block}
+  .vcard .vq{font-size:12px;color:var(--coral-mid);margin:12px 0 2px;font-weight:500}
+
+  /* single-select pill options (reuse [data-scale] single-select JS) */
+  .opts{display:inline-flex;gap:6px;flex-wrap:wrap;margin:4px 0;vertical-align:middle}
+  .opt{border:1.4px solid var(--line);border-radius:999px;padding:4px 13px;font-size:12px;font-weight:600;color:var(--coral);cursor:pointer;transition:.12s;user-select:none}
+  .opt:hover{background:rgba(214,76,99,.08)}
+  .opt.on{background:var(--coral);color:var(--ink-on-red);border-color:var(--coral)}
+
+  /* compact numbered 1-5 scale */
+  .numscale{display:inline-flex;gap:5px;align-items:flex-end}
+  .ns-item{display:flex;flex-direction:column;align-items:center;gap:2px}
+  .ns-item em{font-size:9px;font-style:normal;color:var(--coral-soft)}
+  .scale-dot.sm{width:15px;height:15px;border-width:1.4px}
+
+  /* life-area scale row */
+  .la-row{margin-bottom:15px;break-inside:avoid}
+  .la-row .la-name{font-weight:700;color:var(--coral-deep);font-size:13px;margin-bottom:1px}
+  .la-row .la-q{font-size:11.5px;color:var(--coral-mid);margin-bottom:6px;line-height:1.35}
+  .la-scale{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+  .la-scale .end{font-size:10.5px;color:var(--coral-soft);font-style:italic;min-width:66px}
+  .la-scale .end.r{text-align:right}
+
+  /* energy assessment table */
+  table.energy{width:100%;border-collapse:collapse;font-size:11.5px;margin-top:8px}
+  table.energy th{text-align:left;font-weight:700;font-size:10.5px;letter-spacing:.05em;text-transform:uppercase;color:var(--coral-deep);padding:8px 10px;border:1px solid var(--line);background:rgba(214,76,99,.06)}
+  table.energy td{padding:9px 10px;border:1px solid var(--line-soft);vertical-align:middle}
+  table.energy .rel-in{border:none;border-bottom:1px dotted var(--line);background:transparent;outline:none;color:var(--coral-deep);font-family:var(--font-body);font-size:12px;width:100%;min-width:100px}
+  @media(max-width:720px){table.energy{display:block;overflow-x:auto}}
+
+  /* courage ladder */
+  .ladder{width:120px;flex:none;align-self:center}
+  .ladder svg{width:100%;height:auto;display:block}
+
+  /* ---- Module 4 additions ---- */
+  .mountain{width:190px;flex:none}
+  .mountain svg{width:100%;height:auto;display:block}
+
+  table.logtable{width:100%;border-collapse:collapse;font-size:11.5px;margin-top:10px}
+  table.logtable th{text-align:left;font-weight:700;font-size:10px;letter-spacing:.05em;text-transform:uppercase;color:var(--coral-deep);padding:8px;border:1px solid var(--line);background:rgba(214,76,99,.06);vertical-align:middle}
+  table.logtable td{padding:6px 8px;border:1px solid var(--line-soft);vertical-align:top}
+  table.logtable .day{font-weight:700;color:var(--coral-deep);font-size:12px;white-space:nowrap}
+  table.logtable input.cell-in,table.logtable textarea.cell-in{border:none;background:transparent;outline:none;color:var(--coral-deep);font-family:var(--font-body);font-size:11.5px;width:100%;resize:none;line-height:1.4;min-width:70px}
+  @media(max-width:760px){table.logtable{display:block;overflow-x:auto}}
+
+  .opt.sm{padding:2px 9px;font-size:11px}
+  .wx-opts{display:flex;flex-direction:column;gap:3px;align-items:flex-start}
+  .emotion-palette{font-size:11px;color:var(--coral-mid);font-style:italic;margin-top:6px;line-height:1.5}
+  .inl-label{font-weight:600;color:var(--coral-deep);font-size:12px;display:inline-block;margin-bottom:2px}
+
+  @media print{
+    body{background:#fff;padding:0}
+    .toolbar,#toast{display:none}
+    .wrap{max-width:none;padding:0}
+    .page{box-shadow:none;border:none;border-radius:0;page-break-after:always;padding:34px 40px}
+    .page.red{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+    .lines,.boxfield,.tt-box textarea{background:#fff}
+  }
+</style>
+</head>
+<body>
+
+<!-- ============ TOOLBAR ============ -->
+<div class="toolbar">
+  <div class="toolbar-inner">
+    <div class="brand">
+      <span class="wordmark">The Stoic Girl Starter Pack</span>
+    </div>
+    <select class="jump" id="jump" aria-label="Jump to section">
+      <option value="">Jump to…</option>
+      <option value="p-divider">Module 4 · Emotional Regulation</option>
+      <option value="p-a1">Sensitive Girlie, Too?</option>
+      <option value="p-a2">During Emotional Overwhelm</option>
+      <option value="p-a3">The Wise Mind</option>
+      <option value="p-a4">Riding the Wave</option>
+      <option value="p-a5">How Ancient Stoics Coped</option>
+      <option value="p-a6">Specific Challenging Emotions</option>
+      <option value="p-exintro">Module 4 Exercises</option>
+      <option value="p-ex1a">Ex 4.1 · Gap Pause Practice (1/2)</option>
+      <option value="p-ex1b">Ex 4.1 · Gap Pause Practice (2/2)</option>
+      <option value="p-ex2a">Ex 4.2 · Wise Mind Worksheet (1/2)</option>
+      <option value="p-ex2b">Ex 4.2 · Wise Mind Worksheet (2/2)</option>
+      <option value="p-ex3a">Ex 4.3 · Distress Tolerance Menu (1/2)</option>
+      <option value="p-ex3b">Ex 4.3 · Distress Tolerance Menu (2/2)</option>
+      <option value="p-ex4a">Ex 4.4 · Daily Weather Report (1/2)</option>
+      <option value="p-ex4b">Ex 4.4 · Daily Weather Report (2/2)</option>
+    </select>
+    <span class="saved" id="savedMsg">saved ✓</span>
+    <button class="tbtn" id="btnExport" title="Download your answers as a file">Export</button>
+    <button class="tbtn" id="btnPrint" title="Print or save as PDF">Print</button>
+    <button class="tbtn" id="btnReset" title="Clear all answers">Reset</button>
+  </div>
+</div>
+
+<div class="wrap">
+
+<!-- ============ MODULE 4 DIVIDER ============ -->
+<section class="page red" id="p-divider">
+  <div class="runhead">
+    <span>The Stoic Girl Starter Pack</span>
+    <div class="dots"><i></i><i></i><i></i><i></i></div>
+  </div>
+  <div class="divider-hero">
+    <p class="eyebrow" style="font-size:34px;margin-bottom:6px">Module 4:</p>
+    <h1 class="display" style="font-size:clamp(38px,8vw,80px)">Emotional<br>Regulation</h1>
+    <p class="subtitle">For Sensitive Souls</p>
+  </div>
+  <div class="runfoot">
+    <span class="motto">Feel deeply, respond wisely.</span>
+    <span class="pg">46</span>
+  </div>
+</section>
+
+<!-- ============ SENSITIVE GIRLIE ============ -->
+<section class="page" id="p-a1">
+  <div class="runhead"><span>04–Emotional Regulation</span><span class="tag">/edu/</span>
+    <div class="dots"><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i></i><i></i><i></i><i></i></div>
+  </div>
+  <div class="exhead" style="align-items:flex-start">
+    <h1 class="display sm" style="flex:1;min-width:260px">Oh, So You're A<br>Sensitive Girlie,<br>Too?</h1>
+    <div class="mountain"><svg viewBox="0 0 200 154" preserveAspectRatio="xMidYMid meet"><defs><clipPath id="mfr"><rect x="2" y="2" width="196" height="150" rx="12"/></clipPath></defs><rect x="2" y="2" width="196" height="150" rx="12" fill="rgba(214,76,99,.05)" stroke="#D64C63" stroke-width="1.4"/><g clip-path="url(#mfr)"><circle cx="182" cy="24" r="8.5" fill="none" stroke="#D64C63" stroke-width="1.4"/><g transform="translate(22.7,-0.4) scale(0.3021)"><path fill="#D64C63" d="M256.22 18.375c-132.32 0-239.783 107.43-239.783 239.75S123.9 497.905 256.22 497.905 496 390.446 496 258.126 388.54 18.375 256.22 18.375zm0 17.875c102.773 0 189.092 69.664 214.374 164.406l-79.313-81.47-6.967-7.155-6.688 7.47-77.22 86.438c-11.493-10.268-22.98-20.284-34.467-30.063l-6.563-5.625-6.125 6.156c-18.41 18.527-36.937 37.61-55.438 57.094l-76.437-83.375-6.875-7.5-6.875 7.5-71.188 77.313C51.364 119.34 143.983 36.25 256.22 36.25zm102.25 147.28l-3.845 35.376 21.563-32 10.75 16.688 9.968-8.47 27.188 26.814L417 187.344l19.5 5.062 39.188 40.25.843-.812c1.016 8.618 1.564 17.388 1.564 26.28 0 37.033-9.06 71.917-25.063 102.595-46.25-53.48-92.512-100.116-138.75-142.283l11-12.312 33.19-22.594zM138.31 206.28l26.438 18.782 20.22 22.032c-39.47 42.024-78.63 85.836-115.94 130.344-21.98-34.443-34.718-75.38-34.718-119.313v-.78l16.25-17.658 37.25-20.187-17.187 54.063 41.813-51.22 27.312 32.72-1.438-48.782zm141.375 61.657l53.157 60.938-7.688-54.563L386.312 315c18.918 19.863 37.83 40.733 56.75 62.78l.188-.186C403.853 439.216 334.868 480.03 256.22 480.03c-71.76 0-135.483-33.992-176.033-86.75 19.135-22.91 38.775-45.645 58.72-68.06l56.155-33.814-29.312 76.75 61.53-73.375 6.25 32.19 19.532-36.783 47.844 69.5-21.22-91.75z"/></g></g></svg></div>
+  </div>
+  <div class="grid2" style="margin-top:30px">
+    <div class="colblock">
+      <h3 class="kicker">The Gift and Challenge of Feeling Deeply</h3>
+      <p class="body">If you're someone who feels everything intensely (like the friend's slightly off tone in a text, the world's pain when you watch the news, the full spectrum of emotions in a single day…) you've probably been told you're "too sensitive" or "too emotional." I know I have.</p>
+      <p class="body">We grow up seeing being sensitive or emotional as a weakness.</p>
+      <p class="body">But the truth is, to feel deeply is to be <em>fully alive</em>. It means you don't skim the surface of life, you plunge into it. You notice subtle shifts, care intensely, and carry the weight of what others barely register.</p>
+      <p class="body">That's a gift. But it's also heavy.</p>
+      <p class="body">Because strong emotions can fuel connection, creativity, and clarity… or spiral into overwhelm and reactivity.</p>
+      <p class="body">That's the paradox: what makes you emotionally rich can also leave you emotionally flooded.</p>
+    </div>
+    <div class="colblock">
+      <h3 class="kicker">What Emotional Regulation Is And Isn't</h3>
+      <p class="body">The goal of emotional regulation isn't to mute that richness. I don't want you to aim for feeling <em>less</em>. The goal is to create enough inner structure to <em>hold that richness</em>.</p>
+      <p class="body">Think of it like a river: depth is beautiful, but it still needs banks to contain the flow. So instead of learning to feel less, <em>we aim to feel fully while responding wisely</em>.</p>
+      <p class="body">This module is about learning how to <em>move with your emotions, not drown in them</em>. That's what the Stoics practiced: not coldness, but clarity. And that's what we're here to build.</p>
+    </div>
+  </div>
+  <div class="runfoot"><span class="motto">Feel deeply, respond wisely.</span><span class="pg">47</span></div>
+</section>
+
+<!-- ============ EMOTIONAL OVERWHELM ============ -->
+<section class="page" id="p-a2">
+  <div class="runhead"><span>04–Emotional Regulation</span><span class="tag">/edu/</span>
+    <div class="dots"><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i></i><i></i><i></i><i></i></div>
+  </div>
+  <h1 class="display sm">What Actually<br>Happens During<br>Emotional Overwhelm</h1>
+  <div class="cols c3" style="margin-top:30px">
+    <div class="colblock">
+      <h3 class="kicker">Your Brain on Big Feelings</h3>
+      <p class="body">When you're emotionally triggered, your brain goes through a predictable sequence:</p>
+      <ol class="pillars">
+        <li><b>Trigger Detection (Amygdala):</b><span>Something happens that your brain perceives as threatening.</span></li>
+        <li><b>Alarm System (Limbic System):</b><span>Stress hormones flood your system within milliseconds.</span></li>
+        <li><b>Executive Shutdown (Prefrontal Cortex):</b><span>Your rational mind goes offline temporarily.</span></li>
+        <li><b>Fight / Flight / Freeze Response:</b><span>Your body prepares for survival, not thoughtful response.</span></li>
+      </ol>
+    </div>
+    <div class="colblock">
+      <h3 class="kicker">That's Not All…</h3>
+      <p class="body">For sensitive people, this process is often more intense:</p>
+      <ul class="tick">
+        <li><em>Your alarm system is more finely tuned (you notice things others miss)</em></li>
+        <li><em>The emotional intensity can last longer</em></li>
+        <li><em>The recovery time may be extended</em></li>
+        <li><em>Multiple triggers can compound throughout the day</em></li>
+      </ul>
+      <p class="body">The good news is that understanding this process helps you realize that emotional overwhelm isn't a character flaw but a biological response.</p>
+      <p class="body">And biological responses can be worked with skillfully.</p>
+    </div>
+    <div class="colblock">
+      <h3 class="kicker">The Space Between Trigger and Response</h3>
+      <p class="body">Remember when we talked about Viktor Frankl's revolutionary insight in module 1? Let me remind you of what he said real quick because it is crucial to understanding this module:</p>
+      <blockquote class="frankl">"Between stimulus and response there is a space. In that space is our power to choose our response. In our response lies our growth and our freedom."</blockquote>
+      <p class="body">For most people, this space between trigger and response happens so quickly it feels nonexistent.</p>
+      <p class="body">But with practice, you can learn to <em>find and expand this space</em>. This is where emotional regulation actually happens.</p>
+      <p class="body">Here's what lives in "The Space":</p>
+      <ul class="tick">
+        <li><em>The ability to pause and breathe</em></li>
+        <li><em>The chance to choose your response rather than react automatically</em></li>
+        <li><em>The opportunity to act from your values rather than your emotions</em></li>
+        <li><em>The power to break patterns that don't serve you</em></li>
+      </ul>
+    </div>
+  </div>
+  <div class="callout" style="max-width:520px;margin:22px auto 0">
+    <div class="ct" style="justify-content:center"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="7" r="3"/><circle cx="7" cy="15" r="3"/><circle cx="17" cy="15" r="3"/></svg>Building the gap muscle</div>
+    <p>Like physical strength, your ability to pause between trigger and response gets stronger with practice. Each time you successfully create space, you're literally rewiring your brain's response patterns. So, as with everything else, practice is key here. (I'm starting to sound like a broken record, I know…)</p>
+  </div>
+  <div class="runfoot"><span class="motto">Feel deeply, respond wisely.</span><span class="pg">48</span></div>
+</section>
+
+<!-- ============ THE WISE MIND ============ -->
+<section class="page" id="p-a3">
+  <div class="runhead"><span>04–Emotional Regulation</span><span class="tag">/edu/</span>
+    <div class="dots"><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i></i><i></i><i></i><i></i></div>
+  </div>
+  <div class="exhead" style="align-items:flex-start">
+    <h1 class="display sm" style="flex:1;min-width:260px">The Wise Mind:<br>Where Logic And<br>Emotion Meet</h1>
+    <div class="callout" style="max-width:330px">
+      <div class="ct"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="7" r="3"/><circle cx="7" cy="15" r="3"/><circle cx="17" cy="15" r="3"/></svg>Meet DBT</div>
+      <p>Dialectical Behavior Therapy (DBT) was created specifically for people who feel emotions intensely.</p>
+      <p style="margin-top:6px">While CBT focuses on changing thoughts to change feelings, DBT teaches you how to tolerate and work with intense emotions without being overwhelmed by them.</p>
+      <p style="margin-top:6px">If you will, DBT can be seen as CBT's emotionally intelligent cousin: it combines the logical thinking skills of CBT with mindfulness and emotion regulation techniques that honor your emotional reality. Perfect for this module!</p>
+    </div>
+  </div>
+  <div class="grid2" style="margin-top:30px">
+    <div class="colblock">
+      <h3 class="kicker">Beyond the False Choice</h3>
+      <p class="body">You've probably been told you need to choose between being emotional or rational, between following your heart or your head.</p>
+      <p class="body">But there's a third option that integrates both (what a relief, right?).</p>
+    </div>
+    <div class="colblock">
+      <h3 class="kicker">The Three States of Mind (From DBT)</h3>
+      <p class="body"><strong>Emotion Mind:</strong></p>
+      <ul class="tick">
+        <li>Feelings drive behavior</li>
+        <li>Thoughts are colored by current emotions</li>
+        <li>Intensity is high, perspective is narrow</li>
+        <li>Example: <em>"I feel rejected, so I must be rejectable"</em></li>
+      </ul>
+      <p class="body"><strong>Rational Mind:</strong></p>
+      <ul class="tick">
+        <li>Logic drives behavior</li>
+        <li>Emotions are minimized or ignored</li>
+        <li>Perspective is broad but may lack nuance</li>
+        <li>Example: <em>"I shouldn't feel hurt by this, it's illogical"</em></li>
+      </ul>
+      <p class="body"><strong>Wise Mind (The Integration):</strong></p>
+      <ul class="tick">
+        <li>Both emotions and logic are honored</li>
+        <li>Feelings provide information, values guide action</li>
+        <li>Perspective balances both heart and head</li>
+        <li>Example: <em>"I feel hurt, and I can choose how to respond thoughtfully"</em></li>
+      </ul>
+      <p class="body"><em>Wise mind</em> isn't a permanent state; it's something you drop into temporarily when you need to make important decisions or respond to challenging situations. It becomes more accessible with (say it with me:) practice.</p>
+    </div>
+  </div>
+  <div class="runfoot"><span class="motto">Feel deeply, respond wisely.</span><span class="pg">49</span></div>
+</section>
+
+<!-- ============ RIDING THE WAVE ============ -->
+<section class="page" id="p-a4">
+  <div class="runhead"><span>04–Emotional Regulation</span><span class="tag">/edu/</span>
+    <div class="dots"><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i></i><i></i><i></i><i></i></div>
+  </div>
+  <div class="exhead" style="align-items:flex-start">
+    <h1 class="display sm" style="flex:1;min-width:260px">Riding The Wave<br>Instead Of<br>Fighting It</h1>
+    <div class="callout" style="max-width:330px">
+      <div class="ct"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="7" r="3"/><circle cx="7" cy="15" r="3"/><circle cx="17" cy="15" r="3"/></svg>Your toolkit</div>
+      <p>Just like you wouldn't go hiking without proper gear, you shouldn't navigate emotional intensity without the right tools. Over time, you will build your very own emotional regulation toolkit. I am here to introduce you to different tools and exercises, but only you can tell what works best for you.</p>
+      <p style="margin-top:6px">Besides these worksheet-based exercises, emotional regulation tools also include breathing techniques, grounding exercises, supportive relationships, physical movement, or creative outlets, btw!</p>
+    </div>
+  </div>
+  <div class="cols c3" style="margin-top:30px">
+    <div class="colblock">
+      <h3 class="kicker">The Paradox of Emotional Resistance</h3>
+      <p class="body">The more you fight against difficult emotions, the stronger they often become.</p>
+      <p class="body"><em>What you resist persists.</em></p>
+      <p class="body"><strong>Distress tolerance</strong> is about learning to surf emotional waves rather than trying to stop the whole ocean.</p>
+    </div>
+    <div class="colblock">
+      <h3 class="kicker">Key Distress Tolerance Principles</h3>
+      <p class="body"><strong>Emotions Are Temporary:</strong> All emotions, even the most intense ones, have a beginning, middle, and end. A feeling's initial chemical reaction lasts 90 seconds on average if you don't feed it with additional thoughts.</p>
+      <p class="body"><strong>You Can Feel Uncomfortable and Still Be Okay:</strong> Discomfort isn't dangerous (even though our brain will tell us otherwise). You can be anxious and still function, sad and still show up, angry and still choose wise action.</p>
+      <p class="body"><strong>The Goal Isn't to Feel Good, It's to Feel Skillfully:</strong> Instead of asking "How can I make this feeling go away?" ask "How can I be with this feeling in a way that aligns with who I want to be?"</p>
+      <p class="body"><strong>Distress Tolerance vs. Emotional Bypassing:</strong> Pretending everything is fine is NOT distress tolerance. That would be emotional bypassing (which we don't want!). What we DO want is to build your capacity to <em>awarely sit with the difficulty without being destroyed by it</em>.</p>
+    </div>
+    <div class="colblock">
+      <h3 class="kicker">Practical Emotional Regulation for Daily Life</h3>
+      <p class="body"><strong>The STOP Technique (adapted from mindfulness practices):</strong></p>
+      <ul class="tick">
+        <li>Stop what you're doing</li>
+        <li>Take a breath</li>
+        <li>Observe what's happening inside you</li>
+        <li>Proceed with intention</li>
+      </ul>
+      <p class="body"><strong>The Emotional Weather Report:</strong> Instead of saying "I am angry," try "I'm <em>experiencing</em> anger." This small language shift creates space between you and the emotion, reminding you that feelings are temporary weather patterns, not permanent states.</p>
+      <p class="body"><strong>The Wise Mind Check-In:</strong> When facing an emotional decision, ask:</p>
+      <ul class="tick">
+        <li><em>"What is my emotion telling me?"</em> (Emotion Mind)</li>
+        <li><em>"What do the facts suggest?"</em> (Rational Mind)</li>
+        <li><em>"What would my wisest self do here?"</em> (Wise Mind)</li>
+      </ul>
+    </div>
+  </div>
+  <div class="runfoot"><span class="motto">Feel deeply, respond wisely.</span><span class="pg">50</span></div>
+</section>
+
+<!-- ============ ANCIENT STOICS ============ -->
+<section class="page" id="p-a5">
+  <div class="runhead"><span>04–Emotional Regulation</span><span class="tag">/edu/</span>
+    <div class="dots"><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i></i><i></i><i></i><i></i></div>
+  </div>
+  <h1 class="display sm">How Ancient<br>Stoics Handled<br>Intense Emotions</h1>
+  <div class="cols c3" style="margin-top:30px">
+    <div class="colblock">
+      <h3 class="kicker">Stoics Weren't Emotionless Robots</h3>
+      <p class="body">Contrary to popular belief, the Stoics didn't suppress their emotions. They were actually very aware of their emotions and developed sophisticated practices for working with intense feelings skillfully.</p>
+      <p class="body">Stoic emotional regulation techniques include:</p>
+    </div>
+    <div class="colblock">
+      <ol class="pillars">
+        <li><b>The Initial Impression vs. Judgment Distinction:</b><span>Stoics recognized that you can't control your first emotional reaction (the "initial impression"), but you can control what you do with it (your "judgment"). Feel the feeling, then choose your response.</span></li>
+        <li><b>Cognitive Distance Practices:</b><span><em>The View from Above:</em> imagine looking at your situation from a cosmic perspective. <em>Temporal Distance:</em> ask "Will this matter in 10 years?" <em>Objective Description:</em> describe the situation as a neutral observer would.</span></li>
+        <li><b>Preferred Indifferents Applied to Emotions:</b><span>Emotions themselves aren't good or bad; they're information. Your response to them is where virtue (or lack thereof) shows up.</span></li>
+      </ol>
+    </div>
+    <div class="colblock">
+      <p class="body">You might have noticed already that these ancient practices align perfectly with modern emotion regulation techniques!</p>
+      <p class="body">The Stoics were essentially developing cognitive behavioral strategies 2000 years before CBT was formalized… (which is crazy to think about, right?)</p>
+    </div>
+  </div>
+  <div class="runfoot"><span class="motto">Feel deeply, respond wisely.</span><span class="pg">51</span></div>
+</section>
+
+<!-- ============ SPECIFIC EMOTIONS ============ -->
+<section class="page" id="p-a6">
+  <div class="runhead"><span>04–Emotional Regulation</span><span class="tag">/edu/</span>
+    <div class="dots"><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i></i><i></i><i></i><i></i></div>
+  </div>
+  <h1 class="display sm">Working With<br>Specific Challenging<br>Emotions</h1>
+  <div class="cols c3" style="margin-top:30px">
+    <div class="colblock">
+      <h3 class="kicker">Different Emotions, Different Approaches</h3>
+      <p class="body">While the general principles of emotional regulation apply to all feelings, some emotions have unique characteristics that benefit from specific strategies.</p>
+      <p class="body">Understanding what each emotion is trying to tell you and how to work with its particular energy can transform your relationship with challenging feelings.</p>
+      <p class="body">Here are some emergency reminders for navigating common emotions:</p>
+    </div>
+    <div class="colblock">
+      <h4 style="font-family:var(--font-body);font-weight:700;color:var(--coral-deep);font-size:13.5px;margin:0 0 1px">Anxiety</h4>
+      <p style="font-style:italic;color:var(--coral-mid);font-size:12px;margin:0 0 6px">The Future-Focused Emotion:</p>
+      <ul class="tick">
+        <li>Bring attention back to the present moment</li>
+        <li>Distinguish between practical concern and anxious rumination</li>
+        <li>Use grounding techniques to reconnect with your body</li>
+        <li>Remember: anxiety often shows up when you care deeply about something</li>
+      </ul>
+      <h4 style="font-family:var(--font-body);font-weight:700;color:var(--coral-deep);font-size:13.5px;margin:14px 0 1px">Anger</h4>
+      <p style="font-style:italic;color:var(--coral-mid);font-size:12px;margin:0 0 6px">The Boundary-Focused Emotion:</p>
+      <ul class="tick">
+        <li>Recognize anger as information about your values or boundaries</li>
+        <li>Create space before responding (especially in relationships)</li>
+        <li>Channel the energy toward constructive action when possible</li>
+        <li>Distinguish between clean anger (information) and dirty anger (blame / resentment)</li>
+      </ul>
+    </div>
+    <div class="colblock">
+      <h4 style="font-family:var(--font-body);font-weight:700;color:var(--coral-deep);font-size:13.5px;margin:0 0 1px">Sadness</h4>
+      <p style="font-style:italic;color:var(--coral-mid);font-size:12px;margin:0 0 6px">The Loss-Focused Emotion:</p>
+      <ul class="tick">
+        <li>Allow time and space for grief without rushing to "fix" it</li>
+        <li>Connect with supportive people rather than isolating</li>
+        <li>Remember that sadness often indicates the depth of your care</li>
+        <li>Practice self-compassion during vulnerable moments</li>
+      </ul>
+      <h4 style="font-family:var(--font-body);font-weight:700;color:var(--coral-deep);font-size:13.5px;margin:14px 0 1px">Overwhelm</h4>
+      <p style="font-style:italic;color:var(--coral-mid);font-size:12px;margin:0 0 6px">The Capacity-Focused Emotion:</p>
+      <ul class="tick">
+        <li>Break things down into smaller, manageable pieces</li>
+        <li>Identify what actually needs immediate attention vs. what can wait</li>
+        <li>Use your support systems rather than trying to handle everything alone</li>
+        <li>Remember that overwhelm often signals growth or transition</li>
+      </ul>
+    </div>
+  </div>
+  <div class="runfoot"><span class="motto">Feel deeply, respond wisely.</span><span class="pg">52</span></div>
+</section>
+
+<!-- ============ MODULE 4 EXERCISES INTRO ============ -->
+<section class="page" id="p-exintro">
+  <div class="runhead"><span>04–Emotional Regulation</span><span class="tag">/ex/</span>
+    <div class="dots"><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i></i><i></i><i></i><i></i></div>
+  </div>
+  <div class="grid2" style="align-items:center;margin-top:30px">
+    <div><h1 class="display">Module 4<br>Exercises</h1></div>
+    <div>
+      <p class="body">After learning about all that theory, it's time to build <em>practical</em> skills for managing intense feelings with wisdom and grace. Each exercise helps you gradually expand your capacity to feel deeply while responding thoughtfully.</p>
+      <div class="colblock" style="margin-top:16px">
+        <p class="body"><strong>1. The Gap Pause Practice</strong><br><span style="font-style:italic;color:var(--coral-mid);font-size:12.5px">This tool teaches you to find and expand the crucial space between emotional trigger and response. The moment when you can choose wisdom over reactivity is where your power lies.</span></p>
+        <p class="body" style="margin-top:11px"><strong>2. Wise Mind Worksheet</strong><br><span style="font-style:italic;color:var(--coral-mid);font-size:12.5px">This exercise helps you integrate both your emotional wisdom and logical thinking when facing decisions or challenges. Instead of being torn between heart and head, you'll learn to access the balanced perspective that honors both.</span></p>
+        <p class="body" style="margin-top:11px"><strong>3. Distress Tolerance Menu</strong><br><span style="font-style:italic;color:var(--coral-mid);font-size:12.5px">This exercise creates a personalized toolkit of healthy strategies for riding out emotional storms. Because sometimes the goal isn't to feel better immediately but to get through intense feelings without making them worse.</span></p>
+        <p class="body" style="margin-top:11px"><strong>4. Daily Weather Report</strong><br><span style="font-style:italic;color:var(--coral-mid);font-size:12.5px">This tool builds your emotional awareness through gentle tracking and pattern recognition. Like a meteorologist studying weather systems, you'll become an expert on your own emotional climate (this is not as boring as it sounds, promise!).</span></p>
+      </div>
+      <hr class="rule">
+      <p class="body" style="font-size:12.5px">These exercises work together to transform you from someone who gets swept away by emotions to someone who can dance with them skillfully. You'll still feel deeply (that's your gift), but you'll respond from wisdom rather than overwhelm.</p>
+    </div>
+  </div>
+  <div class="runfoot"><span class="motto">Feel deeply, respond wisely.</span><span class="pg">53</span></div>
+</section>
+
+<!-- ============ EX 4.1 GAP PAUSE PRACTICE 1/2 ============ -->
+<section class="page" id="p-ex1a">
+  <div class="runhead"><span>04–Emotional Regulation</span><span class="tag">/ex 4.1/</span>
+    <div class="dots"><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i></i><i></i><i></i><i></i></div>
+  </div>
+  <div class="exhead">
+    <div style="flex:1;min-width:260px">
+      <h1 class="display sm">The Gap<br>Pause<br>Practice (1/2)</h1>
+      <p class="body" style="max-width:440px;margin-top:12px">Our freedom lives in the space between stimulus and response. This practice helps you find that space and make it bigger.</p>
+    </div>
+    <div class="purpose-bar">
+      <div><b>Purpose:</b> Learn to identify and expand the space between emotional triggers and your responses, building the skill of conscious choice over automatic reaction.</div>
+      <div><b>Time estimate:</b> 10–15 minutes daily practice + 5 minutes reflection</div>
+    </div>
+  </div>
+  <hr class="rule" style="margin:22px 0 22px">
+  <p class="field-label">1) UNDERSTANDING YOUR CURRENT PATTERNS</p>
+  <div class="grid2" style="margin-top:8px">
+    <div>
+      <p class="field-sub" style="color:var(--coral-mid)">1. Think of a time this week when you reacted emotionally in a way you later regretted. What happened?</p>
+      <textarea class="lines" data-field="gap_q1" style="min-height:56px"></textarea>
+      <p class="field-sub" style="color:var(--coral-mid);margin-top:12px">3. How quickly did you react?</p>
+      <div class="opts">
+        <span class="opt" data-scale="gap_speed" data-val="Instantly">Instantly</span>
+        <span class="opt" data-scale="gap_speed" data-val="Within seconds">Within seconds</span>
+        <span class="opt" data-scale="gap_speed" data-val="Within a minute">Within a minute</span>
+        <span class="opt" data-scale="gap_speed" data-val="Had time to think">I had some time to think</span>
+      </div>
+    </div>
+    <div>
+      <p class="field-sub" style="color:var(--coral-mid)">2. What was the trigger that set you off?</p>
+      <textarea class="lines" data-field="gap_q2" style="min-height:56px"></textarea>
+      <p class="field-sub" style="color:var(--coral-mid);margin-top:12px">4. What would you have done differently if you'd had more time to pause?</p>
+      <textarea class="lines" data-field="gap_q4" style="min-height:56px"></textarea>
+    </div>
+  </div>
+
+  <p class="field-label" style="margin-top:22px">2) THE GAP PRACTICE INSTRUCTIONS</p>
+  <div class="grid2" style="margin-top:8px">
+    <div class="colblock">
+      <h4 style="font-family:var(--font-body);font-weight:700;color:var(--coral-deep);font-size:12.5px;margin:0 0 2px">Step 1: Recognition Training</h4>
+      <p class="cap" style="margin:0 0 6px">(Practice this throughout your day)</p>
+      <ul class="tick">
+        <li>When you notice emotional intensity rising, silently say: <em>"I notice I'm having a strong reaction."</em></li>
+        <li>Rate the intensity: 1 (mild annoyance) to 10 (overwhelming emotion)</li>
+      </ul>
+      <h4 style="font-family:var(--font-body);font-weight:700;color:var(--coral-deep);font-size:12.5px;margin:14px 0 2px">Step 2: The Physical Pause</h4>
+      <p class="cap" style="margin:0 0 6px">(Choose one technique to practice)</p>
+      <div class="chk" data-check="gap_478"><span class="box"></span><span><b>4-7-8 Breathing:</b> inhale for 4, hold for 7, exhale for 8. Repeat.</span></div>
+      <div class="chk" data-check="gap_box"><span class="box"></span><span><b>Box Breathing:</b> inhale for 4, hold for 4, exhale for 4, hold for 4. Repeat.</span></div>
+      <div class="chk" data-check="gap_54321"><span class="box"></span><span><b>5-4-3-2-1 Grounding:</b> name 5 things you see, 4 you feel, 3 you hear, 2 you smell, 1 you taste.</span></div>
+      <div class="chk" data-check="gap_scan"><span class="box"></span><span><b>Body Scan:</b> quickly check from head to toe, notice where you hold tension.</span></div>
+      <div class="chk" data-check="gap_count"><span class="box"></span><span><b>Count to 10:</b> slowly, giving yourself time to settle.</span></div>
+      <h4 style="font-family:var(--font-body);font-weight:700;color:var(--coral-deep);font-size:12.5px;margin:14px 0 2px">Step 3: The Choice Point</h4>
+      <p class="cap" style="margin:0 0 6px">(Ask yourself one of these questions)</p>
+      <ul class="tick">
+        <li><em>"What would my wisest self do here?"</em></li>
+        <li><em>"How do I want to feel about this interaction later?"</em></li>
+        <li><em>"What response aligns with my values?"</em></li>
+      </ul>
+    </div>
+    <div>
+      <div class="hint-box" style="max-width:none">
+        <div class="ct"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="7" r="3"/><circle cx="7" cy="15" r="3"/><circle cx="17" cy="15" r="3"/></svg>Be gentle with yourself</div>
+        <p style="margin:0 0 6px">Don't be hard on yourself when in the beginning you're having a hard time finding the gap between trigger and response. That's totally normal! Building your "gap muscle" takes time. But the more you <em>practice</em> finding the gap, the easier it becomes.</p>
+        <p style="margin:0 0 4px">You might want to start with these common trigger situations:</p>
+        <ul style="margin:0;padding-left:15px">
+          <li>Someone interrupts you mid-sentence</li>
+          <li>You receive unexpected criticism</li>
+          <li>Plans change at the last minute</li>
+          <li>Traffic makes you late</li>
+          <li>Your text goes unanswered for hours</li>
+          <li>Someone disagrees with your opinion</li>
+        </ul>
+        <p style="margin-top:8px">Pick 1–2 situations where you typically react quickly and commit to practicing your pause technique this week.</p>
+      </div>
+    </div>
+  </div>
+  <div class="runfoot"><span class="motto">Feel deeply, respond wisely.</span><span class="pg">54</span></div>
+</section>
+
+<!-- ============ EX 4.1 GAP PAUSE PRACTICE 2/2 ============ -->
+<section class="page" id="p-ex1b">
+  <div class="runhead"><span>04–Emotional Regulation</span><span class="tag">/ex 4.1/</span>
+    <div class="dots"><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i></i><i></i><i></i><i></i></div>
+  </div>
+  <div class="exhead">
+    <div style="flex:1;min-width:260px"><h1 class="display sm">The Gap<br>Pause<br>Practice (2/2)</h1></div>
+    <div class="purpose-bar">
+      <div><b>Purpose:</b> Learn to identify and expand the space between emotional triggers and your responses, building the skill of conscious choice over automatic reaction.</div>
+      <div><b>Time estimate:</b> 10–15 minutes daily practice + 5 minutes reflection</div>
+    </div>
+  </div>
+  <hr class="rule" style="margin:22px 0 22px">
+  <p class="field-label">3) DAILY PRACTICE LOG <span style="font-weight:500;font-style:italic;font-family:var(--font-serif);color:var(--coral-mid)">(use for one week)</span></p>
+  <table class="logtable"><thead><tr><th>Day</th><th>Trigger</th><th>Intensity (1-10)</th><th>Pause Technique Used</th><th>Chosen Response</th><th>How It Felt</th></tr></thead><tbody><tr><td class="day">Mon</td><td><input class="cell-in" type="text" data-field="gl_mon_trig"></td><td><input class="cell-in" type="text" data-field="gl_mon_int"></td><td><input class="cell-in" type="text" data-field="gl_mon_tech"></td><td><input class="cell-in" type="text" data-field="gl_mon_resp"></td><td><input class="cell-in" type="text" data-field="gl_mon_felt"></td></tr><tr><td class="day">Tue</td><td><input class="cell-in" type="text" data-field="gl_tue_trig"></td><td><input class="cell-in" type="text" data-field="gl_tue_int"></td><td><input class="cell-in" type="text" data-field="gl_tue_tech"></td><td><input class="cell-in" type="text" data-field="gl_tue_resp"></td><td><input class="cell-in" type="text" data-field="gl_tue_felt"></td></tr><tr><td class="day">Wed</td><td><input class="cell-in" type="text" data-field="gl_wed_trig"></td><td><input class="cell-in" type="text" data-field="gl_wed_int"></td><td><input class="cell-in" type="text" data-field="gl_wed_tech"></td><td><input class="cell-in" type="text" data-field="gl_wed_resp"></td><td><input class="cell-in" type="text" data-field="gl_wed_felt"></td></tr><tr><td class="day">Thu</td><td><input class="cell-in" type="text" data-field="gl_thu_trig"></td><td><input class="cell-in" type="text" data-field="gl_thu_int"></td><td><input class="cell-in" type="text" data-field="gl_thu_tech"></td><td><input class="cell-in" type="text" data-field="gl_thu_resp"></td><td><input class="cell-in" type="text" data-field="gl_thu_felt"></td></tr><tr><td class="day">Fri</td><td><input class="cell-in" type="text" data-field="gl_fri_trig"></td><td><input class="cell-in" type="text" data-field="gl_fri_int"></td><td><input class="cell-in" type="text" data-field="gl_fri_tech"></td><td><input class="cell-in" type="text" data-field="gl_fri_resp"></td><td><input class="cell-in" type="text" data-field="gl_fri_felt"></td></tr><tr><td class="day">Sat</td><td><input class="cell-in" type="text" data-field="gl_sat_trig"></td><td><input class="cell-in" type="text" data-field="gl_sat_int"></td><td><input class="cell-in" type="text" data-field="gl_sat_tech"></td><td><input class="cell-in" type="text" data-field="gl_sat_resp"></td><td><input class="cell-in" type="text" data-field="gl_sat_felt"></td></tr><tr><td class="day">Sun</td><td><input class="cell-in" type="text" data-field="gl_sun_trig"></td><td><input class="cell-in" type="text" data-field="gl_sun_int"></td><td><input class="cell-in" type="text" data-field="gl_sun_tech"></td><td><input class="cell-in" type="text" data-field="gl_sun_resp"></td><td><input class="cell-in" type="text" data-field="gl_sun_felt"></td></tr></tbody></table>
+  <p class="field-label" style="margin-top:24px">4) WEEKLY REFLECTION</p>
+  <div class="grid2" style="margin-top:8px">
+    <div>
+      <p class="field-sub" style="color:var(--coral-mid)">What patterns do you notice in your triggers?</p><textarea class="lines" data-field="gap_r1" style="min-height:56px"></textarea>
+      <p class="field-sub" style="color:var(--coral-mid);margin-top:12px">Which pause technique worked best for you?</p><textarea class="lines" data-field="gap_r3" style="min-height:56px"></textarea>
+    </div>
+    <div>
+      <p class="field-sub" style="color:var(--coral-mid)">How did it feel to choose your response rather than react automatically?</p><textarea class="lines" data-field="gap_r2" style="min-height:56px"></textarea>
+      <p class="field-sub" style="color:var(--coral-mid);margin-top:12px">What made it hardest to find the gap?</p><textarea class="lines" data-field="gap_r4" style="min-height:56px"></textarea>
+    </div>
+  </div>
+  <div class="runfoot"><span class="motto">Feel deeply, respond wisely.</span><span class="pg">55</span></div>
+</section>
+
+<!-- ============ EX 4.2 WISE MIND WORKSHEET 1/2 ============ -->
+<section class="page" id="p-ex2a">
+  <div class="runhead"><span>04–Emotional Regulation</span><span class="tag">/ex 4.2/</span>
+    <div class="dots"><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i></i><i></i><i></i><i></i></div>
+  </div>
+  <div class="exhead">
+    <div style="flex:1;min-width:260px">
+      <h1 class="display sm">Wise Mind<br>Worksheet (1/2)</h1>
+      <p class="body" style="max-width:440px;margin-top:12px">You don't have to choose between being emotional <em>or</em> logical. The Wise Mind integrates both your emotional intelligence and rational thinking into balanced wisdom.</p>
+    </div>
+    <div class="purpose-bar">
+      <div><b>Purpose:</b> Learn to integrate emotional wisdom and logical thinking to make balanced decisions that honor both your feelings and your reasoning.</div>
+      <div><b>Time estimate:</b> 15–20 minutes</div>
+    </div>
+  </div>
+  <hr class="rule" style="margin:22px 0 22px">
+  <p class="field-label">1) CURRENT CHALLENGE OR DECISION</p>
+  <p class="field-sub">What situation are you currently facing that could benefit from a Wise Mind perspective?</p>
+  <textarea class="lines" data-field="wm_challenge" style="min-height:40px"></textarea>
+
+  <p class="field-label" style="margin-top:22px">2) THE THREE MINDS ANALYSIS</p>
+  <div class="grid2" style="margin-top:10px;gap:22px">
+    <div class="vcard">
+      <div class="vhead"><h4 style="font-size:14px">Emotion Mind</h4></div>
+      <p class="cap" style="margin:-4px 0 8px;text-transform:uppercase;letter-spacing:.04em">(What your feelings are telling you)</p>
+      <p class="vq">What emotions are present in this situation?</p><textarea class="lines" data-field="wm_em1" style="min-height:44px"></textarea>
+      <p class="vq">If you followed your emotions completely, what would you do?</p><textarea class="lines" data-field="wm_em2" style="min-height:44px"></textarea>
+      <p class="vq">What is your emotional mind most afraid of or hoping for?</p><textarea class="lines" data-field="wm_em3" style="min-height:44px"></textarea>
+      <p class="vq">What valid information are these emotions giving you (what are they trying to tell you)?</p><textarea class="lines" data-field="wm_em4" style="min-height:44px"></textarea>
+    </div>
+    <div class="vcard">
+      <div class="vhead"><h4 style="font-size:14px">Rational Mind</h4></div>
+      <p class="cap" style="margin:-4px 0 8px;text-transform:uppercase;letter-spacing:.04em">(What logic and facts suggest)</p>
+      <p class="vq">What are the objective facts of this situation?</p><textarea class="lines" data-field="wm_rm1" style="min-height:44px"></textarea>
+      <p class="vq">If you removed all emotions, what would pure logic suggest?</p><textarea class="lines" data-field="wm_rm2" style="min-height:44px"></textarea>
+      <p class="vq">What are the practical pros and cons of different options?</p><textarea class="lines" data-field="wm_rm3" style="min-height:44px"></textarea>
+      <p class="vq">What would you advise a friend in this exact situation?</p><textarea class="lines" data-field="wm_rm4" style="min-height:44px"></textarea>
+    </div>
+  </div>
+  <div class="runfoot"><span class="motto">Feel deeply, respond wisely.</span><span class="pg">56</span></div>
+</section>
+
+<!-- ============ EX 4.2 WISE MIND WORKSHEET 2/2 ============ -->
+<section class="page" id="p-ex2b">
+  <div class="runhead"><span>04–Emotional Regulation</span><span class="tag">/ex 4.2/</span>
+    <div class="dots"><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i></i><i></i><i></i><i></i></div>
+  </div>
+  <div class="exhead">
+    <div style="flex:1;min-width:260px"><h1 class="display sm">Wise Mind<br>Worksheet (2/2)</h1></div>
+    <div class="purpose-bar">
+      <div><b>Purpose:</b> Learn to integrate emotional wisdom and logical thinking to make balanced decisions that honor both your feelings and your reasoning.</div>
+      <div><b>Time estimate:</b> 15–20 minutes</div>
+    </div>
+  </div>
+  <hr class="rule" style="margin:22px 0 22px">
+  <div class="grid2" style="align-items:start;gap:26px 40px">
+    <div>
+      <p class="field-label">2) THE THREE MINDS ANALYSIS (CONT.)</p>
+      <div class="vcard" style="margin-top:10px">
+        <div class="vhead"><h4 style="font-size:14px">Finding Your Wise Mind</h4></div>
+        <p class="cap" style="margin:-4px 0 8px;text-transform:uppercase;letter-spacing:.04em">(Integration questions)</p>
+        <p class="vq">What do both your emotions AND logic agree on?</p><textarea class="lines" data-field="wm_wm1" style="min-height:44px"></textarea>
+        <p class="vq">What would the most balanced response look like?</p><textarea class="lines" data-field="wm_wm2" style="min-height:44px"></textarea>
+        <p class="vq">If you imagine yourself in 5 years looking back, what would you be proud of doing?</p><textarea class="lines" data-field="wm_wm3" style="min-height:44px"></textarea>
+        <p class="vq">What choice honors both your feelings and your wisdom?</p><textarea class="lines" data-field="wm_wm4" style="min-height:44px"></textarea>
+      </div>
+    </div>
+    <div>
+      <p class="field-label">3) YOUR WISE MIND DECISION</p>
+      <p class="field-sub" style="color:var(--coral-mid);margin-top:8px">Based on this integration, what feels like the most balanced path forward?</p><textarea class="lines" data-field="wm_dec1" style="min-height:52px"></textarea>
+      <p class="field-sub" style="color:var(--coral-mid);margin-top:10px">What's one small step you can take this week aligned with this wisdom?</p><textarea class="lines" data-field="wm_dec2" style="min-height:52px"></textarea>
+
+      <p class="field-label" style="margin-top:18px">4) REFLECTION</p>
+      <p class="field-sub" style="color:var(--coral-mid);margin-top:8px">How does this decision feel different from choices made purely from emotion or logic?</p><textarea class="lines" data-field="wm_ref1" style="min-height:52px"></textarea>
+      <p class="field-sub" style="color:var(--coral-mid);margin-top:10px">What makes it challenging to access your Wise Mind?</p><textarea class="lines" data-field="wm_ref2" style="min-height:52px"></textarea>
+
+      <div class="hint-box" style="margin-top:16px;max-width:none">
+        <div class="ct"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="7" r="3"/><circle cx="7" cy="15" r="3"/><circle cx="17" cy="15" r="3"/></svg>Wise Mind check-in practice</div>
+        <p style="margin:0 0 6px">Use this quick format throughout the week:</p>
+        <ul style="margin:0;padding-left:15px;font-style:italic"><li>"What is my emotion mind saying?"</li><li>"What is my rational mind saying?"</li><li>"What is my wise mind saying?"</li></ul>
+      </div>
+    </div>
+  </div>
+  <div class="runfoot"><span class="motto">Feel deeply, respond wisely.</span><span class="pg">57</span></div>
+</section>
+
+<!-- ============ EX 4.3 DISTRESS TOLERANCE MENU 1/2 ============ -->
+<section class="page" id="p-ex3a">
+  <div class="runhead"><span>04–Emotional Regulation</span><span class="tag">/ex 4.3/</span>
+    <div class="dots"><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i></i><i></i><i></i><i></i></div>
+  </div>
+  <div class="exhead">
+    <div style="flex:1;min-width:260px">
+      <h1 class="display sm">Distress<br>Tolerance<br>Menu (1/2)</h1>
+      <p class="body" style="max-width:440px;margin-top:12px">Sometimes the goal isn't to feel better immediately, but to get through intense emotions without making things worse. This menu gives you healthy options when you're in emotional crisis mode.</p>
+    </div>
+    <div class="purpose-bar">
+      <div><b>Purpose:</b> Create a personalized toolkit of healthy strategies for managing intense emotions without making the situation worse.</div>
+      <div><b>Time estimate:</b> 20–25 minutes to create, ongoing reference</div>
+    </div>
+  </div>
+  <hr class="rule" style="margin:22px 0 22px">
+  <p class="field-label">1) CURRENT COPING ASSESSMENT</p>
+  <p class="field-sub">How do you currently handle intense emotions? Check all that apply + add your own.</p>
+  <div class="grid2" style="gap:22px 40px;margin-top:10px">
+    <div class="chk-group">
+      <h5>Helpful Strategies</h5>
+      <div class="chk" data-check="dtm_h1"><span class="box"></span><span>Talk to supportive friends or family</span></div>
+      <div class="chk" data-check="dtm_h2"><span class="box"></span><span>Go for a walk or do physical exercise</span></div>
+      <div class="chk" data-check="dtm_h3"><span class="box"></span><span>Journal or write about my feelings</span></div>
+      <div class="chk" data-check="dtm_h4"><span class="box"></span><span>Listen to music that matches my mood</span></div>
+      <div class="chk" data-check="dtm_h5"><span class="box"></span><span>Take a hot bath or shower</span></div>
+      <div class="chk" data-check="dtm_h6"><span class="box"></span><span>Practice breathing exercises</span></div>
+      <div class="chk" data-check="dtm_hc"><span class="box"></span><span>Custom:</span><input class="other-in" type="text" data-field="dtm_hc_txt"></div>
+    </div>
+    <div class="chk-group">
+      <h5>Unhelpful Strategies <span style="font-weight:500;font-style:italic;color:var(--coral-mid)">(be honest — no judgment)</span></h5>
+      <div class="chk" data-check="dtm_u1"><span class="box"></span><span>Scroll social media mindlessly</span></div>
+      <div class="chk" data-check="dtm_u2"><span class="box"></span><span>Eat emotionally (too much or too little)</span></div>
+      <div class="chk" data-check="dtm_u3"><span class="box"></span><span>Isolate completely from others</span></div>
+      <div class="chk" data-check="dtm_u4"><span class="box"></span><span>Engage in arguments or send impulsive texts</span></div>
+      <div class="chk" data-check="dtm_u5"><span class="box"></span><span>Use substances to numb feeling</span></div>
+      <div class="chk" data-check="dtm_u6"><span class="box"></span><span>Make big decisions while upset</span></div>
+      <div class="chk" data-check="dtm_uc"><span class="box"></span><span>Custom:</span><input class="other-in" type="text" data-field="dtm_uc_txt"></div>
+    </div>
+  </div>
+
+  <p class="field-label" style="margin-top:22px">2) BUILDING YOUR PERSONAL MENU</p>
+  <p class="field-sub">Go through each category and check the strategies you want to try (aim for at least 2–3 per category you can turn to during emotional intensity).</p>
+
+  <p style="font-family:var(--font-heavy);font-weight:800;color:var(--coral);font-size:13px;margin:16px 0 8px">◆ DISTRACT <span style="font-family:var(--font-serif);font-style:italic;font-weight:400;font-size:12px;color:var(--coral-mid)">(healthy ways to shift focus temporarily)</span></p>
+  <div class="grid2" style="gap:18px 40px">
+    <div class="chk-group"><h5>Activities</h5>
+      <div class="chk" data-check="dtm_da1"><span class="box"></span><span>Clean or organize something</span></div>
+      <div class="chk" data-check="dtm_da2"><span class="box"></span><span>Do a puzzle or brain teaser</span></div>
+      <div class="chk" data-check="dtm_da3"><span class="box"></span><span>Watch funny videos or comedy shows</span></div>
+      <div class="chk" data-check="dtm_da4"><span class="box"></span><span>Call someone and focus on their life</span></div>
+      <div class="chk" data-check="dtm_da5"><span class="box"></span><span>Do creative work (art, music, writing)</span></div>
+      <div class="chk" data-check="dtm_da6"><span class="box"></span><span>Exercise or go for a walk</span></div>
+      <div class="chk" data-check="dtm_dac"><span class="box"></span><span>Custom:</span><input class="other-in" type="text" data-field="dtm_dac_txt"></div>
+    </div>
+    <div class="chk-group"><h5>Contributing to Others</h5>
+      <div class="chk" data-check="dtm_dc1"><span class="box"></span><span>Send an encouraging text to a friend</span></div>
+      <div class="chk" data-check="dtm_dc2"><span class="box"></span><span>Do a small favor for someone</span></div>
+      <div class="chk" data-check="dtm_dc3"><span class="box"></span><span>Volunteer for a cause you care about</span></div>
+      <div class="chk" data-check="dtm_dc4"><span class="box"></span><span>Help with household tasks</span></div>
+      <div class="chk" data-check="dtm_dcc"><span class="box"></span><span>Custom:</span><input class="other-in" type="text" data-field="dtm_dcc_txt"></div>
+    </div>
+  </div>
+
+  <p style="font-family:var(--font-heavy);font-weight:800;color:var(--coral);font-size:13px;margin:16px 0 8px">◆ SOOTHE <span style="font-family:var(--font-serif);font-style:italic;font-weight:400;font-size:12px;color:var(--coral-mid)">(ways to comfort yourself with kindness)</span></p>
+  <div class="grid2" style="gap:18px 40px">
+    <div class="chk-group"><h5>Physical Soothing</h5>
+      <div class="chk" data-check="dtm_sp1"><span class="box"></span><span>Take a warm bath or shower</span></div>
+      <div class="chk" data-check="dtm_sp2"><span class="box"></span><span>Use soft blankets or comfortable clothes</span></div>
+      <div class="chk" data-check="dtm_sp3"><span class="box"></span><span>Drink warm tea or cold water mindfully</span></div>
+      <div class="chk" data-check="dtm_sp4"><span class="box"></span><span>Use pleasant scents (candles, essential oils)</span></div>
+      <div class="chk" data-check="dtm_sp5"><span class="box"></span><span>Gentle stretching or self-massage</span></div>
+      <div class="chk" data-check="dtm_spc"><span class="box"></span><span>Custom:</span><input class="other-in" type="text" data-field="dtm_spc_txt"></div>
+    </div>
+    <div class="chk-group"><h5>Emotional Soothing</h5>
+      <div class="chk" data-check="dtm_se1"><span class="box"></span><span>Practice self-compassion phrases</span></div>
+      <div class="chk" data-check="dtm_se2"><span class="box"></span><span>Look at photos that bring good memories</span></div>
+      <div class="chk" data-check="dtm_se3"><span class="box"></span><span>Read inspiring quotes or affirmations</span></div>
+      <div class="chk" data-check="dtm_se4"><span class="box"></span><span>Listen to calming music</span></div>
+      <div class="chk" data-check="dtm_se5"><span class="box"></span><span>Imagine a safe, peaceful place</span></div>
+      <div class="chk" data-check="dtm_sec"><span class="box"></span><span>Custom:</span><input class="other-in" type="text" data-field="dtm_sec_txt"></div>
+    </div>
+  </div>
+
+  <p style="font-family:var(--font-heavy);font-weight:800;color:var(--coral);font-size:13px;margin:16px 0 8px">◆ GROUND <span style="font-family:var(--font-serif);font-style:italic;font-weight:400;font-size:12px;color:var(--coral-mid)">(ways to reconnect with the present moment)</span></p>
+  <div class="grid2" style="gap:18px 40px">
+    <div class="chk-group"><h5>Sensory Grounding</h5>
+      <div class="chk" data-check="dtm_gs1"><span class="box"></span><span>5-4-3-2-1 technique (5 see, 4 hear, 3 feel, 2 smell, 1 taste)</span></div>
+      <div class="chk" data-check="dtm_gs2"><span class="box"></span><span>Hold ice cubes or splash cold water on face</span></div>
+      <div class="chk" data-check="dtm_gs3"><span class="box"></span><span>Focus on breathing (count breaths)</span></div>
+      <div class="chk" data-check="dtm_gs4"><span class="box"></span><span>Feel your feet on the ground / body scan</span></div>
+      <div class="chk" data-check="dtm_gs5"><span class="box"></span><span>Name objects in the room out loud</span></div>
+      <div class="chk" data-check="dtm_gsc"><span class="box"></span><span>Custom:</span><input class="other-in" type="text" data-field="dtm_gsc_txt"></div>
+    </div>
+    <div class="chk-group"><h5>Mental Grounding</h5>
+      <div class="chk" data-check="dtm_gm1"><span class="box"></span><span>Recite song lyrics, poems, or quotes</span></div>
+      <div class="chk" data-check="dtm_gm2"><span class="box"></span><span>Count backwards from 100 by 7s</span></div>
+      <div class="chk" data-check="dtm_gm3"><span class="box"></span><span>Name categories (animals, foods, countries)</span></div>
+      <div class="chk" data-check="dtm_gm4"><span class="box"></span><span>Describe your day from start to finish</span></div>
+      <div class="chk" data-check="dtm_gm5"><span class="box"></span><span>Plan something positive for tomorrow</span></div>
+      <div class="chk" data-check="dtm_gmc"><span class="box"></span><span>Custom:</span><input class="other-in" type="text" data-field="dtm_gmc_txt"></div>
+    </div>
+  </div>
+  <div class="runfoot"><span class="motto">Feel deeply, respond wisely.</span><span class="pg">58</span></div>
+</section>
+
+<!-- ============ EX 4.3 DISTRESS TOLERANCE MENU 2/2 ============ -->
+<section class="page" id="p-ex3b">
+  <div class="runhead"><span>04–Emotional Regulation</span><span class="tag">/ex 4.3/</span>
+    <div class="dots"><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i></i><i></i><i></i><i></i></div>
+  </div>
+  <div class="exhead">
+    <div style="flex:1;min-width:260px"><h1 class="display sm">Distress<br>Tolerance<br>Menu (2/2)</h1></div>
+    <div class="purpose-bar">
+      <div><b>Purpose:</b> Create a personalized toolkit of healthy strategies for managing intense emotions without making the situation worse.</div>
+      <div><b>Time estimate:</b> 20–25 minutes to create, ongoing reference</div>
+    </div>
+  </div>
+  <hr class="rule" style="margin:22px 0 22px">
+  <p class="field-label">3) EMERGENCY TOOLKIT <span style="font-weight:500;font-style:italic;font-family:var(--font-serif);color:var(--coral-mid)">(for crisis-level emotions)</span></p>
+  <div class="vcard" style="margin-top:10px">
+    <h4 style="font-family:var(--font-body);font-weight:700;color:var(--coral-deep);font-size:13px;margin:0 0 10px">My Emergency Toolkit</h4>
+    <p style="font-weight:700;color:var(--coral);font-size:12.5px;margin:0 0 6px">When I'm at 8–10 intensity, I will:</p>
+    <div class="grid2" style="gap:6px 40px">
+      <div><span class="inl-label">First:</span><textarea class="lines" data-field="dtm_first" style="min-height:24px"></textarea></div>
+      <div><span class="inl-label">Then:</span><textarea class="lines" data-field="dtm_then" style="min-height:24px"></textarea></div>
+    </div>
+    <div style="margin-top:6px"><span class="inl-label">If still struggling:</span><textarea class="lines" data-field="dtm_struggling" style="min-height:24px"></textarea></div>
+
+    <p style="font-weight:700;color:var(--coral);font-size:12.5px;margin:16px 0 6px">My support people <span style="font-weight:400;font-style:italic;color:var(--coral-mid)">(who can I reach out to?)</span></p>
+    <div class="grid2" style="gap:6px 40px">
+      <div><span class="inl-label">For emotional support:</span><textarea class="lines" data-field="dtm_sup_emo" style="min-height:24px"></textarea></div>
+      <div><span class="inl-label">For practical help:</span><textarea class="lines" data-field="dtm_sup_prac" style="min-height:24px"></textarea></div>
+    </div>
+    <div style="margin-top:6px"><span class="inl-label">For crisis situations:</span><textarea class="lines" data-field="dtm_sup_crisis" style="min-height:24px"></textarea></div>
+
+    <p style="font-weight:700;color:var(--coral);font-size:12.5px;margin:16px 0 6px">Gentle reminders for hard moments</p>
+    <ul style="margin:0 0 8px;padding-left:16px;font-style:italic;color:var(--coral-mid);font-size:12.5px">
+      <li>"This feeling is temporary."</li>
+      <li>"I can feel uncomfortable and still be okay."</li>
+      <li>"I don't have to make any big decisions right now."</li>
+      <li>"I am doing the best I can with what I have."</li>
+    </ul>
+    <span class="inl-label">My personal reminder:</span><textarea class="lines" data-field="dtm_personal" style="min-height:24px"></textarea>
+  </div>
+
+  <p class="field-label" style="margin-top:22px">4) WEEKLY PRACTICE</p>
+  <div class="grid2" style="margin-top:8px">
+    <div>
+      <p class="field-sub" style="color:var(--coral-mid)">This week, I will practice using my distress tolerance tools by:</p>
+      <textarea class="lines" data-field="dtm_practice" style="min-height:56px"></textarea>
+    </div>
+    <div>
+      <p class="field-sub" style="color:var(--coral-mid)">I will remind myself to check this menu when I notice my intensity reaching:</p>
+      <div class="opts">
+        <span class="opt" data-scale="dtm_intensity" data-val="5">5</span>
+        <span class="opt" data-scale="dtm_intensity" data-val="6">6</span>
+        <span class="opt" data-scale="dtm_intensity" data-val="7">7</span>
+        <span class="opt" data-scale="dtm_intensity" data-val="8">8</span>
+      </div>
+    </div>
+  </div>
+  <div class="runfoot"><span class="motto">Feel deeply, respond wisely.</span><span class="pg">59</span></div>
+</section>
+
+<!-- ============ EX 4.4 DAILY WEATHER REPORT 1/2 ============ -->
+<section class="page" id="p-ex4a">
+  <div class="runhead"><span>04–Emotional Regulation</span><span class="tag">/ex 4.4/</span>
+    <div class="dots"><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i></i><i></i><i></i><i></i></div>
+  </div>
+  <div class="exhead">
+    <div style="flex:1;min-width:260px">
+      <h1 class="display sm">Daily<br>Weather<br>Report (1/2)</h1>
+      <p class="body" style="max-width:440px;margin-top:12px">Just like weather, emotions are temporary patterns that move through your system. This practice helps you observe your emotional weather with curiosity rather than judgment.</p>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:12px;align-items:flex-end">
+      <div class="purpose-bar">
+        <div><b>Purpose:</b> Build emotional awareness through gentle tracking and pattern recognition, helping you become an expert on your own emotional climate.</div>
+        <div><b>Time estimate:</b> 5 minutes daily + 10 minutes weekly reflection</div>
+      </div>
+      <div class="hint-box" style="max-width:250px">
+        <div class="ct"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="7" r="3"/><circle cx="7" cy="15" r="3"/><circle cx="17" cy="15" r="3"/></svg>Tip</div>
+        <p style="margin:0">Use the emotion wheel in appendix A4 (p. 132) to identify more specific emotions beyond the basic ones!</p>
+      </div>
+    </div>
+  </div>
+  <hr class="rule" style="margin:22px 0 22px">
+  <p class="field-label">1) DAILY EMOTION TRACKING</p>
+  <p class="field-sub">Complete this once daily (evening works well for reflection). Focus on <em>observation</em> over fixing anything, and look for patterns over time.</p>
+  <p class="emotion-palette">Emotion palette: Joy · Sadness · Anger · Fear · Surprise · Disgust · Love · Shame · Guilt · Excitement · Overwhelm · Peace</p>
+  <table class="logtable"><thead><tr><th>Day</th><th>Overall Weather</th><th>Primary Emotions</th><th>Intensity (1-10)</th><th>Triggers I Noticed</th><th>What Helped Today</th></tr></thead><tbody><tr><td class="day">Mon</td><td><div class="wx-opts"><span class="opt sm" data-scale="wx_mon" data-val="Stormy">Stormy</span><span class="opt sm" data-scale="wx_mon" data-val="Cloudy">Cloudy</span><span class="opt sm" data-scale="wx_mon" data-val="Partly cloudy">Partly cloudy</span><span class="opt sm" data-scale="wx_mon" data-val="Sunny">Sunny</span><span class="opt sm" data-scale="wx_mon" data-val="Calm">Calm</span></div></td><td><input class="cell-in" type="text" data-field="wx_mon_emo"></td><td><input class="cell-in" type="text" data-field="wx_mon_int"></td><td><input class="cell-in" type="text" data-field="wx_mon_trig"></td><td><input class="cell-in" type="text" data-field="wx_mon_help"></td></tr><tr><td class="day">Tue</td><td><div class="wx-opts"><span class="opt sm" data-scale="wx_tue" data-val="Stormy">Stormy</span><span class="opt sm" data-scale="wx_tue" data-val="Cloudy">Cloudy</span><span class="opt sm" data-scale="wx_tue" data-val="Partly cloudy">Partly cloudy</span><span class="opt sm" data-scale="wx_tue" data-val="Sunny">Sunny</span><span class="opt sm" data-scale="wx_tue" data-val="Calm">Calm</span></div></td><td><input class="cell-in" type="text" data-field="wx_tue_emo"></td><td><input class="cell-in" type="text" data-field="wx_tue_int"></td><td><input class="cell-in" type="text" data-field="wx_tue_trig"></td><td><input class="cell-in" type="text" data-field="wx_tue_help"></td></tr><tr><td class="day">Wed</td><td><div class="wx-opts"><span class="opt sm" data-scale="wx_wed" data-val="Stormy">Stormy</span><span class="opt sm" data-scale="wx_wed" data-val="Cloudy">Cloudy</span><span class="opt sm" data-scale="wx_wed" data-val="Partly cloudy">Partly cloudy</span><span class="opt sm" data-scale="wx_wed" data-val="Sunny">Sunny</span><span class="opt sm" data-scale="wx_wed" data-val="Calm">Calm</span></div></td><td><input class="cell-in" type="text" data-field="wx_wed_emo"></td><td><input class="cell-in" type="text" data-field="wx_wed_int"></td><td><input class="cell-in" type="text" data-field="wx_wed_trig"></td><td><input class="cell-in" type="text" data-field="wx_wed_help"></td></tr><tr><td class="day">Thu</td><td><div class="wx-opts"><span class="opt sm" data-scale="wx_thu" data-val="Stormy">Stormy</span><span class="opt sm" data-scale="wx_thu" data-val="Cloudy">Cloudy</span><span class="opt sm" data-scale="wx_thu" data-val="Partly cloudy">Partly cloudy</span><span class="opt sm" data-scale="wx_thu" data-val="Sunny">Sunny</span><span class="opt sm" data-scale="wx_thu" data-val="Calm">Calm</span></div></td><td><input class="cell-in" type="text" data-field="wx_thu_emo"></td><td><input class="cell-in" type="text" data-field="wx_thu_int"></td><td><input class="cell-in" type="text" data-field="wx_thu_trig"></td><td><input class="cell-in" type="text" data-field="wx_thu_help"></td></tr><tr><td class="day">Fri</td><td><div class="wx-opts"><span class="opt sm" data-scale="wx_fri" data-val="Stormy">Stormy</span><span class="opt sm" data-scale="wx_fri" data-val="Cloudy">Cloudy</span><span class="opt sm" data-scale="wx_fri" data-val="Partly cloudy">Partly cloudy</span><span class="opt sm" data-scale="wx_fri" data-val="Sunny">Sunny</span><span class="opt sm" data-scale="wx_fri" data-val="Calm">Calm</span></div></td><td><input class="cell-in" type="text" data-field="wx_fri_emo"></td><td><input class="cell-in" type="text" data-field="wx_fri_int"></td><td><input class="cell-in" type="text" data-field="wx_fri_trig"></td><td><input class="cell-in" type="text" data-field="wx_fri_help"></td></tr><tr><td class="day">Sat</td><td><div class="wx-opts"><span class="opt sm" data-scale="wx_sat" data-val="Stormy">Stormy</span><span class="opt sm" data-scale="wx_sat" data-val="Cloudy">Cloudy</span><span class="opt sm" data-scale="wx_sat" data-val="Partly cloudy">Partly cloudy</span><span class="opt sm" data-scale="wx_sat" data-val="Sunny">Sunny</span><span class="opt sm" data-scale="wx_sat" data-val="Calm">Calm</span></div></td><td><input class="cell-in" type="text" data-field="wx_sat_emo"></td><td><input class="cell-in" type="text" data-field="wx_sat_int"></td><td><input class="cell-in" type="text" data-field="wx_sat_trig"></td><td><input class="cell-in" type="text" data-field="wx_sat_help"></td></tr><tr><td class="day">Sun</td><td><div class="wx-opts"><span class="opt sm" data-scale="wx_sun" data-val="Stormy">Stormy</span><span class="opt sm" data-scale="wx_sun" data-val="Cloudy">Cloudy</span><span class="opt sm" data-scale="wx_sun" data-val="Partly cloudy">Partly cloudy</span><span class="opt sm" data-scale="wx_sun" data-val="Sunny">Sunny</span><span class="opt sm" data-scale="wx_sun" data-val="Calm">Calm</span></div></td><td><input class="cell-in" type="text" data-field="wx_sun_emo"></td><td><input class="cell-in" type="text" data-field="wx_sun_int"></td><td><input class="cell-in" type="text" data-field="wx_sun_trig"></td><td><input class="cell-in" type="text" data-field="wx_sun_help"></td></tr></tbody></table>
+  <div class="runfoot"><span class="motto">Feel deeply, respond wisely.</span><span class="pg">60</span></div>
+</section>
+
+<!-- ============ EX 4.4 DAILY WEATHER REPORT 2/2 ============ -->
+<section class="page" id="p-ex4b">
+  <div class="runhead"><span>04–Emotional Regulation</span><span class="tag">/ex 4.4/</span>
+    <div class="dots"><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i></i><i></i><i></i><i></i></div>
+  </div>
+  <div class="exhead">
+    <div style="flex:1;min-width:260px"><h1 class="display sm">Daily<br>Weather<br>Report (2/2)</h1></div>
+    <div class="hint-box" style="max-width:330px">
+      <div class="ct"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="7" r="3"/><circle cx="7" cy="15" r="3"/><circle cx="17" cy="15" r="3"/></svg>Some gentle reminders</div>
+      <ul style="margin:0;padding-left:15px"><li>All emotions are valid information.</li><li>Progress in emotional regulation is not linear.</li><li>Your sensitivity is a strength that you're learning to channel wisely.</li></ul>
+    </div>
+  </div>
+  <hr class="rule" style="margin:22px 0 22px">
+  <p class="field-label">2) WEEKLY REFLECTION &amp; PATTERN RECOGNITION</p>
+  <div class="grid2" style="margin-top:10px;align-items:start">
+    <div>
+      <h4 style="font-family:var(--font-body);font-weight:700;color:var(--coral-deep);font-size:12.5px;margin:0 0 8px">1. Patterns You Notice</h4>
+      <p class="field-sub" style="color:var(--coral-mid)">What emotions showed up most frequently this week?</p><textarea class="lines" data-field="wr_p1" style="min-height:44px"></textarea>
+      <p class="field-sub" style="color:var(--coral-mid);margin-top:10px">What time of day do you tend to feel most / least regulated?</p><textarea class="lines" data-field="wr_p2" style="min-height:44px"></textarea>
+      <p class="field-sub" style="color:var(--coral-mid);margin-top:10px">What consistent triggers are you noticing?</p><textarea class="lines" data-field="wr_p3" style="min-height:44px"></textarea>
+
+      <h4 style="font-family:var(--font-body);font-weight:700;color:var(--coral-deep);font-size:12.5px;margin:16px 0 8px">3. What's Working</h4>
+      <p class="field-sub" style="color:var(--coral-mid)">Which regulation strategies were most helpful this week?</p><textarea class="lines" data-field="wr_w1" style="min-height:44px"></textarea>
+      <p class="field-sub" style="color:var(--coral-mid);margin-top:10px">What conditions help you maintain emotional balance?</p><textarea class="lines" data-field="wr_w2" style="min-height:44px"></textarea>
+    </div>
+    <div>
+      <h4 style="font-family:var(--font-body);font-weight:700;color:var(--coral-deep);font-size:12.5px;margin:0 0 8px">2. Environmental Factors</h4>
+      <p class="field-sub" style="color:var(--coral-mid)">How did sleep affect your emotional weather?</p>
+      <div style="display:flex;align-items:baseline;gap:6px"><span class="inl-label" style="min-width:74px">Poor sleep =</span><textarea class="lines" data-field="wr_sleep_poor" style="min-height:22px"></textarea></div>
+      <div style="display:flex;align-items:baseline;gap:6px;margin-top:4px"><span class="inl-label" style="min-width:74px">Good sleep =</span><textarea class="lines" data-field="wr_sleep_good" style="min-height:22px"></textarea></div>
+      <p class="field-sub" style="color:var(--coral-mid);margin-top:10px">How did social interaction affect your mood?</p>
+      <div style="display:flex;align-items:baseline;gap:6px"><span class="inl-label" style="min-width:74px">Isolation =</span><textarea class="lines" data-field="wr_soc_iso" style="min-height:22px"></textarea></div>
+      <div style="display:flex;align-items:baseline;gap:6px;margin-top:4px"><span class="inl-label" style="min-width:74px">Connection =</span><textarea class="lines" data-field="wr_soc_conn" style="min-height:22px"></textarea></div>
+      <p class="field-sub" style="color:var(--coral-mid);margin-top:10px">Other factors that influenced your emotional climate:</p><textarea class="lines" data-field="wr_other" style="min-height:44px"></textarea>
+
+      <h4 style="font-family:var(--font-body);font-weight:700;color:var(--coral-deep);font-size:12.5px;margin:16px 0 8px">4. Growth Areas</h4>
+      <p class="field-sub" style="color:var(--coral-mid)">What emotions do you still struggle to be with?</p><textarea class="lines" data-field="wr_g1" style="min-height:44px"></textarea>
+      <p class="field-sub" style="color:var(--coral-mid);margin-top:10px">What patterns would you like to shift?</p><textarea class="lines" data-field="wr_g2" style="min-height:44px"></textarea>
+    </div>
+  </div>
+  <h4 style="font-family:var(--font-body);font-weight:700;color:var(--coral-deep);font-size:12.5px;margin:18px 0 8px">5. Next Week's Intention</h4>
+  <div class="grid2">
+    <div><span class="inl-label">Based on this week, I want to focus on:</span><textarea class="lines" data-field="wr_next1" style="min-height:30px"></textarea></div>
+    <div><span class="inl-label">One small thing I'll try differently:</span><textarea class="lines" data-field="wr_next2" style="min-height:30px"></textarea></div>
+  </div>
+  <div class="runfoot"><span class="motto">Feel deeply, respond wisely.</span><span class="pg">61</span></div>
+</section>
+  <p style="text-align:center;font-size:10px;color:var(--coral-soft);letter-spacing:.02em;margin:2px 0 22px">Mountain icon from game-icons.net, licensed under CC&nbsp;BY&nbsp;3.0.</p>
+</div><!-- /wrap -->
+
+<div id="toast"></div>
+
+<script>
+(function(){
+  var STORE = "blussomly_stoic_m4_v1";
+  var savedMsg = document.getElementById("savedMsg");
+  var toast = document.getElementById("toast");
+  var saveTimer=null, msgTimer=null;
+
+  function fields(){ return Array.prototype.slice.call(document.querySelectorAll("[data-field]")); }
+  function checks(){ return Array.prototype.slice.call(document.querySelectorAll("[data-check]")); }
+  function scaleDots(){ return Array.prototype.slice.call(document.querySelectorAll("[data-scale]")); }
+
+  function collect(){
+    var data={text:{},checks:{},scale:{}};
+    fields().forEach(function(el){ data.text[el.dataset.field]=el.value; });
+    checks().forEach(function(el){ data.checks[el.dataset.check]=el.classList.contains("on"); });
+    scaleDots().forEach(function(el){ if(el.classList.contains("on")) data.scale[el.dataset.scale]=el.dataset.val; });
+    return data;
+  }
+
+  function apply(data){
+    if(!data) return;
+    if(data.text) fields().forEach(function(el){ if(data.text[el.dataset.field]!=null){el.value=data.text[el.dataset.field]; autosize(el);} });
+    if(data.checks) checks().forEach(function(el){ el.classList.toggle("on", !!data.checks[el.dataset.check]); });
+    if(data.scale) scaleDots().forEach(function(el){ el.classList.toggle("on", data.scale[el.dataset.scale]===el.dataset.val); });
+  }
+
+  function save(){
+    try{ localStorage.setItem(STORE, JSON.stringify(collect())); }catch(e){}
+    if(savedMsg){ savedMsg.classList.add("show"); clearTimeout(msgTimer); msgTimer=setTimeout(function(){savedMsg.classList.remove("show");},1400); }
+  }
+  function queueSave(){ clearTimeout(saveTimer); saveTimer=setTimeout(save,400); }
+
+  function load(){
+    try{ var raw=localStorage.getItem(STORE); if(raw) apply(JSON.parse(raw)); }catch(e){}
+  }
+
+  function autosize(el){
+    if(el.tagName!=="TEXTAREA") return;
+    el.style.height="auto";
+    el.style.height=Math.max(el.scrollHeight, parseInt(getComputedStyle(el).minHeight)||28)+"px";
+  }
+
+  function showToast(t){ toast.textContent=t; toast.classList.add("show"); setTimeout(function(){toast.classList.remove("show");},1800); }
+
+  // wire fields
+  fields().forEach(function(el){
+    autosize(el);
+    el.addEventListener("input",function(){ autosize(el); queueSave(); });
+  });
+  // wire checkboxes
+  checks().forEach(function(el){
+    el.addEventListener("click",function(e){ if(e.target.classList.contains("other-in")) return; el.classList.toggle("on"); save(); });
+  });
+  // wire 1-10 scale (single select per group)
+  scaleDots().forEach(function(el){
+    el.addEventListener("click",function(){ var g=el.dataset.scale; scaleDots().forEach(function(o){ if(o.dataset.scale===g) o.classList.toggle("on", o===el); }); save(); });
+  });
+
+  // jump nav
+  document.getElementById("jump").addEventListener("change",function(e){
+    var id=e.target.value; if(!id) return;
+    var t=document.getElementById(id); if(t) t.scrollIntoView({behavior:"smooth",block:"start"});
+    e.target.selectedIndex=0;
+  });
+
+  // export
+  document.getElementById("btnExport").addEventListener("click",function(){
+    var blob=new Blob([JSON.stringify(collect(),null,2)],{type:"application/json"});
+    var a=document.createElement("a");
+    var d=new Date().toISOString().slice(0,10);
+    a.href=URL.createObjectURL(blob); a.download="stoic-starter-module1-"+d+".json";
+    document.body.appendChild(a); a.click(); a.remove();
+    showToast("Answers exported ✓");
+  });
+
+  // print
+  document.getElementById("btnPrint").addEventListener("click",function(){ window.print(); });
+
+  // reset
+  document.getElementById("btnReset").addEventListener("click",function(){
+    if(!confirm("Clear all your answers on every page? This can't be undone (export first if you want a copy).")) return;
+    fields().forEach(function(el){ el.value=""; autosize(el); });
+    checks().forEach(function(el){ el.classList.remove("on"); });
+    scaleDots().forEach(function(el){ el.classList.remove("on"); });
+    save(); showToast("Cleared");
+  });
+
+  load();
+})();
+</script>
+</body>
+</html>
