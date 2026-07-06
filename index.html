@@ -222,7 +222,6 @@ body.collapsed .sb-link{justify-content:center;padding:9px 0;}
 .cover .ic{width:20px;height:20px;}
 .dc-ic .ic{width:14px;height:14px;color:var(--muted);}
 .t-box .ic{width:10px;height:10px;}
-#shop-note .ic{width:14px;height:14px;}
 
 @media(max-width:1180px){
   :root{--rp-w:0px;}
@@ -336,7 +335,7 @@ body.collapsed .sb-link{justify-content:center;padding:9px 0;}
     </div>
   </div>
 
-  <!-- ROW 2 — Daily check-ins -->
+  <!-- ROW 2 — Fitness + Media -->
   <div class="grid">
     <!-- Fitness -->
     <div class="tile c6" onclick="location.href='fitness/'">
@@ -349,23 +348,6 @@ body.collapsed .sb-link{justify-content:center;padding:9px 0;}
       <div id="nn-list"></div>
     </div>
 
-    <!-- Meals -->
-    <div class="tile c6" onclick="location.href='meals/'">
-      <div class="tile-head">
-        <div class="ttl"><span class="ey-dot"></span>Meals</div>
-        <div class="head-right"><span class="chip chip-mut" id="meal-chip">—</span><span class="go">→</span></div>
-      </div>
-      <div id="goto-list"></div>
-      <div class="divider"></div>
-      <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;">
-        <span id="shop-note"></span>
-        <a class="lnk" href="https://www.instacart.com/store" target="_blank" rel="noopener" onclick="event.stopPropagation()">Instacart ↗</a>
-      </div>
-    </div>
-  </div>
-
-  <!-- ROW 3 — Media (covers) + DC Guide -->
-  <div class="grid">
     <!-- Media -->
     <div class="tile c6" onclick="location.href='media/'">
       <div class="tile-head">
@@ -373,6 +355,22 @@ body.collapsed .sb-link{justify-content:center;padding:9px 0;}
         <div class="head-right"><span class="go">→</span></div>
       </div>
       <div id="media-list"></div>
+    </div>
+  </div>
+
+  <!-- ROW 3 — Meals (shopping) + DC Guide -->
+  <div class="grid">
+    <!-- Meals -->
+    <div class="tile c6" onclick="location.href='meals/'">
+      <div class="tile-head">
+        <div class="ttl"><span class="ey-dot"></span>Meals</div>
+        <div class="head-right"><span class="chip chip-mut" id="meal-chip">—</span><span class="go">→</span></div>
+      </div>
+      <div id="shop-list"></div>
+      <div class="divider"></div>
+      <div class="links">
+        <a class="lnk" href="https://www.instacart.com/store" target="_blank" rel="noopener" onclick="event.stopPropagation()">Instacart ↗</a>
+      </div>
     </div>
 
     <!-- DC Guide -->
@@ -573,32 +571,23 @@ function toggleNN(id){
   renderFitness();
 }
 
-/* ───────── MEALS (mealPlanner1 — staples / go-to meals) ───────── */
+/* ───────── MEALS (mealPlanner1 — shopping list) ───────── */
 function renderMeals(){
   var d=lsGet('mealPlanner1')||{};
-  var staples=d.staples||[], gotos=d.goto||[], extras=d.shopping||[];
-  function stapleById(id){return staples.find(function(x){return x.id===id;});}
-  var need=staples.filter(function(x){return x.status==='low'||x.status==='out';});
-  var anyOut=staples.some(function(x){return x.status==='out';});
-  var buyCount=need.length+extras.length;
+  var staples=d.staples||[], extras=d.shopping||[];
+  var out=staples.filter(function(x){return x.status==='out';});
+  var low=staples.filter(function(x){return x.status==='low';});
+  var buy=out.map(function(x){return{name:x.name,store:x.store||'',tag:'Out',cls:'chip-over'};})
+    .concat(low.map(function(x){return{name:x.name,store:x.store||'',tag:'Low',cls:'chip-warn'};}))
+    .concat(extras.map(function(x){return{name:x.name,store:x.store||'',tag:'Extra',cls:'chip-mut'};}));
   var chip=document.getElementById('meal-chip');
-  chip.textContent=buyCount?buyCount+' to buy':'Stocked';
-  chip.className='chip '+(anyOut?'chip-warn':(buyCount?'chip-mut':'chip-ok'));
-
-  /* go-to meals — what can I actually make? Ready first, then fewest missing staples */
-  var rows=gotos.map(function(g){
-    var needN=(g.staples||[]).filter(function(id){var it=stapleById(id);return it&&it.status!=='stocked';}).length;
-    return {name:g.name,type:g.type||'',needN:needN};
-  }).sort(function(a,b){return a.needN-b.needN;}).slice(0,3);
-  var el=document.getElementById('goto-list');
-  if(!rows.length){el.innerHTML=emptyRow('No go-to meals yet \u2014 add a few on the Meals page.');}
-  else el.innerHTML=rows.map(function(r){
-    var ok=r.needN===0;
-    return '<div class="due"><span class="due-name">'+esc(r.name)+'</span><span class="due-date">'+esc(r.type)+'</span>'+
-      '<span class="chip '+(ok?'chip-ok':'chip-warn')+'">'+(ok?'Ready':'Need '+r.needN)+'</span></div>';
-  }).join('');
-
-  document.getElementById('shop-note').innerHTML='<span style="font-size:12px;font-weight:600;color:var(--muted);white-space:nowrap;display:inline-flex;align-items:center;gap:6px;">'+IC_CART+(buyCount?buyCount+' on shopping list':'Everything stocked')+'</span>';
+  chip.textContent=buy.length?buy.length+' to buy':'Stocked';
+  chip.className='chip '+(out.length?'chip-warn':(buy.length?'chip-mut':'chip-ok'));
+  var el=document.getElementById('shop-list');
+  if(!buy.length){el.innerHTML=emptyRow('Everything stocked \u2014 nothing to buy.');return;}
+  el.innerHTML=buy.slice(0,4).map(function(r){
+    return '<div class="due"><span class="due-name">'+esc(r.name)+'</span><span class="due-date">'+esc(r.store)+'</span><span class="chip '+r.cls+'">'+r.tag+'</span></div>';
+  }).join('')+(buy.length>4?'<div class="empty-line" style="padding:8px 2px 0;">+'+(buy.length-4)+' more on the list</div>':'');
 }
 
 /* ───────── MEDIA (mediaTracker3) ───────── */
