@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Backup · Brain 2.0</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#f3ecd8; --surface:#fff; --side:#f8f1dd;
+    --lilac:#b099e0; --lilac-soft:#c9b6ee;
+    --ink:#2e2a24; --muted:#7a7264; --line:#e5dcc6;
+    --ok:#7aa37a; --warn:#cb9a4f; --bad:#c46a6a;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{background:var(--bg);color:var(--ink);font-family:'Plus Jakarta Sans',sans-serif;min-height:100vh}
+  .wrap{max-width:860px;margin:0 auto;padding:28px 18px 64px}
+  a.back{display:inline-flex;align-items:center;gap:6px;color:var(--muted);text-decoration:none;font-size:.85rem;font-weight:600;margin-bottom:18px}
+  a.back:hover{color:var(--ink)}
+  h1{font-family:'Fraunces',serif;font-weight:700;font-size:2rem;letter-spacing:-.01em}
+  .sub{color:var(--muted);font-size:.95rem;margin-top:6px;max-width:56ch;line-height:1.55}
+  .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,340px),1fr));gap:16px;margin-top:26px}
+  .card{background:var(--surface);border:1px solid var(--line);border-left:3px solid var(--lilac);border-radius:12px;padding:20px}
+  .card h2{font-family:'Fraunces',serif;font-weight:600;font-size:1.15rem;display:flex;align-items:center;gap:8px}
+  .card p{color:var(--muted);font-size:.88rem;line-height:1.55;margin-top:8px}
+  .btn{display:inline-flex;align-items:center;gap:8px;margin-top:16px;border:none;border-radius:9px;padding:11px 18px;font-family:inherit;font-size:.9rem;font-weight:700;cursor:pointer;background:var(--lilac);color:#fff}
+  .btn:hover{background:var(--lilac-soft)}
+  .btn.ghost{background:transparent;color:var(--ink);border:1.5px solid var(--line)}
+  .btn.ghost:hover{border-color:var(--lilac)}
+  .btn:disabled{opacity:.45;cursor:not-allowed}
+  .stat{display:flex;align-items:baseline;gap:8px;margin-top:14px}
+  .stat b{font-family:'Fraunces',serif;font-size:1.6rem;font-weight:700}
+  .stat span{color:var(--muted);font-size:.82rem}
+  .keys{margin-top:14px;border-top:1px dashed var(--line);padding-top:12px;display:none}
+  .keys.show{display:block}
+  .keyrow{display:flex;justify-content:space-between;gap:10px;font-size:.82rem;padding:5px 0;border-bottom:1px solid #f4efe2}
+  .keyrow code{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:.78rem;color:var(--ink);word-break:break-all}
+  .keyrow span{color:var(--muted);white-space:nowrap}
+  .note{margin-top:22px;background:var(--side);border:1px solid var(--line);border-radius:12px;padding:16px 18px;font-size:.86rem;line-height:1.6;color:var(--muted)}
+  .note b{color:var(--ink)}
+  .msg{margin-top:14px;border-radius:9px;padding:11px 14px;font-size:.86rem;font-weight:600;display:none;align-items:flex-start;gap:8px;line-height:1.5}
+  .msg.show{display:flex}
+  .msg.ok{background:#eef4ec;color:#4c7a4c;border:1px solid #cfe0cd}
+  .msg.warn{background:#f8f0e0;color:#8a6420;border:1px solid #ead9b8}
+  .msg.bad{background:#f8e9e9;color:#9c3f3f;border:1px solid #eccfcf}
+  .choice{margin-top:14px;display:none;gap:10px;flex-wrap:wrap}
+  .choice.show{display:flex}
+  .toggle{background:none;border:none;font-family:inherit;font-size:.8rem;font-weight:700;color:var(--lilac);cursor:pointer;margin-top:12px;padding:0;display:inline-flex;align-items:center;gap:5px}
+  input[type=file]{display:none}
+  @media (max-width:520px){ h1{font-size:1.6rem} .card{padding:16px} }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <a class="back" href="../" id="backLink"></a>
+  <h1>Backup &amp; Restore</h1>
+  <p class="sub">Everything you enter in Brain 2.0 lives inside this browser on this device. Export it to a file to keep it safe, move it to another device, or carry it to a new home for the site.</p>
+
+  <div class="grid">
+    <div class="card">
+      <h2 id="expTitle">Export</h2>
+      <p>Bundles every Brain 2.0 record on this device into one file and downloads it. Do this from the device that has your data.</p>
+      <div class="stat"><b id="keyCount">0</b><span id="keySub">saved sections found here</span></div>
+      <button class="toggle" id="toggleKeys"></button>
+      <div class="keys" id="keyList"></div>
+      <button class="btn" id="exportBtn"></button>
+      <div class="msg" id="expMsg"></div>
+    </div>
+
+    <div class="card">
+      <h2 id="impTitle">Import</h2>
+      <p>Loads a backup file into this browser. Use this on a new device, after a cache wipe, or on a new address for the site.</p>
+      <button class="btn ghost" id="pickBtn"></button>
+      <input type="file" id="fileInput" accept=".json,application/json">
+      <div class="msg" id="impPreview"></div>
+      <div class="choice" id="impChoice">
+        <button class="btn" id="importBtn"></button>
+        <button class="btn ghost" id="cancelBtn">Cancel</button>
+      </div>
+      <div class="msg" id="impMsg"></div>
+    </div>
+  </div>
+
+  <div class="note">
+    <b>How restoring works:</b> importing writes each section from the file into this browser. If a section already exists here <b>and</b> in the file, the file's version replaces it — so import onto a fresh device, or export a safety copy from this device first. Sections that exist only on this device are left untouched.
+  </div>
+</div>
+
+<script>
+(function(){
+  'use strict';
+
+  // Lucide inline SVG helper
+  function IC(name, size){
+    var s = size || 18;
+    var paths = {
+      'arrow-left':'<path d="m12 19-7-7 7-7"/><path d="M19 12H5"/>',
+      'download':'<path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" x2="12" y1="15" y2="3"/>',
+      'upload':'<path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" x2="12" y1="3" y2="15"/>',
+      'archive':'<rect width="20" height="5" x="2" y="3" rx="1"/><path d="M4 8v11a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8"/><path d="M10 12h4"/>',
+      'file-check':'<path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z"/><path d="M14 2v4a2 2 0 0 0 2 2h4"/><path d="m9 15 2 2 4-4"/>',
+      'check':'<path d="M20 6 9 17l-5-5"/>',
+      'alert':'<path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/><path d="M12 9v4"/><path d="M12 17h.01"/>',
+      'eye':'<path d="M2.062 12.348a1 1 0 0 1 0-.696 10.75 10.75 0 0 1 19.876 0 1 1 0 0 1 0 .696 10.75 10.75 0 0 1-19.876 0"/><circle cx="12" cy="12" r="3"/>',
+      'x':'<path d="M18 6 6 18"/><path d="m6 6 12 12"/>'
+    };
+    return '<svg xmlns="http://www.w3.org/2000/svg" width="'+s+'" height="'+s+'" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">'+(paths[name]||'')+'</svg>';
+  }
+
+  var $ = function(id){ return document.getElementById(id); };
+
+  // Keys that belong to the browser/site machinery, not to your data — excluded from export
+  var SKIP = { sbCollapsed:1 };
+
+  function collectKeys(){
+    var out = [];
+    for (var i = 0; i < localStorage.length; i++){
+      var k = localStorage.key(i);
+      if (!SKIP[k]) out.push(k);
+    }
+    out.sort();
+    return out;
+  }
+
+  function fmtSize(str){
+    var b = new Blob([str]).size;
+    if (b < 1024) return b + ' B';
+    if (b < 1048576) return (b/1024).toFixed(1) + ' KB';
+    return (b/1048576).toFixed(2) + ' MB';
+  }
+
+  function todayStamp(){
+    var d = new Date();
+    var p = function(n){ return (n<10?'0':'')+n; };
+    return d.getFullYear() + '-' + p(d.getMonth()+1) + '-' + p(d.getDate());
+  }
+
+  // ---------- render static chrome ----------
+  $('backLink').innerHTML = IC('arrow-left',15) + ' Home';
+  $('expTitle').innerHTML = IC('archive') + ' Export';
+  $('impTitle').innerHTML = IC('file-check') + ' Import';
+  $('exportBtn').innerHTML = IC('download',16) + ' Export to file';
+  $('pickBtn').innerHTML = IC('upload',16) + ' Choose backup file';
+  $('importBtn').innerHTML = IC('check',16) + ' Import now';
+  $('toggleKeys').innerHTML = IC('eye',14) + ' Show what\u2019s included';
+
+  // ---------- export ----------
+  function refreshCount(){
+    var keys = collectKeys();
+    $('keyCount').textContent = keys.length;
+    $('keySub').textContent = keys.length === 1 ? 'saved section found here' : 'saved sections found here';
+    $('exportBtn').disabled = keys.length === 0;
+    var list = $('keyList');
+    list.innerHTML = '';
+    keys.forEach(function(k){
+      var row = document.createElement('div');
+      row.className = 'keyrow';
+      var val = localStorage.getItem(k) || '';
+      row.innerHTML = '<code></code><span></span>';
+      row.querySelector('code').textContent = k;
+      row.querySelector('span').textContent = fmtSize(val);
+      list.appendChild(row);
+    });
+    if (keys.length === 0){
+      var msg = $('expMsg');
+      msg.className = 'msg warn show';
+      msg.innerHTML = IC('alert',15) + '<span>Nothing saved in this browser yet. If your data lives on another device, run the export there.</span>';
+    }
+  }
+
+  $('toggleKeys').addEventListener('click', function(){
+    var list = $('keyList');
+    var open = list.classList.toggle('show');
+    $('toggleKeys').innerHTML = (open ? IC('x',14)+' Hide list' : IC('eye',14)+' Show what\u2019s included');
+  });
+
+  $('exportBtn').addEventListener('click', function(){
+    var keys = collectKeys();
+    var data = {};
+    keys.forEach(function(k){ data[k] = localStorage.getItem(k); });
+    var payload = {
+      app: 'brain2',
+      format: 1,
+      exportedAt: new Date().toISOString(),
+      origin: location.origin,
+      data: data
+    };
+    var str = JSON.stringify(payload, null, 2);
+    var blob = new Blob([str], { type:'application/json' });
+    var a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = 'brain2-backup-' + todayStamp() + '.json';
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    setTimeout(function(){ URL.revokeObjectURL(a.href); }, 4000);
+    var msg = $('expMsg');
+    msg.className = 'msg ok show';
+    msg.innerHTML = IC('check',15) + '<span>Exported ' + keys.length + ' section' + (keys.length===1?'':'s') + ' (' + fmtSize(str) + '). Keep the file somewhere safe \u2014 email it to yourself, or put it in your cloud drive.</span>';
+  });
+
+  // ---------- import ----------
+  var pending = null;
+
+  $('pickBtn').addEventListener('click', function(){ $('fileInput').click(); });
+
+  $('fileInput').addEventListener('change', function(){
+    var f = this.files && this.files[0];
+    this.value = '';
+    hide('impMsg'); hide('impPreview'); $('impChoice').classList.remove('show');
+    pending = null;
+    if (!f) return;
+    var reader = new FileReader();
+    reader.onload = function(){
+      var parsed;
+      try { parsed = JSON.parse(reader.result); }
+      catch(e){ return fail('That file couldn\u2019t be read as a backup. Make sure you picked a brain2-backup file ending in .json.'); }
+      if (!parsed || parsed.app !== 'brain2' || typeof parsed.data !== 'object' || parsed.data === null){
+        return fail('That file isn\u2019t a Brain 2.0 backup. Look for a file named like brain2-backup-2026-07-18.json.');
+      }
+      var keys = Object.keys(parsed.data);
+      if (keys.length === 0) return fail('This backup file is empty \u2014 it was exported from a browser with no saved data.');
+      var overlap = keys.filter(function(k){ return localStorage.getItem(k) !== null; });
+      pending = parsed;
+      var pv = $('impPreview');
+      pv.className = 'msg warn show';
+      var when = parsed.exportedAt ? new Date(parsed.exportedAt).toLocaleDateString() : 'an unknown date';
+      var txt = 'Backup from ' + when + ' with ' + keys.length + ' section' + (keys.length===1?'':'s') + '.';
+      txt += overlap.length
+        ? ' ' + overlap.length + ' of them already exist here and will be replaced by the file\u2019s version.'
+        : ' None of them exist here yet, so nothing will be overwritten.';
+      pv.innerHTML = IC('alert',15) + '<span>' + txt + '</span>';
+      $('impChoice').classList.add('show');
+    };
+    reader.onerror = function(){ fail('Couldn\u2019t open that file. Try choosing it again.'); };
+    reader.readAsText(f);
+  });
+
+  $('cancelBtn').addEventListener('click', function(){
+    pending = null;
+    hide('impPreview');
+    $('impChoice').classList.remove('show');
+  });
+
+  $('importBtn').addEventListener('click', function(){
+    if (!pending) return;
+    var keys = Object.keys(pending.data);
+    var wrote = 0;
+    try {
+      keys.forEach(function(k){
+        var v = pending.data[k];
+        if (typeof v === 'string'){ localStorage.setItem(k, v); wrote++; }
+      });
+    } catch(e){
+      return fail('The browser ran out of storage space partway through (' + wrote + ' of ' + keys.length + ' sections written). Free up space and try again.');
+    }
+    pending = null;
+    hide('impPreview');
+    $('impChoice').classList.remove('show');
+    var msg = $('impMsg');
+    msg.className = 'msg ok show';
+    msg.innerHTML = IC('check',15) + '<span>Imported ' + wrote + ' section' + (wrote===1?'':'s') + '. Open any Brain 2.0 page and your data will be there.</span>';
+    refreshCount();
+  });
+
+  function fail(text){
+    var msg = $('impMsg');
+    msg.className = 'msg bad show';
+    msg.innerHTML = IC('alert',15) + '<span>' + text + '</span>';
+  }
+  function hide(id){ var el = $(id); el.className = el.className.replace(' show','').replace('show',''); }
+
+  refreshCount();
+})();
+</script>
+</body>
+</html>
