@@ -360,8 +360,8 @@ body.collapsed .sb-link{justify-content:center;padding:9px 0;}
       <div class="divider"></div>
       <div style="display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;">
         <div class="lang-strip">
-          <a class="lang-chip" href="language-portal/">Spanish <small>C1</small></a>
-          <a class="lang-chip" href="language-portal/">Portuguese <small>A1</small></a>
+          <a class="lang-chip" href="language-portal/" id="lang-es">Spanish <small>C1</small></a>
+          <a class="lang-chip" href="language-portal/" id="lang-pt">Portuguese <small>A1</small></a>
         </div>
         <div class="links" style="margin:0;">
           <a class="lnk go-lnk" href="learning/">Learning Hub →</a>
@@ -556,6 +556,20 @@ function renderLearning(){
     var base=p.remaining>0?(p.remaining+' of '+p.total+' courses left'):'complete ✓';
     return ringRow(p.pct,p.name,(STAG[p.status]||'')+base,'var(--muted)');
   }).join('');
+}
+
+/* ───────── LANGUAGES (langPortal5 — daily checklist) ───────── */
+function renderLangs(){
+  var d=lsGet('langPortal5'); if(!d||!Array.isArray(d.habits))return;
+  var t=dateKey(new Date()), checks=(d.checks||{})[t]||{};
+  var live=d.habits.filter(function(h){return h.added<=t&&(!h.removed||h.removed>t);});
+  [['es','Spanish'],['pt','Portuguese']].forEach(function(l){
+    var hs=live.filter(function(h){return h.lang===l[0];}); if(!hs.length)return;
+    var n=hs.filter(function(h){return checks[h.id];}).length, done=n===hs.length;
+    var el=document.getElementById('lang-'+l[0]);
+    el.innerHTML=esc(l[1])+' <small>'+(done?'✓ done today':n+'/'+hs.length+' today')+'</small>';
+    el.title='Today\u2019s '+l[1]+' checklist';
+  });
 }
 
 /* ───────── FINANCES (finTrackerState2) ───────── */
@@ -986,6 +1000,7 @@ function renderAll(){
   safe(loadHpCats);
   safe(renderHero);
   safe(renderLearning);
+  safe(renderLangs);
   safe(renderFinances);
   safe(renderFitness);
   safe(renderMeals);

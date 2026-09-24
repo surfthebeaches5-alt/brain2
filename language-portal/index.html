@@ -192,6 +192,80 @@ textarea.f-input{resize:vertical;line-height:1.5;}
   .phase-bar{margin-left:0;}
   .f-row{grid-template-columns:1fr;}
 }
+
+/* ───────── TODAY / DAILY CHALLENGE ───────── */
+.lang-tab.today-active{color:var(--ink);border-bottom-color:var(--accent-deep);}
+.ch-hero{background:var(--surface);border:1px solid var(--line);border-radius:20px;padding:22px 26px;margin-bottom:18px;display:grid;grid-template-columns:auto 1fr auto;gap:28px;align-items:center;}
+.ch-day{font-family:'Fraunces',serif;font-size:44px;font-weight:600;letter-spacing:-1.2px;line-height:1;}
+.ch-day small{font-size:18px;color:var(--muted);font-weight:500;letter-spacing:0;}
+.ch-lbl{font-size:9.5px;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted);font-weight:700;margin-bottom:6px;}
+.ch-msg{font-size:12px;color:var(--muted);font-weight:600;margin-top:6px;}
+.ch-msg.good{color:#3f9866;}.ch-msg.bad{color:#cf5d72;}
+.ch-segs{display:grid;grid-template-columns:repeat(75,1fr);gap:2px;height:14px;}
+.ch-seg{border-radius:2px;background:rgba(0,0,0,.07);}
+.ch-seg.on{background:var(--accent-deep);}
+.ch-seg.today{background:var(--accent);}
+.ch-seg-scale{display:flex;justify-content:space-between;font-size:10px;color:var(--muted);font-weight:600;margin-top:6px;}
+.ch-stats{display:flex;gap:22px;text-align:right;}
+.ch-stat-n{font-family:'Fraunces',serif;font-size:24px;font-weight:600;line-height:1;}
+.ch-stat-l{font-size:9.5px;letter-spacing:1.2px;text-transform:uppercase;color:var(--muted);font-weight:700;margin-top:5px;}
+
+.day-nav{display:flex;align-items:center;justify-content:space-between;margin:0 2px 12px;}
+.day-nav-l{display:flex;align-items:center;gap:8px;}
+.day-nav-t{font-family:'Fraunces',serif;font-size:20px;font-weight:600;letter-spacing:-.3px;min-width:210px;}
+.dn-btn{width:30px;height:30px;border-radius:9px;border:1px solid var(--line);background:var(--surface);cursor:pointer;color:var(--muted);font-size:15px;font-family:inherit;display:flex;align-items:center;justify-content:center;}
+.dn-btn:hover:not(:disabled){color:var(--ink);border-color:var(--accent);}
+.dn-btn:disabled{opacity:.35;cursor:default;}
+.dn-today{width:auto;padding:0 12px;font-size:11.5px;font-weight:700;color:var(--accent-deep);}
+.edit-toggle{border:1px solid var(--line);background:var(--surface);border-radius:10px;padding:7px 13px;font-family:inherit;font-size:12px;font-weight:700;color:var(--muted);cursor:pointer;}
+.edit-toggle:hover,.edit-toggle.on{color:var(--accent-deep);border-color:var(--accent);background:var(--accent-soft);}
+
+.hab-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:24px;}
+.hab-card{background:var(--surface);border:1px solid var(--line);border-radius:18px;padding:18px 18px 14px;}
+.hab-card.es{border-top:4px solid var(--es);}
+.hab-card.pt{border-top:4px solid var(--pt);}
+.hab-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;}
+.hab-title{font-family:'Fraunces',serif;font-size:19px;font-weight:600;display:flex;align-items:center;gap:8px;}
+.hab-count{font-size:11px;font-weight:800;padding:3px 10px;border-radius:12px;background:var(--warm);color:var(--muted);}
+.hab-count.done.es{background:var(--es-bg);color:var(--es);}
+.hab-count.done.pt{background:var(--pt-bg);color:var(--pt);}
+.hab{width:100%;display:flex;align-items:center;gap:12px;padding:12px 13px;border-radius:12px;border:1px solid var(--line);background:var(--warm);font-family:inherit;font-size:13.5px;font-weight:600;color:var(--ink);text-align:left;cursor:pointer;margin-bottom:7px;transition:background .14s,border-color .14s;}
+.hab:hover{border-color:#d9d2bd;}
+.hab-box{width:22px;height:22px;border-radius:7px;border:2px solid #d9d2bd;background:#fff;flex-shrink:0;display:flex;align-items:center;justify-content:center;color:#fff;font-size:12px;font-weight:800;}
+.hab-name{flex:1;}
+.hab-min{font-size:10.5px;font-weight:700;color:var(--muted);background:#fff;border-radius:8px;padding:2px 8px;}
+.hab.done .hab-name{color:var(--muted);text-decoration:line-through;text-decoration-thickness:1.5px;}
+.hab-card.es .hab.done{background:var(--es-bg);border-color:var(--es-light);}
+.hab-card.es .hab.done .hab-box{background:var(--es);border-color:var(--es);}
+.hab-card.pt .hab.done{background:var(--pt-bg);border-color:var(--pt-light);}
+.hab-card.pt .hab.done .hab-box{background:var(--pt);border-color:var(--pt);}
+.hab-empty{font-size:12.5px;color:var(--muted);font-style:italic;padding:8px 2px 12px;}
+.hab-foot{font-size:11px;color:var(--muted);font-weight:600;margin-top:4px;}
+
+/* edit mode */
+.he-row{display:flex;gap:7px;align-items:center;margin-bottom:7px;}
+.he-in{flex:1;min-width:0;border:1px solid var(--line);border-radius:10px;padding:9px 11px;font-family:inherit;font-size:13px;background:#fff;color:var(--ink);}
+.he-in:focus{outline:none;border-color:var(--accent);}
+.he-min{flex:0 0 74px;}
+.he-del{border:none;background:transparent;color:var(--muted);cursor:pointer;font-size:14px;padding:6px 8px;border-radius:8px;}
+.he-del:hover{background:#f8e2e6;color:#cf5d72;}
+.he-add{border:1px dashed #d9d2bd;background:transparent;border-radius:10px;padding:9px;width:100%;font-family:inherit;font-size:12px;font-weight:700;color:var(--muted);cursor:pointer;margin-top:2px;}
+.he-add:hover{color:var(--ink);border-color:var(--accent);}
+.he-hint{font-size:11px;color:var(--muted);margin:2px 0 10px;line-height:1.5;}
+
+/* history */
+.hist{background:var(--surface);border:1px solid var(--line);border-radius:18px;padding:18px 20px;}
+.hist-grid{display:grid;grid-template-columns:repeat(7,26px);gap:5px;justify-content:start;}
+.hist-wrap{display:flex;gap:26px;align-items:flex-start;}
+.hist-dow{font-size:9px;font-weight:700;color:var(--muted);text-align:center;}
+.hist-cell{width:26px;height:26px;border-radius:7px;background:rgba(0,0,0,.05);border:none;font-family:inherit;font-size:9.5px;font-weight:700;color:var(--muted);cursor:pointer;display:flex;align-items:center;justify-content:center;padding:0;}
+.hist-cell.full{background:var(--accent-deep);color:#fff;}
+.hist-cell.part{background:var(--accent-soft);color:var(--accent-deep);}
+.hist-cell.miss{background:#f8e2e6;color:#cf5d72;}
+.hist-cell.pre,.hist-cell.fut{background:transparent;cursor:default;opacity:.45;}
+.hist-cell.sel{box-shadow:0 0 0 2px var(--ink);}
+.hist-legend{display:flex;flex-direction:column;gap:9px;font-size:11.5px;color:var(--muted);font-weight:600;padding-top:18px;}
+.hist-legend span{display:inline-block;width:12px;height:12px;border-radius:4px;vertical-align:-2px;margin-right:7px;}
 </style>
 </head>
 <body>
@@ -208,15 +282,63 @@ textarea.f-input{resize:vertical;line-height:1.5;}
 </div>
 
 <div class="lang-tabs">
-  <button class="lang-tab es-active" id="tab-es" onclick="switchTab('es')">&#127466;&#127480; Spanish</button>
+  <button class="lang-tab today-active" id="tab-today" onclick="switchTab('today')">&#10003; Today</button>
+  <button class="lang-tab" id="tab-es" onclick="switchTab('es')">&#127466;&#127480; Spanish</button>
   <button class="lang-tab" id="tab-pt" onclick="switchTab('pt')">&#127463;&#127479; Portuguese BR</button>
   <button class="lang-tab" id="tab-log" onclick="switchTab('log')">Session Log</button>
 </div>
 
 <div class="hub">
 
+  <!-- TODAY — daily checklist + 75-day challenge -->
+  <div class="page active" id="page-today">
+    <div class="ch-hero">
+      <div>
+        <div class="ch-lbl">75-Day Challenge</div>
+        <div class="ch-day" id="ch-day">Day 0 <small>/ 75</small></div>
+      </div>
+      <div>
+        <div class="ch-segs" id="ch-segs"></div>
+        <div class="ch-seg-scale"><span>Day 1</span><span>25</span><span>50</span><span>75</span></div>
+        <div class="ch-msg" id="ch-msg"></div>
+      </div>
+      <div class="ch-stats">
+        <div><div class="ch-stat-n" id="ch-best">0</div><div class="ch-stat-l">Best run</div></div>
+        <div><div class="ch-stat-n" id="ch-total">0</div><div class="ch-stat-l">Days done</div></div>
+      </div>
+    </div>
+
+    <div class="day-nav">
+      <div class="day-nav-l">
+        <button class="dn-btn" onclick="shiftDay(-1)" aria-label="Previous day">&lsaquo;</button>
+        <button class="dn-btn" id="dn-next" onclick="shiftDay(1)" aria-label="Next day">&rsaquo;</button>
+        <div class="day-nav-t" id="dn-title">Today</div>
+        <button class="dn-btn dn-today" id="dn-today" onclick="goToday()">Back to today</button>
+      </div>
+      <button class="edit-toggle" id="edit-toggle" onclick="toggleEdit()">Edit checklist</button>
+    </div>
+
+    <div class="hab-grid">
+      <div class="hab-card es" id="hab-es"></div>
+      <div class="hab-card pt" id="hab-pt"></div>
+    </div>
+
+    <div class="sec-title">History</div>
+    <div class="hist">
+      <div class="hist-wrap">
+        <div><div class="hist-grid" id="hist-grid"></div></div>
+        <div class="hist-legend">
+          <div><span style="background:var(--accent-deep)"></span>Everything done</div>
+          <div><span style="background:var(--accent-soft)"></span>Some done</div>
+          <div><span style="background:#f8e2e6"></span>Missed</div>
+          <div style="margin-top:6px;max-width:260px;line-height:1.5;">Click any past day to fill in checks you forgot.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <!-- SPANISH -->
-  <div class="page active" id="page-es">
+  <div class="page" id="page-es">
     <div class="lang-hero es">
       <div class="hero-left">
         <div class="hero-flag">&#127466;&#127480;</div>
@@ -395,7 +517,7 @@ var MS=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec']
 var DS=['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
 var MF=['January','February','March','April','May','June','July','August','September','October','November','December'];
 
-var S={hours:{es:0,pt:0},log:[],resources:null};
+var S={hours:{es:0,pt:0},log:[],resources:null,habits:null,checks:{}};
 var activeFilter='all';
 var lib={es:{cat:'all',q:''},pt:{cat:'all',country:'all',q:''}};
 
@@ -571,12 +693,177 @@ function resetLibrary(lang){
   saveState();renderLibrary(lang);
 }
 
+/* ───────── TODAY — daily checklist + 75-day challenge ─────────
+   S.habits: [{id, lang, label, mins, added:'YYYY-MM-DD', removed:'YYYY-MM-DD'|null}]
+   S.checks: {'YYYY-MM-DD': {habitId:true}}
+   A habit only counts on days between its added and removed dates, so editing the list
+   never rewrites history. Habits with minutes also log that time to the Session Log. */
+var CH_LEN=75;
+var viewDay=null, editMode=false;
+function dk(d){return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');}
+function dkAdd(key,n){var p=key.split('-');var d=new Date(+p[0],+p[1]-1,+p[2]+n);return dk(d);}
+function dkDate(key){var p=key.split('-');return new Date(+p[0],+p[1]-1,+p[2]);}
+function todayKey(){return dk(new Date());}
+
+function defaultHabits(){
+  var t=todayKey();
+  return [
+    {lang:'es',label:'Study 15+ minutes',mins:15},
+    {lang:'es',label:'Duolingo lesson',mins:0},
+    {lang:'es',label:'Read something in Spanish',mins:0},
+    {lang:'es',label:'Listen to Spanish music or a podcast',mins:0},
+    {lang:'pt',label:'Study 15+ minutes',mins:15},
+    {lang:'pt',label:'Duolingo lesson',mins:0},
+    {lang:'pt',label:'Read something in Portuguese',mins:0},
+    {lang:'pt',label:'Listen to Portuguese music or a podcast',mins:0}
+  ].map(function(h,i){h.id='h_'+Date.now().toString(36)+'_'+i;h.added=t;h.removed=null;return h;});
+}
+function habitsOn(key,lang){
+  return (S.habits||[]).filter(function(h){
+    return (!lang||h.lang===lang)&&h.added<=key&&(!h.removed||h.removed>key);
+  });
+}
+function firstDay(){
+  var f=null;(S.habits||[]).forEach(function(h){if(!f||h.added<f)f=h.added;});
+  Object.keys(S.checks||{}).forEach(function(k){if(!f||k<f)f=k;});
+  return f||todayKey();
+}
+/* 'full' | 'part' | 'miss' | 'pre' (before you started) | 'fut' */
+function dayStatus(key){
+  if(key>todayKey())return 'fut';
+  if(key<firstDay())return 'pre';
+  var hs=habitsOn(key), c=S.checks[key]||{};
+  if(!hs.length)return 'pre';
+  var n=hs.filter(function(h){return c[h.id];}).length;
+  return n===hs.length?'full':n?'part':'miss';
+}
+function streakInfo(){
+  var t=todayKey(), start=firstDay();
+  /* today still counts as "in progress" — it only breaks the run once it's over */
+  var cur=0, k=dayStatus(t)==='full'?t:dkAdd(t,-1);
+  while(k>=start&&dayStatus(k)==='full'){cur++;k=dkAdd(k,-1);}
+  var best=0,run=0,total=0;
+  for(var d=start;d<=t;d=dkAdd(d,1)){
+    if(dayStatus(d)==='full'){run++;total++;if(run>best)best=run;}
+    else if(d!==t)run=0;
+  }
+  /* when there's no current run: the most recent day that wasn't finished */
+  var broke=(cur===0&&dkAdd(t,-1)>=start)?dkAdd(t,-1):null;
+  return {cur:cur,best:best,total:total,broke:broke,todayDone:dayStatus(t)==='full'};
+}
+
+function toggleHabit(id){
+  var key=viewDay, h=(S.habits||[]).filter(function(x){return x.id===id;})[0]; if(!h)return;
+  if(!S.checks[key])S.checks[key]={};
+  var on=!S.checks[key][id];
+  if(on)S.checks[key][id]=true; else delete S.checks[key][id];
+  if(!Object.keys(S.checks[key]).length)delete S.checks[key];
+  if(h.mins>0){
+    var logId='hab_'+key+'_'+id;
+    if(on){
+      S.log.unshift({id:logId,lang:h.lang,skill:'general',skillLabel:h.label,resource:'--',note:'Daily checklist',mins:h.mins,date:new Date(key+'T12:00:00').toISOString(),fromHabit:true});
+      S.hours[h.lang]=(S.hours[h.lang]||0)+h.mins/60;
+    }else{
+      var e=S.log.filter(function(x){return x.id===logId;})[0];
+      if(e){S.hours[e.lang]=Math.max(0,(S.hours[e.lang]||0)-e.mins/60);S.log=S.log.filter(function(x){return x.id!==logId;});}
+    }
+    updateHours(h.lang);
+  }
+  saveState(); renderToday();
+}
+
+function habCard(lang){
+  var name=lang==='es'?'Spanish':'Portuguese', flag=lang==='es'?'🇪🇸':'🇧🇷';
+  var el=document.getElementById('hab-'+lang);
+  if(editMode){
+    var live=(S.habits||[]).filter(function(h){return h.lang===lang&&!h.removed;});
+    el.innerHTML='<div class="hab-head"><div class="hab-title">'+flag+' '+name+'</div></div>'+
+      '<div class="he-hint">Minutes are optional — if set, checking the item also logs that time to your hours.</div>'+
+      live.map(function(h){
+        return '<div class="he-row"><input class="he-in" value="'+escH(h.label)+'" onchange="renameHabit(\''+h.id+'\',this.value)" aria-label="Checklist item">'+
+          '<input class="he-in he-min" type="number" min="0" max="240" step="5" placeholder="min" value="'+(h.mins||'')+'" onchange="setHabitMins(\''+h.id+'\',this.value)" aria-label="Minutes">'+
+          '<button class="he-del" onclick="removeHabit(\''+h.id+'\')" title="Remove" aria-label="Remove">&#10005;</button></div>';
+      }).join('')+
+      '<button class="he-add" onclick="addHabit(\''+lang+'\')">+ Add item</button>';
+    return;
+  }
+  var hs=habitsOn(viewDay,lang), c=S.checks[viewDay]||{};
+  var n=hs.filter(function(h){return c[h.id];}).length, all=hs.length&&n===hs.length;
+  var mins=hs.filter(function(h){return c[h.id]&&h.mins>0;}).reduce(function(s,h){return s+h.mins;},0);
+  el.innerHTML='<div class="hab-head"><div class="hab-title">'+flag+' '+name+'</div>'+
+    '<span class="hab-count'+(all?' done '+lang:'')+'">'+(all?'All done ✓':n+' / '+hs.length)+'</span></div>'+
+    (hs.length?hs.map(function(h){
+      var on=!!c[h.id];
+      return '<button class="hab'+(on?' done':'')+'" aria-pressed="'+on+'" onclick="toggleHabit(\''+h.id+'\')">'+
+        '<span class="hab-box">'+(on?'✓':'')+'</span><span class="hab-name">'+escH(h.label)+'</span>'+
+        (h.mins>0?'<span class="hab-min">+'+h.mins+' min</span>':'')+'</button>';
+    }).join(''):'<div class="hab-empty">No items for this day. Use “Edit checklist” to add some.</div>')+
+    (mins?'<div class="hab-foot">'+mins+' min added to your '+name+' hours</div>':'');
+}
+function renameHabit(id,v){v=v.trim();var h=S.habits.filter(function(x){return x.id===id;})[0];if(h&&v){h.label=v;saveState();}}
+function setHabitMins(id,v){var h=S.habits.filter(function(x){return x.id===id;})[0];if(h){h.mins=Math.max(0,Math.min(240,parseInt(v,10)||0));saveState();}}
+function addHabit(lang){
+  S.habits.push({id:'h_'+Date.now().toString(36),lang:lang,label:'New item',mins:0,added:todayKey(),removed:null});
+  saveState(); renderToday();
+  var ins=document.querySelectorAll('#hab-'+lang+' .he-in:not(.he-min)'); var last=ins[ins.length-1]; if(last){last.focus();last.select();}
+}
+function removeHabit(id){
+  var h=S.habits.filter(function(x){return x.id===id;})[0]; if(!h)return;
+  if(h.added===todayKey()&&!Object.keys(S.checks).some(function(k){return S.checks[k][id];})){
+    S.habits=S.habits.filter(function(x){return x.id!==id;});   /* never used — just drop it */
+  }else h.removed=todayKey();                                   /* keep it for past days */
+  saveState(); renderToday();
+}
+function toggleEdit(){editMode=!editMode;if(editMode)viewDay=todayKey();renderToday();}
+function shiftDay(n){var k=dkAdd(viewDay,n);if(k>todayKey())return;viewDay=k;editMode=false;renderToday();}
+function goToday(){viewDay=todayKey();renderToday();}
+function pickDay(k){if(k>todayKey()||k<firstDay())return;viewDay=k;editMode=false;renderToday();window.scrollTo({top:0,behavior:'smooth'});}
+
+function renderToday(){
+  var t=todayKey(); if(!viewDay||viewDay>t)viewDay=t;
+  var st=streakInfo(), shown=Math.min(st.cur,CH_LEN);
+  document.getElementById('ch-day').innerHTML='Day '+shown+' <small>/ '+CH_LEN+'</small>';
+  var segs=''; for(var i=0;i<CH_LEN;i++){segs+='<div class="ch-seg'+(i<shown?' on':(i===shown&&!st.todayDone&&shown<CH_LEN?' today':''))+'"></div>';}
+  document.getElementById('ch-segs').innerHTML=segs;
+  var msg=document.getElementById('ch-msg'), m='', cls='';
+  if(st.cur>=CH_LEN){m='🎉 You finished all 75 days. Keep the run going or start fresh any time.';cls='good';}
+  else if(st.todayDone){m='Today is done — '+(CH_LEN-st.cur)+' days to go.';cls='good';}
+  else if(st.cur>0){m='Finish today’s checklist to make it day '+(st.cur+1)+'.';}
+  else if(st.broke&&st.best>0){var bd=dkDate(st.broke);m='Run ended '+MS[bd.getMonth()]+' '+bd.getDate()+'. Today is a fresh Day 1.';cls='bad';}
+  else m='Check off everything today to start Day 1.';
+  msg.textContent=m; msg.className='ch-msg'+(cls?' '+cls:'');
+  document.getElementById('ch-best').textContent=st.best;
+  document.getElementById('ch-total').textContent=st.total;
+
+  var vd=dkDate(viewDay), isToday=viewDay===t;
+  var diff=Math.round((dkDate(t)-vd)/86400000);
+  document.getElementById('dn-title').textContent=isToday?'Today':diff===1?'Yesterday':DS[vd.getDay()]+', '+MS[vd.getMonth()]+' '+vd.getDate();
+  document.getElementById('dn-next').disabled=isToday;
+  document.getElementById('dn-today').style.visibility=isToday?'hidden':'visible';
+  var et=document.getElementById('edit-toggle'); et.textContent=editMode?'Done editing':'Edit checklist'; et.classList.toggle('on',editMode);
+  habCard('es'); habCard('pt');
+
+  /* history: from the week you started, up to the last 10 weeks, Monday-first */
+  var end=dkDate(t); end.setDate(end.getDate()+(7-((end.getDay()+6)%7)-1));
+  var start=new Date(end); start.setDate(start.getDate()-69);
+  var fd=dkDate(firstDay()); fd.setDate(fd.getDate()-((fd.getDay()+6)%7));
+  if(fd>start)start=fd;
+  var html=['M','T','W','T','F','S','S'].map(function(d){return '<div class="hist-dow">'+d+'</div>';}).join('');
+  for(var d=new Date(start);d<=end;d.setDate(d.getDate()+1)){
+    var k=dk(d), s=dayStatus(k);
+    var lbl=MS[d.getMonth()]+' '+d.getDate();
+    html+='<button class="hist-cell '+s+(k===viewDay?' sel':'')+'" title="'+lbl+'" aria-label="'+lbl+'" onclick="pickDay(\''+k+'\')"'+(s==='fut'||s==='pre'?' tabindex="-1"':'')+'>'+d.getDate()+'</button>';
+  }
+  document.getElementById('hist-grid').innerHTML=html;
+}
+
 function switchTab(tab){
   document.querySelectorAll('.page').forEach(function(p){p.classList.remove('active');});
-  document.querySelectorAll('.lang-tab').forEach(function(t){t.classList.remove('es-active','pt-active','log-active');});
+  document.querySelectorAll('.lang-tab').forEach(function(t){t.classList.remove('es-active','pt-active','log-active','today-active');});
   document.getElementById('page-'+tab).classList.add('active');
   document.getElementById('tab-'+tab).classList.add(tab+'-active');
   if(tab==='log') renderLog();
+  if(tab==='today') renderToday();
 }
 
 function logTime(lang,mins,evt){
@@ -754,12 +1041,15 @@ function loadState(){
     if(p.hours)S.hours={es:p.hours.es||0,pt:p.hours.pt||0};
     if(Array.isArray(p.log))S.log=p.log;
     if(p.resources&&(p.resources.es||p.resources.pt))S.resources=p.resources;
+    if(Array.isArray(p.habits))S.habits=p.habits;
+    if(p.checks&&typeof p.checks==='object')S.checks=p.checks;
   }catch(e){}}
+  if(!S.habits){S.habits=defaultHabits();saveState();}
   if(!S.resources)S.resources={};
   if(!S.resources.es||!S.resources.es.length)S.resources.es=seedEs();
   if(!S.resources.pt||!S.resources.pt.length)S.resources.pt=seedPt();
 }
-function saveState(){localStorage.setItem(SK,JSON.stringify(S));}
+function saveState(){try{localStorage.setItem(SK,JSON.stringify(S));}catch(e){alert('Couldn\u2019t save \u2014 browser storage may be full.');}}
 
 document.getElementById('res-modal').addEventListener('click',function(e){if(e.target===this)closeResModal();});
 document.addEventListener('keydown',function(e){if(e.key==='Escape')closeResModal();});
@@ -774,6 +1064,15 @@ updateHours('pt');
 renderLibrary('es');
 renderLibrary('pt');
 renderHeatmap();
+renderToday();
+/* coming back to the tab (or leaving it open past midnight) */
+document.addEventListener('visibilitychange',function(){
+  if(document.hidden)return;
+  var was=viewDay; loadState();
+  if(was&&was===lastRenderedToday)viewDay=todayKey();
+  lastRenderedToday=todayKey(); renderToday(); updateHours('es'); updateHours('pt');
+});
+var lastRenderedToday=todayKey();
 </script>
 </body>
 </html>
