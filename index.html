@@ -7,6 +7,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,560;9..144,600&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/brain.css">
 <style>
 *{box-sizing:border-box;margin:0;padding:0;}
 :root{
@@ -22,32 +23,8 @@ html,body{background:var(--bg);font-family:'Plus Jakarta Sans',system-ui,sans-se
 body{display:flex;}
 a{color:inherit;}
 
-/* ───────── SIDEBARR ───────── */
-.sidebar{position:fixed;left:0;top:0;bottom:0;width:var(--sb-w);background:var(--sidebar);border-right:1px solid var(--line);display:flex;flex-direction:column;z-index:200;overflow-y:auto;transition:width .22s ease;}
-.sidebar::-webkit-scrollbar{width:0;}
-body.collapsed .sidebar{width:var(--sb-col);}
-body.collapsed .main{margin-left:var(--sb-col);}
-.sb-top{display:flex;align-items:center;gap:11px;padding:18px 18px 16px;}
-.sb-burger{width:30px;height:30px;border:none;background:transparent;cursor:pointer;border-radius:8px;display:flex;align-items:center;justify-content:center;flex-shrink:0;color:var(--muted);transition:background .15s;}
-.sb-burger:hover{background:rgba(154,127,212,.14);}
-.sb-burger svg{width:17px;height:17px;}
-.sb-logo{font-family:'Fraunces',serif;font-size:19px;font-weight:600;letter-spacing:-.2px;white-space:nowrap;}
-.sb-logo em{font-style:italic;color:var(--accent-deep);}
-body.collapsed .sb-logo{display:none;}
-body.collapsed .sb-top{justify-content:center;padding:18px 0 16px;}
-.sb-nav{flex:1;padding:4px 12px 22px;}
-.sb-group{padding:13px 10px 6px;font-size:9.5px;letter-spacing:.18em;text-transform:uppercase;color:var(--muted);font-weight:700;}
-body.collapsed .sb-group{opacity:0;height:8px;padding:0;}
-.sb-link{display:flex;align-items:center;gap:11px;padding:9px 11px;border-radius:10px;text-decoration:none;color:var(--muted);font-size:13px;font-weight:500;transition:all .14s;margin-bottom:1px;white-space:nowrap;cursor:pointer;}
-.sb-link:hover{background:rgba(154,127,212,.12);color:var(--ink);}
-.sb-link.active{background:var(--accent-soft);color:var(--accent-deep);font-weight:600;}
-.sb-link svg{width:18px;height:18px;flex-shrink:0;stroke:currentColor;stroke-width:1.6;fill:none;stroke-linecap:round;stroke-linejoin:round;}
-body.collapsed .sb-txt{display:none;}
-body.collapsed .sb-link{justify-content:center;padding:9px 0;}
-.sb-rule{height:1px;background:var(--line);margin:7px 10px;}
-
 /* ───────── MAIN ───────── */
-.main{margin-left:var(--sb-w);margin-right:var(--rp-w);flex:1;padding:26px 26px 70px;transition:margin .22s ease;min-width:0;}
+.main{margin-right:var(--rp-w);flex:1;padding:26px 28px 70px;min-width:0;}
 
 /* hero */
 .hero{display:flex;justify-content:space-between;align-items:flex-end;gap:24px;margin-bottom:22px;padding:2px 4px;}
@@ -68,7 +45,8 @@ body.collapsed .sb-link{justify-content:center;padding:9px 0;}
 .tile:hover{box-shadow:0 8px 26px rgba(60,50,30,.09);transform:translateY(-2px);}
 .tile.lead{border-color:var(--accent-line);box-shadow:0 6px 26px rgba(176,153,224,.14);}
 .tile-head{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:14px;}
-.ttl{font-family:'Fraunces',serif;font-size:var(--fs-title);font-weight:560;letter-spacing:-.2px;display:flex;align-items:center;gap:9px;min-width:0;}
+.ttl{font-family:'Fraunces',serif;font-size:var(--fs-title);font-weight:560;letter-spacing:-.2px;display:flex;align-items:center;gap:9px;min-width:0;white-space:nowrap;}
+.chip:empty{display:none;}
 .ey-dot{width:7px;height:7px;border-radius:50%;background:var(--accent);flex-shrink:0;}
 .head-right{display:flex;align-items:center;gap:9px;flex-shrink:0;}
 .go{width:27px;height:27px;border-radius:9px;display:flex;align-items:center;justify-content:center;color:var(--muted);font-size:15px;transition:all .16s;background:var(--warm);}
@@ -110,11 +88,53 @@ body.collapsed .sb-link{justify-content:center;padding:9px 0;}
 .lang-chip:hover{border-color:var(--accent-line);background:var(--accent-soft);color:var(--accent-deep);}
 .lang-chip small{color:var(--muted);font-weight:600;}
 
-/* finances */
-.due{display:flex;align-items:center;gap:10px;padding:9px 0;}
+/* bills due */
+.due{display:flex;align-items:center;gap:11px;padding:9px 0;}
 .due + .due{border-top:1px solid var(--hair);}
-.due-name{flex:1;font-weight:600;font-size:var(--fs-strong);}
-.due-date{font-size:11.5px;color:var(--muted);font-weight:600;}
+.due-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0;box-shadow:inset 0 0 0 1px rgba(0,0,0,.06);}
+.due-main{flex:1;min-width:0;}
+.due-name{font-weight:650;font-size:var(--fs-strong);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.due-date{font-size:11.5px;color:var(--muted);font-weight:600;margin-top:1px;}
+.due-btn{font-size:11.5px;font-weight:700;text-decoration:none;color:var(--muted);border:1px solid var(--line);border-radius:9px;padding:5px 10px;white-space:nowrap;transition:all .14s;}
+.due-btn:hover{color:var(--accent-deep);border-color:var(--accent-line);background:var(--accent-soft);}
+.due-check{width:28px;height:28px;border-radius:9px;border:1.5px solid var(--line);background:#fff;color:#c9bfab;font-size:13px;font-weight:800;cursor:pointer;flex-shrink:0;transition:all .14s;font-family:inherit;}
+.due-check:hover{border-color:var(--ok);color:var(--ok);background:var(--ok-bg);}
+.due-more{font-size:11.5px;color:var(--muted);font-weight:600;padding-top:8px;}
+.fin-foot{display:flex;align-items:center;gap:12px;margin-top:12px;padding-top:13px;border-top:1px solid var(--hair);font-size:11.5px;color:var(--muted);font-weight:600;}
+.fin-foot:empty{display:none;}
+.fin-bar{flex:0 0 120px;height:6px;border-radius:4px;background:var(--warm-deep);overflow:hidden;}
+.fin-bar div{height:100%;background:var(--ok);border-radius:4px;}
+
+/* tiles that aren't a doorway to a page */
+.tile.static{cursor:default;}
+.tile.static:hover{transform:none;box-shadow:0 1px 2px rgba(60,50,30,.03);}
+.mini-btn{border:1px solid var(--line);background:transparent;color:var(--muted);font:700 11.5px 'Plus Jakarta Sans',sans-serif;padding:5px 11px;border-radius:9px;cursor:pointer;transition:all .14s;}
+.mini-btn:hover{color:var(--ink);border-color:var(--accent-line);}
+.mini-btn.solid{background:var(--ink);border-color:var(--ink);color:#fff;}
+.mini-btn.solid:hover{background:#000;}
+
+/* quick links */
+.ql-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(118px,1fr));gap:8px;}
+.ql{position:relative;display:flex;align-items:center;gap:9px;padding:9px 10px;border-radius:12px;background:var(--warm);border:1px solid transparent;text-decoration:none;color:var(--ink);font-size:12.5px;font-weight:650;min-width:0;transition:all .14s;}
+.ql:hover{background:var(--accent-soft);border-color:var(--accent-line);color:var(--accent-deep);}
+.ql-ic{position:relative;width:24px;height:24px;border-radius:7px;background:#fff;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:800;color:var(--accent-deep);overflow:hidden;box-shadow:0 0 0 1px var(--line);}
+.ql-ic img{position:absolute;inset:4px;width:16px;height:16px;background:#fff;}
+.ql-n{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.ql-ord{display:none;}
+.editing .ql-grid{grid-template-columns:1fr;gap:6px;}
+.editing .ql{padding-right:76px;background:#fff;border-color:var(--line);color:var(--ink);cursor:default;}
+.editing .ql-ord{display:flex;gap:2px;position:absolute;right:6px;top:50%;transform:translateY(-50%);}
+.ql-ord button{width:19px;height:22px;border:none;border-radius:6px;background:var(--warm);color:var(--muted);cursor:pointer;font-size:13px;line-height:1;font-family:inherit;}
+.ql-ord button:hover{background:var(--warm-deep);color:var(--ink);}
+.ql-ord .ql-x:hover{background:var(--over-bg);color:var(--over);}
+.ql-add{display:none;gap:7px;margin-top:12px;}
+.editing .ql-add{display:flex;}
+.ql-in{flex:1;min-width:0;border:1px solid var(--line);background:#fff;border-radius:9px;padding:7px 10px;font:500 12.5px 'Plus Jakarta Sans',sans-serif;color:var(--ink);}
+.ql-in:first-child{flex:0 0 32%;}
+.ql-in:focus{outline:none;border-color:var(--accent-line);box-shadow:0 0 0 3px var(--accent-soft);}
+.ql-hint{margin-top:12px;font-size:11px;color:var(--muted);}
+.ql-hint b{font-weight:700;background:var(--warm);border-radius:5px;padding:1px 5px;}
+.editing .ql-hint{display:none;}
 
 /* fitness */
 .wo{font-family:'Fraunces',serif;font-size:17px;font-weight:560;}
@@ -125,14 +145,40 @@ body.collapsed .sb-link{justify-content:center;padding:9px 0;}
 .box{width:18px;height:18px;border-radius:6px;border:2px solid var(--line);flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:800;background:#fff;}
 .nn.done .box{background:var(--ok);border-color:var(--ok);color:#fff;}
 
-/* media — cover images on every item */
-.media-item{display:flex;gap:12px;align-items:center;padding:10px 0;}
-.media-item + .media-item{border-top:1px solid var(--hair);}
-.cover{width:42px;height:58px;border-radius:6px;flex-shrink:0;display:flex;align-items:center;justify-content:center;color:var(--muted);background:var(--warm);border:1px solid var(--hair);overflow:hidden;position:relative;}
-.cover img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;}
-.media-info{min-width:0;flex:1;}
-.media-t{font-size:13px;font-weight:700;line-height:1.3;overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;}
-.media-a{font-size:11px;color:var(--muted);font-weight:600;margin:2px 0 5px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+/* reading & watching — a little shelf of covers */
+.shelf{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px;}
+.shelf-item{min-width:0;}
+.cv{position:relative;aspect-ratio:2/3;border-radius:8px;overflow:hidden;box-shadow:0 1px 2px rgba(60,50,30,.08),0 6px 16px rgba(60,50,30,.10);margin-bottom:9px;transition:transform .18s;}
+.tile:hover .cv{transform:translateY(-1px);}
+.cv img,.cv .gen{position:absolute;inset:0;width:100%;height:100%;}
+.cv img{object-fit:cover;}
+.cv .gen{display:flex;align-items:flex-end;padding:10px 9px;}
+.cv .gen::before{content:"";position:absolute;left:7px;top:0;bottom:0;width:1px;background:rgba(255,255,255,.55);}
+.cv .gen b{font-family:'Fraunces',serif;font-weight:600;font-size:13px;line-height:1.15;color:#3a3226;overflow:hidden;display:-webkit-box;-webkit-line-clamp:4;-webkit-box-orient:vertical;}
+.sh-t{font-size:12.5px;font-weight:700;line-height:1.3;overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;}
+.sh-a{font-size:11px;color:var(--muted);font-weight:600;margin-top:2px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.sh-bar{height:4px;border-radius:3px;background:var(--warm-deep);margin-top:7px;overflow:hidden;}
+.sh-bar div{height:100%;background:var(--accent);border-radius:3px;}
+.sh-p{font-size:10.5px;font-weight:700;color:var(--muted);margin-top:5px;letter-spacing:.02em;}
+.sh-p.on{color:var(--accent-deep);}
+.up-next{display:flex;flex-wrap:wrap;align-items:baseline;gap:6px;margin-top:15px;padding-top:13px;border-top:1px solid var(--hair);font-size:12px;color:var(--muted);}
+.up-next span{font-size:10px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;margin-right:4px;}
+.up-next b{font-weight:600;color:var(--ink);}
+.up-next i{font-style:normal;color:#cfc6b4;}
+
+/* language challenge */
+.lc-hero{display:flex;align-items:baseline;justify-content:space-between;gap:10px;margin-bottom:9px;}
+.lc-day{font-family:'Fraunces',serif;font-size:15px;font-weight:560;color:var(--muted);}
+.lc-day b{font-size:34px;font-weight:600;color:var(--ink);letter-spacing:-.5px;margin-left:3px;}
+.lc-streak{font-size:11.5px;font-weight:700;color:var(--warn);}
+.lc-bar{height:6px;border-radius:4px;background:var(--warm-deep);overflow:hidden;margin-bottom:14px;}
+.lc-bar div{height:100%;background:linear-gradient(90deg,var(--accent),var(--accent-deep));border-radius:4px;}
+.lc-l{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.lc-open{font-size:11px;font-weight:700;color:var(--accent-deep);text-decoration:none;padding:3px 8px;border-radius:7px;background:#fff;border:1px solid var(--accent-line);white-space:nowrap;}
+.lc-open:hover{background:var(--accent-soft);}
+.nn.done .lc-open{border-color:transparent;background:rgba(255,255,255,.6);color:var(--ok);}
+.lc-cta-t{font-family:'Fraunces',serif;font-size:17px;font-weight:560;margin-bottom:4px;}
+.lc-cta-s{font-size:12.5px;color:var(--muted);line-height:1.5;margin-bottom:14px;}
 
 /* dc guide */
 .dc{display:flex;align-items:center;gap:11px;padding:9px 0;}
@@ -223,6 +269,12 @@ body.collapsed .sb-link{justify-content:center;padding:9px 0;}
 .dc-ic .ic{width:14px;height:14px;color:var(--muted);}
 .t-box .ic{width:10px;height:10px;}
 
+@media(max-width:1400px){
+  :root{--rp-w:272px;}
+  .right{padding:20px 16px;}
+  .shelf{grid-template-columns:repeat(3,minmax(0,1fr));}
+  .shelf-item:nth-child(n+4){display:none;}
+}
 @media(max-width:1180px){
   :root{--rp-w:0px;}
   .main{margin-right:0;}
@@ -232,49 +284,13 @@ body.collapsed .sb-link{justify-content:center;padding:9px 0;}
 @media(max-width:820px){
   .hero{flex-direction:column;align-items:flex-start;gap:10px;}
   .hero-right{text-align:left;}
-  .main{margin-left:var(--sb-col);padding:20px 16px 60px;}
-  .sidebar{width:var(--sb-col);}
-  .sb-logo,.sb-group,.sb-txt{display:none;}
-  .sb-top{justify-content:center;padding:18px 0;}
-  .sb-link{justify-content:center;padding:9px 0;}
+  .main{padding:20px 16px 60px;}
   .c4,.c5,.c6,.c7{grid-column:span 12;}
 }
 </style>
 </head>
 <body>
-
-<!-- ───────── SIDEBAR ───────── -->
-<aside class="sidebar">
-  <div class="sb-top">
-    <button class="sb-burger" onclick="document.body.classList.toggle('collapsed')" aria-label="Toggle sidebar">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M4 7h16M4 12h12M4 17h16"/></svg>
-    </button>
-    <span class="sb-logo">Brain <em>2.0</em></span>
-  </div>
-  <nav class="sb-nav">
-    <div class="sb-group">Daily</div>
-    <a class="sb-link active" href="./"><svg viewBox="0 0 24 24"><path d="M3 10.5 12 3l9 7.5M5 9.5V20h14V9.5"/></svg><span class="sb-txt">Home</span></a>
-    <a class="sb-link" href="weekly-audit/"><svg viewBox="0 0 24 24"><rect x="6" y="4" width="12" height="17" rx="2"/><path d="M9 4h6v3H9zM8.5 11h7M8.5 15h7"/></svg><span class="sb-txt">Weekly Audit</span></a>
-    <a class="sb-link" href="monthly/"><svg viewBox="0 0 24 24"><rect x="4" y="4" width="16" height="16" rx="2"/><path d="M4 9h16M9 4v16M4 14h16"/></svg><span class="sb-txt">Monthly Planner</span></a>
-    <a class="sb-link" href="calendar/"><svg viewBox="0 0 24 24"><rect x="4" y="5" width="16" height="16" rx="2"/><path d="M4 9h16M8 3v4M16 3v4"/></svg><span class="sb-txt">Calendar</span></a>
-    <a class="sb-link" href="fitness/"><svg viewBox="0 0 24 24"><path d="M4 9v6M7 7v10M17 7v10M20 9v6M7 12h10"/></svg><span class="sb-txt">Fitness</span></a>
-    <a class="sb-link" href="meals/"><svg viewBox="0 0 24 24"><path d="M4 11h16a8 8 0 0 1-16 0Z"/><path d="M9 6.5c0-1 .6-1.5 1-2M13 6.5c0-1 .6-1.5 1-2"/></svg><span class="sb-txt">Meals</span></a>
-    <div class="sb-rule"></div>
-    <div class="sb-group">Growth</div>
-    <a class="sb-link" href="learning/"><svg viewBox="0 0 24 24"><path d="M3 8l9-4 9 4-9 4Z"/><path d="M7 10v5c0 1 5 3 5 3s5-2 5-3v-5"/></svg><span class="sb-txt">Learning</span></a>
-    <a class="sb-link" href="media/"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8"/><circle cx="12" cy="12" r="2.4"/></svg><span class="sb-txt">Media Tracker</span></a>
-    <a class="sb-link" href="language-portal/"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8"/><path d="M4 12h16M12 4c2.4 2.4 2.4 13.6 0 16M12 4c-2.4 2.4-2.4 13.6 0 16"/></svg><span class="sb-txt">Languages</span></a>
-    <a class="sb-link" href="stoic/"><svg viewBox="0 0 24 24"><path d="M5 19c0-8 6-14 14-14 0 8-6 14-14 14Z"/><path d="M5 19c4-4 7-6 11-8"/></svg><span class="sb-txt">Stoic Workbook</span></a>
-    <div class="sb-rule"></div>
-    <div class="sb-group">Life</div>
-    <a class="sb-link" href="finances/"><svg viewBox="0 0 24 24"><rect x="3" y="6" width="18" height="12" rx="2"/><path d="M3 10h18"/></svg><span class="sb-txt">Finances</span></a>
-    <a class="sb-link" href="wishlist/"><svg viewBox="0 0 24 24"><path d="M12 4l2.3 4.8 5.2.7-3.8 3.6 1 5.1-4.7-2.6-4.7 2.6 1-5.1L5 9.5l5.2-.7Z"/></svg><span class="sb-txt">Wishlist</span></a>
-    <a class="sb-link" href="travel/"><svg viewBox="0 0 24 24"><path d="M17.8 19.2 16 11l3.5-3.5C21 6 21.5 4 21 3c-1-.5-3 0-4.5 1.5L13 8 4.8 6.2c-.5-.1-.9.1-1.1.5l-.3.5c-.2.5-.1 1 .3 1.3L9 12l-2 3H4l-1 1 3 2 2 3 1-1v-3l3-2 3.5 5.3c.3.4.8.5 1.3.3l.5-.2c.4-.3.6-.7.5-1.2z"/></svg><span class="sb-txt">Travel</span></a>
-    <a class="sb-link" href="passport/"><svg viewBox="0 0 24 24"><path d="M12 21s7-6 7-11a7 7 0 0 0-14 0c0 5 7 11 7 11Z"/><circle cx="12" cy="10" r="2.4"/></svg><span class="sb-txt">DC Passport</span></a>
-    <a class="sb-link" href="dc-guide/"><svg viewBox="0 0 24 24"><rect x="5" y="3" width="14" height="18" rx="1"/><path d="M9 7h2M13 7h2M9 11h2M13 11h2M9 15h2M13 15h2"/></svg><span class="sb-txt">DC Guide</span></a>
-    <a class="sb-link" href="reset-2026/"><svg viewBox="0 0 24 24"><path d="M12 3l1.7 5L19 9.5l-5.3 1.5L12 16l-1.7-5L5 9.5 10.3 8Z"/></svg><span class="sb-txt">Mid-Year Pivot</span></a>
-  </nav>
-</aside>
+<script src="assets/shell.js"></script>
 
 <!-- ───────── MAIN ───────── -->
 <main class="main">
@@ -291,52 +307,56 @@ body.collapsed .sb-link{justify-content:center;padding:9px 0;}
     </div>
   </div>
 
-  <!-- ROW 1 — Growth flagship + obligations -->
+  <!-- ROW 1 — what gets used every day: bills + quick links -->
   <div class="grid">
-    <!-- Learning & Classes -->
-    <div class="tile lead c7" onclick="location.href='learning/'">
+    <!-- Bills due (finTrackerState2) -->
+    <div class="tile lead c7" onclick="location.href='finances/'">
       <div class="tile-head">
-        <div class="ttl"><span class="ey-dot"></span>Learning</div>
-        <div class="head-right"><span class="chip chip-mut" id="learn-chip">—</span><span class="go">→</span></div>
-      </div>
-      <div class="split">
-        <div>
-          <div class="col-hdr">Enrolled</div>
-          <div id="enrolled-list"></div>
-        </div>
-        <div>
-          <div class="col-hdr">Self-Study</div>
-          <div id="selfstudy-list"></div>
-        </div>
-      </div>
-      <div class="divider"></div>
-      <div style="display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;">
-        <div class="lang-strip">
-          <a class="lang-chip" href="language-portal/" onclick="event.stopPropagation()">Spanish <small>C1</small></a>
-          <a class="lang-chip" href="language-portal/" onclick="event.stopPropagation()">Portuguese <small>A1</small></a>
-        </div>
-        <div class="links" style="margin:0;">
-          <a class="lnk go-lnk" href="learning/" onclick="event.stopPropagation()">Learning Hub →</a>
-        </div>
-      </div>
-    </div>
-
-    <!-- Finances -->
-    <div class="tile c5" onclick="location.href='finances/'">
-      <div class="tile-head">
-        <div class="ttl"><span class="ey-dot"></span>Finances</div>
+        <div class="ttl"><span class="ey-dot"></span>Bills due</div>
         <div class="head-right"><span class="chip chip-mut" id="fin-chip">—</span><span class="go">→</span></div>
       </div>
       <div id="fin-list"></div>
-      <div class="divider"></div>
-      <div class="links">
-        <a class="lnk" href="https://login.sofi.com/" target="_blank" rel="noopener" onclick="event.stopPropagation()">SoFi ↗</a>
-        <a class="lnk" href="https://app.useorigin.com/" target="_blank" rel="noopener" onclick="event.stopPropagation()">Origin ↗</a>
+      <div class="fin-foot" id="fin-foot"></div>
+    </div>
+
+    <!-- Quick links (brain2QuickLinks1) -->
+    <div class="tile static c5" id="ql-tile">
+      <div class="tile-head">
+        <div class="ttl"><span class="ey-dot"></span>Quick links</div>
+        <div class="head-right"><button class="mini-btn" id="ql-edit" onclick="qlToggleEdit()">Edit</button></div>
       </div>
+      <div class="ql-grid" id="ql-grid"></div>
+      <form class="ql-add" id="ql-add" onsubmit="qlAdd(event)">
+        <input class="ql-in" id="ql-name" placeholder="Name" maxlength="40" autocomplete="off">
+        <input class="ql-in" id="ql-url" placeholder="https://…" autocomplete="off">
+        <button class="mini-btn solid" type="submit">Add</button>
+      </form>
+      <div class="ql-hint">Tip: press <b>Ctrl K</b> on any page to jump to these.</div>
     </div>
   </div>
 
-  <!-- ROW 2 — Fitness + Media -->
+  <!-- ROW 2 — growth: books & screen + language challenge -->
+  <div class="grid">
+    <!-- Reading & watching (mediaTracker3) -->
+    <div class="tile c7" onclick="location.href='media/'">
+      <div class="tile-head">
+        <div class="ttl"><span class="ey-dot"></span>Reading &amp; watching</div>
+        <div class="head-right"><span class="chip chip-mut" id="media-chip">—</span><span class="go">→</span></div>
+      </div>
+      <div id="media-list"></div>
+    </div>
+
+    <!-- Language challenge (langChallenge1) -->
+    <div class="tile c5" onclick="location.href='language-portal/'">
+      <div class="tile-head">
+        <div class="ttl"><span class="ey-dot"></span><span id="lc-title">Languages</span></div>
+        <div class="head-right"><span class="chip chip-mut" id="lc-chip">—</span><span class="go">→</span></div>
+      </div>
+      <div id="lc-body"></div>
+    </div>
+  </div>
+
+  <!-- ROW 3 — Fitness + Learning -->
   <div class="grid">
     <!-- Fitness -->
     <div class="tile c6" onclick="location.href='fitness/'">
@@ -349,17 +369,21 @@ body.collapsed .sb-link{justify-content:center;padding:9px 0;}
       <div id="nn-list"></div>
     </div>
 
-    <!-- Media -->
-    <div class="tile c6" onclick="location.href='media/'">
+    <!-- Learning & Classes -->
+    <div class="tile c6" onclick="location.href='learning/'">
       <div class="tile-head">
-        <div class="ttl"><span class="ey-dot"></span>Media</div>
-        <div class="head-right"><span class="go">→</span></div>
+        <div class="ttl"><span class="ey-dot"></span>Learning</div>
+        <div class="head-right"><span class="chip chip-mut" id="learn-chip">—</span><span class="go">→</span></div>
       </div>
-      <div id="media-list"></div>
+      <div class="col-hdr">Enrolled</div>
+      <div id="enrolled-list"></div>
+      <div class="divider"></div>
+      <div class="col-hdr">Self-Study</div>
+      <div id="selfstudy-list"></div>
     </div>
   </div>
 
-  <!-- ROW 3 — Meals (shopping) + DC Guide -->
+  <!-- ROW 4 — Meals (shopping) + DC Guide -->
   <div class="grid">
     <!-- Meals -->
     <div class="tile c6" onclick="location.href='meals/'">
@@ -368,10 +392,6 @@ body.collapsed .sb-link{justify-content:center;padding:9px 0;}
         <div class="head-right"><span class="chip chip-mut" id="meal-chip">—</span><span class="go">→</span></div>
       </div>
       <div id="shop-list"></div>
-      <div class="divider"></div>
-      <div class="links">
-        <a class="lnk" href="https://www.instacart.com/store" target="_blank" rel="noopener" onclick="event.stopPropagation()">Instacart ↗</a>
-      </div>
     </div>
 
     <!-- DC Guide -->
@@ -512,24 +532,97 @@ function dueStr(day){
   if(due<now)due=new Date(now.getFullYear(),now.getMonth()+1,day);
   return MS[due.getMonth()]+' '+due.getDate();
 }
+var FIN_SK='finTrackerState2';
+function finMonthKey(){var n=new Date();return n.getFullYear()+'-'+(n.getMonth()+1);}
+/* same rules as the Finances page: a new month clears every paid flag */
+function finLoad(){
+  var s=lsGet(FIN_SK); if(!s||!Array.isArray(s.cards))return null;
+  if(s.lastReset&&s.lastReset!==finMonthKey()){
+    s.cards.forEach(function(c){c.paid=false;c.paid2=false;});
+    s.lastReset=finMonthKey();
+    try{localStorage.setItem(FIN_SK,JSON.stringify(s));}catch(e){}
+  }
+  return s;
+}
+function finMarkPaid(id,which,ev){
+  ev.stopPropagation();
+  var s=finLoad(); if(!s)return;
+  var c=s.cards.find(function(x){return x.id===id;}); if(!c)return;
+  c[which]=!c[which];
+  s.lastReset=finMonthKey();
+  try{localStorage.setItem(FIN_SK,JSON.stringify(s));}catch(e){}
+  renderFinances();
+}
 function renderFinances(){
-  var s=lsGet('finTrackerState2'); var cards=(s&&s.cards)?s.cards:[];
-  var active=[];
+  var s=finLoad(); var cards=s?s.cards:[];
+  var el=document.getElementById('fin-list'), chip=document.getElementById('fin-chip'), foot=document.getElementById('fin-foot');
+  if(!s){
+    chip.textContent='set up';chip.className='chip chip-mut';
+    el.innerHTML=emptyRow('Open Finances once to load your cards — due dates will show up here.');
+    foot.innerHTML='';return;
+  }
+  var rows=[],paidCount=0,activeCount=0;
   cards.forEach(function(c){
-    if(!c.active)return;
-    if(c.day&&!c.paid)active.push({name:c.name,day:c.day,d:daysUntilDay(c.day)});
-    if(c.day2&&!c.paid2)active.push({name:c.name+' \u00b7 mid-cycle',day:c.day2,d:daysUntilDay(c.day2)});
+    if(!c.active)return; activeCount++;
+    if(c.paid)paidCount++;
+    if(c.day&&!c.paid)rows.push({c:c,kind:'Statement',which:'paid',day:c.day,d:daysUntilDay(c.day)});
+    if(c.day2&&!c.paid2)rows.push({c:c,kind:'Mid-cycle',which:'paid2',day:c.day2,d:daysUntilDay(c.day2)});
   });
-  active.sort(function(a,b){return a.d-b.d;});
-  document.getElementById('fin-chip').textContent=active.length?active.length+' upcoming':'all paid';
-  var el=document.getElementById('fin-list');
-  var top=active.slice(0,3);
-  if(!top.length){el.innerHTML=emptyRow('No upcoming payments — all caught up.');return;}
-  el.innerHTML=top.map(function(c){
-    var cls=c.d<=7?'chip-over':(c.d<=14?'chip-warn':'chip-ok');
-    return '<div class="due"><span class="due-name">'+esc(c.name)+'</span><span class="due-date">'+dueStr(c.day)+'</span><span class="chip '+cls+'">'+c.d+'d</span></div>';
+  rows.sort(function(a,b){return a.d-b.d;});
+  var soon=rows.filter(function(r){return r.d<=7;}).length;
+  chip.textContent=soon?soon+' due this week':(rows.length?'nothing urgent':'all paid');
+  chip.className='chip '+(soon?'chip-over':(rows.length?'chip-mut':'chip-ok'));
+  if(!rows.length){el.innerHTML=emptyRow('Every card is paid for this month. Nice.');}
+  else el.innerHTML=rows.slice(0,6).map(function(r){
+    var cls=r.d<=3?'chip-over':(r.d<=7?'chip-warn':'chip-mut');
+    var when=r.d===0?'today':(r.d===1?'tomorrow':'in '+r.d+'d');
+    var pay=r.c.url?'<a class="due-btn" href="'+esc(r.c.url)+'" target="_blank" rel="noopener" onclick="event.stopPropagation()">Pay ↗</a>':'';
+    return '<div class="due"><span class="due-dot" style="background:'+esc(r.c.color||'#d8cdea')+'"></span>'+
+      '<div class="due-main"><div class="due-name">'+esc(r.c.name)+'</div><div class="due-date">'+r.kind+' · '+dueStr(r.day)+'</div></div>'+
+      '<span class="chip '+cls+'">'+when+'</span>'+pay+
+      '<button class="due-check" title="Mark paid" aria-label="Mark '+esc(r.c.name)+' paid" onclick="finMarkPaid(\''+esc(r.c.id)+'\',\''+r.which+'\',event)">✓</button></div>';
+  }).join('')+(rows.length>6?'<div class="due-more">+'+(rows.length-6)+' more in Finances</div>':'');
+  var pct=activeCount?Math.round(paidCount/activeCount*100):0;
+  foot.innerHTML='<div class="fin-bar"><div style="width:'+pct+'%"></div></div><span>'+paidCount+' of '+activeCount+' statements paid this month</span>';
+}
+
+/* ───────── QUICK LINKS (brain2QuickLinks1 — also listed in the Ctrl K jump menu) ───────── */
+var QL_SK='brain2QuickLinks1';
+var QL_DEFAULT=[
+  {id:'q1',name:'SoFi',url:'https://login.sofi.com/'},
+  {id:'q2',name:'Origin',url:'https://app.useorigin.com/'},
+  {id:'q3',name:'Instacart',url:'https://www.instacart.com/store'},
+  {id:'q4',name:'AnkiWeb',url:'https://ankiweb.net/decks'},
+  {id:'q5',name:'Duolingo',url:'https://www.duolingo.com/learn'}
+];
+var qlEditing=false;
+function qlLoad(){var l=lsGet(QL_SK);if(!Array.isArray(l)){l=QL_DEFAULT.slice();qlSave(l);}return l;}
+function qlSave(l){try{localStorage.setItem(QL_SK,JSON.stringify(l));}catch(e){}}
+function qlHost(u){try{return new URL(u).hostname.replace(/^www\./,'');}catch(e){return '';}}
+function renderQuickLinks(){
+  var l=qlLoad(), g=document.getElementById('ql-grid');
+  document.getElementById('ql-tile').classList.toggle('editing',qlEditing);
+  document.getElementById('ql-edit').textContent=qlEditing?'Done':'Edit';
+  if(!l.length&&!qlEditing){g.innerHTML=emptyRow('No links yet — click Edit to add your go-to sites.');return;}
+  g.innerHTML=l.map(function(q,i){
+    var host=qlHost(q.url), letter=esc((q.name||host||'?').charAt(0).toUpperCase());
+    var fav=host?'<img src="https://icons.duckduckgo.com/ip3/'+esc(host)+'.ico" alt="" loading="lazy" onerror="this.remove()">':'';
+    return '<a class="ql" href="'+esc(q.url)+'" target="_blank" rel="noopener" title="'+esc(q.url)+'"'+(qlEditing?' onclick="event.preventDefault()"':'')+'>'+
+      '<span class="ql-ic"><span>'+letter+'</span>'+fav+'</span><span class="ql-n">'+esc(q.name||host)+'</span>'+
+      (qlEditing?'<span class="ql-ord"><button type="button" title="Move left" onclick="qlMove('+i+',-1)">‹</button><button type="button" title="Move right" onclick="qlMove('+i+',1)">›</button><button type="button" class="ql-x" title="Remove" onclick="qlRemove('+i+')">×</button></span>':'')+'</a>';
   }).join('');
 }
+function qlToggleEdit(){qlEditing=!qlEditing;renderQuickLinks();if(qlEditing)document.getElementById('ql-name').focus();}
+function qlAdd(e){
+  e.preventDefault();
+  var n=document.getElementById('ql-name'), u=document.getElementById('ql-url');
+  var url=u.value.trim(); if(!url){u.focus();return;}
+  if(!/^[a-z][a-z0-9+.-]*:/i.test(url))url='https://'+url;
+  var l=qlLoad(); l.push({id:'q'+Date.now().toString(36),name:n.value.trim()||qlHost(url),url:url}); qlSave(l);
+  n.value='';u.value='';n.focus();renderQuickLinks();
+}
+function qlRemove(i){var l=qlLoad();l.splice(i,1);qlSave(l);renderQuickLinks();}
+function qlMove(i,d){var l=qlLoad(),j=i+d;if(j<0||j>=l.length)return;var t=l[i];l[i]=l[j];l[j]=t;qlSave(l);renderQuickLinks();}
 
 /* ───────── FITNESS (fitnessTracker1_day_*) ───────── */
 var WO_MAP={
@@ -610,35 +703,100 @@ function pickRR(pools,limit){
   }
   return out;
 }
+var COVER_TONES=[['#efe6fb','#d9c8f3'],['#fbe7ea','#f2c9d1'],['#e5f0e8','#c6dfcd'],['#fbefdc','#f1d6ac'],['#e4eef6','#c4d8ea'],['#f4e7f3','#e3c6e1']];
+function coverTone(t){var h=0;t=String(t||'');for(var i=0;i<t.length;i++)h=(h*31+t.charCodeAt(i))>>>0;return COVER_TONES[h%COVER_TONES.length];}
+function coverHtml(it){
+  var tone=coverTone(it.title);
+  var gen='<span class="gen" style="background:linear-gradient(160deg,'+tone[0]+','+tone[1]+')"><b>'+esc(it.title)+'</b></span>';
+  return '<div class="cv">'+gen+(it.cover?'<img src="'+esc(it.cover)+'" alt="" loading="lazy" onerror="this.remove()">':'')+'</div>';
+}
+function mediaProgress(t,it){
+  if(t.key==='books'){
+    var tot=+it.pages||0, at=+it.progress||0;
+    if(tot&&at)return {pct:Math.min(100,Math.round(at/tot*100)),txt:'p. '+at+' of '+tot};
+    return {pct:null,txt:'Reading'};
+  }
+  if(t.key==='screen'){
+    if(SCREEN_SERIES.indexOf(it.category)>=0||it.kind==='tv')return {pct:null,txt:'S'+(it.season||1)+' · E'+(it.episode||1)};
+    return {pct:null,txt:'Watching'};
+  }
+  if(t.key==='videos'&&it.epCurrent)return {pct:null,txt:'Ep '+it.epCurrent};
+  return {pct:null,txt:t.labels.progress};
+}
 function renderMedia(){
   var d=lsGet('mediaTracker3')||{};
-  var inprogPools=[], queuedPools=[];
+  var now=[],next=[],yr=String(new Date().getFullYear()),readYr=0;
   MEDIA_TYPES.forEach(function(t){
-    var ip=[], q=[];
     (d[t.key]||[]).forEach(function(it){
-      if(it.status===t.prog)ip.push({t:t,it:it});
-      else if(it.status===t.queue)q.push({t:t,it:it});
+      if(it.status===t.prog)now.push({t:t,it:it});
+      else if(it.status===t.queue&&(t.key==='books'||t.key==='screen'))next.push({t:t,it:it});
+      if(t.key==='books'&&it.status==='done'&&String(it.date||'').slice(0,4)===yr)readYr++;
     });
-    inprogPools.push(ip); queuedPools.push(q);
   });
-  // one per medium first (round-robin) so each type gets a slot before any doubles up;
-  // in-progress always beats queued
-  var picks=pickRR(inprogPools,3);
-  if(picks.length<3)picks=picks.concat(pickRR(queuedPools,3-picks.length));
+  // books and screen first, then everything else
+  var ORDER={books:0,screen:1,videos:2,articles:3,music:4};
+  now.sort(function(a,b){return ORDER[a.t.key]-ORDER[b.t.key];});
+  var chip=document.getElementById('media-chip');
+  chip.textContent=readYr+' read in '+yr; chip.className='chip '+(readYr?'chip-ok':'chip-mut');
   var el=document.getElementById('media-list');
-  if(!picks.length){el.innerHTML=emptyRow('Nothing reading or queued yet — add something in the Media Tracker.');return;}
-  el.innerHTML=picks.map(function(p){
-    var it=p.it,t=p.t,isProg=(it.status===t.prog);
-    var label=t.labels[it.status]||'';
-    if(t.key==='screen'&&isProg)label=SCREEN_SERIES.indexOf(it.category)>=0?'Watching · S'+(it.season||1)+' E'+(it.episode||1):'Watching';
-    if(t.key==='videos'&&isProg&&it.epCurrent)label='Watching · Ep '+it.epCurrent;
-    var chipCls=isProg?'chip-ok':'chip-mut';
-    var inner=t.icon+(it.cover?'<img src="'+esc(it.cover)+'" alt="" onerror="this.style.display=\'none\'">':'');
-    var creator=it.creator?'<div class="media-a">'+esc(it.creator)+'</div>':'';
-    return '<div class="media-item"><div class="cover">'+inner+'</div>'+
-      '<div class="media-info"><div class="media-t">'+esc(it.title)+'</div>'+creator+
-      '<span class="chip '+chipCls+'">'+esc(label)+'</span></div></div>';
+  if(!now.length&&!next.length){el.innerHTML=emptyRow('Nothing on the go — add a book or a show in Books & Screen.');return;}
+  var shelf=(now.length?now:next).slice(0,4).map(function(p){
+    var it=p.it, isNow=p.it.status===p.t.prog, pr=isNow?mediaProgress(p.t,it):{pct:null,txt:'Up next'};
+    return '<div class="shelf-item">'+coverHtml(it)+
+      '<div class="sh-t">'+esc(it.title)+'</div>'+
+      (it.creator?'<div class="sh-a">'+esc(it.creator)+'</div>':'')+
+      (pr.pct!=null?'<div class="sh-bar"><div style="width:'+pr.pct+'%"></div></div>':'')+
+      '<div class="sh-p'+(isNow?' on':'')+'">'+esc(pr.txt)+'</div></div>';
   }).join('');
+  var upNext=now.length&&next.length?'<div class="up-next"><span>Up next</span>'+next.slice(0,3).map(function(p){return '<b>'+esc(p.it.title)+'</b>';}).join('<i>·</i>')+'</div>':'';
+  el.innerHTML='<div class="shelf">'+shelf+'</div>'+upNext;
+}
+
+/* ───────── LANGUAGE CHALLENGE (langChallenge1) ───────── */
+var LC_SK='langChallenge1';
+var LANG_NAMES={es:'Spanish',pt:'Portuguese',fr:'French',it:'Italian',de:'German',ja:'Japanese',ko:'Korean'};
+function lcDayNum(start){var d=new Date(start+'T00:00:00');return Math.floor((todayMidnight()-d)/86400000)+1;}
+function lcActive(db){if(!db||!Array.isArray(db.challenges))return null;return db.challenges.find(function(c){return c.id===db.active;})||null;}
+function lcToggle(tid,ev){
+  ev.stopPropagation();
+  var db=lsGet(LC_SK), c=lcActive(db); if(!c)return;
+  var k=dateKey(new Date()); c.days=c.days||{};
+  var day=c.days[k]||(c.days[k]={done:[]}); day.done=day.done||[];
+  var i=day.done.indexOf(tid); if(i>=0)day.done.splice(i,1); else day.done.push(tid);
+  try{localStorage.setItem(LC_SK,JSON.stringify(db));}catch(e){}
+  renderLang();
+}
+function lcStreak(c){
+  var n=0,d=todayMidnight(),ids=(c.tasks||[]).map(function(t){return t.id;});
+  function full(k){var x=(c.days||{})[k];return !!x&&ids.length>0&&ids.every(function(id){return (x.done||[]).indexOf(id)>=0;});}
+  if(!full(dateKey(d)))d.setDate(d.getDate()-1);     // today still in progress doesn't break the streak
+  while(full(dateKey(d))){n++;d.setDate(d.getDate()-1);}
+  return n;
+}
+function renderLang(){
+  var db=lsGet(LC_SK), c=lcActive(db), body=document.getElementById('lc-body'), chip=document.getElementById('lc-chip');
+  if(!c){
+    document.getElementById('lc-title').textContent='Languages';
+    chip.textContent='';
+    body.innerHTML='<div class="lc-cta"><div class="lc-cta-t">Start a 75-day challenge</div><div class="lc-cta-s">A short daily checklist — Anki, Duolingo, listening — ticked in one click. Flashcards you can study right here.</div>'+
+      '<div class="lang-strip"><span class="lang-chip">Spanish <small>C1</small></span><span class="lang-chip">Portuguese <small>A1</small></span></div></div>';
+    return;
+  }
+  var len=c.length||75, day=Math.max(1,Math.min(lcDayNum(c.start),len)), tasks=c.tasks||[];
+  var today=(c.days||{})[dateKey(new Date())]||{}, done=today.done||[];
+  var nDone=tasks.filter(function(t){return done.indexOf(t.id)>=0;}).length;
+  document.getElementById('lc-title').textContent=(LANG_NAMES[c.lang]||c.title||'Language');
+  chip.textContent=nDone+' / '+tasks.length+' today';
+  chip.className='chip '+(tasks.length&&nDone===tasks.length?'chip-ok':'chip-mut');
+  var streak=lcStreak(c);
+  body.innerHTML='<div class="lc-hero"><div class="lc-day">Day <b>'+day+'</b><span> / '+len+'</span></div>'+
+      '<div class="lc-streak">'+(streak?'🔥 '+streak+'-day streak':'Start today’s streak')+'</div></div>'+
+      '<div class="lc-bar"><div style="width:'+Math.round(day/len*100)+'%"></div></div>'+
+      tasks.map(function(t){
+        var on=done.indexOf(t.id)>=0;
+        var open=t.url?'<a class="lc-open" href="'+esc(t.url)+'" target="_blank" rel="noopener" onclick="event.stopPropagation()">Open ↗</a>':'';
+        return '<div class="nn'+(on?' done':'')+'" onclick="lcToggle(\''+esc(t.id)+'\',event)"><span class="box">'+(on?'✓':'')+'</span><span class="lc-l">'+esc(t.label)+'</span>'+open+'</div>';
+      }).join('');
 }
 
 /* ───────── DC GUIDE (dcGuide1) ───────── */
@@ -869,6 +1027,8 @@ safe(loadHpCats);
 safe(renderHero);
 safe(renderLearning);
 safe(renderFinances);
+safe(renderQuickLinks);
+safe(renderLang);
 safe(renderFitness);
 safe(renderMeals);
 safe(renderMedia);
