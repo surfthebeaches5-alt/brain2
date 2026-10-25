@@ -67,7 +67,7 @@
     {label:'Plan',pages:[
       {p:'weekly-audit/',label:'Weekly Audit',sub:'Brain dump, wins, life wheel',icon:'audit'},
       {p:'monthly/',label:'Monthly Planner',sub:'Focus & goals',icon:'monthly'},
-      {p:'reset-2026/',label:'Mid-Year Pivot',sub:'H2 2026 vision',icon:'pivot'}]},
+      {p:'reset-2026/',label:'Season Reset',sub:'Reset any time',icon:'pivot'}]},
     {label:'Money',pages:[
       {p:'finances/',label:'Finances',sub:'Cards, due dates, accounts',icon:'finances'},
       {p:'wishlist/',label:'Wishlist',sub:'Things you want',icon:'wishlist'}]},

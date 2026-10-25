@@ -3,169 +3,279 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Mid-Year Pivot 2026</title>
+<title>Season Reset</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,ital,wght@9..144,0,500;9..144,0,600;9..144,0,700;9..144,1,400;9..144,1,500&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,ital,wght@9..144,0,400;9..144,0,500;9..144,0,600;9..144,0,700;9..144,1,400;9..144,1,500&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
 *{box-sizing:border-box;margin:0;padding:0;}
-:root{
-  --bg:#f3ecd8;--surface:#fff;--sidebar:#f8f1dd;--sidebar-line:#e6dec5;
-  --ink:#1a1612;--muted:#7a7468;--line:#ececec;--warm:#faf6ec;
-  --accent:#c9b6ee;--accent-deep:#b099e0;--accent-soft:#ede5fb;
-  --paper:#fdfaf4;--paper-line:#e8e0cc;
-}
 html,body{background:var(--bg);overflow-x:hidden;font-family:var(--b2-sans);color:var(--ink);min-height:100vh;-webkit-font-smoothing:antialiased;}
+button{font-family:inherit;cursor:pointer;}
+[hidden]{display:none !important;}
 
-/* TOPBAR (brain.css turns it into the shared title row) */
-.topbar{display:flex;align-items:center;justify-content:space-between;}
-.topbar-left{display:flex;align-items:center;gap:14px;}
-.back-btn{display:inline-flex;align-items:center;gap:6px;padding:7px 14px;border:1px solid var(--line);border-radius:20px;font-size:12px;color:var(--muted);background:transparent;font-family:inherit;text-decoration:none;}
-.topbar-title{font-family:var(--b2-serif);font-size:22px;font-weight:600;letter-spacing:-0.4px;}
-.topbar-right{display:flex;align-items:center;gap:10px;}
-.topbar-date{font-size:11px;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted);font-weight:500;}
-.pdf-btn{display:inline-flex;align-items:center;gap:6px;height:34px;padding:0 15px;border:1px solid var(--line);border-radius:10px;font:650 12.5px var(--b2-sans);color:var(--ink-2);cursor:pointer;background:var(--raised);white-space:nowrap;transition:border-color .15s,color .15s;}
-.pdf-btn:hover{border-color:var(--accent-line);color:var(--ink);}
-.pdf-btn svg{width:13px;height:13px;}
+.hub{max-width:1280px;margin:0 auto;padding:22px 40px 80px;width:100%;}
 
-/* PAGE TABS — the shared segmented control (sits in the title row) */
-.tab-bar{background:none;border:none;position:static;}
-.tab-bar-inner{display:inline-flex;align-items:center;gap:2px;padding:4px;background:var(--warm-deep);border-radius:13px;}
-.tab-btn{padding:8px 16px;display:inline-flex;align-items:center;gap:7px;font:650 13px var(--b2-sans);cursor:pointer;border:none;background:transparent;color:var(--muted);border-radius:10px;transition:color .15s,background .15s;white-space:nowrap;}
-.tab-btn:hover{color:var(--ink);}
-.tab-btn.active{background:var(--raised);color:var(--ink);box-shadow:0 1px 3px rgba(60,50,30,.1);}
-.tab-btn svg{display:none;}
-.phase-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0;}
-.saved-ind{font-size:12px;color:var(--ok);font-weight:650;white-space:nowrap;}
+/* header inside a reset */
+.ttl-wrap{min-width:0;}
+.back-link{display:inline-flex;align-items:center;gap:4px;font:650 12.5px var(--b2-sans);color:var(--muted);text-decoration:none;margin-bottom:10px;background:none;border:none;padding:0;}
+.back-link:hover{color:var(--ink);}
+.ttl{display:flex;align-items:baseline;gap:14px;min-width:0;}
+.ttl .dates{font:600 14px var(--b2-sans);color:var(--muted);white-space:nowrap;}
+.icon-btn{width:30px;height:30px;border-radius:9px;border:1px solid transparent;background:transparent;color:var(--faint);display:inline-flex;align-items:center;justify-content:center;align-self:center;flex-shrink:0;transition:color .15s,border-color .15s,background .15s;}
+.icon-btn:hover{color:var(--accent-deep);border-color:var(--accent-line);background:var(--raised);}
+.icon-btn svg{width:15px;height:15px;}
 
-/* FRAME — aligned with the title row; the document is one left-aligned card */
-.hub-wrap{max-width:1280px;margin:0 auto;padding:20px 40px 80px;box-sizing:border-box;width:100%;}
-.paper{max-width:960px;background:var(--surface);border:1px solid var(--line);border-radius:18px;padding:34px 40px 44px;box-shadow:0 1px 2px rgba(60,50,30,.04),0 8px 24px rgba(60,50,30,.05);min-height:600px;}
+/* buttons */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:7px;height:36px;padding:0 16px;border-radius:10px;font:650 13px var(--b2-sans);border:1px solid var(--line);background:var(--raised);color:var(--ink-2);white-space:nowrap;text-decoration:none;transition:border-color .15s,color .15s,transform .15s;}
+.btn:hover{border-color:var(--accent-line);color:var(--ink);}
+.btn.primary{background:var(--ink);border-color:var(--ink);color:#fff;}
+.btn.primary:hover{transform:translateY(-1px);color:#fff;}
+.btn.ghost{background:transparent;border-color:transparent;color:var(--muted);}
+.btn.ghost:hover{color:var(--ink);}
+.btn.danger{background:transparent;border-color:transparent;color:var(--muted);margin-right:auto;}
+.btn.danger:hover{color:var(--over);background:var(--over-bg);}
+.btn svg{width:14px;height:14px;}
+.btn:focus-visible,.step:focus-visible,.why:focus-visible,.pill:focus-visible,.ck .box:focus-visible,.rs:focus-visible,.date:focus-visible,.icon-btn:focus-visible,.textlink:focus-visible,.sw:focus-visible{outline:2px solid var(--accent);outline-offset:2px;}
 
-.page{display:none;}.page.active{display:block;}
+/* step tabs (same as Weekly Audit) */
+.steps{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;}
+.step{display:flex;align-items:center;gap:12px;padding:14px 16px;border-radius:14px;background:var(--surface);border:1px solid var(--line);min-width:0;text-align:left;color:var(--ink);transition:border-color .15s,box-shadow .15s;}
+.step:hover{border-color:var(--accent-line);}
+.step .n{width:30px;height:30px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:13px;background:var(--warm);color:var(--muted);flex-shrink:0;}
+.step .n svg{width:14px;height:14px;}
+.step-txt{min-width:0;}
+.step b{display:block;font-size:14.5px;font-weight:700;}
+.step small{display:block;font-size:12px;color:var(--muted);font-weight:550;margin-top:1px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.step.on{border-color:var(--accent-line);box-shadow:0 0 0 3px var(--accent-soft);}
+.step.on .n{background:var(--accent-deep);color:#fff;}
+.step.done .n{background:var(--ok-soft);color:var(--ok);}
+.lead{font-size:13.5px;color:var(--muted);margin:16px 0 20px;}
+.panel{display:none;}
+.panel.on{display:block;}
 
-/* COVER */
-.cover{text-align:center;padding:22px 0 36px;border-bottom:1px solid var(--hair);margin-bottom:28px;}
-.cover-eyebrow{font-size:10.5px;letter-spacing:.24em;text-transform:uppercase;color:var(--muted);font-weight:750;margin-bottom:14px;}
-.cover-title{font-family:var(--b2-serif);font-size:3.6rem;font-weight:500;letter-spacing:-1px;line-height:1.05;color:var(--ink);}
-.cover-title em{font-style:italic;color:var(--accent-deep);}
-.cover-sub{font-size:10.5px;letter-spacing:.2em;text-transform:uppercase;color:var(--muted);font-weight:750;margin-top:14px;}
-.cover-key{font-size:12px;color:var(--muted);margin-top:10px;}
-.cover-ornament{color:var(--accent);font-size:.9rem;letter-spacing:10px;margin-top:20px;}
-.cover-quote{font-family:var(--b2-serif);font-size:15px;font-style:italic;color:var(--ink-2);line-height:1.8;max-width:540px;margin:26px auto 0;}
-.cover-fields{background:var(--warm);border:1px solid var(--hair);border-radius:14px;padding:20px 22px;margin-top:0;display:flex;flex-direction:column;gap:14px;text-align:left;}
-.cover-field-label{font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--muted);font-weight:750;margin-bottom:6px;}
+/* grid + cards */
+.grid{display:grid;grid-template-columns:repeat(12,minmax(0,1fr));gap:20px;align-items:start;}
+.s5{grid-column:span 5;}.s6{grid-column:span 6;}.s7{grid-column:span 7;}.s12{grid-column:span 12;}
+.stretch{align-self:stretch;}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:18px;padding:26px 28px 28px;box-shadow:0 1px 2px rgba(60,50,30,.04),0 8px 24px rgba(60,50,30,.05);min-width:0;}
+.card-h{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:20px;}
+.card-t{font-family:var(--b2-serif);font-size:20px;font-weight:600;letter-spacing:-.2px;}
+.card-m{font-size:12.5px;color:var(--muted);font-weight:600;white-space:nowrap;}
+.hint{font-size:13px;color:var(--muted);margin:-12px 0 20px;}
 
-/* CHAPTER HEADER */
-.chapter-hdr{margin-bottom:28px;padding-bottom:22px;border-bottom:1px solid var(--hair);}
-.chapter-eyebrow{font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--muted);font-weight:750;margin-bottom:8px;}
-.chapter-title{font-family:var(--b2-serif);font-size:2.2rem;font-weight:500;letter-spacing:-0.8px;line-height:1.1;color:var(--ink);}
-.chapter-title em{font-style:italic;color:var(--accent-deep);}
-.chapter-desc{font-size:13.5px;color:var(--ink-2);line-height:1.7;margin-top:10px;max-width:620px;}
+/* "why this?" toggle */
+.why{display:inline-flex;align-items:center;gap:6px;height:26px;padding:0 10px 0 8px;border-radius:20px;border:1px solid var(--line);background:transparent;font:650 11.5px var(--b2-sans);color:var(--muted);white-space:nowrap;flex-shrink:0;transition:color .15s,border-color .15s,background .15s;}
+.why:hover{color:var(--accent-deep);border-color:var(--accent-line);}
+.why i{width:15px;height:15px;border-radius:50%;border:1.4px solid currentColor;font:800 9px/12px var(--b2-serif);font-style:italic;text-align:center;}
+.why.on{background:var(--accent-soft);border-color:var(--accent-line);color:var(--accent-deep);}
+.why-box{background:var(--warm);border-radius:12px;padding:12px 16px;font-size:13px;line-height:1.6;color:var(--ink-2);margin:-6px 0 22px;}
 
-/* SECTIONS */
-.section{margin-bottom:34px;}
-.section-hdr{display:flex;align-items:center;gap:10px;margin-bottom:8px;}
-.section-badge{background:var(--accent-soft);color:var(--accent-deep);font-size:11px;font-weight:700;padding:3px 9px;border-radius:20px;}
-.section-title{font-family:var(--b2-serif);font-size:19px;font-weight:600;letter-spacing:-.2px;}
-.section-sub{font-size:12.5px;color:var(--muted);margin-bottom:14px;line-height:1.6;}
-
-/* WRITE FIELDS */
-.f-label{font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--muted);font-weight:750;margin-bottom:7px;margin-top:16px;display:block;line-height:1.5;}
-.f-label:first-child{margin-top:0;}
-.write{background:var(--raised);border:1px solid var(--line);border-radius:10px;padding:9px 12px;font:500 13px/1.65 var(--b2-sans);color:var(--ink);outline:none;width:100%;min-height:44px;resize:none;overflow:hidden;display:block;transition:border-color .15s,box-shadow .15s;}
+/* fields */
+.lab{display:block;font-size:13px;font-weight:650;color:var(--ink-2);margin:0 0 8px;line-height:1.4;}
+.f + .f{margin-top:22px;}
+.cols2 > .f,.cols3 > .f,.cols4 > .f{margin-top:0;}
+.write{display:block;background:var(--raised);border:1px solid var(--line);border-radius:12px;padding:11px 14px;font:500 13.5px/1.6 var(--b2-sans);color:var(--ink);width:100%;min-height:84px;resize:none;overflow:hidden;outline:none;transition:border-color .15s,box-shadow .15s;}
 .write:focus{border-color:var(--accent-line);box-shadow:0 0 0 3px var(--accent-soft);}
 .write::placeholder{color:var(--faint);}
-.write.sh{min-height:60px;}
-.write.md{min-height:90px;}
-.write.tall{min-height:130px;}
-.write.letter{min-height:200px;font-family:var(--b2-serif);font-style:italic;font-size:15px;line-height:1.9;}
-.write.cover-write{min-height:44px;}
+.write.one{min-height:44px;}
+.write.tall{min-height:120px;}
+.write.serif{font-family:var(--b2-serif);font-size:16px;line-height:1.6;}
+.write.letter{min-height:178px;}
+.write.mission{font-family:var(--b2-serif);font-style:italic;font-size:18px;line-height:1.55;background:var(--warm);border-color:var(--warm);min-height:60px;padding:14px 18px;}
+.write.mission:focus{background:var(--raised);}
+.cols2{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:22px 24px;}
+.cols3{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:22px 20px;}
+.cols4{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:22px 18px;}
+.gap-t{margin-top:24px;}
+.narrow{max-width:420px;}
 
-/* GRIDS + CARDS */
-.two-col{display:grid;grid-template-columns:1fr 1fr;gap:18px;}
-.three-col{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px;}
-.col-card{background:var(--warm);border:1px solid var(--hair);border-radius:14px;padding:16px 18px;}
-.col-card-title{font-family:var(--b2-serif);font-size:17px;font-weight:600;letter-spacing:-.2px;margin-bottom:3px;}
-.col-card-sub{font-size:12px;color:var(--muted);margin-bottom:10px;line-height:1.45;}
+/* wins */
+.li{display:flex;gap:12px;align-items:flex-start;padding:6px 0;}
+.li + .li{border-top:1px solid var(--hair);}
+.li .dot{width:6px;height:6px;border-radius:50%;background:var(--accent);flex-shrink:0;margin-top:15px;}
+.li .wt{flex:1;min-width:0;border:none;background:transparent;font:550 14px/1.5 var(--b2-sans);color:var(--ink);outline:none;padding:5px 4px;border-radius:8px;resize:none;overflow:hidden;min-height:31px;}
+.li .wt:focus{background:var(--raised);box-shadow:0 0 0 3px var(--accent-soft);}
+.li .x{background:none;border:none;font-size:11px;color:var(--faint);padding:4px 6px;border-radius:6px;margin-top:5px;opacity:0;transition:opacity .15s,color .15s,background .15s;}
+.li:hover .x,.li .x:focus,.li:focus-within .x{opacity:1;}
+.li .x:hover{color:var(--over);background:var(--over-bg);}
+.addrow{display:flex;align-items:center;gap:8px;margin-top:10px;padding:0 12px;height:40px;border-radius:10px;border:1.5px dashed var(--line);transition:border-color .15s,background .15s;}
+.addrow:focus-within{border-color:var(--accent-line);border-style:solid;background:var(--raised);}
+.addrow b{color:var(--accent-deep);font-weight:700;}
+.addrow input{flex:1;min-width:0;border:none;background:transparent;outline:none;font:500 13px var(--b2-sans);color:var(--ink);}
+.addrow input::placeholder{color:var(--faint);}
+.textlink{font:650 12.5px var(--b2-sans);color:var(--accent-deep);background:none;border:none;padding:2px 0;white-space:nowrap;}
+.textlink:hover{text-decoration:underline;text-underline-offset:2px;}
 
-/* WINS */
-.win-list{display:flex;flex-direction:column;gap:6px;margin-bottom:8px;}
-.win-row{display:flex;align-items:flex-start;gap:10px;padding:6px 10px;background:var(--warm);border:1px solid var(--hair);border-radius:10px;}
-.win-bullet{color:var(--accent-deep);font-size:13px;flex-shrink:0;padding-top:4px;}
-.win-text{flex:1;border:none;background:transparent;font:550 13.5px/1.5 var(--b2-sans);color:var(--ink);outline:none;padding:3px 2px;resize:none;overflow:hidden;min-height:27px;}
-.win-text::placeholder{color:var(--faint);}
-.win-row:focus-within{border-color:var(--accent-line);background:var(--raised);box-shadow:0 0 0 3px var(--accent-soft);}
-.win-del{background:none;border:none;color:var(--faint);cursor:pointer;font-size:11px;padding:2px 5px;flex-shrink:0;margin-top:4px;border-radius:5px;transition:all .15s;}
-.win-del:hover{color:var(--over);background:var(--over-bg);}
-.add-win{display:inline-flex;align-items:center;height:28px;padding:0 11px;border-radius:8px;font:650 11.5px var(--b2-sans);color:var(--accent-deep);background:var(--accent-soft);border:1px solid var(--accent-line);cursor:pointer;margin-top:4px;}
-.add-win:hover{background:var(--accent-line);}
+/* rows: label | field */
+.row{display:grid;grid-template-columns:132px minmax(0,1fr);gap:14px;align-items:center;}
+.row + .row{margin-top:10px;}
+.row .k,.row3 .k{font-size:13px;font-weight:650;color:var(--ink-2);}
+.row3{display:grid;grid-template-columns:104px minmax(0,1fr) minmax(0,1fr);gap:10px;align-items:center;}
+.row3 + .row3{margin-top:10px;}
+.row3-h{display:grid;grid-template-columns:104px minmax(0,1fr) minmax(0,1fr);gap:10px;margin-bottom:8px;font-size:12px;font-weight:700;color:var(--muted);}
+.row3-h span:nth-child(3)::before{content:"→ ";color:var(--accent-deep);}
 
-/* MANIFESTO / MISSION */
-.manifesto-card{background:var(--accent-soft);border:1px solid var(--accent-line);border-radius:14px;padding:20px 22px;margin-bottom:18px;}
-.manifesto-intro{font-family:var(--b2-serif);font-size:16px;font-style:italic;color:var(--accent-deep);margin-bottom:14px;}
-.future-row{display:flex;gap:14px;align-items:flex-start;margin-bottom:10px;}
-.future-row:last-child{margin-bottom:0;}
-.future-prompt{font-size:10.5px;font-weight:750;text-transform:uppercase;letter-spacing:.12em;color:var(--muted);min-width:150px;padding-top:11px;flex-shrink:0;}
-.future-write{flex:1;border:1px solid var(--accent-line);border-radius:10px;background:var(--raised);font-family:var(--b2-serif);font-style:italic;font-size:14px;color:var(--ink);outline:none;padding:8px 12px;resize:none;overflow:hidden;line-height:1.6;min-height:40px;}
-.future-write::placeholder{color:var(--faint);}
-.future-write:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(255,255,255,.7);}
-.mission-box{background:var(--warm);border:1px solid var(--hair);border-radius:14px;padding:22px 26px;text-align:center;margin:18px 0;}
-.mission-label{font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--accent-deep);font-weight:750;margin-bottom:8px;display:block;}
+/* first 30 days (Vision) */
+.act{display:grid;grid-template-columns:26px minmax(0,1fr) 92px;gap:12px;align-items:center;}
+.act + .act{margin-top:10px;}
+.act .date{width:100%;}
+.act .n{font-family:var(--b2-serif);font-size:18px;font-weight:600;color:var(--accent-deep);text-align:center;}
+.date{position:relative;display:inline-flex;justify-content:center;align-items:center;gap:6px;height:44px;padding:0 12px;border-radius:12px;border:1px solid var(--line);background:var(--raised);font:600 12.5px var(--b2-sans);color:var(--ink-2);white-space:nowrap;transition:border-color .15s;}
+.date:hover{border-color:var(--accent-line);}
+.date.ph{color:var(--faint);}
+.date svg{width:14px;height:14px;color:var(--muted);flex-shrink:0;}
+.date input{position:absolute;left:0;bottom:0;width:100%;height:100%;opacity:0;pointer-events:none;border:0;padding:0;}
 
-/* REBRAND H1->H2 (rose = leaving, green = stepping into) */
-.rebrand-row{display:grid;grid-template-columns:1fr 1fr;margin-bottom:10px;border-radius:14px;overflow:hidden;border:1px solid var(--hair);}
-.rebrand-h1{background:var(--over-bg);padding:14px 16px;border-right:1px solid var(--hair);}
-.rebrand-h2{background:var(--ok-bg);padding:14px 16px;}
-.rebrand-label{font-size:10.5px;font-weight:750;text-transform:uppercase;letter-spacing:.12em;color:var(--ink-2);margin-bottom:8px;display:flex;align-items:center;gap:6px;}
-.rebrand-h1 .rebrand-label svg{color:var(--over);}
-.rebrand-h2 .rebrand-label svg{color:var(--ok);}
+.nextbar{display:flex;justify-content:space-between;align-items:center;margin-top:26px;}
 
-/* AUDIT / AESTHETIC GRIDS */
-.audit-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
-.audit-item{background:var(--warm);border:1px solid var(--hair);border-radius:14px;padding:14px 16px;}
-.audit-area{font-size:10.5px;font-weight:750;text-transform:uppercase;letter-spacing:.12em;color:var(--accent-deep);margin-bottom:8px;display:flex;align-items:center;gap:6px;}
-.aesthetic-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;}
-.aesthetic-item{background:var(--warm);border:1px solid var(--hair);border-radius:14px;padding:14px 16px;}
-.aesthetic-label{font-size:10.5px;font-weight:750;text-transform:uppercase;letter-spacing:.12em;color:var(--accent-deep);margin-bottom:8px;display:flex;align-items:center;gap:6px;}
-.audit-area svg,.aesthetic-label svg,.rebrand-label svg,.boundary-label svg{flex-shrink:0;}
+/* landing */
+.cur-eyebrow{display:block;font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--accent-deep);font-weight:750;}
+.cur-name{font-family:var(--b2-serif);font-size:42px;font-weight:600;letter-spacing:-1px;line-height:1.05;margin:10px 0 6px;overflow-wrap:anywhere;}
+.cur-dates{font-size:14px;color:var(--muted);font-weight:600;}
+.bar4{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px;margin:30px 0 8px;}
+.bar4 i,.mini4 i{display:block;border-radius:5px;background:var(--warm-2);}
+.bar4 i{height:8px;}
+.bar4 i.d,.mini4 i.d{background:var(--ok);opacity:.55;}
+.bar4 i.c,.mini4 i.c{background:linear-gradient(90deg,var(--accent-deep) 0 var(--p,50%),var(--warm-2) var(--p,50%));}
+.bar4-l{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px;font-size:12px;font-weight:650;color:var(--muted);}
+.bar4-l span.c{color:var(--ink);}
+.cur-acts{margin-top:30px;display:flex;gap:10px;}
 
-/* HARD BOUNDARY */
-.boundary-box{background:var(--warn-bg);border:1px solid var(--warn-bg);border-radius:14px;padding:16px 18px;margin-top:18px;}
-.boundary-label{font-size:10.5px;font-weight:750;text-transform:uppercase;letter-spacing:.12em;color:var(--warn);margin-bottom:8px;display:flex;align-items:center;gap:6px;}
-.boundary-note{font-size:12.5px;color:var(--ink-2);margin-bottom:10px;line-height:1.55;}
+.ck{display:flex;align-items:center;gap:12px;padding:12px 0;font-size:14px;font-weight:600;}
+.ck + .ck{border-top:1px solid var(--hair);}
+.ck .box{width:19px;height:19px;border-radius:6px;border:1.5px solid var(--faint);flex-shrink:0;display:flex;align-items:center;justify-content:center;color:#fff;background:transparent;padding:0;transition:border-color .15s,background .15s;}
+.ck .box:hover{border-color:var(--ok);}
+.ck .box svg{width:12px;height:12px;}
+.ck .box.on{background:var(--ok);border-color:var(--ok);}
+.ck .tx{min-width:0;overflow-wrap:anywhere;}
+.ck.done .tx{color:var(--muted);text-decoration:line-through;text-decoration-color:var(--faint);}
+.ck .when{margin-left:auto;font-size:12px;color:var(--muted);font-weight:650;white-space:nowrap;padding-left:8px;}
+.empty-line{font-size:13.5px;color:var(--muted);line-height:1.55;}
+.empty-line .textlink{font-size:13.5px;}
 
-/* FIRST 30 DAYS */
-.thirty-day-card{background:var(--warm);border:1px solid var(--hair);border-radius:14px;padding:18px 20px;margin-top:6px;}
-.thirty-label{font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--muted);font-weight:750;margin-bottom:14px;}
-.thirty-row{display:flex;align-items:flex-start;gap:12px;margin-bottom:10px;}
-.thirty-row:last-child{margin-bottom:0;}
-.thirty-num{width:28px;height:28px;border-radius:8px;background:var(--ink);color:#fff;font-size:12px;font-weight:800;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:6px;}
-.thirty-write{flex:1;border:1px solid var(--line);border-radius:10px;background:var(--raised);font:600 13px/1.5 var(--b2-sans);color:var(--ink);outline:none;padding:9px 12px;resize:none;overflow:hidden;min-height:40px;}
-.thirty-write::placeholder{color:var(--faint);font-weight:500;}
-.thirty-write:focus{border-color:var(--accent-line);box-shadow:0 0 0 3px var(--accent-soft);}
+.rs{display:grid;grid-template-columns:minmax(0,1fr) 220px 110px 70px;gap:20px;align-items:center;padding:16px 0;width:100%;border:none;background:none;text-align:left;color:var(--ink);font:inherit;border-radius:0;}
+.rs + .rs{border-top:1px solid var(--hair);}
+.rs:hover .nm{color:var(--accent-deep);}
+.rs .nm{font-family:var(--b2-serif);font-size:17px;font-weight:600;letter-spacing:-.2px;display:flex;align-items:center;gap:10px;min-width:0;transition:color .15s;}
+.rs .nm span.t{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.rs .dt{font-size:12.5px;color:var(--muted);font-weight:600;margin-top:3px;}
+.mini4{display:flex;gap:4px;}
+.mini4 i{flex:1;height:6px;border-radius:4px;}
+.rs .st{font-size:12.5px;color:var(--muted);font-weight:600;}
+.rs .open{font:700 12.5px var(--b2-sans);color:var(--accent-deep);text-align:right;}
+.chip{display:inline-flex;align-items:center;font:700 10.5px var(--b2-sans);padding:3px 8px;border-radius:20px;background:var(--accent-soft);color:var(--accent-deep);flex-shrink:0;}
 
-hr.rule{border:none;border-top:1px solid var(--hair);margin:28px 0;}
-.ornament{text-align:center;color:var(--accent);font-size:.9rem;letter-spacing:10px;margin-top:30px;}
+/* modal */
+.scrim{position:fixed;inset:0;background:rgba(36,31,23,.32);z-index:1000;display:flex;align-items:flex-start;justify-content:center;padding:96px 16px 24px;overflow-y:auto;}
+.modal{width:590px;max-width:100%;background:var(--surface);border:1px solid var(--line);border-radius:20px;box-shadow:0 30px 80px rgba(40,30,15,.22);padding:28px 30px 24px;}
+.modal-h{display:flex;align-items:center;justify-content:space-between;margin-bottom:24px;}
+.modal-h .card-t{font-size:24px;}
+.x-btn{width:32px;height:32px;border-radius:10px;border:none;background:var(--warm);color:var(--muted);font-size:18px;line-height:1;}
+.x-btn:hover{color:var(--ink);background:var(--warm-2);}
+.input{height:44px;width:100%;border:1px solid var(--line);background:var(--raised);border-radius:12px;padding:0 14px;display:flex;align-items:center;font:500 14px var(--b2-sans);color:var(--ink);outline:none;transition:border-color .15s,box-shadow .15s;}
+.input::placeholder{color:var(--faint);}
+.input:focus,.input:focus-within{border-color:var(--accent-line);box-shadow:0 0 0 3px var(--accent-soft);}
+.input.date{font:500 14px var(--b2-sans);color:var(--ink);gap:9px;justify-content:flex-start;}
+.input.date svg{width:15px;height:15px;}
+.pills{display:flex;flex-wrap:wrap;gap:7px;}
+.pill{font:650 12.5px var(--b2-sans);padding:7px 13px;border-radius:20px;border:1px solid var(--line);color:var(--ink-2);background:var(--raised);transition:border-color .15s;}
+.pill:hover{border-color:var(--accent-line);}
+.pill.on{background:var(--ink);border-color:var(--ink);color:#fff;}
+.m-f + .m-f{margin-top:22px;}
+.m-row{display:grid;grid-template-columns:150px minmax(0,1fr);gap:16px;}
+.ends{font-size:12px;color:var(--muted);font-weight:600;margin-top:8px;}
+.tog{display:flex;align-items:center;gap:12px;margin-top:24px;padding:14px 16px;border-radius:12px;background:var(--warm);font-size:13px;font-weight:650;color:var(--ink-2);cursor:pointer;}
+.tog small{display:block;font-size:12px;color:var(--muted);font-weight:550;margin-top:2px;}
+.sw{width:34px;height:20px;border-radius:12px;background:var(--warm-2);position:relative;border:1px solid var(--line);flex-shrink:0;margin-left:auto;padding:0;transition:background .15s,border-color .15s;}
+.sw::after{content:"";position:absolute;left:2px;top:2px;width:14px;height:14px;border-radius:50%;background:#fff;box-shadow:0 1px 2px rgba(0,0,0,.2);transition:left .15s;}
+.sw[aria-checked="true"]{background:var(--accent-deep);border-color:var(--accent-deep);}
+.sw[aria-checked="true"]::after{left:16px;}
+.modal-f{display:flex;justify-content:flex-end;gap:8px;margin-top:26px;}
+
+/* toast */
+.toast{position:fixed;left:50%;bottom:28px;transform:translateX(-50%);background:var(--ink);color:#fff;padding:10px 16px;border-radius:12px;font:650 13px var(--b2-sans);box-shadow:0 12px 30px rgba(36,31,23,.25);z-index:1200;opacity:0;transition:opacity .2s;pointer-events:none;display:flex;align-items:center;gap:14px;max-width:calc(100vw - 32px);}
+.toast.show{opacity:1;pointer-events:auto;}
+.toast button{border:0;background:none;color:#cbb9f2;font:750 13px var(--b2-sans);padding:0;text-decoration:underline;text-underline-offset:2px;}
+.toast button:hover{color:#fff;}
 
 @media(max-width:1100px){
   body.b2-shell .topbar{flex-wrap:wrap;}
+  .cols4{grid-template-columns:repeat(2,minmax(0,1fr));}
+  .rs{grid-template-columns:minmax(0,1fr) 160px 90px 60px;gap:14px;}
 }
-@media(max-width:700px){
-  .hub-wrap{padding:16px 16px 60px;}
-  .paper{padding:24px 18px 32px;}
-  .two-col,.three-col,.aesthetic-grid,.audit-grid{grid-template-columns:1fr;}
-  .rebrand-row{grid-template-columns:1fr;}
-  .rebrand-h1{border-right:none;border-bottom:1px solid var(--hair);}
-  .cover-title{font-size:2.8rem;}
+@media(max-width:980px){
+  .grid > *{grid-column:span 12;}
 }
+@media(max-width:760px){
+  .hub{padding:16px 16px 60px;}
+  .card{padding:20px 18px 22px;}
+  .steps{grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;}
+  .step{padding:10px;gap:8px;}
+  .cols2,.cols3,.cols4{grid-template-columns:minmax(0,1fr);}
+  .row{grid-template-columns:minmax(0,1fr);gap:6px;}
+  .row3,.row3-h{grid-template-columns:72px minmax(0,1fr) minmax(0,1fr);}
+  .act{grid-template-columns:20px minmax(0,1fr);}
+  .act .date{grid-column:2;justify-self:start;width:auto;}
+  .rs{grid-template-columns:minmax(0,1fr) auto;gap:8px 14px;}
+  .rs .mini4{grid-column:1;}
+  .rs .open{display:none;}
+  .ttl{flex-wrap:wrap;gap:4px 12px;}
+  .cur-name{font-size:32px;}
+  .m-row{grid-template-columns:minmax(0,1fr);}
+  .modal{padding:22px 18px 18px;}
+  .scrim{padding-top:40px;}
+}
+
+/* ── Save PDF: the document is built into #rp on demand, printed alone, then emptied ── */
+#rp{display:none;}
+.rp{background:#fff;color:#241f17;font:400 10pt/1.55 'Plus Jakarta Sans',sans-serif;}
+.rp *{box-sizing:border-box;}
+.rp .title{padding-bottom:22pt;border-bottom:.75pt solid #241f17;margin-bottom:6pt;}
+.rp .eyebrow,.rp .part-h span{font:700 7.5pt 'Plus Jakarta Sans',sans-serif;letter-spacing:.22em;text-transform:uppercase;color:#8e71d3;}
+.rp h1{font:600 36pt/1.05 'Fraunces',Georgia,serif;letter-spacing:-.5pt;margin:10pt 0 8pt;overflow-wrap:anywhere;}
+.rp .meta{font-size:9.5pt;color:#7d7466;}
+.rp .meta b{color:#241f17;font-weight:600;}
+.rp .mission{margin-top:22pt;}
+.rp .mission .q{margin-bottom:5pt;}
+.rp .mission p{font:italic 400 16pt/1.45 'Fraunces',Georgia,serif;color:#241f17;}
+.rp .about{display:grid;grid-template-columns:1fr 1fr;gap:22pt;margin-top:20pt;}
+.rp .about p{font:400 10.5pt/1.5 'Fraunces',Georgia,serif;margin-top:4pt;}
+.rp p,.rp .a,.rp li span,.rp td{white-space:pre-wrap;overflow-wrap:anywhere;}
+.rp .part{margin-top:28pt;}
+.rp .part-h{display:flex;align-items:baseline;gap:12pt;padding-bottom:7pt;border-bottom:.75pt solid #241f17;break-after:avoid;page-break-after:avoid;}
+.rp .part-h h2{font:600 22pt/1.1 'Fraunces',Georgia,serif;letter-spacing:-.3pt;}
+.rp .sec{margin-top:17pt;}
+.rp .sec.keep{break-inside:avoid;page-break-inside:avoid;}
+.rp .sec h3{font:600 12.5pt 'Fraunces',Georgia,serif;margin-bottom:4pt;break-after:avoid;page-break-after:avoid;}
+.rp .qa{display:grid;grid-template-columns:1.85in 1fr;gap:16pt;padding:6pt 0;border-top:.5pt solid #e7e0d2;break-inside:avoid;page-break-inside:avoid;}
+.rp .qa:last-child{border-bottom:.5pt solid #e7e0d2;}
+.rp .q{font:600 8.5pt/1.5 'Plus Jakarta Sans',sans-serif;color:#8c8374;}
+.rp .qa .q{padding-top:1.5pt;}
+.rp .a{font-size:10pt;}
+.rp .wins{list-style:none;columns:2;column-gap:24pt;border-top:.5pt solid #e7e0d2;padding-top:5pt;}
+.rp .wins li{padding:3pt 0 3pt 12pt;position:relative;break-inside:avoid;page-break-inside:avoid;}
+.rp .wins li::before{content:"";position:absolute;left:0;top:9pt;width:4pt;height:4pt;border-radius:50%;background:#a98fe0;}
+.rp .rules{display:grid;grid-template-columns:1fr 14pt 1fr;gap:10pt;border-top:.5pt solid #e7e0d2;padding-top:8pt;}
+.rp .rules p{margin-top:3pt;}
+.rp .arrow{color:#8e71d3;padding-top:14pt;text-align:center;}
+.rp table.rb{width:100%;border-collapse:collapse;}
+.rp table.rb th,.rp table.rb td{text-align:left;vertical-align:top;padding:6.5pt 10pt 6.5pt 0;border-top:.5pt solid #e7e0d2;font-size:10pt;font-weight:400;}
+.rp table.rb thead th{font:600 8.5pt 'Plus Jakarta Sans',sans-serif;color:#8c8374;border-top:none;padding-top:2pt;}
+.rp table.rb tbody th{font:600 8.5pt/1.5 'Plus Jakarta Sans',sans-serif;color:#8c8374;width:1.25in;padding-top:7.5pt;}
+.rp table.rb tr{break-inside:avoid;page-break-inside:avoid;}
+.rp table.rb tbody tr:last-child td,.rp table.rb tbody tr:last-child th{border-bottom:.5pt solid #e7e0d2;}
+.rp .manifesto{font:italic 400 12pt/1.6 'Fraunces',Georgia,serif;border-left:1.5pt solid #a98fe0;padding:2pt 0 2pt 14pt;margin-top:6pt;}
+.rp ol.acts{list-style:none;border-top:.5pt solid #e7e0d2;}
+.rp ol.acts li{display:flex;gap:12pt;align-items:baseline;padding:6.5pt 0;border-bottom:.5pt solid #e7e0d2;break-inside:avoid;page-break-inside:avoid;}
+.rp ol.acts b{font:600 11pt 'Fraunces',Georgia,serif;color:#8e71d3;width:12pt;flex-shrink:0;}
+.rp ol.acts span{flex:1;min-width:0;}
+.rp ol.acts em{font-style:normal;font-size:9pt;font-weight:600;color:#8c8374;white-space:nowrap;}
 @media print{
-  .topbar,.tab-bar{display:none!important;}
-  body{background:white!important;}
-  .hub-wrap{padding:0!important;max-width:none!important;}
-  .paper{max-width:none!important;box-shadow:none!important;border:none!important;border-radius:0!important;padding:20px 28px!important;margin:0!important;background:transparent!important;}
-  .page{display:block!important;}
-  .section{page-break-inside:avoid;}
+  html,body{background:#fff !important;}
+  body{-webkit-print-color-adjust:exact;print-color-adjust:exact;}
+  body.rp-on > *:not(#rp){display:none !important;}
+  body.rp-on #rp{display:block;}
+  .topbar,.steps,.lead,.nextbar,.why,.toast,.scrim{display:none !important;}
 }
 </style>
 <link rel="stylesheet" href="../assets/brain.css?v=1025b">
@@ -173,382 +283,545 @@ hr.rule{border:none;border-top:1px solid var(--hair);margin:28px 0;}
 <body>
 <script src="../assets/shell.js?v=1025b"></script>
 
-<div class="topbar">
-  <div class="topbar-left">
-    <a href="../" class="back-btn">
-      <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"/></svg>
-      Brain 2.0
-    </a>
-    <div class="topbar-title">Mid-Year Pivot</div>
+<!-- LANDING -->
+<div id="view-landing" hidden>
+  <div class="topbar">
+    <div class="topbar-left"><div class="topbar-title">Season Reset</div></div>
+    <div class="topbar-right"><button class="btn primary" type="button" id="new-btn">+ New reset</button></div>
   </div>
-  <div class="topbar-right">
-    <span class="topbar-date" id="today-date"></span>
-    <span class="saved-ind" id="saved-ind"></span>
-    <div class="tab-bar">
-      <div class="tab-bar-inner">
-        <button class="tab-btn active" id="tbtn-cover" onclick="goTab('cover',this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>Cover</button>
-        <button class="tab-btn" id="tbtn-phase1" onclick="goTab('phase1',this)"><span class="phase-dot" style="background:var(--over);"></span>1 &middot; Audit</button>
-        <button class="tab-btn" id="tbtn-phase2" onclick="goTab('phase2',this)"><span class="phase-dot" style="background:var(--accent-deep);"></span>2 &middot; Core</button>
-        <button class="tab-btn" id="tbtn-phase3" onclick="goTab('phase3',this)"><span class="phase-dot" style="background:var(--ok);"></span>3 &middot; Vision</button>
-      </div>
+  <div class="hub" style="padding-top:26px">
+    <div class="grid">
+      <section class="card s7 stretch" id="cur-card"></section>
+      <section class="card s5 stretch" id="thirty-card"></section>
+      <section class="card s12">
+        <div class="card-h"><div class="card-t">All resets</div></div>
+        <div id="all-list"></div>
+      </section>
     </div>
-    <button class="pdf-btn" onclick="savePDF()"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" x2="12" y1="15" y2="3"/></svg>Save PDF</button>
   </div>
 </div>
 
-<div class="hub-wrap">
-  <div class="paper">
-
-    <!-- COVER -->
-    <div class="page active" id="page-cover">
-      <div class="cover">
-        <div class="cover-eyebrow">H2 2026 &middot; July &mdash; December</div>
-        <div class="cover-title">The Mid-Year<br><em>Pivot</em></div>
-        <div class="cover-sub">Identity &middot; Narrative &middot; Standards &middot; Vision</div>
-        <div class="cover-key">H1 = the first half of 2026 (Jan&ndash;Jun) &nbsp;&middot;&nbsp; H2 = the second half (Jul&ndash;Dec)</div>
-        <div class="cover-ornament">&#10022; &#10047; &#10022;</div>
-        <div class="cover-quote">"When a business rebrands, they leave behind what no longer fits their new vision. That is exactly what you need to do &mdash; because if you stick with all of the old, how are you ever going to step into the new?"</div>
+<!-- INSIDE A RESET -->
+<div id="view-reset" hidden>
+  <div class="topbar">
+    <div class="topbar-left">
+      <div class="ttl-wrap">
+        <a class="back-link" href="#">&lsaquo; All resets</a>
+        <div class="ttl"><span class="topbar-title" id="r-name"></span><span class="dates" id="r-dates"></span>
+          <button class="icon-btn" type="button" id="edit-btn" title="Edit name &amp; dates" aria-label="Edit name and dates"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg></button></div>
       </div>
-      <div class="cover-fields">
-        <div>
-          <div class="cover-field-label">This document belongs to</div>
-          <textarea class="write cover-write" data-save-id="cover_name" placeholder="Your name..."></textarea>
-        </div>
-        <div>
-          <div class="cover-field-label">My intention for the next 6 months</div>
-          <textarea class="write md" data-save-id="cover_intention" placeholder="In one sentence — what does H2 2026 mean to you?"></textarea>
-        </div>
-        <div>
-          <div class="cover-field-label">One thing H1 taught me that I'm carrying forward</div>
-          <textarea class="write cover-write" data-save-id="cover_lesson" placeholder="The thing this first half of the year made clear..."></textarea>
-        </div>
-      </div>
-      <div class="ornament">&#10022; &#10047; &#10022;</div>
     </div>
+    <div class="topbar-right"><button class="btn" type="button" id="pdf-btn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" x2="12" y1="15" y2="3"/></svg>Save PDF</button></div>
+  </div>
+  <div class="hub">
+    <div class="steps" id="steps"></div>
+    <p class="lead" id="lead"></p>
+    <div id="panels"></div>
+    <div class="nextbar" id="nextbar"></div>
+  </div>
+</div>
 
-    <!-- PHASE 1: THE AUDIT -->
-    <div class="page" id="page-phase1">
-      <div class="chapter-hdr">
-        <div class="chapter-eyebrow">Phase 1 &middot; Looking Back</div>
-        <div class="chapter-title">The <em>Audit</em></div>
-        <div class="chapter-desc">Before you step into who you're becoming, you need to see H1 clearly — the wins you actually earned, what you're outgrowing, and what needs to be left behind. Clear the clutter first.</div>
-      </div>
-
-      <div class="section">
-        <div class="section-hdr"><span class="section-badge">1.1</span><span class="section-title">Every Small Win from H1</span></div>
-        <p class="section-sub">Add as many as you can. Big, small, trivial, profound. Every single one counts as evidence of who you already are.</p>
-        <div class="win-list" id="wins-list"></div>
-        <button class="add-win" onclick="addWin()">+ Add a win</button>
-      </div>
-
-      <hr class="rule">
-
-      <div class="section">
-        <div class="section-hdr"><span class="section-badge">1.2</span><span class="section-title">Identity Audit — What No Longer Fits</span></div>
-        <p class="section-sub">Be ruthlessly honest. The goal isn't to tear yourself down — it's to separate what you're still performing from who you're actually becoming. (The concrete people, spaces, and habits you're leaving belong in 1.3 below.)</p>
-        <div class="two-col">
-          <div>
-            <label class="f-label">What part of my identity feels outdated?</label>
-            <textarea class="write md" data-save-id="audit_outdated" placeholder="The version of her that no longer fits..."></textarea>
-          </div>
-          <div>
-            <label class="f-label">What identity am I still performing that I don't believe in?</label>
-            <textarea class="write md" data-save-id="audit_performing" placeholder="The role you play for others that isn't actually you anymore..."></textarea>
-          </div>
-        </div>
-      </div>
-
-      <hr class="rule">
-
-      <div class="section">
-        <div class="section-hdr"><span class="section-badge">1.3</span><span class="section-title">The Market Exit — What You're Leaving Behind</span></div>
-        <p class="section-sub">When a business rebrands, they exit markets that don't fit the new vision. You need to do the same — and be specific. Vague exits don't stick.</p>
-        <div class="three-col" style="margin-bottom:18px;">
-          <div class="col-card">
-            <div class="col-card-title">Ways of Working</div>
-            <div class="col-card-sub">Habits, work styles, routines that need to go</div>
-            <textarea class="write md" data-save-id="exit_work" placeholder="Overcommitting, people-pleasing at work, shrinking in meetings..."></textarea>
-          </div>
-          <div class="col-card">
-            <div class="col-card-title">Relationships & Spaces</div>
-            <div class="col-card-sub">People, groups, environments to step back from</div>
-            <textarea class="write md" data-save-id="exit_people" placeholder="One-sided friendships, draining social commitments, toxic group chats..."></textarea>
-          </div>
-          <div class="col-card">
-            <div class="col-card-title">Patterns & Digital Habits</div>
-            <div class="col-card-sub">Mental loops, apps, and triggers to exit</div>
-            <textarea class="write md" data-save-id="exit_patterns" placeholder="Doomscrolling, comparison spirals, apps that drain your energy..."></textarea>
-          </div>
-        </div>
-        <label class="f-label">Conversations & mental loops I'm done engaging with</label>
-        <textarea class="write" data-save-id="exit_convos" placeholder="Narratives, arguments, and internal loops I'm closing out..."></textarea>
-
-        <div class="boundary-box">
-          <div class="boundary-label"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 14a1 1 0 0 1-.78-1.63l9.9-10.2a.5.5 0 0 1 .86.46l-1.92 6.02A1 1 0 0 0 13 10h7a1 1 0 0 1 .78 1.63l-9.9 10.2a.5.5 0 0 1-.86-.46l1.92-6.02A1 1 0 0 0 11 14z"/></svg>My First Hard Boundary — and when I start it</div>
-          <p class="boundary-note">Pick the one exit that matters most, be specific, and date it. Not "I'll set better limits" — but "I'm stepping back from ___, starting ___."</p>
-          <textarea class="write sh" data-save-id="exit_boundary" placeholder="The first concrete exit I'm committing to — what it is, and the date I start..."></textarea>
-        </div>
-      </div>
-
-      <div class="ornament">&#10022; &#10047; &#10022;</div>
-    </div>
-
-    <!-- PHASE 2: THE CORE -->
-    <div class="page" id="page-phase2">
-      <div class="chapter-hdr">
-        <div class="chapter-eyebrow">Phase 2 &middot; Looking In</div>
-        <div class="chapter-title">The <em>Core</em></div>
-        <div class="chapter-desc">This is the internal grounding work. Before you project who you're becoming outward, you need to know what's actually there — your real story, the values you operate from, and the honest inventory of what you contribute.</div>
-      </div>
-
-      <div class="section">
-        <div class="section-hdr"><span class="section-badge">2.1</span><span class="section-title">The Good Parts of Your Story</span></div>
-        <div class="three-col" style="margin-bottom:18px;">
-          <div class="col-card">
-            <div class="col-card-title">Your Intentions</div>
-            <div class="col-card-sub">What drives you? What do you genuinely care about?</div>
-            <textarea class="write md" data-save-id="story_intentions" placeholder="At your core, you are motivated by..."></textarea>
-          </div>
-          <div class="col-card">
-            <div class="col-card-title">Your Morals & Values</div>
-            <div class="col-card-sub">What do you actually stand for — non-negotiable?</div>
-            <textarea class="write md" data-save-id="story_values" placeholder="The principles you live by and won't compromise on..."></textarea>
-          </div>
-          <div class="col-card">
-            <div class="col-card-title">Your Character</div>
-            <div class="col-card-sub">Who are you at your best?</div>
-            <textarea class="write md" data-save-id="story_character" placeholder="The qualities people see when you're most yourself..."></textarea>
-          </div>
-        </div>
-        <label class="f-label">Your Dreams — uncensored</label>
-        <textarea class="write tall" data-save-id="story_dreams" placeholder="What do you actually want? Not what you think you should want — what do you dream about when no one is watching?"></textarea>
-      </div>
-
-      <hr class="rule">
-
-      <div class="section">
-        <div class="section-hdr"><span class="section-badge">2.2</span><span class="section-title">Personal Culture — Auditing Your Internal Rules</span></div>
-        <p class="section-sub">Like company culture, your personal culture is the invisible set of rules you live by — whether you chose them or they were handed to you. Time to rewrite them.</p>
-        <label class="f-label">The Rules I've Been Running On (even the embarrassing ones)</label>
-        <textarea class="write tall" data-save-id="culture_oldrules" placeholder="Don't be too loud. Don't take up too much space. Play it safe. Don't disappoint anyone. Be agreeable even when you're not. Shrink yourself so others feel comfortable..."></textarea>
-        <label class="f-label" style="margin-top:18px;">&rarr; The New Rules I'm Running H2 On</label>
-        <textarea class="write tall" data-save-id="culture_newrules" placeholder="I take up space unapologetically. I speak my mind even when my voice shakes. I choose people who choose me. I rest without guilt. I say no when I mean no..."></textarea>
-      </div>
-
-      <hr class="rule">
-
-      <div class="section">
-        <div class="section-hdr"><span class="section-badge">2.3</span><span class="section-title">Your Value Proposition — What You Actually Bring</span></div>
-        <p class="section-sub">Once you realize what value you bring, you stop underselling yourself and overgiving yourself. This isn't arrogance — it's inventory.</p>
-        <div class="audit-grid">
-          <div class="audit-item">
-            <div class="audit-area"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="20" height="14" x="2" y="7" rx="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg>Career & Intellect</div>
-            <textarea class="write sh" data-save-id="val_work" placeholder="What you bring to your work, team, and academic pursuits — at the Chamber, at SAIS..."></textarea>
-          </div>
-          <div class="audit-item">
-            <div class="audit-area"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.29 1.49 4.04 3 5.5l7 7Z"/></svg>In Romance</div>
-            <textarea class="write sh" data-save-id="val_romance" placeholder="What do you bring to a relationship?"></textarea>
-          </div>
-          <div class="audit-item">
-            <div class="audit-area"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>In Friendships</div>
-            <textarea class="write sh" data-save-id="val_friends" placeholder="What do you bring to your friendships?"></textarea>
-          </div>
-          <div class="audit-item">
-            <div class="audit-area"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 20h10"/><path d="M10 20c5.5-2.5.8-6.4 3-10"/><path d="M9.5 9.4c1.1.8 1.8 2.2 2.3 3.7-2 .4-3.5.4-4.8-.3-1.2-.6-2.3-1.9-3-4.2 2.8-.5 4.4 0 5.5.8z"/><path d="M14.1 6a7 7 0 0 0-1.1 4c1.9-.1 3.3-.6 4.3-1.4 1-1 1.6-2.3 1.7-4.6-2.7.1-4 1-4.9 2z"/></svg>To Yourself</div>
-            <textarea class="write sh" data-save-id="val_self" placeholder="What do you bring to your own future, inner child, and goals?"></textarea>
-          </div>
-        </div>
-      </div>
-
-      <div class="ornament">&#10022; &#10047; &#10022;</div>
-    </div>
-
-    <!-- PHASE 3: THE VISION -->
-    <div class="page" id="page-phase3">
-      <div class="chapter-hdr">
-        <div class="chapter-eyebrow">Phase 3 &middot; Looking Forward</div>
-        <div class="chapter-title">The <em>Vision</em></div>
-        <div class="chapter-desc">This is the outward projection. Who are you stepping into for H2? Write it, name it, and ground it in the physical details that make it feel real — because the gap between identity and reality closes the moment you decide.</div>
-      </div>
-
-      <div class="section">
-        <div class="section-hdr"><span class="section-badge">3.1</span><span class="section-title">The New Narrative</span></div>
-        <div class="three-col" style="margin-bottom:20px;">
-          <div class="col-card">
-            <div class="col-card-title">Known For</div>
-            <div class="col-card-sub">Your reputation — the substance people associate with you</div>
-            <textarea class="write md" data-save-id="narr_known" placeholder="People know me as someone who..."></textarea>
-          </div>
-          <div class="col-card">
-            <div class="col-card-title">Attract</div>
-            <div class="col-card-sub">What opportunities, people, energy do you draw in?</div>
-            <textarea class="write md" data-save-id="narr_attract" placeholder="The opportunities, people and energy I draw in..."></textarea>
-          </div>
-          <div class="col-card">
-            <div class="col-card-title">Recognized For</div>
-            <div class="col-card-sub">Your presence — the immediate impression when you walk in</div>
-            <textarea class="write md" data-save-id="narr_recognized" placeholder="When I walk into a room, people notice..."></textarea>
-          </div>
-        </div>
-        <div class="mission-box">
-          <span class="mission-label">My H2 Mission Statement</span>
-          <textarea class="write letter" style="background:transparent;border:none;text-align:center;min-height:70px;" data-save-id="narr_mission" placeholder="My mission for the next 6 months is to..."></textarea>
-        </div>
-      </div>
-
-      <hr class="rule">
-
-      <div class="section">
-        <div class="section-hdr"><span class="section-badge">3.2</span><span class="section-title">Talk Like Your Future Self</span></div>
-        <p class="section-sub">Write 5 statements from the perspective of the woman you are becoming. Present tense. No hedging. No "I'm trying to" — just "I am."</p>
-        <div class="manifesto-card">
-          <div class="manifesto-intro">I am becoming someone who...</div>
-          <div class="future-row"><span class="future-prompt">Who I am</span><textarea class="future-write" data-save-id="future_who" placeholder="I am a woman who..." rows="1"></textarea></div>
-          <div class="future-row"><span class="future-prompt">How I show up</span><textarea class="future-write" data-save-id="future_showup" placeholder="I show up to every room as..." rows="1"></textarea></div>
-          <div class="future-row"><span class="future-prompt">What I require</span><textarea class="future-write" data-save-id="future_require" placeholder="I require..." rows="1"></textarea></div>
-          <div class="future-row"><span class="future-prompt">My standards</span><textarea class="future-write" data-save-id="future_standards" placeholder="My standards are..." rows="1"></textarea></div>
-          <div class="future-row"><span class="future-prompt">What I won't accept</span><textarea class="future-write" data-save-id="future_wontaccept" placeholder="I will no longer accept..." rows="1"></textarea></div>
-        </div>
-      </div>
-
-      <hr class="rule">
-
-      <div class="section">
-        <div class="section-hdr"><span class="section-badge">3.3</span><span class="section-title">Lifestyle Rebrand — H1 &rarr; H2</span></div>
-        <p class="section-sub">For each moment in your day, map what you're leaving behind in H1 and the elevated version you're stepping into in H2.</p>
-        <div class="rebrand-row">
-          <div class="rebrand-h1"><div class="rebrand-label"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v8"/><path d="m4.93 10.93 1.41 1.41"/><path d="M2 18h2"/><path d="M20 18h2"/><path d="m19.07 10.93-1.41 1.41"/><path d="M22 22H2"/><path d="m8 6 4-4 4 4"/><path d="M16 18a4 4 0 0 0-8 0"/></svg>Morning &middot; leaving behind</div><textarea class="write sh" data-save-id="rebrand_morn_before" placeholder="Wake up at last second, rush, overwhelmed..."></textarea></div>
-          <div class="rebrand-h2"><div class="rebrand-label"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>Morning &middot; stepping into</div><textarea class="write sh" data-save-id="rebrand_morn_after" placeholder="Wake up with intention, slow playlist, made the bed..."></textarea></div>
-        </div>
-        <div class="rebrand-row">
-          <div class="rebrand-h1"><div class="rebrand-label"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2"/><path d="M12 20v2"/><path d="m4.93 4.93 1.41 1.41"/><path d="m17.66 17.66 1.41 1.41"/><path d="M2 12h2"/><path d="M20 12h2"/><path d="m6.34 17.66-1.41 1.41"/><path d="m19.07 4.93-1.41 1.41"/></svg>Work & Energy &middot; leaving behind</div><textarea class="write sh" data-save-id="rebrand_commute_before" placeholder="Reactive, scattered, people-pleasing..."></textarea></div>
-          <div class="rebrand-h2"><div class="rebrand-label"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>Work & Energy &middot; stepping into</div><textarea class="write sh" data-save-id="rebrand_commute_after" placeholder="Intentional, boundaried, operating from a full cup..."></textarea></div>
-        </div>
-        <div class="rebrand-row">
-          <div class="rebrand-h1"><div class="rebrand-label"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 10V2"/><path d="m4.93 10.93 1.41 1.41"/><path d="M2 18h2"/><path d="M20 18h2"/><path d="m19.07 10.93-1.41 1.41"/><path d="M22 22H2"/><path d="m16 6-4 4-4-4"/><path d="M16 18a4 4 0 0 0-8 0"/></svg>Evening &middot; leaving behind</div><textarea class="write sh" data-save-id="rebrand_eve_before" placeholder="Scroll until asleep, no wind-down routine..."></textarea></div>
-          <div class="rebrand-h2"><div class="rebrand-label"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>Evening &middot; stepping into</div><textarea class="write sh" data-save-id="rebrand_eve_after" placeholder="A ritual that belongs to you — skincare, reading, reflection..."></textarea></div>
-        </div>
-        <div class="rebrand-row">
-          <div class="rebrand-h1"><div class="rebrand-label"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>Social Life &middot; leaving behind</div><textarea class="write sh" data-save-id="rebrand_social_before" placeholder="Saying yes to everything, feeling drained after..."></textarea></div>
-          <div class="rebrand-h2"><div class="rebrand-label"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>Social Life &middot; stepping into</div><textarea class="write sh" data-save-id="rebrand_social_after" placeholder="Intentional, energizing, chosen with care..."></textarea></div>
-        </div>
-      </div>
-
-      <hr class="rule">
-
-      <div class="section">
-        <div class="section-hdr"><span class="section-badge">3.4</span><span class="section-title">The Visual Rebrand</span></div>
-        <p class="section-sub">You need at least one tiny physical change to make it feel real — "Oh yeah, I'm her now." Define the sensory identity of who you're becoming.</p>
-        <label class="f-label" style="margin-top:0;">The woman you're becoming — how she carries herself</label>
-        <textarea class="write tall" data-save-id="story_dress" placeholder="She walks in and you know immediately she is someone. She wears... she carries herself like... the energy she brings is..."></textarea>
-        <div class="aesthetic-grid" style="margin:18px 0 20px;">
-          <div class="aesthetic-item"><div class="aesthetic-label"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="6" cy="6" r="3"/><path d="M8.12 8.12 12 12"/><path d="M20 4 8.12 15.88"/><circle cx="6" cy="18" r="3"/><path d="M14.8 14.8 20 20"/></svg>Hair</div><textarea class="write sh" data-save-id="aes_hair" placeholder="Cut, color, style, texture..."></textarea></div>
-          <div class="aesthetic-item"><div class="aesthetic-label"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m12 3-1.9 5.8a2 2 0 0 1-1.3 1.3L3 12l5.8 1.9a2 2 0 0 1 1.3 1.3L12 21l1.9-5.8a2 2 0 0 1 1.3-1.3L21 12l-5.8-1.9a2 2 0 0 1-1.3-1.3Z"/></svg>Makeup & Beauty</div><textarea class="write sh" data-save-id="aes_makeup" placeholder="A lipstick, a finish, a look that says her..."></textarea></div>
-          <div class="aesthetic-item"><div class="aesthetic-label"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 16.3c2.2 0 4-1.83 4-4.05 0-1.16-.57-2.26-1.71-3.19S7.29 4.24 7 2c-.29 2.24-1.14 4.13-2.29 5.06S3 11.1 3 12.25c0 2.22 1.8 4.05 4 4.05z"/><path d="M12.56 6.6A11 11 0 0 0 14 3c.5 2.5 2 4.9 4 6.5s3 3.5 3 5.5a7 7 0 0 1-11.9 5"/></svg>Fragrance</div><textarea class="write sh" data-save-id="aes_fragrance" placeholder="The scent she wears, the ritual of applying it..."></textarea></div>
-          <div class="aesthetic-item"><div class="aesthetic-label"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.38 3.46 16 2a4 4 0 0 1-8 0L3.62 3.46a2 2 0 0 0-1.34 2.23l.58 3.47a1 1 0 0 0 .99.84H6v10c0 1.1.9 2 2 2h8a2 2 0 0 0 2-2V10h2.15a1 1 0 0 0 .99-.84l.58-3.47a2 2 0 0 0-1.34-2.23z"/></svg>Style & Wardrobe</div><textarea class="write sh" data-save-id="aes_style" placeholder="How does she dress? What does her wardrobe feel like?"></textarea></div>
-          <div class="aesthetic-item"><div class="aesthetic-label"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 3h12l4 6-10 13L2 9Z"/><path d="M11 3 8 9l4 13 4-13-3-6"/><path d="M2 9h20"/></svg>Jewelry & Accessories</div><textarea class="write sh" data-save-id="aes_jewelry" placeholder="The daily stack that makes her feel like that girl..."></textarea></div>
-          <div class="aesthetic-item"><div class="aesthetic-label"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><path d="M9 22V12h6v10"/></svg>Her Space</div><textarea class="write sh" data-save-id="aes_space" placeholder="How does her home feel? Smell? Look?"></textarea></div>
-        </div>
-        <label class="f-label">The one physical change that makes it real — specific and dated</label>
-        <textarea class="write" data-save-id="aes_firstchange" placeholder="Not 'I'll dress better' — but 'I'm booking that haircut on July 15th' or 'I'm picking up that red lip this weekend'..."></textarea>
-      </div>
-
-      <hr class="rule">
-
-      <div class="section">
-        <div class="section-hdr"><span class="section-badge">3.5</span><span class="section-title">My H2 Manifesto</span></div>
-        <p class="section-sub">Bring it all together. Write it like a letter to yourself that you'll read every month. Present tense. No hedging.</p>
-        <textarea class="write letter" data-save-id="manifesto_final" placeholder="In H2 2026, I am the woman who... I no longer... I choose... I show up as... I am done with... I deserve..."></textarea>
-      </div>
-
-      <div class="section">
-        <div class="section-hdr"><span class="section-badge">3.6</span><span class="section-title">The First 30 Days</span></div>
-        <p class="section-sub">Inspiration fades in 48 hours. Anchor this pivot in three concrete actions you're taking in the next 30 days — specific, scheduled, non-negotiable.</p>
-        <div class="thirty-day-card">
-          <div class="thirty-label">The First 3 Actions — Specific & Dated</div>
-          <div class="thirty-row"><div class="thirty-num">1</div><textarea class="thirty-write" data-save-id="thirty_1" placeholder="What exactly, and by when? (e.g. Book haircut appointment — this Friday)" rows="1"></textarea></div>
-          <div class="thirty-row"><div class="thirty-num">2</div><textarea class="thirty-write" data-save-id="thirty_2" placeholder="Second concrete action — specific and scheduled..." rows="1"></textarea></div>
-          <div class="thirty-row"><div class="thirty-num">3</div><textarea class="thirty-write" data-save-id="thirty_3" placeholder="Third concrete action — what, when, done." rows="1"></textarea></div>
-        </div>
-      </div>
-
-      <div class="ornament">&#10022; &#10047; &#10022;</div>
-    </div>
-
-  </div><!-- end paper -->
-</div><!-- end hub-wrap -->
+<!-- print-only Season Reset document: filled on "Save PDF" (or Ctrl+P), emptied after printing -->
+<div id="rp" aria-hidden="true"></div>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
 
 <script>
-var SK='reset2026v2';
-var activeTab='cover';
-var saveTimer=null;
-var DAYS_FULL=['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
-var MONTHS_FULL=['January','February','March','April','May','June','July','August','September','October','November','December'];
-var now=new Date();
-document.getElementById('today-date').textContent=DAYS_FULL[now.getDay()]+', '+MONTHS_FULL[now.getMonth()]+' '+now.getDate()+', '+now.getFullYear();
+/* ════════════════════════════════════════════════════════════════
+   SEASON RESET
+   Storage (localStorage):
+   • seasonReset1 = {
+       v:1,
+       current:'<id>',                       // the reset shown on the landing page
+       resets:[{
+         id, name,
+         start:'YYYY-MM-DD', end:'YYYY-MM-DD' | '' (open-ended),
+         length:'3m'|'6m'|'1y'|'open'|'custom',
+         reason:'New season'|'New year'|'Birthday'|'After a big change'|'Feeling stuck'|'Just because'|'',
+         created:ISO timestamp,
+         keys:{data:'<answers key>', wins:'<wins key>'}
+       }]
+     }
+   • The first reset is the original Mid-Year Pivot 2026 (id 'pivot2026'). It keeps reading and
+     writing its original keys: reset2026v2 (answers) and reset2026v2_wins (array of strings).
+   • New resets store answers in seasonReset1_<id> and wins in seasonReset1_<id>_wins.
+   • Answers objects use the original field names (cover_name, audit_outdated, … thirty_3), plus
+     optional new ones: thirty_N_date ('YYYY-MM-DD') and thirty_N_done ('1' or '').
+   • Saving merges into the stored object, so no stored field is ever dropped or renamed.
+   ════════════════════════════════════════════════════════════════ */
+(function(){
+var META_KEY='seasonReset1', PIVOT_ID='pivot2026';
+var STEPS=['About','The Audit','The Core','The Vision'];
+var LEAD=['A few words before you begin.',
+  'Look back at the last season \u2014 what worked, and what no longer fits.',
+  'Look inward \u2014 your story, your rules, what you bring.',
+  'Look forward \u2014 who you\u2019re becoming, and your first 30 days.'];
+var REASONS=['New season','New year','Birthday','After a big change','Feeling stuck','Just because'];
+var LENGTHS=[['3m','3 months'],['6m','6 months'],['1y','1 year'],['open','Open']];
+var LEN_MONTHS={'1m':1,'3m':3,'6m':6,'1y':12};
+var MS=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+var ML=['January','February','March','April','May','June','July','August','September','October','November','December'];
+var CORE_KEYS=['story_intentions','story_values','story_character','story_dreams','culture_oldrules','culture_newrules','val_work','val_romance','val_friends','val_self'];
+var RB=[['Morning','rebrand_morn_before','rebrand_morn_after'],['Work & Energy','rebrand_commute_before','rebrand_commute_after'],
+        ['Evening','rebrand_eve_before','rebrand_eve_after'],['Social Life','rebrand_social_before','rebrand_social_after']];
+var AES=[['Hair','aes_hair','Cut, color, style\u2026'],['Makeup & Beauty','aes_makeup','A signature look\u2026'],['Fragrance','aes_fragrance','Her scent\u2026'],
+         ['Style & Wardrobe','aes_style','How she dresses\u2026'],['Jewelry & Accessories','aes_jewelry','Her daily stack\u2026'],['Her Space','aes_space','How her home feels\u2026']];
+var FUT=[['Who I am','future_who','I am a woman who\u2026'],['How I show up','future_showup','I show up as\u2026'],['What I require','future_require','I require\u2026'],
+         ['My standards','future_standards','My standards are\u2026'],['What I won\u2019t accept','future_wontaccept','I will no longer accept\u2026']];
+/* what "Done" means for each step: every entry answered; an array entry = at least one of those answered */
+var REQ=[
+  ['cover_name','cover_intention','cover_lesson'],
+  ['@wins','audit_outdated','audit_performing','exit_work','exit_people','exit_patterns','exit_convos','exit_boundary'],
+  CORE_KEYS,
+  ['narr_known','narr_attract','narr_recognized','narr_mission'].concat(FUT.map(function(x){return x[1];}),[
+    RB.reduce(function(a,r){return a.concat([r[1],r[2]]);},[]),
+    ['story_dress'].concat(AES.map(function(x){return x[1];})),
+    'aes_firstchange','manifesto_final','thirty_1','thirty_2','thirty_3'])
+];
 
-function autoExpand(el){el.style.height='auto';el.style.height=el.scrollHeight+'px';}
+/* ── utils ── */
+function $(id){return document.getElementById(id);}
+function esc(s){return String(s==null?'':s).replace(/[&<>"']/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];});}
+function trim(x){return String(x==null?'':x).trim();}
+function lsGet(k,fb){try{var r=localStorage.getItem(k);return r?JSON.parse(r):fb;}catch(e){return fb;}}
+function lsSet(k,v){try{localStorage.setItem(k,JSON.stringify(v));}catch(e){}}
+function pad(n){return String(n).padStart(2,'0');}
+function iso(d){return d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate());}
+function parse(s){if(!s||!/^\d{4}-\d{2}-\d{2}$/.test(s))return null;var p=s.split('-');return new Date(+p[0],+p[1]-1,+p[2]);}
+function today0(){var t=new Date();return new Date(t.getFullYear(),t.getMonth(),t.getDate());}
+function addDays(d,n){var x=new Date(d.getFullYear(),d.getMonth(),d.getDate());x.setDate(x.getDate()+n);return x;}
+function addMonths(d,n){var y=d.getFullYear(),m=d.getMonth()+n,last=new Date(y,m+1,0).getDate();return new Date(y,m,Math.min(d.getDate(),last));}
+function endFor(start,len){var s=parse(start),m=LEN_MONTHS[len];return s&&m?iso(addDays(addMonths(s,m),-1)):'';}
+function md(d){return MS[d.getMonth()]+' '+d.getDate();}
+function mdy(d){return md(d)+', '+d.getFullYear();}
+function fmtRange(s,e,long){
+  var a=parse(s),b=parse(e);if(!a)return '';
+  var M=long?ML:MS,f=function(d){return M[d.getMonth()]+' '+d.getDate();};
+  if(!b)return 'From '+f(a)+', '+a.getFullYear();
+  if(a.getFullYear()===b.getFullYear())return f(a)+' \u2013 '+f(b)+', '+b.getFullYear();
+  return f(a)+', '+a.getFullYear()+' \u2013 '+f(b)+', '+b.getFullYear();
+}
+function seasonName(s){var d=parse(s)||today0(),m=d.getMonth();return (m>=2&&m<=4?'Spring':m>=5&&m<=7?'Summer':m>=8&&m<=10?'Autumn':'Winter')+' '+d.getFullYear();}
+function autoExpand(el){if(!el||el.tagName!=='TEXTAREA'||!el.offsetParent)return;el.style.height='auto';el.style.height=el.scrollHeight+'px';}
+function expandIn(root){root.querySelectorAll('textarea').forEach(autoExpand);}
+var CAL='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>';
+var CHECK='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>';
 
-/* WINS */
-function getWins(){var r=localStorage.getItem(SK+'_wins');try{return r?JSON.parse(r):[];}catch(e){return[];}}
-function saveWins(w){localStorage.setItem(SK+'_wins',JSON.stringify(w));}
-function renderWins(){
-  var c=document.getElementById('wins-list');c.innerHTML='';
-  getWins().forEach(function(w,i){
-    var row=document.createElement('div');row.className='win-row';
-    var bullet=document.createElement('span');bullet.className='win-bullet';bullet.textContent='\u2726';
-    var txt=document.createElement('textarea');txt.className='win-text';txt.rows=1;txt.placeholder='A win, big or small...';txt.value=w;
-    txt.oninput=function(){autoExpand(this);var ws=getWins();ws[i]=this.value;saveWins(ws);};
-    var del=document.createElement('button');del.className='win-del';del.textContent='\u2715';
-    del.onclick=(function(idx){return function(){var ws=getWins();ws.splice(idx,1);saveWins(ws);renderWins();};})(i);
-    row.appendChild(bullet);row.appendChild(txt);row.appendChild(del);c.appendChild(row);
-    autoExpand(txt);
+/* ── meta: the list of resets ── */
+function pivotEntry(){return {id:PIVOT_ID,name:'Mid-Year Pivot 2026',start:'2026-07-01',end:'2026-12-31',length:'6m',reason:'',created:'2026-07-01T00:00:00.000Z',keys:{data:'reset2026v2',wins:'reset2026v2_wins'}};}
+var META=null;
+function loadMeta(){
+  var m=lsGet(META_KEY,null),dirty=false;
+  if(!m||typeof m!=='object'||!Array.isArray(m.resets)){m={v:1,resets:[],current:''};dirty=true;}
+  m.resets=m.resets.filter(function(r){return r&&typeof r==='object'&&r.id&&r.keys&&r.keys.data&&r.keys.wins;});
+  if(!m.resets.some(function(r){return r.id===PIVOT_ID;})){m.resets.unshift(pivotEntry());dirty=true;}
+  if(!m.resets.some(function(r){return r.id===m.current;})){m.current=sorted(m.resets)[0].id;dirty=true;}
+  META=m;if(dirty)saveMeta();
+}
+function saveMeta(){lsSet(META_KEY,META);}
+function sorted(list){return (list||META.resets).slice().sort(function(a,b){return (b.start||'').localeCompare(a.start||'')||(b.created||'').localeCompare(a.created||'');});}
+function byId(id){for(var i=0;i<META.resets.length;i++)if(META.resets[i].id===id)return META.resets[i];return null;}
+function rData(r){var d=lsGet(r.keys.data,{});return d&&typeof d==='object'&&!Array.isArray(d)?d:{};}
+function rWins(r){var w=lsGet(r.keys.wins,[]);return Array.isArray(w)?w.map(function(x){return typeof x==='string'?x:(x&&typeof x.text==='string'?x.text:'');}):[];}
+function patchData(r,obj){var d=rData(r);Object.keys(obj).forEach(function(k){d[k]=obj[k];});lsSet(r.keys.data,d);}
+
+/* ── progress ── */
+function filled(d,w,k){if(k==='@wins')return w.some(function(x){return trim(x);});return !!trim(d[k]);}
+function stepState(i,d,w){
+  var req=REQ[i],met=0,any=false;
+  req.forEach(function(q){
+    var ok=Array.isArray(q)?q.some(function(k){return filled(d,w,k);}):filled(d,w,q);
+    if(ok){met++;any=true;}
   });
+  return {met:met,total:req.length,frac:met/req.length,status:met===req.length?'done':any?'prog':'none'};
 }
-function addWin(){
-  var ws=getWins();ws.push('');saveWins(ws);renderWins();
-  var rows=document.querySelectorAll('.win-text');if(rows.length)rows[rows.length-1].focus();
+function states(r){var d=rData(r),w=rWins(r);return [0,1,2,3].map(function(i){return stepState(i,d,w);});}
+var ST_LABEL={done:'Done',prog:'In progress',none:'Not started'};
+function segs(st){return st.map(function(s){return s.status==='done'?'<i class="d"></i>':s.status==='prog'?'<i class="c" style="--p:'+Math.max(8,Math.round(s.frac*100))+'%"></i>':'<i></i>';}).join('');}
+function firstOpenStep(st){for(var i=0;i<4;i++)if(st[i].status!=='done')return i;return 0;}
+
+/* ── toast ── */
+var toastT=null;
+function toast(msg,undo){
+  var t=$('toast');t.innerHTML='<span>'+esc(msg)+'</span>'+(undo?'<button type="button">Undo</button>':'');
+  if(undo)t.querySelector('button').onclick=function(){undo();t.classList.remove('show');};
+  t.classList.add('show');clearTimeout(toastT);toastT=setTimeout(function(){t.classList.remove('show');},undo?7000:3200);
 }
 
-/* SAVE / RESTORE */
-function saveData(){
-  var d={};
-  document.querySelectorAll('textarea[data-save-id]').forEach(function(el){d[el.dataset.saveId]=el.value;});
-  localStorage.setItem(SK,JSON.stringify(d));
-  var ind=document.getElementById('saved-ind');
-  if(ind){ind.textContent='Saved \u2713';setTimeout(function(){ind.textContent='';},2000);}
+/* ════════════ LANDING ════════════ */
+function renderLanding(){
+  var cur=byId(META.current),st=states(cur),open=firstOpenStep(st),allDone=st.every(function(s){return s.status==='done';});
+  $('cur-card').innerHTML='<span class="cur-eyebrow">Current reset</span><div class="cur-name">'+esc(cur.name)+'</div><div class="cur-dates">'+esc(fmtRange(cur.start,cur.end))+'</div>'+
+    '<div class="bar4">'+segs(st)+'</div><div class="bar4-l">'+STEPS.map(function(s,i){return '<span'+(!allDone&&i===open?' class="c"':'')+'>'+s+'</span>';}).join('')+'</div>'+
+    '<div class="cur-acts"><button class="btn primary" type="button" data-open="'+esc(cur.id)+'" data-step="'+open+'">'+(allDone?'Open':'Continue')+' &rarr;</button></div>';
+  renderThirty(cur);
+  $('all-list').innerHTML=sorted().map(function(r){
+    var s=states(r),done=s.filter(function(x){return x.status==='done';}).length,any=s.some(function(x){return x.status!=='none';});
+    return '<button class="rs" type="button" data-open="'+esc(r.id)+'" data-step="'+firstOpenStep(s)+'"><div style="min-width:0"><div class="nm"><span class="t">'+esc(r.name)+'</span>'+(r.id===META.current?'<span class="chip">Current</span>':'')+'</div>'+
+      '<div class="dt">'+esc(fmtRange(r.start,r.end))+'</div></div><div class="mini4">'+segs(s)+'</div>'+
+      '<span class="st">'+(done===4?'Complete':any?done+' of 4':'Not started')+'</span><span class="open">Open &rsaquo;</span></button>';
+  }).join('');
 }
-function restoreData(){
-  var raw=localStorage.getItem(SK);if(!raw)return;
-  var d={};try{d=JSON.parse(raw);}catch(e){return;}
-  document.querySelectorAll('textarea[data-save-id]').forEach(function(el){
-    if(d[el.dataset.saveId]!==undefined){el.value=d[el.dataset.saveId];autoExpand(el);}
-  });
+function renderThirty(r){
+  var d=rData(r),rows=[1,2,3].filter(function(n){return trim(d['thirty_'+n]);});
+  var start=parse(r.start),day=start?Math.floor((today0()-start)/864e5)+1:0,meta='';
+  var doneN=rows.filter(function(n){return d['thirty_'+n+'_done']==='1';}).length;
+  if(start&&day<1)meta='Starts '+md(start);
+  else if(day>=1&&day<=30)meta='Day '+day+' of 30';
+  else if(rows.length)meta=doneN+' of '+rows.length+' done';
+  var h='<div class="card-h"><div class="card-t">First 30 days</div>'+(meta?'<span class="card-m">'+meta+'</span>':'')+'</div>';
+  if(!rows.length)h+='<p class="empty-line">Three dated actions, set in <button class="textlink" type="button" data-open="'+esc(r.id)+'" data-step="3">The Vision &rsaquo;</button></p>';
+  else h+=rows.map(function(n){
+    var on=d['thirty_'+n+'_done']==='1',dt=parse(d['thirty_'+n+'_date']);
+    return '<div class="ck'+(on?' done':'')+'"><button class="box'+(on?' on':'')+'" type="button" role="checkbox" aria-checked="'+on+'" data-tick="'+n+'" aria-label="Done">'+(on?CHECK:'')+'</button>'+
+      '<span class="tx">'+esc(d['thirty_'+n])+'</span><span class="when">'+(dt?md(dt):'')+'</span></div>';
+  }).join('');
+  $('thirty-card').innerHTML=h;
 }
-function debouncedSave(){clearTimeout(saveTimer);saveTimer=setTimeout(saveData,600);}
+$('view-landing').addEventListener('click',function(e){
+  var t=e.target.closest('[data-tick]');
+  if(t){var r=byId(META.current),n=t.getAttribute('data-tick'),o={};o['thirty_'+n+'_done']=rData(r)['thirty_'+n+'_done']==='1'?'':'1';patchData(r,o);renderLanding();var b=document.querySelector('[data-tick="'+n+'"]');if(b)b.focus();return;}
+  var o2=e.target.closest('[data-open]');if(o2)go(o2.getAttribute('data-open'),+o2.getAttribute('data-step')||0);
+});
+$('new-btn').onclick=function(){openModal(null);};
 
-/* TABS */
-function goTab(tab,btn){
-  saveData();activeTab=tab;
-  document.querySelectorAll('.page').forEach(function(p){p.classList.remove('active');});
-  document.getElementById('page-'+tab).classList.add('active');
-  document.querySelectorAll('.tab-btn').forEach(function(b){b.classList.remove('active');});
-  btn.classList.add('active');
-  window.scrollTo(0,0);
+/* ════════════ INSIDE A RESET ════════════ */
+function f(label,key,ph,cls){return '<div class="f"><label class="lab" for="f-'+key+'">'+label+'</label><textarea class="write '+(cls||'')+'" id="f-'+key+'" data-k="'+key+'" rows="1" placeholder="'+ph+'"></textarea></div>';}
+function ta(key,ph,cls,aria){return '<textarea class="write '+(cls||'')+'" data-k="'+key+'" rows="1" placeholder="'+ph+'" aria-label="'+(aria||'')+'"></textarea>';}
+function why(text){return {btn:'<button class="why" type="button" aria-expanded="false"><i>i</i>Why this?</button>',box:'<div class="why-box" hidden>'+text+'</div>'};}
+function card(title,inner,o){
+  o=o||{};var w=o.why?why(o.why):null;
+  return '<section class="card '+(o.span||'s12')+'">'+'<div class="card-h"><div class="card-t">'+title+'</div>'+(o.right||'')+(w?w.btn:'')+'</div>'+(w?w.box:'')+(o.hint?'<p class="hint">'+o.hint+'</p>':'')+inner+'</section>';
+}
+function buildPanels(){
+  var about='<div class="grid">'+card('About this reset',
+    '<div class="narrow">'+f('This reset belongs to','cover_name','Your name','one')+'</div>'+
+    '<div class="cols2 gap-t">'+f('My intention for this season','cover_intention','In one sentence \u2014 what does this season mean to you?','tall serif')+
+    f('One thing the last season taught me that I\u2019m carrying forward','cover_lesson','The thing the last season made clear\u2026','tall serif')+'</div>')+'</div>';
+
+  var audit='<div class="grid">'+
+    card('Every small win','<div id="wins-list"></div><label class="addrow"><b>+</b><input type="text" id="win-add" placeholder="Add a win\u2026" aria-label="Add a win" autocomplete="off"></label>',
+      {span:'s5 stretch',right:'<button class="textlink" type="button" id="import-btn">+ Import from Weekly Audit</button>'})+
+    card('What no longer fits',
+      f('What part of my identity feels outdated?','audit_outdated','The version of me that no longer fits\u2026','tall')+
+      f('What identity am I still performing that I don\u2019t believe in?','audit_performing','The role I play that isn\u2019t me anymore\u2026','tall'),
+      {span:'s7 stretch',why:'Be ruthlessly honest. The goal isn\u2019t to tear yourself down \u2014 it\u2019s to separate what you\u2019re still performing from who you\u2019re actually becoming.'})+
+    card('What I\u2019m leaving behind',
+      '<div class="cols3">'+f('Ways of working','exit_work','Overcommitting, people-pleasing\u2026')+f('Relationships &amp; spaces','exit_people','Draining commitments, group chats\u2026')+
+      f('Patterns &amp; digital habits','exit_patterns','Doomscrolling, comparison spirals\u2026')+'</div>'+
+      '<div class="cols2 gap-t">'+f('Conversations &amp; mental loops I\u2019m done with','exit_convos','Narratives and loops I\u2019m closing out\u2026')+
+      f('My first hard boundary \u2014 and when it starts','exit_boundary','I\u2019m stepping back from ___, starting ___')+'</div>',
+      {why:'When a business rebrands, it exits markets that don\u2019t fit the new vision. Do the same \u2014 and be specific: vague exits don\u2019t stick. Pick the one that matters most and give it a start date.'})+
+    '</div>';
+
+  var core='<div class="grid">'+
+    card('The good parts of your story',
+      '<div class="cols3">'+f('My intentions','story_intentions','What drives me, what I care about\u2026')+f('My morals &amp; values','story_values','What I stand for \u2014 non-negotiable\u2026')+
+      f('My character','story_character','Who I am at my best\u2026')+'</div><div class="gap-t">'+f('My dreams \u2014 uncensored','story_dreams','What do I actually want, when no one is watching?')+'</div>')+
+    card('My rules','<div class="cols2">'+f('The rules I\u2019ve been running on','culture_oldrules','Even the embarrassing ones\u2026','tall')+
+      f('&rarr; The new rules I\u2019m running this season on','culture_newrules','I take up space. I rest without guilt\u2026','tall')+'</div>',
+      {why:'Like company culture, your personal culture is the invisible set of rules you live by \u2014 whether you chose them or they were handed to you. Time to rewrite them.'})+
+    card('What I actually bring','<div class="cols4">'+f('Career &amp; intellect','val_work','To my work and studies\u2026')+f('In romance','val_romance','To a relationship\u2026')+
+      f('In friendships','val_friends','To my friends\u2026')+f('To myself','val_self','To my future and my goals\u2026')+'</div>',
+      {why:'Once you realize what value you bring, you stop underselling yourself and overgiving yourself. This isn\u2019t arrogance \u2014 it\u2019s inventory.'})+
+    '</div>';
+
+  var fut=FUT.map(function(x){return '<div class="row"><span class="k">'+esc(x[0])+'</span>'+ta(x[1],x[2],'one',x[0])+'</div>';}).join('');
+  var rb='<div class="row3-h"><span></span><span>Leaving behind</span><span>Stepping into</span></div>'+RB.map(function(x){
+    return '<div class="row3"><span class="k">'+esc(x[0])+'</span>'+ta(x[1],'Before\u2026','one',x[0]+' \u00b7 leaving behind')+ta(x[2],'After\u2026','one',x[0]+' \u00b7 stepping into')+'</div>';}).join('');
+  var aes='<div class="cols3">'+AES.map(function(x){return f(esc(x[0]),x[1],x[2],'one');}).join('')+'</div>';
+  var acts=[1,2,3].map(function(n){
+    return '<div class="act"><span class="n">'+n+'</span>'+ta('thirty_'+n,'A concrete action\u2026','one','Action '+n)+
+      '<button class="date" type="button" data-date="'+n+'" aria-label="Date for action '+n+'">'+CAL+'<span></span><input type="date" tabindex="-1" aria-hidden="true"></button></div>';
+  }).join('');
+  var vision='<div class="grid">'+
+    card('The new narrative','<div class="cols3">'+f('Known for','narr_known','People know me as someone who\u2026')+f('What I attract','narr_attract','The people and energy I draw in\u2026')+
+      f('Recognized for','narr_recognized','When I walk into a room\u2026')+'</div><div class="gap-t">'+f('My mission for this season','narr_mission','My mission for this season is to\u2026','mission')+'</div>')+
+    card('Talk like your future self',fut,{span:'s6 stretch',hint:'Present tense. No hedging.'})+
+    card('Lifestyle rebrand',rb,{span:'s6 stretch',why:'For each moment in your day, map what you\u2019re leaving behind from the last season and the version you\u2019re stepping into this season.'})+
+    card('The visual rebrand',f('How she carries herself','story_dress','She walks in and you know she is someone\u2026')+'<div class="gap-t">'+aes+'</div><div class="gap-t">'+
+      f('The one physical change that makes it real','aes_firstchange','Specific and dated \u2014 e.g. a haircut on the 15th','one')+'</div>',
+      {why:'You need at least one tiny physical change to make it feel real \u2014 \u201cOh yeah, I\u2019m her now.\u201d Define the sensory identity of who you\u2019re becoming.'})+
+    card('My season manifesto',ta('manifesto_final','This season, I am the woman who\u2026','serif letter','My season manifesto'),{span:'s7 stretch',hint:'A letter to yourself, to reread every month.'})+
+    card('The first 30 days',acts,{span:'s5 stretch',hint:'Three specific, dated actions.',why:'Inspiration fades in 48 hours. Anchor this reset in three concrete actions for the next 30 days \u2014 specific, scheduled, non-negotiable.'})+
+    '</div>';
+  $('panels').innerHTML=[about,audit,core,vision].map(function(h,i){return '<div class="panel" data-panel="'+i+'">'+h+'</div>';}).join('');
 }
 
-/* PDF */
-function savePDF(){window.print();}
+var CUR=null, STEP=0, D={}, W=[], dirty={}, saveT=null, winsT=null;
+function flush(){
+  if(saveT){clearTimeout(saveT);saveT=null;}
+  if(CUR&&Object.keys(dirty).length){patchData(CUR,dirty);dirty={};}
+  if(winsT){clearTimeout(winsT);winsT=null;if(CUR)lsSet(CUR.keys.wins,W);}
+}
+function queueSave(k,v){D[k]=v;dirty[k]=v;clearTimeout(saveT);saveT=setTimeout(function(){saveT=null;flush();renderSteps();},400);}
+function saveWinsSoon(){clearTimeout(winsT);winsT=setTimeout(function(){winsT=null;if(CUR)lsSet(CUR.keys.wins,W);renderSteps();},300);}
+function saveWinsNow(){clearTimeout(winsT);winsT=null;lsSet(CUR.keys.wins,W);renderSteps();}
 
-/* INPUT */
-document.querySelector('.paper').addEventListener('input',function(e){
-  if(e.target.tagName==='TEXTAREA')autoExpand(e.target);
-  debouncedSave();
+function openReset(r,step){
+  CUR=r;STEP=Math.max(0,Math.min(3,step|0));D=rData(r);W=rWins(r);dirty={};
+  $('r-name').textContent=r.name;$('r-name').title=r.name;$('r-dates').textContent=fmtRange(r.start,r.end);
+  document.querySelectorAll('#panels [data-k]').forEach(function(el){el.value=D[el.dataset.k]==null?'':String(D[el.dataset.k]);});
+  document.querySelectorAll('.why.on').forEach(function(b){b.classList.remove('on');b.setAttribute('aria-expanded','false');b.closest('.card').querySelector('.why-box').hidden=true;});
+  renderDates();renderWins();showStep(STEP,true);
+}
+function showStep(i,noScroll){
+  STEP=i;
+  document.querySelectorAll('.panel').forEach(function(p){p.classList.toggle('on',+p.dataset.panel===i);});
+  $('lead').textContent=LEAD[i];
+  renderSteps();
+  $('nextbar').innerHTML=(i?'<button class="btn" type="button" data-go="'+(i-1)+'">&larr; '+STEPS[i-1]+'</button>':'<span></span>')+
+    (i<3?'<button class="btn primary" type="button" data-go="'+(i+1)+'">Next: '+STEPS[i+1]+' &rarr;</button>':'<button class="btn primary" type="button" data-go="finish">Finish reset</button>');
+  try{history.replaceState(null,'','#r/'+encodeURIComponent(CUR.id)+'/'+i);}catch(e){}
+  expandIn(document.querySelector('.panel.on'));
+  if(!noScroll)window.scrollTo(0,0);
+}
+function renderSteps(){
+  if(!CUR)return;
+  var st=[0,1,2,3].map(function(i){return stepState(i,D,W);});
+  $('steps').innerHTML=st.map(function(s,i){
+    var c=i===STEP?'on':s.status==='done'?'done':'';
+    return '<button class="step '+c+'" type="button" data-step="'+i+'"'+(i===STEP?' aria-current="step"':'')+'><span class="n">'+(c==='done'?CHECK:i+1)+'</span><span class="step-txt"><b>'+STEPS[i]+'</b><small>'+ST_LABEL[s.status]+'</small></span></button>';
+  }).join('');
+}
+$('steps').addEventListener('click',function(e){var b=e.target.closest('[data-step]');if(b){flush();showStep(+b.dataset.step);}});
+$('nextbar').addEventListener('click',function(e){
+  var b=e.target.closest('[data-go]');if(!b)return;flush();
+  if(b.dataset.go==='finish'){location.hash='';return;}
+  showStep(+b.dataset.go);
+});
+$('panels').addEventListener('input',function(e){
+  var el=e.target;
+  if(el.dataset.k){autoExpand(el);queueSave(el.dataset.k,el.value);}
+  else if(el.classList.contains('wt')){autoExpand(el);W[+el.dataset.i]=el.value;saveWinsSoon();}
+});
+$('panels').addEventListener('click',function(e){
+  var w=e.target.closest('.why');
+  if(w){var box=w.closest('.card').querySelector('.why-box'),on=box.hidden;box.hidden=!on;w.classList.toggle('on',on);w.setAttribute('aria-expanded',String(on));return;}
+  var x=e.target.closest('.li .x');
+  if(x){W.splice(+x.dataset.i,1);saveWinsNow();renderWins();return;}
+  var d=e.target.closest('[data-date]');
+  if(d){var inp=d.querySelector('input');try{if(inp.showPicker){inp.showPicker();return;}}catch(err){}inp.style.pointerEvents='auto';inp.focus();return;}
+  if(e.target.closest('#import-btn'))importWins();
+});
+$('panels').addEventListener('change',function(e){
+  var inp=e.target;if(inp.type!=='date')return;
+  var n=inp.closest('[data-date]').dataset.date;queueSave('thirty_'+n+'_date',inp.value||'');flush();renderDates();
+});
+$('panels').addEventListener('keydown',function(e){
+  if(e.target.id==='win-add'&&e.key==='Enter'){
+    e.preventDefault();var v=trim(e.target.value);if(!v)return;
+    W.push(v);saveWinsNow();e.target.value='';renderWins();$('win-add').focus();
+  }
 });
 
-/* INIT */
-renderWins();
-restoreData();
+function renderDates(){
+  document.querySelectorAll('[data-date]').forEach(function(b){
+    var n=b.dataset.date,v=D['thirty_'+n+'_date']||'',dt=parse(v);
+    b.querySelector('input').value=dt?v:'';
+    b.querySelector('span').textContent=dt?md(dt):'Date';
+    b.classList.toggle('ph',!dt);
+  });
+}
+function renderWins(){
+  var c=$('wins-list');
+  c.innerHTML=W.map(function(w,i){
+    return '<div class="li"><span class="dot"></span><textarea class="wt" rows="1" data-i="'+i+'" aria-label="Win '+(i+1)+'" placeholder="A win, big or small\u2026">'+esc(w)+'</textarea><button class="x" type="button" data-i="'+i+'" aria-label="Remove win" title="Remove">\u2715</button></div>';
+  }).join('');
+  c.querySelectorAll('textarea').forEach(autoExpand);
+}
+
+/* ── import wins from Weekly Audit (weeks that started in the 6 months before this reset) ── */
+function weeklyRecords(){
+  var recs={};
+  var arch=lsGet('weeklyAuditArchive',[]);
+  if(Array.isArray(arch))arch.forEach(function(r){if(r&&typeof r==='object'&&parse(r.weekStart))recs[r.weekStart]=Array.isArray(r.wins)?r.wins:[];});
+  var cur=lsGet('weeklyAudit',null);
+  if(cur&&typeof cur==='object'&&parse(cur.week_start)){
+    var wd=cur.wdData;if(typeof wd==='string'){try{wd=JSON.parse(wd);}catch(e){wd=null;}}
+    if(wd&&Array.isArray(wd.wins))recs[cur.week_start]=wd.wins;
+  }
+  return recs;
+}
+function importWins(){
+  var start=parse(CUR.start)||today0(),from=iso(addMonths(start,-6)),to=iso(start);
+  var recs=weeklyRecords(),seen={},add=[];
+  W.forEach(function(w){seen[trim(w).toLowerCase()]=1;});
+  Object.keys(recs).sort().forEach(function(ws){
+    if(ws<from||ws>=to)return;
+    recs[ws].forEach(function(x){
+      var t=trim(typeof x==='string'?x:x&&x.text),k=t.toLowerCase();
+      if(t&&!seen[k]){seen[k]=1;add.push(t);}
+    });
+  });
+  if(!add.length){toast('No new wins from Weekly Audit');return;}
+  var prev=W.slice();
+  W=W.concat(add);saveWinsNow();renderWins();
+  toast('Added '+add.length+' win'+(add.length>1?'s':''),function(){if(!CUR)return;W=prev;saveWinsNow();renderWins();});
+}
+
+/* ════════════ NEW / EDIT MODAL ════════════ */
+function lastWithCore(exceptId){
+  var l=sorted().filter(function(r){return r.id!==exceptId;});
+  for(var i=0;i<l.length;i++){var d=rData(l[i]);if(CORE_KEYS.some(function(k){return trim(d[k]);}))return l[i];}
+  return null;
+}
+function closeModal(){var s=document.querySelector('.scrim');if(s)s.remove();document.removeEventListener('keydown',modalKey);}
+function modalKey(e){if(e.key==='Escape')closeModal();}
+function openModal(r){
+  closeModal();
+  var isNew=!r,st={name:r?r.name:'',reason:r?r.reason||'':'New season',start:r?r.start:iso(today0()),length:r?r.length||'custom':'3m',end:r?r.end||'':'',copy:false};
+  var src=isNew?lastWithCore(null):null;
+  var el=document.createElement('div');el.className='scrim';
+  el.innerHTML='<div class="modal" role="dialog" aria-modal="true" aria-labelledby="m-title"><div class="modal-h"><div class="card-t" id="m-title">'+(isNew?'New reset':'Edit reset')+'</div><button class="x-btn" type="button" data-x aria-label="Close">\u00d7</button></div>'+
+    '<div class="m-f"><label class="lab" for="m-name">Name</label><input class="input" id="m-name" type="text" maxlength="60" autocomplete="off"></div>'+
+    '<div class="m-f"><span class="lab">What\u2019s prompting it?</span><div class="pills" id="m-reason">'+REASONS.map(function(x){return '<button class="pill" type="button" data-v="'+esc(x)+'">'+esc(x)+'</button>';}).join('')+'</div></div>'+
+    '<div class="m-f m-row"><div><span class="lab">Start</span><button class="input date" type="button" id="m-start">'+CAL+'<span></span><input type="date" tabindex="-1" aria-hidden="true"></button></div>'+
+    '<div><span class="lab">Length</span><div class="pills" id="m-len">'+LENGTHS.map(function(x){return '<button class="pill" type="button" data-v="'+x[0]+'">'+x[1]+'</button>';}).join('')+'</div><div class="ends" id="m-ends"></div></div></div>'+
+    (src?'<div class="tog" id="m-tog"><span>Start from my last reset\u2019s answers<small>Copies The Core from '+esc(src.name)+'</small></span><button class="sw" type="button" role="switch" aria-checked="false" aria-label="Start from my last reset\u2019s answers"></button></div>':'')+
+    '<div class="modal-f">'+(!isNew&&r.id!==PIVOT_ID?'<button class="btn danger" type="button" data-del>Delete reset</button>':'')+
+    '<button class="btn ghost" type="button" data-x>Cancel</button><button class="btn primary" type="button" data-ok>'+(isNew?'Start reset':'Save')+'</button></div></div>';
+  document.body.appendChild(el);
+  var name=el.querySelector('#m-name');name.value=st.name;
+  function paint(){
+    name.placeholder='e.g. '+seasonName(st.start);
+    el.querySelectorAll('#m-reason .pill').forEach(function(p){p.classList.toggle('on',p.dataset.v===st.reason);p.setAttribute('aria-pressed',String(p.dataset.v===st.reason));});
+    el.querySelectorAll('#m-len .pill').forEach(function(p){p.classList.toggle('on',p.dataset.v===st.length);p.setAttribute('aria-pressed',String(p.dataset.v===st.length));});
+    if(st.length==='open')st.end='';else if(LEN_MONTHS[st.length])st.end=endFor(st.start,st.length);
+    var sd=parse(st.start),ed=parse(st.end);
+    el.querySelector('#m-start span').textContent=sd?mdy(sd):'Pick a date';
+    el.querySelector('#m-start input').value=sd?st.start:'';
+    el.querySelector('#m-ends').textContent=ed?'Ends '+mdy(ed):(st.length==='open'?'No end date':'');
+    var sw=el.querySelector('.sw');if(sw)sw.setAttribute('aria-checked',String(st.copy));
+  }
+  paint();
+  el.addEventListener('mousedown',function(e){if(e.target===el)closeModal();});
+  el.addEventListener('click',function(e){
+    if(e.target.closest('[data-x]')){closeModal();return;}
+    var p=e.target.closest('#m-reason .pill');if(p){st.reason=st.reason===p.dataset.v?'':p.dataset.v;paint();return;}
+    var l=e.target.closest('#m-len .pill');if(l){st.length=l.dataset.v;paint();return;}
+    if(e.target.closest('#m-tog')){st.copy=!st.copy;paint();return;}
+    if(e.target.closest('#m-start')){var inp=el.querySelector('#m-start input');try{if(inp.showPicker){inp.showPicker();return;}}catch(err){}inp.style.pointerEvents='auto';inp.focus();return;}
+    if(e.target.closest('[data-del]')){
+      if(!confirm('Delete \u201c'+r.name+'\u201d and its answers? This can\u2019t be undone.'))return;
+      META.resets=META.resets.filter(function(x){return x.id!==r.id;});
+      try{localStorage.removeItem(r.keys.data);localStorage.removeItem(r.keys.wins);}catch(err){}
+      if(META.current===r.id)META.current=sorted()[0].id;
+      saveMeta();closeModal();CUR=null;location.hash='';route();return;
+    }
+    if(e.target.closest('[data-ok]'))submit();
+  });
+  el.querySelector('#m-start input').addEventListener('change',function(){if(parse(this.value)){st.start=this.value;if(!LEN_MONTHS[st.length]&&st.length!=='open'&&st.end&&st.end<st.start)st.end='';paint();}});
+  name.addEventListener('keydown',function(e){if(e.key==='Enter'){e.preventDefault();submit();}});
+  document.addEventListener('keydown',modalKey);
+  setTimeout(function(){name.focus();},20);
+  function submit(){
+    st.name=trim(name.value)||seasonName(st.start);
+    if(!parse(st.start))st.start=iso(today0());
+    paint();
+    if(isNew){
+      var id='r'+Date.now().toString(36),k=META_KEY+'_'+id,data={};
+      var prevNamed=sorted().filter(function(x){return trim(rData(x).cover_name);})[0];
+      if(prevNamed)data.cover_name=rData(prevNamed).cover_name;
+      if(st.copy&&src){var sd=rData(src);CORE_KEYS.forEach(function(key){if(trim(sd[key]))data[key]=sd[key];});}
+      lsSet(k,data);lsSet(k+'_wins',[]);
+      META.resets.push({id:id,name:st.name,start:st.start,end:st.end,length:st.length,reason:st.reason,created:new Date().toISOString(),keys:{data:k,wins:k+'_wins'}});
+      META.current=id;saveMeta();closeModal();go(id,0);
+    }else{
+      r.name=st.name;r.start=st.start;r.end=st.end;r.length=st.length;r.reason=st.reason;
+      saveMeta();closeModal();
+      $('r-name').textContent=r.name;$('r-name').title=r.name;$('r-dates').textContent=fmtRange(r.start,r.end);
+    }
+  }
+}
+$('edit-btn').onclick=function(){if(CUR)openModal(CUR);};
+$('view-reset').querySelector('.back-link').addEventListener('click',function(e){e.preventDefault();flush();location.hash='';});
+
+/* ════════════ SAVE PDF ════════════ */
+var built=false, oldTitle=null;
+function docHtml(r){
+  var d=rData(r),wins=rWins(r).map(trim).filter(Boolean);
+  function v(k){return trim(d[k]);}
+  function qa(q,a){return a?'<div class="qa"><div class="q">'+q+'</div><div class="a">'+esc(a)+'</div></div>':'';}
+  function sec(title,body,cls){return body?'<section class="sec '+(cls||'')+'"><h3>'+title+'</h3>'+body+'</section>':'';}
+  var partN=0;
+  function part(title,secs){
+    if(!secs.length)return '';
+    return '<div class="part"><div class="part-h"><span>Part '+['one','two','three'][partN++]+'</span><h2>'+title+'</h2></div>'+secs.join('')+'</div>';
+  }
+  function list(){return Array.prototype.slice.call(arguments).filter(Boolean);}
+  var owner=v('cover_name'),about=[['Intention',v('cover_intention')],['Carrying forward',v('cover_lesson')]].filter(function(x){return x[1];});
+  var h='<header class="title"><div class="eyebrow">Season Reset</div><h1>'+esc(r.name)+'</h1><div class="meta">'+esc(fmtRange(r.start,r.end,true))+(owner?' &nbsp;\u00b7&nbsp; <b>'+esc(owner)+'</b>':'')+'</div>'+
+    (v('narr_mission')?'<div class="mission"><div class="q">Mission for this season</div><p>'+esc(v('narr_mission'))+'</p></div>':'')+
+    (about.length?'<div class="about">'+about.map(function(x){return '<div><div class="q">'+x[0]+'</div><p>'+esc(x[1])+'</p></div>';}).join('')+'</div>':'')+'</header>';
+
+  h+=part('The Audit',list(
+    sec('Every small win',wins.length?'<ul class="wins">'+wins.map(function(w){return '<li><span>'+esc(w)+'</span></li>';}).join('')+'</ul>':''),
+    sec('What no longer fits',qa('What part of my identity feels outdated?',v('audit_outdated'))+qa('What identity am I still performing that I don\u2019t believe in?',v('audit_performing'))),
+    sec('What I\u2019m leaving behind',qa('Ways of working',v('exit_work'))+qa('Relationships &amp; spaces',v('exit_people'))+qa('Patterns &amp; digital habits',v('exit_patterns'))+
+      qa('Conversations &amp; mental loops I\u2019m done with',v('exit_convos'))+qa('My first hard boundary',v('exit_boundary')))));
+
+  var oldR=v('culture_oldrules'),newR=v('culture_newrules'),rules='';
+  if(oldR&&newR)rules='<div class="rules"><div><div class="q">The rules I\u2019ve been running on</div><p>'+esc(oldR)+'</p></div><div class="arrow">\u2192</div><div><div class="q">The new rules for this season</div><p>'+esc(newR)+'</p></div></div>';
+  else rules=qa('The rules I\u2019ve been running on',oldR)+qa('The new rules for this season',newR);
+  h+=part('The Core',list(
+    sec('The good parts of my story',qa('My intentions',v('story_intentions'))+qa('My morals &amp; values',v('story_values'))+qa('My character',v('story_character'))+qa('My dreams \u2014 uncensored',v('story_dreams'))),
+    sec('My rules',rules,'keep'),
+    sec('What I actually bring',qa('Career &amp; intellect',v('val_work'))+qa('In romance',v('val_romance'))+qa('In friendships',v('val_friends'))+qa('To myself',v('val_self')))));
+
+  var rbRows=RB.filter(function(x){return v(x[1])||v(x[2]);}).map(function(x){return '<tr><th>'+esc(x[0])+'</th><td>'+esc(v(x[1]))+'</td><td>'+esc(v(x[2]))+'</td></tr>';}).join('');
+  var acts=[1,2,3].filter(function(n){return v('thirty_'+n);}).map(function(n,i){var dt=parse(d['thirty_'+n+'_date']);return '<li><b>'+(i+1)+'</b><span>'+esc(v('thirty_'+n))+'</span>'+(dt?'<em>'+md(dt)+'</em>':'')+'</li>';}).join('');
+  h+=part('The Vision',list(
+    sec('The new narrative',qa('Known for',v('narr_known'))+qa('What I attract',v('narr_attract'))+qa('Recognized for',v('narr_recognized'))),
+    sec('Talk like my future self',FUT.map(function(x){return qa(esc(x[0]),v(x[1]));}).join('')),
+    sec('Lifestyle rebrand',rbRows?'<table class="rb"><thead><tr><th></th><th>Leaving behind</th><th>Stepping into</th></tr></thead><tbody>'+rbRows+'</tbody></table>':''),
+    sec('The visual rebrand',qa('How she carries herself',v('story_dress'))+AES.map(function(x){return qa(esc(x[0]),v(x[1]));}).join('')+qa('The one physical change',v('aes_firstchange'))),
+    sec('My season manifesto',v('manifesto_final')?'<p class="manifesto">'+esc(v('manifesto_final'))+'</p>':'','keep'),
+    sec('The first 30 days',acts?'<ol class="acts">'+acts+'</ol>':'','keep')));
+  return h;
+}
+function cssStr(s){return '"'+String(s).replace(/[\\"]/g,'\\$&').replace(/[\r\n]+/g,' ')+'"';}
+function buildPDF(r){
+  r=r||CUR||byId(META.current);if(!r)return false;
+  flush();
+  var el=$('rp');el.className='rp';el.innerHTML=docHtml(r);
+  var st=$('rp-page');if(!st){st=document.createElement('style');st.id='rp-page';document.head.appendChild(st);}
+  var foot='font:600 6.5pt "Plus Jakarta Sans",Helvetica,Arial,sans-serif;letter-spacing:.08em;color:#a59c8c;vertical-align:top;padding-top:16pt;';
+  st.textContent='@media print{@page{size:letter;margin:0.75in 0.85in 0.8in;'+
+    '@bottom-left{content:'+cssStr((r.name+' \u00b7 Season Reset').toUpperCase())+';'+foot+'text-align:left;}'+
+    '@bottom-right{content:counter(page) " / " counter(pages);'+foot+'text-align:right;}}}';
+  document.body.classList.add('rp-on');built=true;
+  if(oldTitle==null)oldTitle=document.title;document.title=r.name+' \u2014 Season Reset';
+  return true;
+}
+function cleanupPDF(){var el=$('rp');el.innerHTML='';el.className='';var st=$('rp-page');if(st)st.remove();document.body.classList.remove('rp-on');built=false;if(oldTitle!=null){document.title=oldTitle;oldTitle=null;}}
+$('pdf-btn').onclick=function(){if(!buildPDF(CUR))return;try{window.print();}catch(e){cleanupPDF();}};
+window.addEventListener('beforeprint',function(){if(!built)buildPDF(CUR||byId(META.current));});
+window.addEventListener('afterprint',cleanupPDF);
+window.SeasonReset={buildPDF:buildPDF,cleanupPDF:cleanupPDF};
+
+/* ════════════ ROUTING ════════════ */
+function go(id,step){flush();location.hash='r/'+encodeURIComponent(id)+'/'+(step|0);}
+function route(){
+  flush();closeModal();
+  var m=/^#r\/([^\/]+)\/?(\d)?/.exec(location.hash),r=m&&byId(decodeURIComponent(m[1]));
+  if(r){
+    $('view-landing').hidden=true;$('view-reset').hidden=false;
+    openReset(r,m[2]==null?firstOpenStep(states(r)):+m[2]);
+  }else{
+    CUR=null;
+    $('view-reset').hidden=true;$('view-landing').hidden=false;
+    if(location.hash){try{history.replaceState(null,'',location.pathname+location.search);}catch(e){}}
+    renderLanding();
+  }
+  window.scrollTo(0,0);
+}
+window.addEventListener('hashchange',route);
+window.addEventListener('pagehide',flush);
+window.addEventListener('resize',function(){var p=document.querySelector('.panel.on');if(p&&CUR)expandIn(p);});
+
+loadMeta();buildPanels();route();
+if(document.fonts&&document.fonts.ready)document.fonts.ready.then(function(){var p=document.querySelector('.panel.on');if(p&&CUR)expandIn(p);});
+})();
 </script>
 </body>
 </html>
