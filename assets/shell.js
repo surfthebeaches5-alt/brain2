@@ -98,7 +98,8 @@
   sps.forEach(function(sp){
     sp.addEventListener('mouseenter',function(){open(sp);});
     sp.addEventListener('mouseleave',function(){closeT=setTimeout(function(){sp.classList.remove('open');},180);});
-    sp.firstChild.addEventListener('click',function(e){e.preventDefault();sp.classList.contains('open')?closeAll():open(sp);});
+    // hovering already opened it, so a click must not toggle it shut again; outside click / Esc closes
+    sp.firstChild.addEventListener('click',function(e){e.preventDefault();open(sp);});
     sp.firstChild.addEventListener('keydown',function(e){if(e.key==='Enter'||e.key===' '){e.preventDefault();open(sp);var a=sp.querySelector('.b2-menu a');if(a)a.focus();}});
   });
   document.addEventListener('click',function(e){if(!nav.contains(e.target)){closeAll();closeLinks();}});
