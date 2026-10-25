@@ -5,7 +5,7 @@
    server; your events only load after you sign in.
 
    Storage:
-     brain2GCal1       {clientId, calendars:[ids], defaultCal, email}
+     brain2GCal1       {clientId, calendars:[ids], defaultCal, lastCal, calList:[{id,summary,backgroundColor,primary}], email}
      brain2GCalCache1  {from, to, at, events:[normalized]}  (last fetch, so the
                         page shows your week instantly; refreshed on demand)
      sessionStorage brain2GCalTok {token, exp}  (≈1 hour, this tab only)
@@ -94,7 +94,10 @@
 
   function calendars(){
     return api('/users/me/calendarList?minAccessRole=writer&maxResults=100').then(function(j){
-      return (j.items||[]).map(function(c){return {id:c.id,summary:c.summaryOverride||c.summary,backgroundColor:c.backgroundColor,primary:!!c.primary,selected:c.selected!==false};});
+      var list=(j.items||[]).map(function(c){return {id:c.id,summary:c.summaryOverride||c.summary,backgroundColor:c.backgroundColor,primary:!!c.primary,selected:c.selected!==false};});
+      /* remember the writable calendars so pickers work before the next sign-in */
+      cfg.calList=list.map(function(c){return {id:c.id,summary:c.summary,backgroundColor:c.backgroundColor,primary:c.primary};});lsSet(CFG_KEY,cfg);
+      return list;
     });
   }
   /* events between two Date objects across the chosen calendars; result is cached */
@@ -145,6 +148,8 @@
     setConfig:function(c){cfg=Object.assign({},cfg,c);lsSet(CFG_KEY,cfg);tokenClient=null;if(cfg.clientId)loadGIS().then(initClient).catch(function(){});},
     disconnect:function(){var t=tok();clearTok();if(t&&window.google&&google.accounts&&google.accounts.oauth2)google.accounts.oauth2.revoke(t,function(){});cfg.everConnected=false;lsSet(CFG_KEY,cfg);},
     cached:function(){return lsGet(CACHE_KEY,null);},
+    /* writable calendars from the last fetch: [{id,summary,backgroundColor,primary}] */
+    calList:function(){return (cfg.calList||[]).slice();},
     signIn:signIn, calendars:calendars, events:events, create:create, remove:remove,
     origin:location.origin
   };

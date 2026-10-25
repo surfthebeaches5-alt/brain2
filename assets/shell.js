@@ -65,7 +65,6 @@
   var SPACES=[
     {label:'Today',p:''},
     {label:'Plan',pages:[
-      {p:'calendar/',label:'Calendar',sub:'Your schedule',icon:'calendar'},
       {p:'weekly-audit/',label:'Weekly Audit',sub:'Brain dump, wins, life wheel',icon:'audit'},
       {p:'monthly/',label:'Monthly Planner',sub:'Focus & goals',icon:'monthly'},
       {p:'reset-2026/',label:'Mid-Year Pivot',sub:'H2 2026 vision',icon:'pivot'}]},

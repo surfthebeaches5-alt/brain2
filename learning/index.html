@@ -547,10 +547,11 @@
   .gcov .g2{font-size:9.5px;letter-spacing:.2em;font-weight:800;color:#7a6a4e;text-transform:uppercase}
   .sqgen{width:100%;height:100%;display:flex;align-items:flex-end;padding:14px}
   .sqgen span{font-family:var(--b2-serif);font-size:18px;font-weight:600;line-height:1.12;color:var(--ink);display:-webkit-box;-webkit-line-clamp:4;-webkit-box-orient:vertical;overflow:hidden}
-  .atile{aspect-ratio:2/3;border-radius:8px;background:var(--c);border:1px solid var(--line);padding:16px 14px;display:flex;flex-direction:column;box-shadow:0 1px 2px rgba(40,30,20,.08),0 8px 18px rgba(40,30,20,.08);overflow:hidden}
+  .atile{position:relative;aspect-ratio:2/3;border-radius:8px;background:var(--c);border:1px solid var(--line);padding:16px 14px;display:flex;flex-direction:column;box-shadow:0 1px 2px rgba(40,30,20,.08),0 8px 18px rgba(40,30,20,.08);overflow:hidden}
   .atile .site{font-size:9.5px;letter-spacing:.16em;text-transform:uppercase;font-weight:800;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
   .atile .at{font-family:var(--b2-serif);font-size:19px;font-weight:600;line-height:1.18;margin-top:12px;letter-spacing:-.3px;display:-webkit-box;-webkit-line-clamp:6;-webkit-box-orient:vertical;overflow:hidden}
   .atile .mins{margin-top:auto;font-size:11px;font-weight:700;color:var(--muted)}
+  .atile img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
   .rtool{display:flex;align-items:center;gap:14px;padding:14px 16px;border-radius:14px;background:var(--surface);border:1px solid var(--line);box-shadow:var(--shadow)}
   .rtool:hover{border-color:var(--accent-line)}
   .rtool .av{width:40px;height:40px;border-radius:11px;color:#fff;font-weight:800;font-size:15px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
@@ -2445,7 +2446,8 @@ var LIB=(function(){
   var DB, editId=null, fType='all', fStatus='all', fFor='all', q='';
   var TYPEMETA={video:'Video',playlist:'Playlist',podcast:'Podcast',article:'Article',book:'Book',course:'Course',website:'Website',tool:'Tool'};
   var SUBJECTS=['Philosophy','Personal Development','Psychology','Health & Wellness','Technology & AI','Business & Career','Finance & Money','Politics & Society','History','Science','Languages','Arts & Culture','Other'];
-  var TABS=[['all','All',null],['article','Articles',['article']],['video','Videos',['video','playlist']],['podcast','Podcasts',['podcast']],['book','Books',['book']],['course','Courses',['course']],['web','Websites & tools',['website','tool']]];
+  /* two shelves only: Watch (videos, playlists, podcasts) and Read (books, articles and any other link) */
+  var TABS=[['all','All',null],['watch','Watch',['video','playlist','podcast']],['read','Read',['book','article','course','website','tool']]];
   var GEN=['linear-gradient(135deg,#d9ccf3,#bfaee8)','linear-gradient(135deg,#cfe3c9,#a9cfa3)','linear-gradient(135deg,#d6e3f2,#aec6e4)','linear-gradient(135deg,#f3e2c4,#e3c58f)','linear-gradient(135deg,#f2d3d9,#e0a9b4)','linear-gradient(135deg,#d3ebe7,#a2d0c8)'];
   var SOFT=['#f0eafc','#e4efe3','#e5edf7','#f7eedb','#f9e4e8','#e3f1ee'];
   var AV=['#cb9a4f','#5f88b8','#5f9568','#7e9cc4','#a98fe0','#cf8a93'];
@@ -2575,14 +2577,10 @@ var LIB=(function(){
   function vidTile(it){
     var th=thumb(it), dur=it.type==='playlist'?(it.progress&&it.progress.of?it.progress.of+' videos':'playlist'):'';
     return '<div class="ri'+(it.status==='done'?' done':'')+'" onclick="LIB.open('+A(it.id)+')">'+acts(it)+'<div class="vthumb"><div class="vgen" style="background:'+genBg(it)+'"><span>'+esc(it.title)+'</span></div>'+
-      (th?'<img src="'+esc(th)+'" alt="" loading="lazy" onerror="this.remove()">':'')+(dur?'<span class="dur">'+esc(dur)+'</span>':'')+'<span class="play">▶</span></div>'+
+      (th?'<img src="'+esc(th)+'" alt="" loading="lazy"'+(it.type==='podcast'?' style="object-fit:contain;background:'+genBg(it)+'"':'')+' onerror="this.remove()">':'')+(dur?'<span class="dur">'+esc(dur)+'</span>':'')+'<span class="play">'+(it.type==='podcast'?'♪':'▶')+'</span></div>'+
       '<div class="rt">'+esc(it.title)+'</div><div class="rs">'+esc(src(it)+(it.type==='playlist'?' · playlist':''))+'</div>'+tag(it)+'</div>';
   }
-  function podTile(it){
-    var th=thumb(it);
-    return '<div class="ri'+(it.status==='done'?' done':'')+'" onclick="LIB.open('+A(it.id)+')">'+acts(it)+'<div class="cover sq"><div class="sqgen" style="background:'+genBg(it)+'"><span>'+esc(it.title)+'</span></div>'+(th?'<img src="'+esc(th)+'" alt="" loading="lazy" onerror="this.remove()">':'')+'</div>'+
-      '<div class="rt">'+esc(it.title)+'</div><div class="rs">'+esc(src(it))+'</div>'+tag(it)+'</div>';
-  }
+
   function bookTile(it){
     var th=thumb(it);
     return '<div class="ri'+(it.status==='done'?' done':'')+'" onclick="LIB.open('+A(it.id)+')">'+acts(it)+'<div class="cover book"><div class="gcov" style="background:linear-gradient(160deg,#e9dfc9,#d9c9a8)"><span class="g1">'+esc(it.title)+'</span><span class="g2">'+esc(it.author||'')+'</span></div>'+(th?'<img src="'+esc(th)+'" alt="" loading="lazy" onerror="this.remove()">':'')+'</div>'+
@@ -2590,16 +2588,12 @@ var LIB=(function(){
   }
   function artTile(it){
     var site=it.author||host(it.url)||'Article';
-    return '<div class="ri'+(it.status==='done'?' done':'')+'" onclick="LIB.open('+A(it.id)+')">'+acts(it)+'<div class="atile" style="--c:'+SOFT[U.hash(site)%SOFT.length]+'"><span class="site">'+esc(site)+'</span><span class="at">'+esc(it.title)+'</span><span class="mins">Article</span></div>'+
+    return '<div class="ri'+(it.status==='done'?' done':'')+'" onclick="LIB.open('+A(it.id)+')">'+acts(it)+'<div class="atile" style="--c:'+SOFT[U.hash(site)%SOFT.length]+'"><span class="site">'+esc(site)+'</span><span class="at">'+esc(it.title)+'</span><span class="mins">'+esc(typeLabel(it.type))+'</span>'+(thumb(it)?'<img src="'+esc(thumb(it))+'" alt="" loading="lazy" onerror="this.remove()">':'')+'</div>'+
       '<div class="rt">'+esc(it.title)+'</div><div class="rs">'+esc(site)+'</div>'+tag(it)+'</div>';
   }
   function readTile(it){return it.type==='book'?bookTile(it):artTile(it);}
-  function toolTile(it){
-    var nm=it.title||host(it.url);
-    return '<div class="rtool ri'+(it.status==='done'?' done':'')+'" onclick="LIB.open('+A(it.id)+')"><span class="av" style="background:'+AV[U.hash(nm)%AV.length]+'">'+esc(nm.trim().charAt(0).toUpperCase()||'?')+'</span>'+
-      '<div class="grow"><div class="eyebrow" style="font-size:9.5px">'+esc(typeLabel(it.type))+'</div><div class="rt" style="margin:1px 0 0">'+esc(it.title)+'</div><div class="rs">'+esc(it.author||host(it.url)||'')+'</div></div>'+tag(it)+acts(it)+'<span class="ar">↗</span></div>';
-  }
-  function tileFor(it){if(it.type==='video'||it.type==='playlist')return vidTile(it);if(it.type==='podcast')return podTile(it);if(it.type==='book'||it.type==='article')return readTile(it);return toolTile(it);}
+
+  function tileFor(it){if(it.type==='video'||it.type==='playlist'||it.type==='podcast')return vidTile(it);if(it.type==='book')return bookTile(it);return artTile(it);}
   function shelf(title,n,body,cls,tabKey){return '<div class="shelf-h"><div><span class="st-t">'+title+'</span><span class="st-n">'+esc(n)+'</span></div>'+(tabKey?'<button class="more" onclick="LIB.setType('+A(tabKey)+')">See all →</button>':'')+'</div><div class="'+cls+'">'+body+'</div>';}
   function progLabel(it){var p=it.progress||{};var u=it.type==='book'?'p. ':it.type==='playlist'?'Video ':it.type==='podcast'?'Episode ':it.type==='course'?'Lesson ':'';return {at:(p.at!=null&&p.at!=='')?u+p.at:'Started',of:p.of?'of '+p.of:'',pct:p.of?Math.min(100,(+p.at||0)/p.of*100):0};}
   function nowCard(it){
@@ -2644,10 +2638,11 @@ var LIB=(function(){
       var list=all.filter(function(it){return matches(it);}).sort(function(x,y){var r={doing:0,queued:1,done:2};return r[x.status]-r[y.status];});
       if(!list.length)body='<div class="empty" style="margin-top:20px"><h3>Nothing here</h3><p>No resources match — try another search or clear the filters.</p></div>';
       else if(q.trim()){body='<section class="card" style="padding:6px 22px;margin-top:20px">'+list.map(drow).join('')+'</section>';}
-      else{var tb=TABS.filter(function(t){return t[0]===fType;})[0];var cls=fType==='video'?'rgrid v':fType==='course'||fType==='web'?'rgrid t':'rgrid';
+      else{var tb=TABS.filter(function(t){return t[0]===fType;})[0];var cls=fType==='watch'?'rgrid v':'rgrid';
         body='<div class="shelf-h"><div><span class="st-t">'+esc(tb[1])+'</span><span class="st-n">'+list.length+'</span></div><button class="more" onclick="LIB.setType(\'all\')">← All shelves</button></div><div class="'+cls+'">'+list.map(tileFor).join('')+'</div>';}
     }else{
-      var showDone=fStatus==='done', base=all.filter(function(it){return matches(it)&&(showDone||fStatus!=='all'||it.status!=='done');});
+      var showDone=fStatus==='done', ORD={doing:0,queued:1,done:2},
+        base=all.filter(function(it){return matches(it);}).sort(function(x,y){return (ORD[x.status]-ORD[y.status])||(x.status==='done'?(y.doneOn||'').localeCompare(x.doneOn||''):0);});
       var doing=all.filter(function(it){return it.status==='doing'&&matches(it,true);});
       var top='';
       if(fStatus==='all'||fStatus==='doing'){
@@ -2655,20 +2650,14 @@ var LIB=(function(){
         if(doing.length<2)nc+='<section class="card '+(doing.length?'s4':'s8')+'" style="display:flex;flex-direction:column;justify-content:center;border-style:dashed;box-shadow:none;background:transparent"><div class="card-t" style="font-size:16px">'+(doing.length?'One thing at a time':'Nothing in progress')+'</div><div class="soft-empty">Hover a resource and press ▶ Start — it shows up here with your place in it.</div></section>';
         top='<div class="grid" style="margin-top:20px">'+nc+seasonCard()+'</div>';
       }
-      var W=base.filter(function(it){return it.type==='video'||it.type==='playlist';}), L=base.filter(function(it){return it.type==='podcast';}),
-          R=base.filter(function(it){return it.type==='book'||it.type==='article';}), T=base.filter(function(it){return ['course','website','tool'].indexOf(it.type)>=0;});
-      var lbl=showDone?'done':fStatus==='doing'?'in progress':'saved';
+      var WT=['video','playlist','podcast'], W=base.filter(function(it){return WT.indexOf(it.type)>=0;}), R=base.filter(function(it){return WT.indexOf(it.type)<0;});
+      function cnt(list){var d=list.filter(function(x){return x.status==='done';}).length,o=list.length-d;
+        if(fStatus!=='all')return list.length+' '+(showDone?'done':fStatus==='doing'?'in progress':'saved');
+        return [o?o+' to go':'',d?d+' done':''].filter(Boolean).join(' · ');}
       body=top+
-        (W.length?shelf('Watch',W.length+' '+lbl,W.slice(0,5).map(vidTile).join(''),'vrow','video'):'')+
-        (L.length?shelf('Listen',L.length+' '+lbl,L.slice(0,6).map(podTile).join(''),'prow','podcast'):'')+
-        (R.length?shelf('Read',(function(){var b=R.filter(function(x){return x.type==='book';}).length,a=R.length-b;return [b?b+' book'+(b===1?'':'s'):'',a?a+' article'+(a===1?'':'s'):''].filter(Boolean).join(' · ');})(),R.slice(0,6).map(readTile).join(''),'prow',R.every(function(x){return x.type==='book';})?'book':R.every(function(x){return x.type==='article';})?'article':null):'')+
-        (T.length?shelf('Courses, websites &amp; tools',String(T.length),T.slice(0,6).map(toolTile).join(''),'trow',T.every(function(x){return x.type==='course';})?'course':T.every(function(x){return x.type!=='course';})?'web':null):'');
-      if(!W.length&&!L.length&&!R.length&&!T.length)body+='<div class="empty" style="margin-top:24px"><h3>Nothing here</h3><p>No resources match these filters yet.</p></div>';
-      if(!showDone){
-        var dn=all.filter(function(it){return it.status==='done'&&matches(it,true);}).sort(function(x,y){return (y.doneOn||'').localeCompare(x.doneOn||'');});
-        var s=SEA.selected(), ins=dn.filter(function(it){return it.doneOn&&it.doneOn>=s.start&&it.doneOn<=s.end;}).length;
-        if(dn.length)body+='<div class="shelf-h"><div><span class="st-t">Done lately</span><span class="st-n">'+(ins?ins+' '+esc(SEA.isCurrent(s)?'this season':'in '+s.name):dn.length+' done')+'</span></div><button class="more" onclick="LIB.setStatusF(\'done\')">See all →</button></div><section class="card" style="padding:6px 22px">'+dn.slice(0,5).map(drow).join('')+'</section>';
-      }
+        (W.length?shelf('Watch',cnt(W),W.slice(0,5).map(vidTile).join(''),'vrow','watch'):'')+
+        (R.length?shelf('Read',cnt(R),R.slice(0,6).map(function(it){return it.type==='book'?bookTile(it):artTile(it);}).join(''),'prow','read'):'');
+      if(!W.length&&!R.length)body+='<div class="empty" style="margin-top:24px"><h3>Nothing here</h3><p>No resources match these filters yet.</p></div>';
     }
     host.innerHTML=head+body;
   }

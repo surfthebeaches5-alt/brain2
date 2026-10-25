@@ -1180,7 +1180,7 @@ $('plan-go').addEventListener('click',function(){
       .catch(function(err){var id=addLocal(ev,note);markPlanned(p,ev,id,'local');closeFloats();toast('Google didn’t take it ('+err.message+') — saved to your Brain calendar instead');});
   }else{
     var id=addLocal(ev,note);markPlanned(p,ev,id,'local');closeFloats();
-    toast('On your calendar · '+DS[p.date.getDay()]+' '+MS[p.date.getMonth()]+' '+p.date.getDate()+(ev.time?' · '+fmtTime(ev.time):''),'Open calendar',function(){location.href='../calendar/'+(location.protocol==='file:'?'index.html':'');});
+    toast('On your calendar · '+DS[p.date.getDay()]+' '+MS[p.date.getMonth()]+' '+p.date.getDate()+(ev.time?' · '+fmtTime(ev.time):''),'Open Today',function(){location.href='../'+(location.protocol==='file:'?'index.html':'');});
   }
 });
 function calCat(){
