@@ -35,7 +35,8 @@ button,input,select{font-family:inherit;}
   box-shadow:0 1px 2px rgba(60,50,30,.04),0 8px 24px rgba(60,50,30,.05);}
 
 /* ── SIDEBAR (filters + list) ── */
-.sidebar{width:360px;flex-shrink:0;background:var(--surface);border-right:1px solid var(--line);display:flex;flex-direction:column;overflow:hidden;}
+.sidebar{width:360px;flex-shrink:0;background:var(--surface);border-right:1px solid var(--line);display:flex;flex-direction:column;overflow-y:auto;overscroll-behavior:contain;}
+.sidebar > *{flex-shrink:0;}
 .sidebar-controls{padding:18px 20px 16px;border-bottom:1px solid var(--hair);display:flex;flex-direction:column;gap:12px;}
 .filter-group{display:flex;flex-direction:column;gap:7px;}
 .filter-group-label{font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--muted);font-weight:750;}
@@ -61,7 +62,7 @@ button,input,select{font-family:inherit;}
 .sb-stat-label{font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--muted);font-weight:750;margin-top:6px;}
 
 /* spot rows */
-.sidebar-list{flex:1;overflow-y:auto;padding:6px 10px 12px;}
+.sidebar-list{padding:6px 10px 12px;}
 .spot-card{padding:13px 10px;border-radius:12px;cursor:pointer;transition:background .15s;position:relative;border-bottom:1px solid var(--hair);}
 .spot-card:last-child{border-bottom:none;}
 .spot-card:hover,.spot-card.hovered{background:var(--warm);}
