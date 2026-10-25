@@ -53,15 +53,16 @@
   .msg.bad{background:var(--over-bg);color:var(--over)}
   .choice{margin-top:2px;display:none;gap:8px;flex-wrap:wrap}
   .choice.show{display:flex}
+  .choice .btn[hidden]{display:none}
   .toggle{display:flex;background:none;border:none;font:650 12px var(--b2-sans);color:var(--accent-deep);cursor:pointer;margin-top:12px;padding:0;align-items:center;gap:5px}
   .toggle:hover{text-decoration:underline}
   input[type=file]{display:none}
   @media (max-width:760px){ .wrap{padding:16px 16px 60px} .card{padding:18px} }
 </style>
-<link rel="stylesheet" href="../assets/brain.css">
+<link rel="stylesheet" href="../assets/brain.css?v=1025b">
 </head>
 <body>
-<script src="../assets/shell.js"></script>
+<script src="../assets/shell.js?v=1025b"></script>
 <div class="topbar">
   <div class="topbar-left">
     <a class="back" href="../" id="backLink"></a>
@@ -90,6 +91,7 @@
       <input type="file" id="fileInput" accept=".json,application/json">
       <div class="msg" id="impPreview"></div>
       <div class="choice" id="impChoice">
+        <button class="btn" id="importNewBtn" hidden></button>
         <button class="btn" id="importBtn"></button>
         <button class="btn ghost" id="cancelBtn">Cancel</button>
       </div>
@@ -159,6 +161,7 @@
   $('exportBtn').innerHTML = IC('download',16) + ' Export to file';
   $('pickBtn').innerHTML = IC('upload',16) + ' Choose backup file';
   $('importBtn').innerHTML = IC('check',16) + ' Import now';
+  $('importNewBtn').innerHTML = IC('check',16) + ' Add only what\u2019s missing';
   $('toggleKeys').innerHTML = IC('eye',14) + ' Show what\u2019s included';
 
   // ---------- export ----------
@@ -218,6 +221,19 @@
 
   // ---------- import ----------
   var pending = null;
+  /* a section "has content" when it holds any list item or real text; pages save empty
+     shells (e.g. [] or {items:[]}) the first time they open, and those count as missing */
+  var META = { id:1, active:1, lastReset:1, month:1, updated:1, version:1, step:1, view:1, week_start:1, week_end:1, weekStart:1, midCycleSeeded:1 };
+  function hasContent(raw){
+    if (raw === null || raw === undefined) return false;
+    var v; try { v = JSON.parse(raw); } catch(e){ return String(raw).trim() !== ''; }
+    return (function walk(x, key){
+      if (Array.isArray(x)) return x.length > 0;
+      if (x && typeof x === 'object') return Object.keys(x).some(function(k){ return walk(x[k], k); });
+      if (typeof x === 'string') return !META[key] && x.trim() !== '';
+      return false;
+    })(v, '');
+  }
 
   $('pickBtn').addEventListener('click', function(){ $('fileInput').click(); });
 
@@ -237,15 +253,18 @@
       }
       var keys = Object.keys(parsed.data);
       if (keys.length === 0) return fail('This backup file is empty \u2014 it was exported from a browser with no saved data.');
-      var overlap = keys.filter(function(k){ return localStorage.getItem(k) !== null; });
+      var overlap = keys.filter(function(k){ return hasContent(localStorage.getItem(k)); });
       pending = parsed;
       var pv = $('impPreview');
       pv.className = 'msg warn show';
       var when = parsed.exportedAt ? new Date(parsed.exportedAt).toLocaleDateString() : 'an unknown date';
       var txt = 'Backup from ' + when + ' with ' + keys.length + ' section' + (keys.length===1?'':'s') + '.';
       txt += overlap.length
-        ? ' ' + overlap.length + ' of them already exist here and will be replaced by the file\u2019s version.'
+        ? ' ' + (overlap.length===1 ? 'One of them already has' : overlap.length + ' of them already have') + ' your data here. \u201cAdd only what\u2019s missing\u201d keeps yours and adds the other ' + (keys.length-overlap.length) + '; \u201cReplace all\u201d swaps yours for the file\u2019s version.'
         : ' None of them exist here yet, so nothing will be overwritten.';
+      $('importNewBtn').hidden = !overlap.length || overlap.length === keys.length;
+      $('importBtn').innerHTML = IC('check',16) + (overlap.length ? ' Replace all' : ' Import now');
+      $('importBtn').className = overlap.length ? 'btn ghost' : 'btn';
       pv.innerHTML = IC('alert',15) + '<span>' + txt + '</span>';
       $('impChoice').classList.add('show');
     };
@@ -259,9 +278,13 @@
     $('impChoice').classList.remove('show');
   });
 
-  $('importBtn').addEventListener('click', function(){
+  $('importBtn').addEventListener('click', function(){ doImport(false); });
+  $('importNewBtn').addEventListener('click', function(){ doImport(true); });
+  /* onlyMissing: keep every section that already exists in this browser */
+  function doImport(onlyMissing){
     if (!pending) return;
     var keys = Object.keys(pending.data);
+    if (onlyMissing) keys = keys.filter(function(k){ return !hasContent(localStorage.getItem(k)); });
     var wrote = 0;
     try {
       keys.forEach(function(k){
@@ -278,7 +301,7 @@
     msg.className = 'msg ok show';
     msg.innerHTML = IC('check',15) + '<span>Imported ' + wrote + ' section' + (wrote===1?'':'s') + '. Open any Brain 2.0 page and your data will be there.</span>';
     refreshCount();
-  });
+  }
 
   function fail(text){
     var msg = $('impMsg');

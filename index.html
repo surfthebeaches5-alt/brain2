@@ -782,12 +782,13 @@ $('lang').addEventListener('click',function(e){if(e.target.closest('a'))return;v
   if(i>=0)day.done.splice(i,1);else day.done.push(id);lsSet('langChallenge1',db);renderLang();renderCount();});
 
 /* Body — the Fitness page's daily non-negotiables (fitnessTracker1_day_YYYY-MM-DD) */
-var WO={0:'Rest & Prep',1:'Lower Body Sculpt',2:'Waist Snatching',3:'Upper Body Sculpt',4:'Active Recovery',5:'Full Body Glow',6:'Sweat Session'};
+/* today's routine name comes from your own weekly plan on the Fitness page */
+function planRoutine(){var p=lsGet('fitnessTracker1_plan');if(!p||!p.week)return '';var id=p.week[new Date().getDay()];if(id===null)return 'Rest';var r=(p.routines||[]).filter(function(x){return x.id===id;})[0];return r?r.name:'';}
 var NN=[{id:'water',label:'Water — 4 cups'},{id:'walk',label:'Walking pad — 1 hr'},{id:'steps',label:'6k+ steps'},{id:'workout',label:'Workout'}];
 function fitKey(){return 'fitnessTracker1_day_'+dk(today());}
 function renderBody(){
   var nn=(lsGet(fitKey())||{}).nonneg||{},custom=lsGet('fitnessTracker1_custom_workout_'+dk(today()));
-  var wo=(custom&&custom.label)||WO[new Date().getDay()]||'Workout';
+  var wo=(custom&&custom.label)||planRoutine()||'Workout';
   $('body').innerHTML='<div class="grp"><span>Body · '+esc(wo)+'</span><a href="fitness/">Fitness →</a></div>'+NN.map(function(n){var on=!!nn[n.id];
     return '<div class="task'+(on?' on':'')+'" data-nn="'+n.id+'"><span class="ck'+(on?' on':'')+'">'+(on?'✓':'')+'</span><span class="tx">'+n.label+'</span></div>';}).join('');
 }

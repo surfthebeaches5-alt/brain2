@@ -449,26 +449,8 @@ var SHELF_GUESS={Produce:5,Dairy:7,Protein:5,Bread:7};
 
 var data={staples:[],goto:[],shopping:[],picked:[]};
 
-var DEFAULT_STAPLES=[
-  {id:'s1', name:'Celsius Energy Drink',              store:'Costco',  category:'Drink',   status:'stocked', price:19.79},
-  {id:'s2', name:'Seasoned St. Louis Ribs',           store:'Costco',  category:'Protein', status:'stocked', price:23.65},
-  {id:'s3', name:'BelGioioso Fresh Mozzarella',       store:'Walmart', category:'Dairy',   status:'out',     price:2.58},
-  {id:'s4', name:'Palmini Hearts of Palm Linguine',   store:'Walmart', category:'Pantry',  status:'stocked', price:3.98},
-  {id:'s5', name:"Thomas' Bagel Thins",               store:'Walmart', category:'Bread',   status:'stocked', price:5.62},
-  {id:'s6', name:'Great Value Large White Eggs',      store:'Walmart', category:'Protein', status:'stocked', price:5.84},
-  {id:'s7', name:'Great Value Hickory Smoked Bacon',  store:'Walmart', category:'Protein', status:'low',     price:4.24},
-  {id:'s8', name:'Mission Jalapeño Flour Tortillas',  store:'Safeway', category:'Bread',   status:'stocked', price:3.63},
-  {id:'s9', name:'Great Value Original Pepperoni',    store:'Walmart', category:'Protein', status:'stocked', price:2.88},
-  {id:'s10',name:"Rao's Marinara Sauce",              store:'Walmart', category:'Sauce',   status:'stocked', price:6.98},
-  {id:'s11',name:'Rebel Vanilla Ice Cream',           store:'Walmart', category:'Dessert', status:'out',     price:5.48},
-  {id:'s12',name:'Coca Cola Zero',                    store:'Costco',  category:'Drink',   status:'stocked', price:21.99},
-];
-var DEFAULT_GOTO=[
-  {id:'g1', name:'Bacon & Eggs',            type:'Breakfast', staples:['s6','s7']},
-  {id:'g2', name:'Breakfast Sandwich',      type:'Breakfast', staples:['s5','s6','s7']},
-  {id:'g3', name:'Pepperoni Pizza Bowl',    type:'Dinner',    staples:['s9','s10','s3']},
-  {id:'g4', name:'Palmini Pasta with Sauce',type:'Dinner',    staples:['s4','s10','s9']},
-];
+var DEFAULT_STAPLES=[];
+var DEFAULT_GOTO=[];
 
 /* ── STORAGE + MIGRATION ── */
 function save(){try{localStorage.setItem(SK,JSON.stringify(data));}catch(e){}}

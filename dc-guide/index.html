@@ -551,58 +551,11 @@ function nearestArea(lat,lng){
 
 /* ═════════════════ DATA ═════════════════ */
 // the original DC Passport starter spots (only used when dcPassport1 has never been saved)
-var DEFAULT_SPOTS = [
-  {id:'d1', name:'Folger Library',category:'Museum',city:'DC',lat:38.8894,lng:-77.0040,note:'Stunning library & Shakespeare collection',link:'https://www.folger.edu/',visited:false,rating:0,tags:[]},
-  {id:'d2', name:'Spy Museum',category:'Museum',city:'DC',lat:38.8994,lng:-77.0214,note:'Interactive spy experiences',link:'https://www.spymuseum.org/',visited:false,rating:0,tags:[]},
-  {id:'d3', name:'National Building Museum',category:'Museum',city:'DC',lat:38.8969,lng:-77.0215,note:'Architecture & design',link:'',visited:false,rating:0,tags:[]},
-  {id:'d4', name:'The Gogo Museum',category:'Museum',city:'DC',lat:38.9072,lng:-77.0320,note:'',link:'',visited:false,rating:0,tags:[]},
-  {id:'d5', name:'Planet Word DC',category:'Museum',city:'DC',lat:38.8997,lng:-77.0290,note:'Language & words museum',link:'',visited:false,rating:0,tags:[]},
-  {id:'d6', name:'AMA Museum',category:'Museum',city:'DC',lat:38.8960,lng:-77.0270,note:'',link:'',visited:false,rating:0,tags:[]},
-  {id:'d7', name:'Hillwood Museum',category:'Museum',city:'DC',lat:38.9398,lng:-77.0607,note:'',link:'',visited:false,rating:0,tags:[]},
-  {id:'d8', name:'Historic Congressional Cemetery',category:'Experience',city:'DC',lat:38.8800,lng:-76.9856,note:'Beautiful historic grounds',link:'',visited:false,rating:0,tags:[]},
-  {id:'d9', name:'Advance the Dream',category:'Experience',city:'DC',lat:38.9072,lng:-77.0369,note:'',link:'',visited:false,rating:0,tags:[]},
-  {id:'d10',name:'Tabard Inn',category:'Restaurant',city:'DC',lat:38.9074,lng:-77.0443,note:'Cozy neighborhood classic',link:'',visited:false,rating:0,tags:[]},
-  {id:'d11',name:'Casamara',category:'Restaurant',city:'DC',lat:38.9100,lng:-77.0420,note:'',link:'',visited:false,rating:0,tags:[]},
-  {id:'d12',name:'Maison Bar à Vins',category:'Bar',city:'DC',lat:38.9090,lng:-77.0430,note:'Wine bar',link:'',visited:false,rating:0,tags:[]},
-  {id:'d13',name:"L'Avant Garde",category:'Restaurant',city:'DC',lat:38.9080,lng:-77.0400,note:'',link:'',visited:false,rating:0,tags:[]},
-  {id:'d14',name:'Reynolds',category:'Restaurant',city:'DC',lat:38.9070,lng:-77.0390,note:'',link:'',visited:false,rating:0,tags:[]},
-  {id:'d15',name:'Amelie',category:'Bar',city:'DC',lat:38.9065,lng:-77.0450,note:'French wine bar',link:'',visited:false,rating:0,tags:[]},
-  {id:'d16',name:'Floriana',category:'Restaurant',city:'DC',lat:38.9130,lng:-77.0460,note:'',link:'',visited:false,rating:0,tags:[]},
-  {id:'d17',name:'Maydan',category:'Restaurant',city:'DC',lat:38.9145,lng:-77.0315,note:'Middle Eastern — splurge worthy',link:'',visited:false,rating:0,tags:['splurge']},
-  {id:'d18',name:'Little Black Bird',category:'Bar',city:'DC',lat:38.9110,lng:-77.0350,note:'',link:'',visited:false,rating:0,tags:[]},
-  {id:'d19',name:'Occidental',category:'Restaurant',city:'DC',lat:38.8972,lng:-77.0353,note:'',link:'',visited:false,rating:0,tags:[]},
-  {id:'d20',name:'Press Club',category:'Bar',city:'DC',lat:38.9060,lng:-77.0310,note:'',link:'',visited:false,rating:0,tags:[]},
-  {id:'d21',name:'Siam House',category:'Restaurant',city:'DC',lat:38.9200,lng:-77.0480,note:'Thai',link:'',visited:false,rating:0,tags:[]},
-  {id:'d22',name:'All Souls',category:'Bar',city:'DC',lat:38.9220,lng:-77.0410,note:'',link:'',visited:false,rating:0,tags:[]},
-  {id:'d23',name:'Doi Moi',category:'Restaurant',city:'DC',lat:38.9145,lng:-77.0320,note:'Bold Vietnamese · HH Weekdays 5–7pm · ½ off drinks, $5 daiquiris',link:'',visited:false,rating:0,tags:['happyhour']},
-  {id:'d24',name:"Rumi's Kitchen",category:'Restaurant',city:'DC',lat:38.9030,lng:-77.0220,note:'Persian · HH Weekdays 4–6pm · $10 cocktails',link:'',visited:false,rating:0,tags:['happyhour']},
-  {id:'d25',name:'Tokyo Pearl',category:'Restaurant',city:'DC',lat:38.9118,lng:-77.0437,note:'Sushi · HH Tue–Sun 4–10pm · $8 happy hour',link:'',visited:false,rating:0,tags:['happyhour','keto']},
-  {id:'d26',name:'Bar Chinois',category:'Bar',city:'DC',lat:38.9030,lng:-77.0218,note:'Chinese cuisine & French cocktails · HH Daily 5–7pm · ½ priced cocktails + $1 dumplings',link:'',visited:false,rating:0,tags:['happyhour']},
-  {id:'d27',name:'Dumplings & Beyond',category:'Restaurant',city:'DC',lat:38.9005,lng:-77.0222,note:'',link:'',visited:false,rating:0,tags:[]},
-  {id:'d28',name:'Pho 75',category:'Restaurant',city:'DC',lat:38.8958,lng:-77.0144,note:'',link:'',visited:false,rating:0,tags:['healthy']},
-  {id:'d29',name:'Corso Italian',category:'Restaurant',city:'DC',lat:38.9080,lng:-77.0350,note:'$8 spritzes',link:'',visited:false,rating:0,tags:['happyhour']},
-  {id:'d30',name:'Zaytinya',category:'Restaurant',city:'DC',lat:38.8997,lng:-77.0215,note:'$6 pides, $9 glasses',link:'',visited:false,rating:0,tags:['happyhour','splurge']},
-  {id:'d31',name:'Inca Social',category:'Bar',city:'DC',lat:38.9100,lng:-77.0400,note:'Ladies margs',link:'',visited:false,rating:0,tags:['happyhour']},
-  {id:'d32',name:'Momoyama',category:'Restaurant',city:'DC',lat:38.9050,lng:-77.0380,note:'Mom & pop Asian restaurant',link:'',visited:false,rating:0,tags:[]},
-  {id:'d33',name:'Lapis',category:'Restaurant',city:'DC',lat:38.9110,lng:-77.0420,note:'Afghan',link:'',visited:false,rating:0,tags:[]},
-  {id:'d34',name:'Chez Billy Sud',category:'Restaurant',city:'DC',lat:38.9030,lng:-77.0560,note:'French',link:'',visited:false,rating:0,tags:[]},
-];
+var DEFAULT_SPOTS = [];
 // the original DC Guide starter items + links (only used when dcGuide1 has never been saved)
 function defaultGuide(){return {
-  items:[
-    {id:'ex1',name:'Eastern Market',category:'markets',month:'evergreen',price:'free',hood:'Capitol Hill',dates:'Every weekend',img:'',link:'https://www.easternmarket-dc.org',note:'Saturday is farmers market, Sunday is flea market. Get there before 10am.',status:'want'},
-    {id:'ex2',name:'9:30 Club',category:'nightlife',month:4,price:'$$',hood:'14th St / U Street',dates:'Check calendar',img:'',link:'https://www.930.com',note:'Best live music venue in DC. Always worth checking what\'s on.',status:'want'},
-    {id:'ex3',name:'National Cherry Blossom Festival',category:'events',month:3,price:'free',hood:'National Mall',dates:'Late March – Early April',img:'',link:'',note:'Peak bloom usually first week of April. Go early morning.',status:'done'},
-    {id:'ex4',name:'Rosalys',category:'food',month:'evergreen',price:'$',hood:'Georgetown',dates:'',img:'',link:'',note:'Cute French-inspired café. Perfect for a slow Sunday brunch.',status:'want'},
-    {id:'ex5',name:'Yards Park',category:'outdoors',month:'evergreen',price:'free',hood:'Navy Yard / Yards Park',dates:'Best May–Sept',img:'',link:'',note:'Free concerts and events all summer. Great waterfront vibes.',status:'want'},
-    {id:'ex6',name:'Smithsonian Folklife Festival',category:'events',month:5,price:'free',hood:'National Mall',dates:'Late June – July 4th',img:'',link:'',note:'One of the best free events in DC every summer.',status:'want'},
-    {id:'ex7',name:'Salsa Night at Decades',category:'dancing',month:'evergreen',price:'$',hood:'Penn Quarter / Chinatown',dates:'Thursday nights',img:'',link:'',note:'Latin night — get there by 10pm.',status:'want'},
-  ],
+  items:[],
   resources:[
-    {id:'r1',label:'The DC List',url:'https://thedclist.com'},
-    {id:'r2',label:'Meetup DC',url:'https://www.meetup.com/find/?location=us--dc--Washington&source=EVENTS'},
-    {id:'r3',label:'DC Events (Eventbrite)',url:'https://www.eventbrite.com/d/dc--washington/events/'},
-    {id:'r4',label:'Do512 DC',url:'https://dc.do512.com'},
   ]
 };}
 
