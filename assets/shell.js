@@ -7,6 +7,37 @@
    quick-link dock on the right (brain2QuickLinks1, editable via +).
    Also hides each page's old "‹ Brain 2.0" back pill.
    ───────────────────────────────────────────────────────────── */
+/* Site icons for link tiles: the site's own icon first, then DuckDuckGo's icon service,
+   else the letter tile underneath shows. (DuckDuckGo answers unknown sites with a grey
+   placeholder that never errors, so it goes last.) What worked is remembered per site. */
+(function(){
+  var KEY='brain2FavCache1',cache={};
+  try{cache=JSON.parse(localStorage.getItem(KEY)||'{}')||{};}catch(e){}
+  function save(){try{localStorage.setItem(KEY,JSON.stringify(cache));}catch(e){}}
+  function hostOf(u){try{return new URL(/^https?:\/\//i.test(u)?u:'https://'+u).hostname.replace(/^www\./,'');}catch(e){return '';}}
+  function list(h){
+    var root=h.split('.').slice(-2).join('.'),c=['https://'+h+'/apple-touch-icon.png','https://'+h+'/favicon.ico'];
+    if(root!==h)c.push('https://'+root+'/favicon.ico');
+    c.push('https://icons.duckduckgo.com/ip3/'+h+'.ico');
+    return c;
+  }
+  window.B2Fav=function(u){
+    var h=hostOf(u);if(!h)return '';
+    var known=cache[h];
+    if(known==='none')return '';
+    var c=known?[known]:list(h);
+    return '<img src="'+c[0].replace(/"/g,'&quot;')+'" alt="" loading="lazy" data-h="'+h.replace(/"/g,'&quot;')+'" data-c="'+c.slice(1).join(' ').replace(/"/g,'&quot;')+'" onload="B2FavOk(this)" onerror="B2FavNext(this)">';
+  };
+  window.B2FavOk=function(img){
+    if(img.naturalWidth<8){window.B2FavNext(img);return;}
+    var h=img.getAttribute('data-h');if(h&&cache[h]!==img.src){cache[h]=img.src;save();}
+  };
+  window.B2FavNext=function(img){
+    var rest=(img.getAttribute('data-c')||'').split(' ').filter(Boolean),h=img.getAttribute('data-h');
+    if(!rest.length){if(h&&cache[h]){delete cache[h];save();}img.remove();return;}
+    img.setAttribute('data-c',rest.slice(1).join(' '));img.src=rest[0];
+  };
+})();
 (function(){
   var LINKS_KEY='brain2QuickLinks1';
   var ROOT=new URL('..',document.currentScript.src).href;   // site root
@@ -108,7 +139,7 @@
   /* ── quick-link dock ── */
   var dock=nav.querySelector('#b2-dock'),panel=null;
   function links(){var l=lsGet(LINKS_KEY,null);if(!Array.isArray(l)){l=DEFAULT_LINKS.slice();lsSet(LINKS_KEY,l);}return l;}
-  function fav(u){var h=host(u);return h?'<img src="https://icons.duckduckgo.com/ip3/'+esc(h)+'.ico" alt="" loading="lazy" onerror="this.remove()">':'';}
+  function fav(u){return window.B2Fav?window.B2Fav(u):'';}
   function renderDock(){
     var l=links();
     dock.innerHTML=l.map(function(q){

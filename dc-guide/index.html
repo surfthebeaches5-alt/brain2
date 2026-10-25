@@ -1082,7 +1082,7 @@ function renderDock(){
   $('dock').innerHTML='<span class="dock-l">Find more</span>'+guide.resources.map(function(r){
     var u=safeUrl(r.url),h=host(r.url);
     return '<a class="dk" href="'+esc(u||'#')+'" target="_blank" rel="noopener" aria-label="'+esc(r.label)+'">'+esc(initials(r.label||h))+
-      (h?'<img src="https://icons.duckduckgo.com/ip3/'+esc(h)+'.ico" alt="" loading="lazy" onerror="this.remove()">':'')+'<span class="tip">'+esc(r.label||h)+'</span></a>';
+      (window.B2Fav?B2Fav(r.url):'')+'<span class="tip">'+esc(r.label||h)+'</span></a>';
   }).join('')+'<button class="dk plus" type="button" data-act="links" title="Add or edit links" aria-label="Add or edit links">+</button>';
 }
 function renderLinksEd(){
