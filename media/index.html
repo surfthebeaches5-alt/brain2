@@ -1360,9 +1360,49 @@ function itunesMovies(q,sig){
       return {sec:'screen',kind:'movie',title:m.trackName||'',creator:m.artistName||'',year:yr,category:/documentary/i.test(m.primaryGenreName||'')?'Documentary':'Movie',
         cover:art.replace('100x100','600x600'),thumb:art,link:m.trackViewUrl||'',meta:['Film',yr,m.artistName,m.primaryGenreName].filter(Boolean).join(' · ')};});});
 }
+/* Apple's album search misses some albums (e.g. "rosalia lux" finds nothing), so when the words include an
+   artist's name we also read that artist's own album list and match the remaining words against it */
+function normQ(x){return String(x||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase().replace(/[^a-z0-9]+/g,' ').trim();}
+function artistAlbums(q,sig){
+  var words=normQ(q).split(' ').filter(Boolean),qset=' '+words.join(' ')+' ',tries=[q];
+  if(words.length>1){tries.push(words.slice(0,-1).join(' '));tries.push(words.slice(1).join(' '));if(words.length>2)tries.push(words[0]);if(words.length>2)tries.push(words[words.length-1]);}
+  function fits(a){var n=normQ(a.artistName);return n&&qset.indexOf(' '+n+' ')>=0;}
+  /* albums of one artist whose names contain the rest of the words */
+  function albumsOf(ar){
+    var rest=(' '+normQ(q)+' ').replace(' '+normQ(ar.artistName)+' ',' ').trim().split(' ').filter(Boolean),want=rest.join(' ');
+    return itunesJSONP('https://itunes.apple.com/lookup?id='+ar.artistId+'&entity=album&limit=200&sort=recent&country=US',sig).then(function(j){
+      var list=(j.results||[]).filter(function(r){return r.wrapperType==='collection'&&r.collectionName;});
+      if(rest.length)list=list.filter(function(r){var n=' '+normQ(r.collectionName)+' ';return rest.every(function(w){return n.indexOf(' '+w)>=0;});});
+      else list=list.filter(function(r){return (r.trackCount||0)>3;});
+      list.sort(function(x,y){var ex=normQ(x.collectionName)===want?0:1,ey=normQ(y.collectionName)===want?0:1;return ex-ey||String(y.releaseDate||'').localeCompare(String(x.releaseDate||''));});
+      return list;
+    });
+  }
+  /* ask about every word-combination at once, then try the matching artists longest-name first (max 3 lookups) */
+  var asks=tries.map(function(t){return itunesJSONP('https://itunes.apple.com/search?term='+encodeURIComponent(t)+'&entity=musicArtist&limit=5&country=US',sig)
+    .then(function(j){return j.results||[];}).catch(function(e){if(e&&e.name==='AbortError')throw e;return [];});});
+  return Promise.all(asks).then(function(all){
+    var seen={},cands=[];
+    all.forEach(function(l){l.forEach(function(a){if(fits(a)&&!seen[a.artistId]){seen[a.artistId]=1;cands.push(a);}});});
+    cands.sort(function(a,b){return normQ(b.artistName).length-normQ(a.artistName).length;});
+    function each(k){
+      if(k>=cands.length||k>=3)return [];
+      return albumsOf(cands[k]).then(function(l){return l.length?l:each(k+1);});
+    }
+    return each(0);
+  }).catch(function(e){if(e&&e.name==='AbortError')throw e;return [];});
+}
 function searchAlbums(q,sig,limit){
-  return itunesJSONP('https://itunes.apple.com/search?term='+encodeURIComponent(q)+'&media=music&entity=album&limit='+(limit||8)+'&country=US',sig)
-    .then(function(j){return (j.results||[]).map(albumResult);});
+  var n=limit||8;
+  var plain=itunesJSONP('https://itunes.apple.com/search?term='+encodeURIComponent(q)+'&media=music&entity=album&limit='+n+'&country=US',sig)
+    .then(function(j){return j.results||[];}).catch(function(e){if(e&&e.name==='AbortError')throw e;return [];});
+  return Promise.all([artistAlbums(q,sig),plain]).then(function(r){
+    var seen={},out=[];
+    /* skip repeats: same album id, or the clean/explicit twin (same name, artist and song count) */
+    r[0].concat(r[1]).forEach(function(m){var k2=normQ(m.collectionName)+'|'+normQ(m.artistName)+'|'+(m.trackCount||0);
+      if(out.length<n&&!seen[m.collectionId]&&!seen[k2]){seen[m.collectionId]=1;seen[k2]=1;out.push(m);}});
+    return out.map(albumResult);
+  });
 }
 /* one Apple album (search result or lookup collection) → result shape; itunesId + genre let the songs fill in later */
 function albumResult(m){
