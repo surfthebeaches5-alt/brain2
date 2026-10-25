@@ -48,8 +48,7 @@
     {label:'Life',pages:[
       {p:'fitness/',label:'Fitness',sub:'Weekly plan & habits',icon:'fitness'},
       {p:'meals/',label:'Meals & Groceries',sub:'Staples & shopping',icon:'meals'},
-      {p:'passport/',label:'DC Passport',sub:'Your map of spots',icon:'passport'},
-      {p:'dc-guide/',label:'DC Guide',sub:"What's on each month",icon:'guide'},
+      {p:'dc-guide/',label:'Out in DC',sub:"What's around · plan something",icon:'passport'},
       {p:'stoic/',label:'Stoic Workbook',sub:'8 modules',icon:'stoic'},
       {sep:true},
       {p:'backup/',label:'Backup',sub:'Export & restore your data',icon:'backup'}]}
