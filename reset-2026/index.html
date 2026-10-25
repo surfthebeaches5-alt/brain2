@@ -15,147 +15,155 @@
   --accent:#c9b6ee;--accent-deep:#b099e0;--accent-soft:#ede5fb;
   --paper:#fdfaf4;--paper-line:#e8e0cc;
 }
-html,body{background:var(--bg);overflow-x:hidden;font-family:'Plus Jakarta Sans',system-ui,sans-serif;color:var(--ink);min-height:100vh;-webkit-font-smoothing:antialiased;}
+html,body{background:var(--bg);overflow-x:hidden;font-family:var(--b2-sans);color:var(--ink);min-height:100vh;-webkit-font-smoothing:antialiased;}
 
-/* TOPBAR */
-.topbar{background:var(--sidebar);border-bottom:1px solid var(--sidebar-line);padding:16px 32px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:300;}
+/* TOPBAR (brain.css turns it into the shared title row) */
+.topbar{display:flex;align-items:center;justify-content:space-between;}
 .topbar-left{display:flex;align-items:center;gap:14px;}
-.back-btn{display:inline-flex;align-items:center;gap:6px;padding:7px 14px;border:1.5px solid #d9d2bd;border-radius:20px;font-size:12px;color:var(--muted);cursor:pointer;background:transparent;font-family:inherit;text-decoration:none;transition:all .15s;}
-.back-btn:hover{border-color:var(--accent-deep);color:var(--ink);}
-.topbar-title{font-family:'Fraunces',serif;font-size:22px;font-weight:600;letter-spacing:-0.4px;}
-.topbar-right{display:flex;align-items:center;gap:12px;}
+.back-btn{display:inline-flex;align-items:center;gap:6px;padding:7px 14px;border:1px solid var(--line);border-radius:20px;font-size:12px;color:var(--muted);background:transparent;font-family:inherit;text-decoration:none;}
+.topbar-title{font-family:var(--b2-serif);font-size:22px;font-weight:600;letter-spacing:-0.4px;}
+.topbar-right{display:flex;align-items:center;gap:10px;}
 .topbar-date{font-size:11px;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted);font-weight:500;}
-.pdf-btn{padding:7px 14px;border:1.5px solid var(--line);border-radius:16px;font-size:12px;font-weight:600;color:var(--muted);cursor:pointer;background:transparent;font-family:inherit;transition:all .15s;display:inline-flex;align-items:center;gap:5px;}
-.pdf-btn:hover{border-color:var(--accent-deep);color:var(--ink);}
+.pdf-btn{display:inline-flex;align-items:center;gap:6px;height:34px;padding:0 15px;border:1px solid var(--line);border-radius:10px;font:650 12.5px var(--b2-sans);color:var(--ink-2);cursor:pointer;background:var(--raised);white-space:nowrap;transition:border-color .15s,color .15s;}
+.pdf-btn:hover{border-color:var(--accent-line);color:var(--ink);}
 .pdf-btn svg{width:13px;height:13px;}
 
-/* TAB BAR (standard strip) */
-.tab-bar{background:var(--surface);border-bottom:1px solid var(--line);position:sticky;top:57px;z-index:150;}
-.tab-bar-inner{max-width:860px;margin:0 auto;padding:0 14px;display:flex;align-items:center;overflow-x:auto;}
-.tab-btn{padding:13px 17px;display:inline-flex;align-items:center;gap:7px;font-family:inherit;font-size:12.5px;font-weight:600;cursor:pointer;border:none;background:transparent;color:var(--muted);border-bottom:2.5px solid transparent;margin-bottom:-1px;transition:all .15s;white-space:nowrap;}
+/* PAGE TABS — the shared segmented control (sits in the title row) */
+.tab-bar{background:none;border:none;position:static;}
+.tab-bar-inner{display:inline-flex;align-items:center;gap:2px;padding:4px;background:var(--warm-deep);border-radius:13px;}
+.tab-btn{padding:8px 16px;display:inline-flex;align-items:center;gap:7px;font:650 13px var(--b2-sans);cursor:pointer;border:none;background:transparent;color:var(--muted);border-radius:10px;transition:color .15s,background .15s;white-space:nowrap;}
 .tab-btn:hover{color:var(--ink);}
-.tab-btn.active{color:var(--ink);border-bottom-color:var(--accent-deep);}
-.tab-btn svg{width:15px;height:15px;flex-shrink:0;}
+.tab-btn.active{background:var(--raised);color:var(--ink);box-shadow:0 1px 3px rgba(60,50,30,.1);}
+.tab-btn svg{display:none;}
 .phase-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0;}
-.saved-ind{font-size:10.5px;color:#1a4a44;font-weight:600;margin-left:auto;align-self:center;padding-right:6px;white-space:nowrap;}
+.saved-ind{font-size:12px;color:var(--ok);font-weight:650;white-space:nowrap;}
 
-/* PAPER */
-.hub-wrap{max-width:860px;margin:0 auto;padding:0 0 80px;}
-.paper{margin:20px 24px 0;background:var(--paper);box-shadow:0 4px 26px rgba(0,0,0,.06);border:1px solid var(--paper-line);border-radius:6px 6px 0 0;padding:50px 60px 70px;min-height:600px;}
+/* FRAME — aligned with the title row; the document is one left-aligned card */
+.hub-wrap{max-width:1280px;margin:0 auto;padding:20px 40px 80px;box-sizing:border-box;width:100%;}
+.paper{max-width:960px;background:var(--surface);border:1px solid var(--line);border-radius:18px;padding:34px 40px 44px;box-shadow:0 1px 2px rgba(60,50,30,.04),0 8px 24px rgba(60,50,30,.05);min-height:600px;}
 
 .page{display:none;}.page.active{display:block;}
 
 /* COVER */
-.cover{text-align:center;padding:28px 0 40px;border-bottom:1px solid var(--paper-line);margin-bottom:44px;}
-.cover-eyebrow{font-size:10px;letter-spacing:5px;text-transform:uppercase;color:var(--muted);font-weight:700;margin-bottom:14px;}
-.cover-title{font-family:'Fraunces',serif;font-size:3.8rem;font-weight:500;letter-spacing:-1px;line-height:1.05;color:var(--ink);}
+.cover{text-align:center;padding:22px 0 36px;border-bottom:1px solid var(--hair);margin-bottom:28px;}
+.cover-eyebrow{font-size:10.5px;letter-spacing:.24em;text-transform:uppercase;color:var(--muted);font-weight:750;margin-bottom:14px;}
+.cover-title{font-family:var(--b2-serif);font-size:3.6rem;font-weight:500;letter-spacing:-1px;line-height:1.05;color:var(--ink);}
 .cover-title em{font-style:italic;color:var(--accent-deep);}
-.cover-sub{font-size:11px;letter-spacing:3px;text-transform:uppercase;color:var(--muted);font-weight:700;margin-top:14px;}
-.cover-key{font-size:10.5px;color:var(--muted);margin-top:12px;letter-spacing:.2px;}
-.cover-ornament{color:var(--accent);font-size:1rem;letter-spacing:10px;margin-top:22px;}
-.cover-quote{font-family:'Fraunces',serif;font-size:15px;font-style:italic;color:var(--muted);line-height:1.8;max-width:520px;margin:32px auto 0;}
-.cover-fields{background:var(--warm);border:1px solid var(--paper-line);border-radius:16px;padding:22px 26px;margin-top:32px;display:flex;flex-direction:column;gap:14px;text-align:left;}
-.cover-field-label{font-size:9.5px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);font-weight:700;margin-bottom:4px;}
+.cover-sub{font-size:10.5px;letter-spacing:.2em;text-transform:uppercase;color:var(--muted);font-weight:750;margin-top:14px;}
+.cover-key{font-size:12px;color:var(--muted);margin-top:10px;}
+.cover-ornament{color:var(--accent);font-size:.9rem;letter-spacing:10px;margin-top:20px;}
+.cover-quote{font-family:var(--b2-serif);font-size:15px;font-style:italic;color:var(--ink-2);line-height:1.8;max-width:540px;margin:26px auto 0;}
+.cover-fields{background:var(--warm);border:1px solid var(--hair);border-radius:14px;padding:20px 22px;margin-top:0;display:flex;flex-direction:column;gap:14px;text-align:left;}
+.cover-field-label{font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--muted);font-weight:750;margin-bottom:6px;}
 
 /* CHAPTER HEADER */
-.chapter-hdr{margin-bottom:36px;padding-bottom:22px;border-bottom:1px solid var(--paper-line);}
-.chapter-eyebrow{font-size:9.5px;letter-spacing:3px;text-transform:uppercase;color:var(--muted);font-weight:700;margin-bottom:8px;}
-.chapter-title{font-family:'Fraunces',serif;font-size:2.4rem;font-weight:500;letter-spacing:-0.8px;line-height:1.1;color:var(--ink);}
+.chapter-hdr{margin-bottom:28px;padding-bottom:22px;border-bottom:1px solid var(--hair);}
+.chapter-eyebrow{font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--muted);font-weight:750;margin-bottom:8px;}
+.chapter-title{font-family:var(--b2-serif);font-size:2.2rem;font-weight:500;letter-spacing:-0.8px;line-height:1.1;color:var(--ink);}
 .chapter-title em{font-style:italic;color:var(--accent-deep);}
-.chapter-desc{font-size:13px;color:var(--muted);line-height:1.75;margin-top:10px;max-width:560px;}
+.chapter-desc{font-size:13.5px;color:var(--ink-2);line-height:1.7;margin-top:10px;max-width:620px;}
 
 /* SECTIONS */
-.section{margin-bottom:40px;}
-.section-hdr{display:flex;align-items:center;gap:10px;margin-bottom:14px;}
-.section-badge{background:var(--accent-soft);color:var(--accent-deep);font-size:10px;font-weight:800;letter-spacing:.5px;padding:3px 10px;border-radius:10px;border:1px solid var(--accent);}
-.section-title{font-family:'Fraunces',serif;font-size:18px;font-weight:600;letter-spacing:-.2px;}
-.section-sub{font-size:12px;color:var(--muted);font-style:italic;margin-bottom:14px;line-height:1.6;}
+.section{margin-bottom:34px;}
+.section-hdr{display:flex;align-items:center;gap:10px;margin-bottom:8px;}
+.section-badge{background:var(--accent-soft);color:var(--accent-deep);font-size:11px;font-weight:700;padding:3px 9px;border-radius:20px;}
+.section-title{font-family:var(--b2-serif);font-size:19px;font-weight:600;letter-spacing:-.2px;}
+.section-sub{font-size:12.5px;color:var(--muted);margin-bottom:14px;line-height:1.6;}
 
 /* WRITE FIELDS */
-.f-label{font-size:9.5px;letter-spacing:1.8px;text-transform:uppercase;color:var(--muted);font-weight:700;margin-bottom:6px;margin-top:14px;display:block;}
+.f-label{font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--muted);font-weight:750;margin-bottom:7px;margin-top:16px;display:block;line-height:1.5;}
 .f-label:first-child{margin-top:0;}
-.write{background:var(--warm);border:1.5px solid var(--paper-line);border-radius:12px;padding:12px 14px;font-family:'Plus Jakarta Sans',system-ui,sans-serif;font-size:13px;line-height:1.75;color:var(--ink);outline:none;width:100%;resize:none;overflow:hidden;display:block;transition:border .15s;}
-.write:focus{border-color:var(--accent-deep);}
-.write::placeholder{color:#b8b0a0;font-style:italic;}
+.write{background:var(--raised);border:1px solid var(--line);border-radius:10px;padding:9px 12px;font:500 13px/1.65 var(--b2-sans);color:var(--ink);outline:none;width:100%;min-height:44px;resize:none;overflow:hidden;display:block;transition:border-color .15s,box-shadow .15s;}
+.write:focus{border-color:var(--accent-line);box-shadow:0 0 0 3px var(--accent-soft);}
+.write::placeholder{color:var(--faint);}
 .write.sh{min-height:60px;}
 .write.md{min-height:90px;}
 .write.tall{min-height:130px;}
-.write.letter{min-height:200px;font-family:'Fraunces',serif;font-style:italic;font-size:15px;line-height:1.9;}
-.write.cover-write{min-height:44px;background:rgba(255,255,255,.6);}
+.write.letter{min-height:200px;font-family:var(--b2-serif);font-style:italic;font-size:15px;line-height:1.9;}
+.write.cover-write{min-height:44px;}
 
 /* GRIDS + CARDS */
 .two-col{display:grid;grid-template-columns:1fr 1fr;gap:18px;}
 .three-col{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px;}
-.col-card{background:var(--warm);border:1px solid var(--paper-line);border-top:2.5px solid var(--accent);border-radius:14px;padding:16px 18px;}
-.col-card-title{font-family:'Fraunces',serif;font-size:16px;font-weight:600;letter-spacing:-.2px;margin-bottom:3px;}
-.col-card-sub{font-size:11px;color:var(--muted);font-style:italic;margin-bottom:10px;}
+.col-card{background:var(--warm);border:1px solid var(--hair);border-radius:14px;padding:16px 18px;}
+.col-card-title{font-family:var(--b2-serif);font-size:17px;font-weight:600;letter-spacing:-.2px;margin-bottom:3px;}
+.col-card-sub{font-size:12px;color:var(--muted);margin-bottom:10px;line-height:1.45;}
 
 /* WINS */
-.win-list{display:flex;flex-direction:column;gap:7px;margin-bottom:10px;}
-.win-row{display:flex;align-items:flex-start;gap:10px;}
-.win-bullet{color:var(--accent-deep);font-size:14px;flex-shrink:0;padding-top:3px;}
-.win-text{flex:1;border:none;border-bottom:1.5px dashed var(--paper-line);background:transparent;font-family:inherit;font-size:13px;color:var(--ink);outline:none;padding:4px 2px;resize:none;overflow:hidden;line-height:1.5;}
-.win-text::placeholder{color:#b8b0a0;font-style:italic;}
-.win-text:focus{border-bottom-color:var(--accent-deep);}
-.win-del{background:none;border:none;color:#ccc;cursor:pointer;font-size:12px;padding:2px 5px;flex-shrink:0;margin-top:2px;transition:color .15s;}
-.win-del:hover{color:#a0304a;}
-.add-win{font-size:12px;font-weight:700;color:var(--accent-deep);background:transparent;border:none;cursor:pointer;font-family:inherit;padding:4px 0;margin-top:4px;}
-.add-win:hover{text-decoration:underline;}
+.win-list{display:flex;flex-direction:column;gap:6px;margin-bottom:8px;}
+.win-row{display:flex;align-items:flex-start;gap:10px;padding:6px 10px;background:var(--warm);border:1px solid var(--hair);border-radius:10px;}
+.win-bullet{color:var(--accent-deep);font-size:13px;flex-shrink:0;padding-top:4px;}
+.win-text{flex:1;border:none;background:transparent;font:550 13.5px/1.5 var(--b2-sans);color:var(--ink);outline:none;padding:3px 2px;resize:none;overflow:hidden;min-height:27px;}
+.win-text::placeholder{color:var(--faint);}
+.win-row:focus-within{border-color:var(--accent-line);background:var(--raised);box-shadow:0 0 0 3px var(--accent-soft);}
+.win-del{background:none;border:none;color:var(--faint);cursor:pointer;font-size:11px;padding:2px 5px;flex-shrink:0;margin-top:4px;border-radius:5px;transition:all .15s;}
+.win-del:hover{color:var(--over);background:var(--over-bg);}
+.add-win{display:inline-flex;align-items:center;height:28px;padding:0 11px;border-radius:8px;font:650 11.5px var(--b2-sans);color:var(--accent-deep);background:var(--accent-soft);border:1px solid var(--accent-line);cursor:pointer;margin-top:4px;}
+.add-win:hover{background:var(--accent-line);}
 
 /* MANIFESTO / MISSION */
-.manifesto-card{background:linear-gradient(135deg,var(--accent-soft),#f0e8ff);border:1.5px solid var(--accent);border-radius:16px;padding:26px 30px;margin-bottom:20px;}
-.manifesto-intro{font-family:'Fraunces',serif;font-size:15px;font-style:italic;color:var(--accent-deep);margin-bottom:14px;}
-.future-row{display:flex;gap:14px;align-items:flex-start;margin-bottom:12px;}
-.future-prompt{font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.5px;color:var(--muted);min-width:110px;padding-top:5px;flex-shrink:0;}
-.future-write{flex:1;border:none;border-bottom:1.5px dashed rgba(176,153,224,.4);background:transparent;font-family:'Fraunces',serif;font-style:italic;font-size:14px;color:var(--ink);outline:none;padding:4px 2px;resize:none;overflow:hidden;line-height:1.6;}
-.future-write::placeholder{color:#c0b0d8;font-style:italic;}
-.future-write:focus{border-bottom-color:var(--accent-deep);}
-.mission-box{border:2px solid var(--accent-deep);border-radius:16px;padding:26px 30px;text-align:center;margin:18px 0;}
-.mission-label{font-size:9.5px;letter-spacing:3px;text-transform:uppercase;color:var(--accent-deep);font-weight:700;margin-bottom:10px;display:block;}
+.manifesto-card{background:var(--accent-soft);border:1px solid var(--accent-line);border-radius:14px;padding:20px 22px;margin-bottom:18px;}
+.manifesto-intro{font-family:var(--b2-serif);font-size:16px;font-style:italic;color:var(--accent-deep);margin-bottom:14px;}
+.future-row{display:flex;gap:14px;align-items:flex-start;margin-bottom:10px;}
+.future-row:last-child{margin-bottom:0;}
+.future-prompt{font-size:10.5px;font-weight:750;text-transform:uppercase;letter-spacing:.12em;color:var(--muted);min-width:150px;padding-top:11px;flex-shrink:0;}
+.future-write{flex:1;border:1px solid var(--accent-line);border-radius:10px;background:var(--raised);font-family:var(--b2-serif);font-style:italic;font-size:14px;color:var(--ink);outline:none;padding:8px 12px;resize:none;overflow:hidden;line-height:1.6;min-height:40px;}
+.future-write::placeholder{color:var(--faint);}
+.future-write:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(255,255,255,.7);}
+.mission-box{background:var(--warm);border:1px solid var(--hair);border-radius:14px;padding:22px 26px;text-align:center;margin:18px 0;}
+.mission-label{font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--accent-deep);font-weight:750;margin-bottom:8px;display:block;}
 
-/* REBRAND H1->H2 */
-.rebrand-row{display:grid;grid-template-columns:1fr 1fr;margin-bottom:12px;border-radius:14px;overflow:hidden;border:1px solid var(--paper-line);}
-.rebrand-h1{background:#fbecef;padding:14px 16px;border-right:1px solid var(--paper-line);}
-.rebrand-h2{background:#ecf5ec;padding:14px 16px;}
-.rebrand-label{font-size:9.5px;font-weight:800;text-transform:uppercase;letter-spacing:1px;color:var(--muted);margin-bottom:7px;display:flex;align-items:center;gap:5px;}
+/* REBRAND H1->H2 (rose = leaving, green = stepping into) */
+.rebrand-row{display:grid;grid-template-columns:1fr 1fr;margin-bottom:10px;border-radius:14px;overflow:hidden;border:1px solid var(--hair);}
+.rebrand-h1{background:var(--over-bg);padding:14px 16px;border-right:1px solid var(--hair);}
+.rebrand-h2{background:var(--ok-bg);padding:14px 16px;}
+.rebrand-label{font-size:10.5px;font-weight:750;text-transform:uppercase;letter-spacing:.12em;color:var(--ink-2);margin-bottom:8px;display:flex;align-items:center;gap:6px;}
+.rebrand-h1 .rebrand-label svg{color:var(--over);}
+.rebrand-h2 .rebrand-label svg{color:var(--ok);}
 
 /* AUDIT / AESTHETIC GRIDS */
-.audit-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
-.audit-item{background:var(--warm);border:1px solid var(--paper-line);border-radius:12px;padding:14px 16px;}
-.audit-area{font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.8px;color:var(--accent-deep);margin-bottom:8px;display:flex;align-items:center;gap:6px;}
+.audit-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+.audit-item{background:var(--warm);border:1px solid var(--hair);border-radius:14px;padding:14px 16px;}
+.audit-area{font-size:10.5px;font-weight:750;text-transform:uppercase;letter-spacing:.12em;color:var(--accent-deep);margin-bottom:8px;display:flex;align-items:center;gap:6px;}
 .aesthetic-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;}
-.aesthetic-item{background:var(--warm);border:1px solid var(--paper-line);border-radius:12px;padding:14px 16px;}
-.aesthetic-label{font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.5px;color:var(--accent-deep);margin-bottom:8px;display:flex;align-items:center;gap:6px;}
+.aesthetic-item{background:var(--warm);border:1px solid var(--hair);border-radius:14px;padding:14px 16px;}
+.aesthetic-label{font-size:10.5px;font-weight:750;text-transform:uppercase;letter-spacing:.12em;color:var(--accent-deep);margin-bottom:8px;display:flex;align-items:center;gap:6px;}
 .audit-area svg,.aesthetic-label svg,.rebrand-label svg,.boundary-label svg{flex-shrink:0;}
 
 /* HARD BOUNDARY */
-.boundary-box{background:#fdf3d4;border:1.5px solid #e0c870;border-radius:14px;padding:18px 20px;margin-top:18px;}
-.boundary-label{font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:1px;color:#8a6010;margin-bottom:8px;display:flex;align-items:center;gap:6px;}
+.boundary-box{background:var(--warn-bg);border:1px solid var(--warn-bg);border-radius:14px;padding:16px 18px;margin-top:18px;}
+.boundary-label{font-size:10.5px;font-weight:750;text-transform:uppercase;letter-spacing:.12em;color:var(--warn);margin-bottom:8px;display:flex;align-items:center;gap:6px;}
+.boundary-note{font-size:12.5px;color:var(--ink-2);margin-bottom:10px;line-height:1.55;}
 
 /* FIRST 30 DAYS */
-.thirty-day-card{background:var(--ink);border-radius:18px;padding:24px 28px;margin-top:24px;}
-.thirty-label{font-size:10px;letter-spacing:2px;text-transform:uppercase;color:rgba(255,255,255,.5);font-weight:700;margin-bottom:16px;}
-.thirty-row{display:flex;align-items:flex-start;gap:12px;margin-bottom:12px;}
-.thirty-num{width:28px;height:28px;border-radius:8px;background:var(--accent);color:#fff;font-size:12px;font-weight:800;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
-.thirty-write{flex:1;border:none;border-bottom:1.5px solid rgba(255,255,255,.15);background:transparent;font-family:inherit;font-size:13px;font-weight:600;color:#fff;outline:none;padding:4px 2px;resize:none;overflow:hidden;line-height:1.5;}
-.thirty-write::placeholder{color:rgba(255,255,255,.3);font-style:italic;}
-.thirty-write:focus{border-bottom-color:var(--accent);}
+.thirty-day-card{background:var(--warm);border:1px solid var(--hair);border-radius:14px;padding:18px 20px;margin-top:6px;}
+.thirty-label{font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--muted);font-weight:750;margin-bottom:14px;}
+.thirty-row{display:flex;align-items:flex-start;gap:12px;margin-bottom:10px;}
+.thirty-row:last-child{margin-bottom:0;}
+.thirty-num{width:28px;height:28px;border-radius:8px;background:var(--ink);color:#fff;font-size:12px;font-weight:800;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:6px;}
+.thirty-write{flex:1;border:1px solid var(--line);border-radius:10px;background:var(--raised);font:600 13px/1.5 var(--b2-sans);color:var(--ink);outline:none;padding:9px 12px;resize:none;overflow:hidden;min-height:40px;}
+.thirty-write::placeholder{color:var(--faint);font-weight:500;}
+.thirty-write:focus{border-color:var(--accent-line);box-shadow:0 0 0 3px var(--accent-soft);}
 
-hr.rule{border:none;border-top:1px solid var(--paper-line);margin:30px 0;}
-.ornament{text-align:center;color:var(--accent);font-size:1rem;letter-spacing:10px;margin-top:36px;}
+hr.rule{border:none;border-top:1px solid var(--hair);margin:28px 0;}
+.ornament{text-align:center;color:var(--accent);font-size:.9rem;letter-spacing:10px;margin-top:30px;}
 
+@media(max-width:1100px){
+  body.b2-shell .topbar{flex-wrap:wrap;}
+}
 @media(max-width:700px){
-  .paper{padding:28px 22px 40px;margin:14px 14px 0;}
+  .hub-wrap{padding:16px 16px 60px;}
+  .paper{padding:24px 18px 32px;}
   .two-col,.three-col,.aesthetic-grid,.audit-grid{grid-template-columns:1fr;}
   .rebrand-row{grid-template-columns:1fr;}
-  .rebrand-h1{border-right:none;border-bottom:1px solid var(--paper-line);}
+  .rebrand-h1{border-right:none;border-bottom:1px solid var(--hair);}
   .cover-title{font-size:2.8rem;}
-  .topbar{padding:14px 18px;}
 }
 @media print{
   .topbar,.tab-bar{display:none!important;}
   body{background:white!important;}
-  .paper{box-shadow:none!important;border:none!important;border-radius:0!important;padding:20px 28px!important;margin:0!important;}
+  .hub-wrap{padding:0!important;max-width:none!important;}
+  .paper{max-width:none!important;box-shadow:none!important;border:none!important;border-radius:0!important;padding:20px 28px!important;margin:0!important;background:transparent!important;}
   .page{display:block!important;}
   .section{page-break-inside:avoid;}
 }
@@ -175,21 +183,20 @@ hr.rule{border:none;border-top:1px solid var(--paper-line);margin:30px 0;}
   </div>
   <div class="topbar-right">
     <span class="topbar-date" id="today-date"></span>
+    <span class="saved-ind" id="saved-ind"></span>
+    <div class="tab-bar">
+      <div class="tab-bar-inner">
+        <button class="tab-btn active" id="tbtn-cover" onclick="goTab('cover',this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>Cover</button>
+        <button class="tab-btn" id="tbtn-phase1" onclick="goTab('phase1',this)"><span class="phase-dot" style="background:var(--over);"></span>1 &middot; Audit</button>
+        <button class="tab-btn" id="tbtn-phase2" onclick="goTab('phase2',this)"><span class="phase-dot" style="background:var(--accent-deep);"></span>2 &middot; Core</button>
+        <button class="tab-btn" id="tbtn-phase3" onclick="goTab('phase3',this)"><span class="phase-dot" style="background:var(--ok);"></span>3 &middot; Vision</button>
+      </div>
+    </div>
     <button class="pdf-btn" onclick="savePDF()"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" x2="12" y1="15" y2="3"/></svg>Save PDF</button>
   </div>
 </div>
 
 <div class="hub-wrap">
-  <div class="tab-bar">
-    <div class="tab-bar-inner">
-      <button class="tab-btn active" id="tbtn-cover" onclick="goTab('cover',this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>Cover</button>
-      <button class="tab-btn" id="tbtn-phase1" onclick="goTab('phase1',this)"><span class="phase-dot" style="background:#e6a4b4;"></span>1 &middot; Audit</button>
-      <button class="tab-btn" id="tbtn-phase2" onclick="goTab('phase2',this)"><span class="phase-dot" style="background:var(--accent-deep);"></span>2 &middot; Core</button>
-      <button class="tab-btn" id="tbtn-phase3" onclick="goTab('phase3',this)"><span class="phase-dot" style="background:#8fae86;"></span>3 &middot; Vision</button>
-      <span class="saved-ind" id="saved-ind"></span>
-    </div>
-  </div>
-
   <div class="paper">
 
     <!-- COVER -->
@@ -278,8 +285,8 @@ hr.rule{border:none;border-top:1px solid var(--paper-line);margin:30px 0;}
 
         <div class="boundary-box">
           <div class="boundary-label"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 14a1 1 0 0 1-.78-1.63l9.9-10.2a.5.5 0 0 1 .86.46l-1.92 6.02A1 1 0 0 0 13 10h7a1 1 0 0 1 .78 1.63l-9.9 10.2a.5.5 0 0 1-.86-.46l1.92-6.02A1 1 0 0 0 11 14z"/></svg>My First Hard Boundary — and when I start it</div>
-          <p style="font-size:11.5px;color:#8a6010;margin-bottom:10px;font-style:italic;">Pick the one exit that matters most, be specific, and date it. Not "I'll set better limits" — but "I'm stepping back from ___, starting ___."</p>
-          <textarea class="write sh" style="background:rgba(255,255,255,.6);border-color:#e0c870;" data-save-id="exit_boundary" placeholder="The first concrete exit I'm committing to — what it is, and the date I start..."></textarea>
+          <p class="boundary-note">Pick the one exit that matters most, be specific, and date it. Not "I'll set better limits" — but "I'm stepping back from ___, starting ___."</p>
+          <textarea class="write sh" data-save-id="exit_boundary" placeholder="The first concrete exit I'm committing to — what it is, and the date I start..."></textarea>
         </div>
       </div>
 
@@ -410,20 +417,20 @@ hr.rule{border:none;border-top:1px solid var(--paper-line);margin:30px 0;}
         <div class="section-hdr"><span class="section-badge">3.3</span><span class="section-title">Lifestyle Rebrand — H1 &rarr; H2</span></div>
         <p class="section-sub">For each moment in your day, map what you're leaving behind in H1 and the elevated version you're stepping into in H2.</p>
         <div class="rebrand-row">
-          <div class="rebrand-h1"><div class="rebrand-label"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v8"/><path d="m4.93 10.93 1.41 1.41"/><path d="M2 18h2"/><path d="M20 18h2"/><path d="m19.07 10.93-1.41 1.41"/><path d="M22 22H2"/><path d="m8 6 4-4 4 4"/><path d="M16 18a4 4 0 0 0-8 0"/></svg>Morning &middot; leaving behind</div><textarea class="write sh" style="background:rgba(255,255,255,.5);border-color:rgba(230,164,180,.5);" data-save-id="rebrand_morn_before" placeholder="Wake up at last second, rush, overwhelmed..."></textarea></div>
-          <div class="rebrand-h2"><div class="rebrand-label"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>Morning &middot; stepping into</div><textarea class="write sh" style="background:rgba(255,255,255,.5);border-color:rgba(143,174,134,.5);" data-save-id="rebrand_morn_after" placeholder="Wake up with intention, slow playlist, made the bed..."></textarea></div>
+          <div class="rebrand-h1"><div class="rebrand-label"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v8"/><path d="m4.93 10.93 1.41 1.41"/><path d="M2 18h2"/><path d="M20 18h2"/><path d="m19.07 10.93-1.41 1.41"/><path d="M22 22H2"/><path d="m8 6 4-4 4 4"/><path d="M16 18a4 4 0 0 0-8 0"/></svg>Morning &middot; leaving behind</div><textarea class="write sh" data-save-id="rebrand_morn_before" placeholder="Wake up at last second, rush, overwhelmed..."></textarea></div>
+          <div class="rebrand-h2"><div class="rebrand-label"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>Morning &middot; stepping into</div><textarea class="write sh" data-save-id="rebrand_morn_after" placeholder="Wake up with intention, slow playlist, made the bed..."></textarea></div>
         </div>
         <div class="rebrand-row">
-          <div class="rebrand-h1"><div class="rebrand-label"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2"/><path d="M12 20v2"/><path d="m4.93 4.93 1.41 1.41"/><path d="m17.66 17.66 1.41 1.41"/><path d="M2 12h2"/><path d="M20 12h2"/><path d="m6.34 17.66-1.41 1.41"/><path d="m19.07 4.93-1.41 1.41"/></svg>Work & Energy &middot; leaving behind</div><textarea class="write sh" style="background:rgba(255,255,255,.5);border-color:rgba(230,164,180,.5);" data-save-id="rebrand_commute_before" placeholder="Reactive, scattered, people-pleasing..."></textarea></div>
-          <div class="rebrand-h2"><div class="rebrand-label"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>Work & Energy &middot; stepping into</div><textarea class="write sh" style="background:rgba(255,255,255,.5);border-color:rgba(143,174,134,.5);" data-save-id="rebrand_commute_after" placeholder="Intentional, boundaried, operating from a full cup..."></textarea></div>
+          <div class="rebrand-h1"><div class="rebrand-label"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2"/><path d="M12 20v2"/><path d="m4.93 4.93 1.41 1.41"/><path d="m17.66 17.66 1.41 1.41"/><path d="M2 12h2"/><path d="M20 12h2"/><path d="m6.34 17.66-1.41 1.41"/><path d="m19.07 4.93-1.41 1.41"/></svg>Work & Energy &middot; leaving behind</div><textarea class="write sh" data-save-id="rebrand_commute_before" placeholder="Reactive, scattered, people-pleasing..."></textarea></div>
+          <div class="rebrand-h2"><div class="rebrand-label"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>Work & Energy &middot; stepping into</div><textarea class="write sh" data-save-id="rebrand_commute_after" placeholder="Intentional, boundaried, operating from a full cup..."></textarea></div>
         </div>
         <div class="rebrand-row">
-          <div class="rebrand-h1"><div class="rebrand-label"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 10V2"/><path d="m4.93 10.93 1.41 1.41"/><path d="M2 18h2"/><path d="M20 18h2"/><path d="m19.07 10.93-1.41 1.41"/><path d="M22 22H2"/><path d="m16 6-4 4-4-4"/><path d="M16 18a4 4 0 0 0-8 0"/></svg>Evening &middot; leaving behind</div><textarea class="write sh" style="background:rgba(255,255,255,.5);border-color:rgba(230,164,180,.5);" data-save-id="rebrand_eve_before" placeholder="Scroll until asleep, no wind-down routine..."></textarea></div>
-          <div class="rebrand-h2"><div class="rebrand-label"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>Evening &middot; stepping into</div><textarea class="write sh" style="background:rgba(255,255,255,.5);border-color:rgba(143,174,134,.5);" data-save-id="rebrand_eve_after" placeholder="A ritual that belongs to you — skincare, reading, reflection..."></textarea></div>
+          <div class="rebrand-h1"><div class="rebrand-label"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 10V2"/><path d="m4.93 10.93 1.41 1.41"/><path d="M2 18h2"/><path d="M20 18h2"/><path d="m19.07 10.93-1.41 1.41"/><path d="M22 22H2"/><path d="m16 6-4 4-4-4"/><path d="M16 18a4 4 0 0 0-8 0"/></svg>Evening &middot; leaving behind</div><textarea class="write sh" data-save-id="rebrand_eve_before" placeholder="Scroll until asleep, no wind-down routine..."></textarea></div>
+          <div class="rebrand-h2"><div class="rebrand-label"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>Evening &middot; stepping into</div><textarea class="write sh" data-save-id="rebrand_eve_after" placeholder="A ritual that belongs to you — skincare, reading, reflection..."></textarea></div>
         </div>
         <div class="rebrand-row">
-          <div class="rebrand-h1"><div class="rebrand-label"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>Social Life &middot; leaving behind</div><textarea class="write sh" style="background:rgba(255,255,255,.5);border-color:rgba(230,164,180,.5);" data-save-id="rebrand_social_before" placeholder="Saying yes to everything, feeling drained after..."></textarea></div>
-          <div class="rebrand-h2"><div class="rebrand-label"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>Social Life &middot; stepping into</div><textarea class="write sh" style="background:rgba(255,255,255,.5);border-color:rgba(143,174,134,.5);" data-save-id="rebrand_social_after" placeholder="Intentional, energizing, chosen with care..."></textarea></div>
+          <div class="rebrand-h1"><div class="rebrand-label"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>Social Life &middot; leaving behind</div><textarea class="write sh" data-save-id="rebrand_social_before" placeholder="Saying yes to everything, feeling drained after..."></textarea></div>
+          <div class="rebrand-h2"><div class="rebrand-label"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>Social Life &middot; stepping into</div><textarea class="write sh" data-save-id="rebrand_social_after" placeholder="Intentional, energizing, chosen with care..."></textarea></div>
         </div>
       </div>
 
