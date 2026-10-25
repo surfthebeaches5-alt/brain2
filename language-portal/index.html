@@ -949,7 +949,10 @@ function loadC(){
   try{o=raw?JSON.parse(raw):null;}catch(e){o=null;}
   C=normalize(o);
 }
-function saveC(){var raw=JSON.stringify(C);if(lsSet(LC_KEY,raw))lastRaw=raw;}
+var saveT=null;
+function saveC(){clearTimeout(saveT);saveT=null;var raw=JSON.stringify(C);if(lsSet(LC_KEY,raw))lastRaw=raw;}
+function saveSoon(){clearTimeout(saveT);saveT=setTimeout(saveC,400);}
+function flushSave(){if(saveT)saveC();}
 
 /* ───────── challenge logic ───────── */
 function running(){return C.challenges.filter(function(c){return !c.endedAt;});}
@@ -961,19 +964,58 @@ function ensureDay(ch,date){var d=ch.days[date];if(!d||typeof d!=='object'){d=ch
 function dayInfo(ch,date){
   var d=ch.days[date]||{};var raw=Array.isArray(d.done)?d.done:[];
   var done=ch.tasks.filter(function(t){return raw.indexOf(t.id)>=0;}).map(function(t){return t.id;});
-  return {done:done,n:done.length,total:ch.tasks.length,complete:ch.tasks.length>0&&done.length===ch.tasks.length,note:d.note||'',cards:+d.cards||0};
+  var res=dayRes(d),log=typeof d.log==='string'?d.log:'';
+  return {done:done,n:done.length,total:ch.tasks.length,complete:ch.tasks.length>0&&done.length===ch.tasks.length,note:d.note||'',cards:+d.cards||0,
+    minutes:Math.max(0,+d.minutes||0),pages:Math.max(0,+d.pages||0),resources:res,log:log,
+    logged:!!(Math.max(0,+d.minutes||0)||Math.max(0,+d.pages||0)||res.length||log.trim())};
 }
-function isCardsTask(t){return t.id==='cards'||/^cards/.test(t.id);}
+function dayRes(d){return (d&&Array.isArray(d.resources)?d.resources:[]).filter(function(r){return r&&(r.name||r.url);});}
+function isCardsTask(t){return !!(t&&t.auto&&t.auto.kind==='cards');}
 function cardsTask(ch){for(var i=0;i<ch.tasks.length;i++)if(isCardsTask(ch.tasks[i]))return ch.tasks[i];return null;}
-function cardsTarget(t){var m=/(\d+)/.exec(t&&t.label||'');var n=m?parseInt(m[1],10):20;return n>0?n:20;}
+function cardsTarget(t){return t&&t.auto&&t.auto.min>0?t.auto.min:labelNum(t&&t.label);}
+function inRange(ch,date){return date>=ch.start&&date<=endDate(ch);}
+/* does a day's log satisfy a rule's auto condition? */
+function autoMet(task,d){
+  var a=task&&task.auto;if(!a||!d)return false;
+  if(a.kind==='minutes')return (+d.minutes||0)>=a.min;
+  if(a.kind==='pages')return (+d.pages||0)>=a.min;
+  if(a.kind==='cards')return (+d.cards||0)>=a.min;
+  if(a.kind==='log')return !!((typeof d.log==='string'&&d.log.trim())||dayRes(d).length);
+  return false;
+}
+function cleanDay(d){
+  ['minutes','pages','cards'].forEach(function(k){if(k in d){var n=Math.max(0,Math.round(+d[k]||0));if(n)d[k]=n;else delete d[k];}});
+  if('resources' in d){var r=dayRes(d).map(function(x){var o={name:String(x.name||hostOf(x.url||'')).slice(0,120)};o.url=x.url?String(x.url):'';return o;});if(r.length)d.resources=r;else delete d.resources;}
+  if('log' in d&&!(typeof d.log==='string'&&d.log.trim()))delete d.log;
+}
+/* Change a day's log, then tick/untick auto rules whose condition just flipped.
+   Only transitions act, so a manual untick sticks until the log crosses the line again. */
+function logChange(ch,date,mutate,lazy){
+  var d=ensureDay(ch,date),before={},wasComplete=dayInfo(ch,date).complete,ticked=[];
+  ch.tasks.forEach(function(t){if(t.auto)before[t.id]=autoMet(t,d);});
+  mutate(d);cleanDay(d);
+  ch.tasks.forEach(function(t){
+    if(!t.auto)return;var now=autoMet(t,d),i=d.done.indexOf(t.id);
+    if(now&&!before[t.id]&&i<0){d.done.push(t.id);ticked.push(t);}
+    else if(!now&&before[t.id]&&i>=0)d.done.splice(i,1);
+  });
+  if(lazy&&!ticked.length)saveSoon();else saveC();
+  return {ticked:ticked,completed:!wasComplete&&dayInfo(ch,date).complete};
+}
+function dayMinutes(lang){
+  var m=0;C.challenges.forEach(function(c){if(lang&&c.lang!==lang)return;Object.keys(c.days).forEach(function(k){m+=Math.max(0,+c.days[k].minutes||0);});});
+  return m;
+}
+function quickHours(lang){return lang?(+LP.hours[lang]||0):Object.keys(LP.hours).reduce(function(s,k){return s+(+LP.hours[k]||0);},0);}
+function totalHours(lang){return quickHours(lang)+dayMinutes(lang)/60;}
 function chStats(ch){
-  var t=TODAY(),dn=dayNum(ch),last=dn>ch.length?endDate(ch):t,complete=0,cards=0,elapsed=Math.max(0,Math.min(dn,ch.length));
+  var t=TODAY(),dn=dayNum(ch),last=dn>ch.length?endDate(ch):t,complete=0,cards=0,mins=0,elapsed=Math.max(0,Math.min(dn,ch.length));
   for(var i=0;i<ch.length;i++){var d=addDays(ch.start,i);if(d>last)break;if(dayInfo(ch,d).complete)complete++;}
-  Object.keys(ch.days).forEach(function(k){cards+=+ch.days[k].cards||0;});
+  Object.keys(ch.days).forEach(function(k){cards+=+ch.days[k].cards||0;mins+=Math.max(0,+ch.days[k].minutes||0);});
   var streak=0,s=last;
   if(s===t&&!dayInfo(ch,t).complete)s=addDays(t,-1);
   while(s>=ch.start&&dayInfo(ch,s).complete){streak++;s=addDays(s,-1);}
-  return {dn:dn,elapsed:elapsed,complete:complete,cards:cards,streak:streak,pct:Math.round(complete/ch.length*100)};
+  return {dn:dn,elapsed:elapsed,complete:complete,cards:cards,mins:mins,streak:streak,pct:Math.round(complete/ch.length*100)};
 }
 function missedDate(ch){
   if(!ch.strict)return null;
@@ -1013,16 +1055,10 @@ function creditFor(lang){
 }
 function creditCard(lang){
   var ch=creditFor(lang);if(!ch)return;
-  var t=TODAY();if(t<ch.start||t>endDate(ch))return;
-  var before=dayInfo(ch,t).complete;
-  var d=ensureDay(ch,t);d.cards=(+d.cards||0)+1;
-  var task=cardsTask(ch);
-  if(task&&d.cards>=cardsTarget(task)&&d.done.indexOf(task.id)<0){
-    d.done.push(task.id);
-    var after=dayInfo(ch,t).complete;
-    if(after&&!before){toast('✓ Flashcards done — and that completes Day '+dayNum(ch)+'! 🎉');setTimeout(function(){celebrate($('.flash')||$('.study'));},60);}
-    else toast('✓ “'+task.label+'” ticked on your '+L(ch.lang).name+' challenge');
-  }
+  var t=TODAY();if(!inRange(ch,t))return;
+  var r=logChange(ch,t,function(d){d.cards=(+d.cards||0)+1;});
+  if(r.completed){toast('✓ Flashcards done — and that completes Day '+dayNum(ch)+'! 🎉');setTimeout(function(){celebrate($('.flash')||$('.study'));},60);}
+  else if(r.ticked.length)toast('✓ “'+r.ticked[0].label+'” ticked on your '+L(ch.lang).name+' challenge');
 }
 
 /* ───────── UI helpers ───────── */
@@ -1057,16 +1093,16 @@ var canSpeak=('speechSynthesis' in window)&&typeof SpeechSynthesisUtterance!=='u
 
 /* ───────── tabs ───────── */
 var tab='challenge';
-function tabFromHash(){var h=(location.hash||'').replace('#','');return h==='flashcards'||h==='flash'?'flash':h==='library'?'library':'challenge';}
+function tabFromHash(){var h=(location.hash||'').replace('#','');return h==='flashcards'||h==='flash'?'flash':h==='library'?'library':h==='log'?'log':'challenge';}
 function setTab(t){
-  tab=['challenge','flash','library'].indexOf(t)>=0?t:'challenge';
+  tab=['challenge','log','flash','library'].indexOf(t)>=0?t:'challenge';
   $$('#tabs button').forEach(function(b){var on=b.getAttribute('data-tab')===tab;b.classList.toggle('on',on);b.setAttribute('aria-selected',on?'true':'false');});
   $$('.view').forEach(function(v){v.classList.toggle('on',v.id==='v-'+tab);});
   try{history.replaceState(null,'',location.pathname+location.search+(tab==='challenge'?'':'#'+(tab==='flash'?'flashcards':tab)));}catch(e){}
   hideTip();renderView();
 }
 function renderView(){
-  if(tab==='challenge')renderChallenge();else if(tab==='flash')renderFlash();else renderLibrary();
+  if(tab==='challenge')renderChallenge();else if(tab==='log')renderStudyLog();else if(tab==='flash')renderFlash();else renderLibrary();
   var n=totalStudyable(),b=$('#due-badge');b.hidden=!n;b.textContent=n>99?'99+':n;
 }
 
@@ -1100,12 +1136,12 @@ function welcomeHtml(){
   return '<div class="card" style="padding:32px 34px"><div class="welcome"><div>'+
     '<div class="eyebrow">A 75-day language challenge</div>'+
     '<div class="w-big">Make the work <em>the log.</em></div>'+
-    '<p class="w-p">Pick a few daily tasks (Anki, Duolingo, 20 minutes of listening…). Each day you tick them off with one click, or study flashcards right here and they tick themselves. Fill the 75 squares.</p>'+
+    '<p class="w-p">Follow the 75 Fluent rules or write your own. Log your minutes, pages, resources and notes each day and the matching rules tick themselves; tick the rest with one click. Every day lands in your study log. Fill the 75 squares.</p>'+
     '<div class="demo-grid" aria-hidden="true">'+demo+'</div></div>'+
     '<div class="qs">'+
-      '<button type="button" class="qs-card" data-act="newCh" data-lang="pt"><span class="fl">'+L('pt').flag+'</span><span><b>75 Days of Portuguese</b><small>A1 → build the daily habit</small></span><span class="go">Start →</span></button>'+
-      '<button type="button" class="qs-card" data-act="newCh" data-lang="es"><span class="fl">'+L('es').flag+'</span><span><b>75 Days of Spanish</b><small>C1 → keep it sharp</small></span><span class="go">Start →</span></button>'+
-      '<button type="button" class="qs-card" data-act="newCh"><span class="fl">✨</span><span><b>Custom challenge</b><small>Your language, length and rules</small></span><span class="go">Set up →</span></button>'+
+      '<button type="button" class="qs-card" data-act="newCh" data-lang="pt" data-tpl="fluent"><span class="fl">'+L('pt').flag+'</span><span><b>75 Fluent · Portuguese</b><small>60 min study · 5 pages · track · speak · 1 episode</small></span><span class="go">Start →</span></button>'+
+      '<button type="button" class="qs-card" data-act="newCh" data-lang="es" data-tpl="fluent"><span class="fl">'+L('es').flag+'</span><span><b>75 Fluent · Spanish</b><small>60 min study · 5 pages · track · speak · 1 episode</small></span><span class="go">Start →</span></button>'+
+      '<button type="button" class="qs-card" data-act="newCh" data-tpl="custom"><span class="fl">✨</span><span><b>Custom challenge</b><small>Your language, length and rules</small></span><span class="go">Set up →</span></button>'+
     '</div></div></div>';
 }
 function bannerHtml(ch){
@@ -1139,6 +1175,7 @@ function heroHtml(ch){
       '<div><div class="hs-num">'+st.streak+'<em> '+(st.streak===1?'day':'days')+'</em></div><div class="hs-lbl">Streak</div></div>'+
       '<div><div class="hs-num">'+st.complete+'<em> / '+Math.max(st.elapsed,0)+'</em></div><div class="hs-lbl">Days complete</div></div>'+
       '<div><div class="hs-num">'+st.pct+'<em>%</em></div><div class="hs-lbl">Of the challenge</div></div>'+
+      (st.mins?'<div><div class="hs-num">'+fmtHM(st.mins/60)+'</div><div class="hs-lbl">Studied</div></div>':'')+
       (st.cards?'<div><div class="hs-num">'+st.cards+'</div><div class="hs-lbl">Cards studied</div></div>':'')+
     '</div><div class="h-bar"><i style="width:'+st.pct+'%"></i></div></div>';
   h+='<div><div class="g-cap"><span class="eyebrow">'+esc(ch.title)+'</span><span class="muted small">'+fmtD(ch.start)+' → '+fmtD(endDate(ch))+'</span></div>';
@@ -1147,7 +1184,7 @@ function heroHtml(ch){
     var d=addDays(ch.start,i),inf=dayInfo(ch,d),cls,lab;
     if(d>t){cls='fut';lab='upcoming';}
     else if(inf.complete){cls='done';lab='complete';}
-    else if(inf.n>0||inf.cards>0){cls='part';lab=inf.n+' of '+inf.total+' done';}
+    else if(inf.n>0||inf.cards>0||inf.logged){cls='part';lab=inf.n+' of '+inf.total+' done';}
     else if(d===t){cls='';lab='not started';}
     else{cls='miss';lab='missed';}
     if(d===t)cls+=' today';
@@ -1170,28 +1207,54 @@ function checklistHtml(ch){
   if(ti.complete)h+='<div class="done-banner">✓ Day '+dn+' complete <span>· see you tomorrow.</span></div>';
   if(!ch.tasks.length)h+='<div class="muted" style="padding:6px 2px 12px">No tasks yet. <button type="button" class="linkish" data-act="editCh">Add some</button></div>';
   ch.tasks.forEach(function(task){
-    var done=ti.done.indexOf(task.id)>=0,sub='',right='';
+    var done=ti.done.indexOf(task.id)>=0,sub='',right='',a=task.auto,u=task.url&&safeUrl(task.url);
+    function meter(n,tg,unit){return '<span>'+n+' / '+tg+' '+unit+'</span><i class="mini"><b style="width:'+Math.min(100,n/tg*100)+'%"></b></i>'+(done?'':'<span class="hint">· ticks itself</span>');}
     if(isCardsTask(task)){
-      var tg=cardsTarget(task),n=ti.cards;
-      sub='<span class="t-sub"><span>'+n+' / '+tg+' cards today</span><i class="mini"><b style="width:'+Math.min(100,n/tg*100)+'%"></b></i>'+(done?'':'<span class="hint">· ticks itself</span>')+'</span>';
+      sub='<span class="t-sub">'+meter(ti.cards,cardsTarget(task),'cards today')+'</span>';
       right='<button type="button" class="t-open" data-act="studyFor">Study →</button>';
-    }else if(task.url&&safeUrl(task.url)){
-      sub='<span class="t-sub"><span class="u">'+esc(hostOf(safeUrl(task.url)))+'</span></span>';
-      right='<a class="t-open" data-act="ext" href="'+esc(safeUrl(task.url))+'" target="_blank" rel="noopener">Open ↗</a>';
-    }
-    h+='<div class="task'+(done?' done':'')+'" role="checkbox" tabindex="0" aria-checked="'+done+'" data-act="toggle" data-tid="'+esc(task.id)+'"><span class="tick">'+CHECK_SVG+'</span><span class="t-main"><span class="t-label">'+esc(task.label)+'</span>'+sub+'</span>'+right+'</div>';
+    }else if(a&&a.kind==='minutes')sub='<span class="t-sub">'+meter(ti.minutes,a.min,'min logged')+'</span>';
+    else if(a&&a.kind==='pages')sub='<span class="t-sub">'+meter(ti.pages,a.min,'pages logged')+'</span>';
+    else if(a&&a.kind==='log')sub='<span class="t-sub"><span class="u">'+(ti.log.trim()||ti.resources.length?'Logged: '+esc([ti.resources.length?plural(ti.resources.length,'resource'):'',ti.log.trim()?'notes':''].filter(Boolean).join(' + ')):'Ticks itself when you add notes or a resource below')+'</span></span>';
+    else if(task.desc)sub='<span class="t-sub"><span class="u">'+esc(task.desc)+'</span></span>';
+    else if(u)sub='<span class="t-sub"><span class="u">'+esc(hostOf(u))+'</span></span>';
+    if(!right&&u)right='<a class="t-open" data-act="ext" href="'+esc(u)+'" target="_blank" rel="noopener">Open ↗</a>';
+    h+='<div class="task'+(done?' done':'')+'" role="checkbox" tabindex="0" aria-checked="'+done+'" data-act="toggle" data-tid="'+esc(task.id)+'"'+(task.desc?' title="'+esc(task.desc)+'"':'')+'><span class="tick">'+CHECK_SVG+'</span><span class="t-main"><span class="t-label">'+esc(task.label)+'</span>'+sub+'</span>'+right+'</div>';
   });
-  h+='<div class="note-wrap"><input class="note-in" id="note-today" data-inp="note" maxlength="240" placeholder="One line about today: what did you watch, read or say?" value="'+esc(ti.note)+'" aria-label="Note for today"><span class="saved" id="note-saved">Saved</span></div></section>';
+  h+=dayLogHtml(ch,t,'td')+'</section>';
   return h;
 }
+/* the "Log today" block — also used in the day editor (ctx 'dm') */
+function dayLogHtml(ch,date,ctx){
+  var inf=dayInfo(ch,date),cid=esc(ch.id),p=' data-ch="'+cid+'" data-date="'+date+'" data-ctx="'+ctx+'"',id='dl-'+ctx+'-';
+  var h='<div class="dl" id="'+id+'box">';
+  h+='<div class="dl-h"><span class="eyebrow">'+(ctx==='td'?'Log today':'Study log')+'</span><span class="saved" id="'+id+'saved">Saved</span><span class="sp"></span>'+
+    (ctx==='td'?'<button type="button" class="linkish" data-act="tab" data-tab="log">Study log →</button>':'')+'</div>';
+  h+='<div class="dl-grid"><div><label class="f-label" for="'+id+'minutes">Minutes studied</label><div class="dl-row">'+
+    '<input class="dl-num" type="number" min="0" max="1440" step="1" inputmode="numeric" id="'+id+'minutes" data-chg="dlNum" data-f="minutes"'+p+' value="'+(inf.minutes||'')+'" placeholder="0">'+
+    '<span class="dl-unit">min</span>'+[15,30,60].map(function(n){return '<button type="button" class="qb" data-act="dlAdd" data-f="minutes" data-n="'+n+'"'+p+'>+'+n+'</button>';}).join('')+'</div></div>';
+  h+='<div><label class="f-label" for="'+id+'pages">Pages read</label><div class="dl-row">'+
+    '<input class="dl-num" type="number" min="0" max="2000" step="1" inputmode="numeric" id="'+id+'pages" data-chg="dlNum" data-f="pages"'+p+' value="'+(inf.pages||'')+'" placeholder="0">'+
+    '<span class="dl-unit">pages</span><button type="button" class="qb" data-act="dlAdd" data-f="pages" data-n="5"'+p+'>+5</button></div></div></div>';
+  h+='<span class="f-label">Resources used</span><div class="dl-res">';
+  inf.resources.forEach(function(r,i){
+    var u=safeUrl(r.url),nm=r.name||hostOf(u);
+    h+='<span class="rchip">'+(u?'<a href="'+esc(u)+'" target="_blank" rel="noopener" data-act="ext" title="'+esc(u)+'">'+esc(nm)+' ↗</a>':'<span class="rn">'+esc(nm)+'</span>')+
+      '<button type="button" data-act="dlRmRes" data-i="'+i+'"'+p+' aria-label="Remove '+esc(nm)+'">×</button></span>';
+  });
+  h+='<button type="button" class="pchip" data-act="dlPick"'+p+'>+ Add resource</button></div>';
+  h+='<label class="f-label" for="'+id+'log">Notes</label><textarea class="f-input" rows="2" id="'+id+'log" data-inp="dlLog"'+p+' maxlength="4000" placeholder="What did you study? Key notes from your session">'+esc(inf.log)+'</textarea>';
+  if(inf.note)h+='<div class="f-field" style="margin:12px 0 0"><label class="f-label" for="'+id+'note">One-line note</label><input class="f-input" id="'+id+'note" data-inp="dlNote"'+p+' maxlength="240" value="'+esc(inf.note)+'"></div>';
+  return h+'</div>';
+}
 function toolsHtml(){
-  var h='<section class="card"><div class="card-h"><div class="ttl-sm">Your tools</div><button type="button" class="linkish" data-act="addLink">+ Add link</button></div><div class="tools">';
+  var h='<section class="card"><div class="card-h"><div class="ttl-sm">Your tools</div><span style="display:flex;gap:12px"><button type="button" class="linkish" data-act="addLink">+ Add link</button><button type="button" class="linkish" data-act="tab" data-tab="library">Resources →</button></span></div><div class="tools">';
   BUILTIN_LINKS.forEach(function(l){h+='<a class="tool" data-act="ext" href="'+esc(l.url)+'" target="_blank" rel="noopener"><span class="av" style="background:'+l.bg+'">'+l.av+'</span><span class="nm">'+esc(l.name)+'</span><span class="arr">↗</span></a>';});
   C.links.forEach(function(l){
     var u=safeUrl(l.url);if(!u)return;
     h+='<a class="tool" data-act="ext" href="'+esc(u)+'" target="_blank" rel="noopener"><span class="av" style="background:var(--accent)">'+esc((l.name||'?').trim().charAt(0).toUpperCase())+'</span><span class="nm">'+esc(l.name)+'</span><span class="arr">↗</span><button type="button" class="x" data-act="rmLink" data-id="'+esc(l.id)+'" aria-label="Remove '+esc(l.name)+'">×</button></a>';
   });
-  h+='</div><div class="tool-note">These open in a new tab. Anki and Duolingo don’t allow embedding, so tick the task here when you’re back.</div></section>';
+  h+='</div><div class="tool-note">These open in a new tab. Tick the rule here when you’re back.</div>'+
+    '<div class="note-wrap" style="justify-content:space-between"><span class="muted small">Found something good? Keep it for later.</span><button type="button" class="btn btn-soft btn-sm" data-act="saveResCh">+ Save to Library</button></div></section>';
   return h;
 }
 function flashMiniHtml(ch){
@@ -1207,11 +1270,30 @@ function flashMiniHtml(ch){
   return h+'</section>';
 }
 function timeHtml(ch){
-  var h='<section class="card"><div class="card-h"><div class="ttl-sm">Time logged</div><button type="button" class="linkish" data-act="openLog">View log ('+LP.log.length+')</button></div>';
-  ['pt','es'].forEach(function(lg){
-    h+='<div class="trow"><span class="fl">'+L(lg).flag+'</span><span class="tn">'+L(lg).name+'<small>quick add</small></span><span class="qbs"><button type="button" class="qb" data-act="qlog" data-lang="'+lg+'" data-min="15">+15m</button><button type="button" class="qb" data-act="qlog" data-lang="'+lg+'" data-min="30">+30m</button><button type="button" class="qb" data-act="qlog" data-lang="'+lg+'" data-min="60">+1h</button></span><span class="hrs">'+fmtHM(LP.hours[lg])+'</span></div>';
+  var h='<section class="card"><div class="card-h"><div class="ttl-sm">Time logged</div><button type="button" class="linkish" data-act="openLog">View log ('+(LP.log.length+minuteDays().length)+')</button></div>';
+  timeLangs().forEach(function(lg){
+    var tc=todayChFor(lg);
+    h+='<div class="trow"><span class="fl">'+L(lg).flag+'</span><span class="tn">'+esc(L(lg).name)+'<small>'+(tc?'adds to today’s log':'quick add')+'</small></span><span class="qbs"><button type="button" class="qb" data-act="qlog" data-lang="'+lg+'" data-min="15">+15m</button><button type="button" class="qb" data-act="qlog" data-lang="'+lg+'" data-min="30">+30m</button><button type="button" class="qb" data-act="qlog" data-lang="'+lg+'" data-min="60">+1h</button></span><span class="hrs">'+fmtHM(totalHours(lg))+'</span></div>';
   });
   return h+'</section>';
+}
+function timeLangs(){
+  var l=['pt','es'];
+  C.challenges.forEach(function(c){if(l.indexOf(c.lang)<0)l.push(c.lang);});
+  Object.keys(LP.hours).forEach(function(k){if(l.indexOf(k)<0&&+LP.hours[k])l.push(k);});
+  return l;
+}
+/* the running challenge in this language whose range covers today (active one first) */
+function todayChFor(lang){
+  var t=TODAY(),a=activeCh();
+  if(a&&a.lang===lang&&inRange(a,t))return a;
+  return running().filter(function(c){return c.lang===lang&&inRange(c,t);})[0]||null;
+}
+/* every (challenge, day) that has minutes in its log */
+function minuteDays(){
+  var out=[];
+  C.challenges.forEach(function(c){Object.keys(c.days).forEach(function(k){var m=Math.max(0,+c.days[k].minutes||0);if(m)out.push({ch:c,date:k,mins:m});});});
+  return out;
 }
 function historyHtml(){
   var ended=C.challenges.filter(function(c){return c.endedAt;}).sort(function(a,b){return a.endedAt<b.endedAt?1:-1;});
@@ -1219,10 +1301,73 @@ function historyHtml(){
   var h='<div class="hist"><div class="sec">Past rounds</div>';
   ended.forEach(function(c){
     var last=c.endedAt<endDate(c)?c.endedAt:endDate(c),n=Math.max(0,diffDays(c.start,last)+1),comp=0,g='';
-    for(var i=0;i<c.length;i++){var d=addDays(c.start,i),inf=dayInfo(c,d),k='';if(d<=last){k=inf.complete?'d':(inf.n||inf.cards)?'p':'m';if(inf.complete)comp++;}g+='<i'+(k?' class="'+k+'"':'')+'></i>';}
+    for(var i=0;i<c.length;i++){var d=addDays(c.start,i),inf=dayInfo(c,d),k='';if(d<=last){k=inf.complete?'d':(inf.n||inf.cards||inf.logged)?'p':'m';if(inf.complete)comp++;}g+='<i'+(k?' class="'+k+'"':'')+'></i>';}
     h+='<div class="hrow"><span style="font-size:20px">'+L(c.lang).flag+'</span><div class="hm"><b>'+esc(c.title)+'</b>'+(c.strict?' <span class="chip chip-mut">strict</span>':'')+'<div>'+fmtD(c.start)+' → '+fmtD(last)+' · reached Day '+n+' · '+comp+' complete</div></div><div class="hgrid" aria-hidden="true">'+g+'</div><button type="button" class="btn btn-danger btn-sm" data-act="delCh" data-id="'+esc(c.id)+'">Delete</button></div>';
   });
   return h+'</div>';
+}
+
+/* ════════════════ STUDY LOG VIEW ════════════════ */
+var slLang='all',slLimit=60;
+function dayHasAnything(d){
+  if(!d||typeof d!=='object')return false;
+  return !!((Array.isArray(d.done)&&d.done.length)||(d.note&&String(d.note).trim())||+d.cards||+d.minutes||+d.pages||dayRes(d).length||(typeof d.log==='string'&&d.log.trim()));
+}
+function logEntries(lang){
+  var out=[];
+  C.challenges.forEach(function(c){
+    if(lang!=='all'&&c.lang!==lang)return;
+    Object.keys(c.days).forEach(function(k){if(pd(k)&&dayHasAnything(c.days[k]))out.push({ch:c,date:k});});
+  });
+  out.sort(function(a,b){return a.date<b.date?1:a.date>b.date?-1:(a.ch.lang<b.ch.lang?-1:a.ch.lang>b.ch.lang?1:0);});
+  return out;
+}
+function renderStudyLog(){
+  var root=$('#v-log'),langs=[];
+  C.challenges.forEach(function(c){if(langs.indexOf(c.lang)<0)langs.push(c.lang);});
+  if(slLang!=='all'&&langs.indexOf(slLang)<0)slLang='all';
+  var ents=logEntries(slLang),dates={},mins=0,pages=0,cards=0;
+  ents.forEach(function(e){var inf=dayInfo(e.ch,e.date);dates[e.date]=1;mins+=inf.minutes;pages+=inf.pages;cards+=inf.cards;});
+  var qh=slLang==='all'?quickHours():quickHours(slLang);
+  var a=activeCh(),canToday=a&&inRange(a,TODAY())&&(slLang==='all'||a.lang===slLang);
+  var h='<div class="sl-head"><div class="ttl">Study log</div>';
+  if(langs.length>1){
+    h+='<button type="button" class="lib-chip'+(slLang==='all'?' active':'')+'" data-act="slLang" data-lang="all">All languages</button>';
+    langs.forEach(function(k){h+='<button type="button" class="lib-chip'+(slLang===k?' active':'')+'" data-act="slLang" data-lang="'+esc(k)+'">'+L(k).flag+' '+esc(L(k).name)+'</button>';});
+  }
+  h+='<span class="sp"></span>'+(canToday?'<button type="button" class="btn btn-dark btn-sm" data-act="day" data-date="'+TODAY()+'" data-ch="'+esc(a.id)+'">Log today</button>':'')+'</div>';
+  h+='<div class="sl-tot">'+
+    '<div class="sl-tile"><b>'+Object.keys(dates).length+'</b><span class="eyebrow">Days logged</span></div>'+
+    '<div class="sl-tile"><b>'+fmtHM(mins/60+qh)+'</b><span class="eyebrow">Total time</span>'+(qh?'<small>incl. '+fmtHM(qh)+' from quick logs</small>':'')+'</div>'+
+    '<div class="sl-tile"><b>'+pages+'</b><span class="eyebrow">Pages read</span></div>'+
+    '<div class="sl-tile"><b>'+cards+'</b><span class="eyebrow">Cards studied</span></div></div>';
+  if(!ents.length){
+    h+='<section class="card"><div class="sl-empty"><b>Nothing logged yet</b>Each day you log minutes, pages, resources and notes (or tick a rule), it shows up here.'+
+      (canToday?'<div style="margin-top:14px"><button type="button" class="btn btn-soft btn-sm" data-act="day" data-date="'+TODAY()+'" data-ch="'+esc(a.id)+'">Log today</button></div>':(!a?'<div style="margin-top:14px"><button type="button" class="btn btn-soft btn-sm" data-act="tab" data-tab="challenge">Start a challenge</button></div>':''))+'</div></section>';
+    root.innerHTML=h;return;
+  }
+  h+='<section class="card sl-list">';
+  ents.slice(0,slLimit).forEach(function(e){h+=logRowHtml(e.ch,e.date);});
+  if(ents.length>slLimit)h+='<div class="more"><button type="button" class="btn btn-ghost btn-sm" data-act="slMore">Show more ('+(ents.length-slLimit)+')</button></div>';
+  root.innerHTML=h+'</section>';
+}
+function logRowHtml(ch,date){
+  var inf=dayInfo(ch,date),dn=diffDays(ch.start,date)+1,dd=pd(date),h='';
+  h+='<article class="sl-row"><div class="sl-date"><b>'+MS[dd.getMonth()]+' '+dd.getDate()+'</b><small>'+DW[dd.getDay()]+(dd.getFullYear()!==new Date().getFullYear()?' '+dd.getFullYear():'')+'</small></div><div style="min-width:0">';
+  h+='<div class="sl-top">'+(dn>=1&&dn<=ch.length?'Day '+dn:'Outside the challenge')+' <span class="muted">· '+L(ch.lang).flag+' '+esc(L(ch.lang).name)+' · '+esc(ch.title)+(ch.endedAt?' (past round)':'')+'</span></div>';
+  h+='<div class="sl-stats"><span class="chip '+(inf.complete?'chip-ok':inf.n?'chip-acc':'chip-mut')+'">'+(inf.complete?'✓ ':'')+inf.n+'/'+inf.total+' rules</span>'+
+    (inf.minutes?'<span class="chip chip-mut">'+fmtHM(inf.minutes/60)+'</span>':'')+
+    (inf.pages?'<span class="chip chip-mut">'+plural(inf.pages,'page')+'</span>':'')+
+    (inf.cards?'<span class="chip chip-mut">'+plural(inf.cards,'card')+'</span>':'')+'</div>';
+  if(ch.tasks.length)h+='<div class="sl-rules">'+ch.tasks.map(function(t){var ok=inf.done.indexOf(t.id)>=0;return '<span'+(ok?' class="ok"':'')+'>'+(ok?'✓ ':'· ')+esc(t.label)+'</span>';}).join(' ')+'</div>';
+  if(inf.resources.length){
+    h+='<div class="sl-res">'+inf.resources.map(function(r){var u=safeUrl(r.url),nm=r.name||hostOf(u);
+      return '<span class="rchip ro">'+(u?'<a href="'+esc(u)+'" target="_blank" rel="noopener" data-act="ext" title="'+esc(u)+'">'+esc(nm)+' ↗</a>':'<span class="rn">'+esc(nm)+'</span>')+'</span>';}).join('')+'</div>';
+  }
+  if(inf.log.trim())h+='<div class="sl-notes">'+esc(inf.log.trim())+'</div>';
+  if(inf.note)h+='<div class="sl-note">“'+esc(inf.note)+'”</div>';
+  h+='</div><button type="button" class="btn btn-ghost btn-sm" data-act="day" data-date="'+date+'" data-ch="'+esc(ch.id)+'">Edit</button></article>';
+  return h;
 }
 
 /* tooltip on grid squares */
@@ -1235,8 +1380,15 @@ function showTip(sq){
   else{
     h+=inf.complete?'All '+inf.total+' done ✓':inf.n+' of '+inf.total+' done';
     ch.tasks.forEach(function(task){var ok=inf.done.indexOf(task.id)>=0;h+='<span class="tk'+(ok?'':' no')+'">'+(ok?'✓ ':'· ')+esc(task.label)+'</span>';});
-    if(inf.cards)h+='<span class="tk">🃏 '+plural(inf.cards,'card')+' studied</span>';
+    var bits=[];
+    if(inf.minutes)bits.push(fmtHM(inf.minutes/60));
+    if(inf.pages)bits.push(plural(inf.pages,'page'));
+    if(inf.cards)bits.push(plural(inf.cards,'card'));
+    if(inf.resources.length)bits.push(plural(inf.resources.length,'resource'));
+    if(bits.length)h+='<span class="tk">'+esc(bits.join(' · '))+'</span>';
+    if(inf.log.trim())h+='<span class="tn">'+esc(inf.log.trim().length>110?inf.log.trim().slice(0,110)+'…':inf.log.trim())+'</span>';
     if(inf.note)h+='<span class="tn">“'+esc(inf.note)+'”</span>';
+    h+='<span class="td" style="display:block;margin-top:4px">Click to view or edit</span>';
   }
   tipEl.innerHTML=h;tipEl.classList.add('on');
   var r=sq.getBoundingClientRect(),tw=tipEl.offsetWidth,th=tipEl.offsetHeight;
@@ -1246,18 +1398,98 @@ function showTip(sq){
 function hideTip(){if(tipEl)tipEl.classList.remove('on');}
 
 /* day editor */
-var dmDate=null;
-function openDay(date){dmDate=date;renderDayModal();openModal('m-day');}
+var dmDate=null,dmCh=null;
+function openDay(date,chId){var ch=chId?chById(chId):activeCh();if(!ch)return;dmCh=ch.id;dmDate=date;renderDayModal();openModal('m-day');}
+function dmChallenge(){return dmCh?chById(dmCh):null;}
 function renderDayModal(){
-  var ch=activeCh();if(!ch||!dmDate)return;
+  var ch=dmChallenge();if(!ch||!dmDate)return;
   var inf=dayInfo(ch,dmDate),i=diffDays(ch.start,dmDate)+1;
-  $('#dm-title').textContent='Day '+i+' · '+fmtD(dmDate,true);
-  $('#dm-sub').textContent=dmDate===TODAY()?'Today. Tick what you’ve done.':'Forgot to tick something? Fix it here.';
+  $('#dm-title').textContent=(i>=1&&i<=ch.length?'Day '+i+' · ':'')+fmtD(dmDate,true);
+  $('#dm-sub').textContent=L(ch.lang).flag+' '+ch.title+' · '+(dmDate===TODAY()?'Today. Tick what you’ve done and log your session.':'Forgot something? Fix the ticks or the log here.');
   var h='';
   ch.tasks.forEach(function(task){var on=inf.done.indexOf(task.id)>=0;h+='<div class="dm-task'+(on?' done':'')+'" role="checkbox" tabindex="0" aria-checked="'+on+'" data-act="dmToggle" data-tid="'+esc(task.id)+'"><span class="tick">'+CHECK_SVG+'</span>'+esc(task.label)+'</div>';});
-  h+='<div class="f-field" style="margin-top:14px"><label class="f-label" for="dm-note">Note</label><input class="f-input" id="dm-note" data-inp="dmNote" maxlength="240" value="'+esc(inf.note)+'" placeholder="What did you watch, read or say?"></div>';
-  if(inf.cards)h+='<div class="muted small">🃏 '+plural(inf.cards,'flashcard')+' studied this day.</div>';
+  h+=dayLogHtml(ch,dmDate,'dm');
+  if(inf.cards)h+='<div class="muted small" style="margin-top:10px">🃏 '+plural(inf.cards,'flashcard')+' studied this day.</div>';
   $('#dm-body').innerHTML=h;
+}
+/* re-render something without losing the caret in the field being typed in */
+function keepFocus(fn){
+  var a=document.activeElement,id=a&&a.id,s=null,e=null;
+  try{s=a.selectionStart;e=a.selectionEnd;}catch(x){}
+  fn();
+  if(!id)return;var n=document.getElementById(id);
+  if(n&&n!==a){n.focus({preventScroll:true});try{if(s!=null)n.setSelectionRange(s,e);}catch(x){}}
+}
+/* after a log edit: re-render where it happened and celebrate a finished day */
+function afterLog(ch,date,ctx,r){
+  keepFocus(function(){if(ctx==='dm'){renderDayModal();}else renderChallenge();});
+  if(pick&&$('#m-pick').classList.contains('open'))renderPick();
+  var s=$('#dl-'+ctx+'-saved');if(s){s.classList.add('on');clearTimeout(afterLog._t);afterLog._t=setTimeout(function(){var x=$('#dl-'+ctx+'-saved');if(x)x.classList.remove('on');},1200);}
+  if(r.completed){
+    var dn=diffDays(ch.start,date)+1;
+    if(ctx==='td')celebrate($('#check-card'));
+    toast('Day '+dn+' complete. That’s the work, logged. 🎉');
+  }else if(r.ticked.length)toast('✓ “'+r.ticked.map(function(t){return t.label;}).join('”, “')+'” ticked from your log');
+}
+function ctxOf(el){return {ch:chById(el.getAttribute('data-ch')),date:el.getAttribute('data-date'),ctx:el.getAttribute('data-ctx')||'td'};}
+
+/* ───────── resource picker ───────── */
+var pick=null;
+function openPick(ch,date,ctx){
+  pick={ch:ch.id,date:date,ctx:ctx,q:'',items:[]};
+  $('#pk-q').value='';$('#pk-name').value='';$('#pk-url').value='';
+  $('#pk-sub').textContent='For '+(date===TODAY()?'today':fmtD(date,true))+' · '+L(ch.lang).flag+' '+ch.title+'. Click to add or remove.';
+  renderPick();openModal('m-pick');setTimeout(function(){$('#pk-q').focus();},30);
+}
+function pickItems(ch){
+  var g=[],tools=BUILTIN_LINKS.map(function(l){return {name:l.name,url:l.url,meta:hostOf(l.url)};});
+  C.links.forEach(function(l){var u=safeUrl(l.url);if(u)tools.push({name:l.name,url:u,meta:hostOf(u)});});
+  g.push({title:'Your tools',items:tools});
+  var langs=[ch.lang].concat(Object.keys(LP.resources||{}).filter(function(k){return k!==ch.lang;}));
+  langs.forEach(function(lg,i){
+    var list=libList(lg);if(!Array.isArray(list)||!list.length)return;
+    g.push({title:(i===0?'Your Library · ':'Library · ')+L(lg).flag+' '+L(lg).name,items:list.map(function(r){return {name:r.name,url:safeUrl(r.url),meta:r.type||hostOf(safeUrl(r.url))};})});
+  });
+  return g;
+}
+function resKey(r){return (r.url?safeUrl(r.url):'').toLowerCase()||String(r.name||'').trim().toLowerCase();}
+function renderPick(){
+  var ch=chById(pick.ch);if(!ch)return;
+  var d=ch.days[pick.date]||{},have={};dayRes(d).forEach(function(r){have[resKey(r)]=1;});
+  var q=pick.q.trim().toLowerCase(),h='',n=0;pick.items=[];
+  pickItems(ch).forEach(function(grp){
+    var its=grp.items.filter(function(r){return !q||(r.name+' '+(r.meta||'')+' '+(r.url||'')).toLowerCase().indexOf(q)>=0;});
+    if(!its.length)return;
+    h+='<div class="pk-sec">'+esc(grp.title)+'</div>';
+    its.slice(0,q?80:40).forEach(function(r){
+      var i=pick.items.push(r)-1,on=!!have[resKey(r)];n++;
+      h+='<button type="button" class="pk-item'+(on?' on':'')+'" data-act="pkToggle" data-i="'+i+'" aria-pressed="'+on+'"><span class="tick">'+CHECK_SVG+'</span><span class="pk-n">'+esc(r.name)+'</span><span class="pk-m">'+esc(r.meta||'')+'</span></button>';
+    });
+    if(!q&&grp.items.length>40)h+='<div class="muted small" style="padding:4px 10px">'+(grp.items.length-40)+' more. Search to find them.</div>';
+  });
+  if(!n)h='<div class="muted small" style="padding:14px 4px">Nothing matches. Add it below.</div>';
+  $('#pk-list').innerHTML=h;
+}
+function pickApply(fn){
+  var ch=chById(pick.ch);if(!ch)return;
+  var r=logChange(ch,pick.date,function(d){var list=dayRes(d).slice();fn(list);d.resources=list;});
+  renderPick();afterLog(ch,pick.date,pick.ctx,r);
+}
+function pickToggle(item){
+  var k=resKey(item);
+  pickApply(function(list){
+    for(var i=0;i<list.length;i++)if(resKey(list[i])===k){list.splice(i,1);return;}
+    list.push({name:item.name,url:item.url||''});
+  });
+}
+function pickCustom(){
+  var nm=$('#pk-name').value.trim(),u=safeUrl($('#pk-url').value);
+  if(!nm&&/^\S+\.\S+$/.test($('#pk-url').value.trim()))nm=hostOf(u);
+  if(!nm&&!u){$('#pk-name').focus();return;}
+  if(!nm)nm=hostOf(u);
+  var k=resKey({name:nm,url:u});
+  pickApply(function(list){if(!list.some(function(x){return resKey(x)===k;}))list.push({name:nm,url:u});});
+  $('#pk-name').value='';$('#pk-url').value='';$('#pk-name').focus();
 }
 
 /* ───────── challenge actions ───────── */
@@ -1287,17 +1519,27 @@ function archiveCh(ch,when){ch.endedAt=when;fixActive();saveC();renderView();}
 
 /* ───────── setup modal ───────── */
 var draft=null;
-function taskFromPreset(id){var p=PRESETS.filter(function(x){return x.id===id;})[0];var t={id:p.id,label:p.label};if(p.url)t.url=p.url;return t;}
-function openSetup(editId,lang){
+function taskFromPreset(id){var p=PRESETS.filter(function(x){return x.id===id;})[0];var t={id:p.id,label:p.label};if(p.url)t.url=p.url;if(p.auto)t.auto=Object.assign({},p.auto);return t;}
+/* editable draft row: {id,label,desc,url,kind,min,legacyCards} */
+function draftTask(t){
+  var a=t.auto&&typeof t.auto==='object'?t.auto:null;
+  return {id:t.id,label:t.label||'',desc:t.desc||'',url:t.url||'',kind:a?a.kind:'',min:a&&a.min?a.min:(a?AUTO_DEF[a.kind]||'':''),legacyCards:legacyCardsId(t.id)};
+}
+function tplTasks(tpl,lang){
+  if(tpl==='fluent')return FLUENT.map(draftTask);
+  return (DEFAULT_TASKS[lang]||DEFAULT_TASKS.pt).map(function(id){return draftTask(taskFromPreset(id));});
+}
+function openSetup(editId,lang,tpl){
   var ch=editId?chById(editId):null;
-  if(ch){draft={editId:ch.id,lang:ch.lang,title:ch.title,auto:false,start:ch.start,length:ch.length,strict:ch.strict,tasks:ch.tasks.map(function(t){return {id:t.id,label:t.label,url:t.url||''};})};}
+  if(ch){draft={editId:ch.id,tpl:null,lang:ch.lang,title:ch.title,auto:false,start:ch.start,length:ch.length,strict:ch.strict,tasks:ch.tasks.map(draftTask)};}
   else{
     if(!lang){var used=running().map(function(c){return c.lang;});lang=used.indexOf('pt')<0?'pt':used.indexOf('es')<0?'es':'pt';}
-    draft={editId:null,lang:lang,title:'',auto:true,start:TODAY(),length:75,strict:false,tasks:(DEFAULT_TASKS[lang]||DEFAULT_TASKS.pt).map(function(id){var t=taskFromPreset(id);return {id:t.id,label:t.label,url:t.url||''};})};
+    tpl=tpl==='custom'?'custom':'fluent';
+    draft={editId:null,tpl:tpl,lang:lang,title:'',auto:true,start:TODAY(),length:75,strict:false,tasks:tplTasks(tpl,lang)};
     draft.title=autoTitle();
   }
   $('#su-title').textContent=ch?'Edit challenge':'Start a challenge';
-  $('#su-sub').textContent=ch?'Changes apply from now on; your ticked days stay as they are.':'Pick a language and a handful of daily tasks. Each day, one click per task. That’s the whole log.';
+  $('#su-sub').textContent=ch?'Changes apply from now on; your ticked days and logs stay as they are.':'Choose a template, then make the rules yours. Each day, log your session and tick what you did.';
   $('#su-save').textContent=ch?'Save changes':'Start challenge';
   $('#su-left').innerHTML=ch?'<button type="button" class="btn btn-danger btn-sm" data-act="endCh">End &amp; archive</button><button type="button" class="btn btn-danger btn-sm" data-act="delCh" data-id="'+esc(ch.id)+'">Delete</button>':'';
   $('#su-err').textContent='';
@@ -1305,22 +1547,31 @@ function openSetup(editId,lang){
   renderSetup();openModal('m-setup');
   setTimeout(function(){var b=$('#su-lang .lp.on');if(b)b.focus();},30);
 }
-function autoTitle(){return draft.length+' Days of '+L(draft.lang).name;}
+function autoTitle(){return draft.tpl==='fluent'?'75 Fluent · '+L(draft.lang).name:draft.length+' Days of '+L(draft.lang).name;}
 function renderSetup(){
   var h='';Object.keys(LANGS).forEach(function(k){h+='<button type="button" class="lp'+(draft.lang===k?' on':'')+'" data-act="suLang" data-lang="'+k+'">'+L(k).flag+' '+L(k).name+'</button>';});
   $('#su-lang').innerHTML=h;
+  $('#su-tpl').innerHTML=draft.editId?'':'<span class="f-label">Template</span><div class="tpl-pick">'+
+    '<button type="button" class="tpl'+(draft.tpl==='fluent'?' on':'')+'" data-act="suTpl" data-tpl="fluent" aria-pressed="'+(draft.tpl==='fluent')+'"><b>75 Fluent</b><small>A language habit challenge inspired by 75 Hard: 60 min study, read 5 pages, track your study, 5 min speaking, 1 episode.</small></button>'+
+    '<button type="button" class="tpl'+(draft.tpl==='custom'?' on':'')+'" data-act="suTpl" data-tpl="custom" aria-pressed="'+(draft.tpl==='custom')+'"><b>Custom</b><small>Start from a few everyday tasks (Anki, Duolingo, listening…) and build your own rules.</small></button></div>';
   $('#su-lenchips').innerHTML=[30,75,100].map(function(n){return '<button type="button" data-act="suLenChip" data-n="'+n+'" class="'+(draft.length===n?'on':'')+'">'+n+'</button>';}).join('');
-  var th='';
+  var th='',last=draft.tasks.length-1;
   draft.tasks.forEach(function(t,i){
-    var cards=isCardsTask(t);
-    th+='<div class="su-task"><span class="num">'+(i+1)+'</span><input class="f-input" data-inp="suTask" data-i="'+i+'" data-f="label" value="'+esc(t.label)+'" placeholder="Task" aria-label="Task '+(i+1)+' label">'+
-      (cards?'<span class="muted small u" style="padding:0 4px">Auto-ticks after that many cards here</span>':'<input class="f-input u" data-inp="suTask" data-i="'+i+'" data-f="url" value="'+esc(t.url)+'" placeholder="Link (optional)" aria-label="Task '+(i+1)+' link">')+
-      '<button type="button" class="rm" data-act="suRm" data-i="'+i+'" aria-label="Remove task">×</button></div>';
+    var a='data-i="'+i+'"',n=i+1;
+    th+='<div class="su-rule"><div class="su-top"><span class="num">'+n+'</span>'+
+      '<input class="f-input" data-inp="suTask" '+a+' data-f="label" value="'+esc(t.label)+'" placeholder="Rule" maxlength="80" aria-label="Rule '+n+' name">'+
+      (t.kind==='cards'?'<span class="muted small u" style="padding:0 4px">Study button opens your flashcards</span>':'<input class="f-input u" data-inp="suTask" '+a+' data-f="url" value="'+esc(t.url)+'" placeholder="Link (optional)" aria-label="Rule '+n+' link">')+
+      '<button type="button" class="mv" data-act="suMove" '+a+' data-d="-1" aria-label="Move rule '+n+' up"'+(i?'':' disabled')+'>↑</button>'+
+      '<button type="button" class="mv" data-act="suMove" '+a+' data-d="1" aria-label="Move rule '+n+' down"'+(i<last?'':' disabled')+'>↓</button>'+
+      '<button type="button" class="rm" data-act="suRm" '+a+' aria-label="Remove rule '+n+'">×</button></div>'+
+      '<div class="su-bot"><span class="num"></span><input class="f-input" data-inp="suTask" '+a+' data-f="desc" value="'+esc(t.desc)+'" placeholder="One-line description (optional)" maxlength="160" aria-label="Rule '+n+' description">'+
+      '<span class="su-auto"><select class="f-input" data-chg="suKind" '+a+' aria-label="Rule '+n+' ticks">'+AUTO_KINDS.map(function(k){return '<option value="'+k[0]+'"'+(t.kind===k[0]?' selected':'')+'>'+k[1]+'</option>';}).join('')+'</select>'+
+      (t.kind&&t.kind!=='log'?'<input class="f-input" type="number" min="1" max="1440" data-inp="suTask" '+a+' data-f="min" value="'+esc(t.min)+'" aria-label="Rule '+n+' threshold">':'')+'</span></div></div>';
   });
   $('#su-tasks').innerHTML=th;
   var ids=draft.tasks.map(function(t){return t.id;}),ph='';
   PRESETS.forEach(function(p){if(ids.indexOf(p.id)<0)ph+='<button type="button" class="pchip" data-act="suPreset" data-id="'+p.id+'">+ '+esc(p.label)+'</button>';});
-  ph+='<button type="button" class="pchip" data-act="suCustom">+ Custom task</button>';
+  ph+='<button type="button" class="pchip" data-act="suCustom">+ Add a rule</button>';
   $('#su-presets').innerHTML=ph;
 }
 function saveSetup(){
@@ -1329,14 +1580,21 @@ function saveSetup(){
   if(!title){err.textContent='Give it a name.';return;}
   if(!pd(start)){err.textContent='Pick a valid start date.';return;}
   if(!(len>=1&&len<=365)){err.textContent='Length should be between 1 and 365 days.';return;}
-  var tasks=draft.tasks.map(function(t){var o={id:t.id,label:t.label.trim()};var u=safeUrl(t.url);if(u&&!isCardsTask(t))o.url=u;return o;}).filter(function(t){return t.label;});
-  if(!tasks.length){err.textContent='Add at least one daily task.';return;}
+  var tasks=draft.tasks.map(function(t){
+    var o={id:t.id,label:t.label.trim()},u=safeUrl(t.url),ds=t.desc.trim();
+    if(ds)o.desc=ds;
+    if(u&&t.kind!=='cards')o.url=u;
+    if(t.kind){var a=normAuto({kind:t.kind,min:t.min});if(a)o.auto=a;}
+    else if(t.legacyCards)o.auto=false;
+    return o;
+  }).filter(function(t){return t.label;});
+  if(!tasks.length){err.textContent='Add at least one daily rule.';return;}
   if(draft.editId){
     var ch=chById(draft.editId);if(!ch)return;
-    ch.lang=draft.lang;ch.title=title;ch.start=start;ch.length=len;ch.strict=$('#su-strict').checked;ch.tasks=tasks;
+    ch.lang=draft.lang;ch.title=title;ch.start=start;ch.length=len;ch.strict=$('#su-strict').checked;ch.tasks=tasks.map(normTask);
     toast('Challenge updated');
   }else{
-    var nc={id:uid('ch'),lang:draft.lang,title:title,start:start,length:len,strict:$('#su-strict').checked,tasks:tasks,days:{}};
+    var nc={id:uid('ch'),lang:draft.lang,title:title,start:start,length:len,strict:$('#su-strict').checked,tasks:tasks.map(normTask),days:{}};
     C.challenges.push(nc);C.active=nc.id;
     toast(nc.start===TODAY()?'Day 1. Let’s go! 💪':'Challenge set for '+fmtD(nc.start,true));
   }
@@ -1728,6 +1986,7 @@ function saveRes(){
   if(resEdit.id){var d=LP.resources[lang].filter(function(x){return x.id===resEdit.id;})[0];if(d)for(var k in fields)d[k]=fields[k];}
   else{fields.id=uid('r');LP.resources[lang].unshift(fields);}
   saveLP();closeModal('m-res');renderLibrary();
+  if(!resEdit.id)toast('Saved to your '+L(lang).name+' Library');
 }
 function deleteRes(){
   var lang=resEdit.lang;if(!resEdit.id||!confirm('Delete this resource?'))return;
@@ -1736,18 +1995,37 @@ function deleteRes(){
 
 /* time log */
 function quickLog(lang,mins,btn){
+  /* a challenge covers today in this language: the minutes go into today's study log (one place, no double count) */
+  var ch=todayChFor(lang);
+  if(ch){
+    var r=logChange(ch,TODAY(),function(d){d.minutes=(+d.minutes||0)+mins;});
+    renderView();
+    if(r.completed){celebrate($('#check-card'));toast('Day '+dayNum(ch)+' complete. That’s the work, logged. 🎉');}
+    else toast('+'+(mins>=60?mins/60+'h':mins+'m')+' added to today’s '+L(lang).name+' log'+(r.ticked.length?' · “'+r.ticked[0].label+'” ticked':''));
+    return;
+  }
   LP.log.unshift({id:'l_'+Date.now(),lang:lang,skill:'general',skillLabel:'General',resource:'--',note:'',mins:mins,date:new Date().toISOString()});
   LP.hours[lang]=(LP.hours[lang]||0)+mins/60;saveLP();
   renderView();toast('+'+(mins>=60?mins/60+'h':mins+'m')+' '+L(lang).name+' logged');
 }
 function renderLog(){
-  var h='<div style="display:flex;gap:10px;margin-bottom:10px">';
-  ['es','pt'].forEach(function(lg){h+='<div class="st" style="flex:1"><b>'+fmtHM(LP.hours[lg])+'</b><span>'+L(lg).flag+' '+L(lg).name+'</span></div>';});
+  var h='<div style="display:flex;gap:10px;margin-bottom:10px;flex-wrap:wrap">';
+  timeLangs().forEach(function(lg){h+='<div class="st" style="flex:1;min-width:120px"><b>'+fmtHM(totalHours(lg))+'</b><span>'+L(lg).flag+' '+esc(L(lg).name)+'</span></div>';});
   h+='</div><div class="log-list">';
-  if(!LP.log.length)h+='<div class="muted small" style="padding:12px 2px">Nothing logged yet.</div>';
-  LP.log.forEach(function(e){
-    var d=new Date(e.date),ds=isNaN(d)?'':MS[d.getMonth()]+' '+d.getDate()+', '+d.getFullYear(),m=+e.mins||0;
-    h+='<div class="log-e"><span style="font-size:17px">'+L(e.lang).flag+'</span><div class="le-m"><b>'+esc(e.skillLabel||e.skill||'Session')+'</b>'+(e.note?' <span class="muted">· '+esc(e.note)+'</span>':'')+'<div>'+ds+'</div></div><span class="le-d">'+fmtHM(m/60)+'</span><button type="button" class="rm" style="width:28px;height:28px" data-act="delLog" data-id="'+esc(e.id)+'" aria-label="Delete entry">×</button></div>';
+  /* merge quick logs (deletable here) with day-log minutes (edited on their day) */
+  var rows=[];
+  LP.log.forEach(function(e){var d=new Date(e.date);rows.push({k:isNaN(d)?'':ymd(d),q:e,d:d});});
+  minuteDays().forEach(function(m){rows.push({k:m.date,m:m});});
+  rows.sort(function(a,b){return a.k<b.k?1:a.k>b.k?-1:0;});
+  if(!rows.length)h+='<div class="muted small" style="padding:12px 2px">Nothing logged yet.</div>';
+  rows.forEach(function(r){
+    if(r.q){
+      var e=r.q,d=r.d,ds=isNaN(d)?'':MS[d.getMonth()]+' '+d.getDate()+', '+d.getFullYear(),m=+e.mins||0;
+      h+='<div class="log-e"><span style="font-size:17px">'+L(e.lang).flag+'</span><div class="le-m"><b>'+esc(e.skillLabel||e.skill||'Session')+'</b>'+(e.note?' <span class="muted">· '+esc(e.note)+'</span>':'')+'<div>'+ds+' · quick log</div></div><span class="le-d">'+fmtHM(m/60)+'</span><button type="button" class="rm" style="width:28px;height:28px" data-act="delLog" data-id="'+esc(e.id)+'" aria-label="Delete entry">×</button></div>';
+    }else{
+      var x=r.m,dd=pd(x.date),dn=diffDays(x.ch.start,x.date)+1;
+      h+='<div class="log-e"><span style="font-size:17px">'+L(x.ch.lang).flag+'</span><div class="le-m"><b>'+(dn>=1&&dn<=x.ch.length?'Day '+dn:'Study log')+'</b> <span class="muted">· '+esc(x.ch.title)+'</span><div>'+MS[dd.getMonth()]+' '+dd.getDate()+', '+dd.getFullYear()+' · study log</div></div><span class="le-d">'+fmtHM(x.mins/60)+'</span><button type="button" class="btn btn-ghost btn-sm" data-act="logDay" data-date="'+x.date+'" data-ch="'+esc(x.ch.id)+'">Edit</button></div>';
+    }
   });
   $('#lg-body').innerHTML=h+'</div>';
 }
@@ -1758,14 +2036,43 @@ var ACT={
   ext:function(){},
   close:function(el){closeModal(el.getAttribute('data-m'));},
   pick:function(el){C.active=el.getAttribute('data-id');saveC();renderChallenge();},
-  newCh:function(el){openSetup(null,el.getAttribute('data-lang'));},
+  newCh:function(el){openSetup(null,el.getAttribute('data-lang'),el.getAttribute('data-tpl'));},
   editCh:function(){var a=activeCh();if(a)openSetup(a.id);},
   toggle:function(el){toggleTask(el.getAttribute('data-tid'));},
-  day:function(el){var d=el.getAttribute('data-date');if(d&&d<=TODAY())openDay(d);},
+  day:function(el){var d=el.getAttribute('data-date');if(d&&d<=TODAY()){hideTip();openDay(d,el.getAttribute('data-ch'));}},
+  logDay:function(el){closeModal('m-log');openDay(el.getAttribute('data-date'),el.getAttribute('data-ch'));},
   dmToggle:function(el){
-    var ch=activeCh();if(!ch||!dmDate)return;var tid=el.getAttribute('data-tid'),before=dayInfo(ch,dmDate);
-    setTaskDone(ch,dmDate,tid,before.done.indexOf(tid)<0);saveC();renderDayModal();
+    var ch=dmChallenge();if(!ch||!dmDate)return;var tid=el.getAttribute('data-tid'),before=dayInfo(ch,dmDate),on=before.done.indexOf(tid)<0;
+    setTaskDone(ch,dmDate,tid,on);saveC();renderDayModal();
     var b=$('#dm-body [data-tid="'+(window.CSS&&CSS.escape?CSS.escape(tid):tid)+'"]');if(b)b.focus();
+    if(on&&!before.complete&&dayInfo(ch,dmDate).complete)toast('Day '+(diffDays(ch.start,dmDate)+1)+' complete ✓');
+  },
+  dlAdd:function(el){
+    var c=ctxOf(el);if(!c.ch)return;var f=el.getAttribute('data-f'),n=+el.getAttribute('data-n');
+    var r=logChange(c.ch,c.date,function(d){d[f]=(+d[f]||0)+n;});afterLog(c.ch,c.date,c.ctx,r);
+  },
+  dlRmRes:function(el){
+    var c=ctxOf(el);if(!c.ch)return;var i=+el.getAttribute('data-i');
+    var r=logChange(c.ch,c.date,function(d){var l=dayRes(d).slice();l.splice(i,1);d.resources=l;});afterLog(c.ch,c.date,c.ctx,r);
+  },
+  dlPick:function(el){var c=ctxOf(el);if(c.ch)openPick(c.ch,c.date,c.ctx);},
+  pkToggle:function(el){var it=pick&&pick.items[+el.getAttribute('data-i')];if(it)pickToggle(it);var b=$('#pk-list [data-i="'+el.getAttribute('data-i')+'"]');if(b)b.focus({preventScroll:true});},
+  pkCustom:function(){pickCustom();},
+  pkSave:function(){var ch=pick&&chById(pick.ch);closeModal('m-pick');openResModal(ch&&LP.resources[ch.lang]?ch.lang:libLang,null);},
+  saveResCh:function(){var a=activeCh();openResModal(a&&LP.resources[a.lang]?a.lang:libLang,null);},
+  slLang:function(el){slLang=el.getAttribute('data-lang');slLimit=60;renderStudyLog();},
+  slMore:function(){slLimit+=120;renderStudyLog();},
+  suTpl:function(el){
+    var tp=el.getAttribute('data-tpl');if(tp===draft.tpl)return;
+    draft.tpl=tp;draft.tasks=tplTasks(tp,draft.lang);
+    if(tp==='fluent'){draft.length=75;$('#su-len').value=75;}
+    if(draft.auto){draft.title=autoTitle();$('#su-name').value=draft.title;}
+    renderSetup();
+  },
+  suMove:function(el){
+    var i=+el.getAttribute('data-i'),j=i+(+el.getAttribute('data-d'));if(j<0||j>=draft.tasks.length)return;
+    var x=draft.tasks[i];draft.tasks[i]=draft.tasks[j];draft.tasks[j]=x;renderSetup();
+    var b=$('#su-tasks .mv[data-i="'+j+'"][data-d="'+el.getAttribute('data-d')+'"]');if(b&&!b.disabled)b.focus();
   },
   restart:function(){restartChallenge();},
   gentle:function(){var a=activeCh();if(!a)return;a.strict=false;saveC();renderView();toast('Gentle mode: misses just show as gaps');},
@@ -1777,8 +2084,8 @@ var ACT={
   suLang:function(el){draft.lang=el.getAttribute('data-lang');if(draft.auto){draft.title=autoTitle();$('#su-name').value=draft.title;}renderSetup();},
   suLenChip:function(el){draft.length=+el.getAttribute('data-n');$('#su-len').value=draft.length;if(draft.auto){draft.title=autoTitle();$('#su-name').value=draft.title;}renderSetup();},
   suRm:function(el){draft.tasks.splice(+el.getAttribute('data-i'),1);renderSetup();},
-  suPreset:function(el){var t=taskFromPreset(el.getAttribute('data-id'));draft.tasks.push({id:t.id,label:t.label,url:t.url||''});renderSetup();},
-  suCustom:function(){draft.tasks.push({id:uid('t'),label:'',url:''});renderSetup();var ins=$$('#su-tasks input[data-f="label"]');if(ins.length)ins[ins.length-1].focus();},
+  suPreset:function(el){draft.tasks.push(draftTask(taskFromPreset(el.getAttribute('data-id'))));renderSetup();},
+  suCustom:function(){draft.tasks.push({id:uid('t'),label:'',desc:'',url:'',kind:'',min:'',legacyCards:false});renderSetup();var ins=$$('#su-tasks input[data-f="label"]');if(ins.length)ins[ins.length-1].focus();},
   suSave:function(){saveSetup();},
   addLink:function(){openMini('link');},
   rmLink:function(el,e){e.preventDefault();e.stopPropagation();C.links=C.links.filter(function(l){return l.id!==el.getAttribute('data-id');});saveC();renderView();},
@@ -1836,7 +2143,17 @@ var INP={
     var ch=activeCh();if(!ch)return;var d=ensureDay(ch,TODAY()),v=el.value.trim();if(v)d.note=v;else delete d.note;
     clearTimeout(INP._t);INP._t=setTimeout(function(){saveC();var s=$('#note-saved');if(s){s.classList.add('on');setTimeout(function(){s.classList.remove('on');},1200);}},350);
   },
-  dmNote:function(el){var ch=activeCh();if(!ch||!dmDate)return;var d=ensureDay(ch,dmDate),v=el.value.trim();if(v)d.note=v;else delete d.note;saveC();},
+  dlLog:function(el){
+    var c=ctxOf(el);if(!c.ch)return;var v=el.value;
+    var d=ensureDay(c.ch,c.date),wasMet=c.ch.tasks.some(function(t){return t.auto&&t.auto.kind==='log'&&autoMet(t,d);});
+    var r=logChange(c.ch,c.date,function(dd){dd.log=v;},true);
+    var isMet=c.ch.tasks.some(function(t){return t.auto&&t.auto.kind==='log'&&autoMet(t,c.ch.days[c.date]||{});});
+    /* re-render only when a rule flipped; otherwise just flash "Saved" */
+    if(wasMet!==isMet||r.completed){if(!r.ticked.length)saveC();afterLog(c.ch,c.date,c.ctx,r);}
+    else{var s=$('#dl-'+c.ctx+'-saved');if(s){s.classList.add('on');clearTimeout(INP._t);INP._t=setTimeout(function(){s.classList.remove('on');},1000);}}
+  },
+  dlNote:function(el){var c=ctxOf(el);if(!c.ch)return;var d=ensureDay(c.ch,c.date),v=el.value.trim();if(v)d.note=v;else delete d.note;saveC();},
+  pkSearch:function(el){if(!pick)return;pick.q=el.value;renderPick();},
   suName:function(el){draft.title=el.value;draft.auto=false;},
   suStart:function(el){draft.start=el.value;},
   suLen:function(el){var n=parseInt(el.value,10);if(n>0){draft.length=n;if(draft.auto){draft.title=autoTitle();$('#su-name').value=draft.title;}$$('#su-lenchips button').forEach(function(b){b.classList.toggle('on',+b.getAttribute('data-n')===n);});}},
@@ -1847,6 +2164,12 @@ var INP={
 };
 var CHG={
   suStrict:function(el){draft.strict=el.checked;},
+  suKind:function(el){var t=draft.tasks[+el.getAttribute('data-i')];if(!t)return;t.kind=el.value;if(t.kind&&t.kind!=='log'&&!(+t.min>0))t.min=AUTO_DEF[t.kind];renderSetup();},
+  dlNum:function(el){
+    var c=ctxOf(el);if(!c.ch)return;var f=el.getAttribute('data-f'),n=Math.max(0,Math.min(f==='minutes'?1440:2000,Math.round(+el.value||0)));
+    var cur=Math.max(0,+((c.ch.days[c.date]||{})[f])||0);if(n===cur){el.value=n||'';return;}
+    var r=logChange(c.ch,c.date,function(d){d[f]=n;});afterLog(c.ch,c.date,c.ctx,r);
+  },
   imFile:function(el){readImportFile(el.files&&el.files[0]);},
   imDeck:function(){renderImport();},
   deckLang:function(el){var d=deckById(selDeck);if(d){d.lang=el.value;saveC();renderFlash();}}
@@ -1877,6 +2200,8 @@ document.addEventListener('keydown',function(e){
     if(k==='editKey'){e.preventDefault();ACT.saveCard();return;}
     if(k==='renameKey'){e.preventDefault();ACT.renameSave();return;}
     if(tg.id==='mini-a'||tg.id==='mini-b'){e.preventDefault();miniOk();return;}
+    if(k==='pkKey'){e.preventDefault();pickCustom();return;}
+    if(tg.getAttribute&&tg.getAttribute('data-chg')==='dlNum'){e.preventDefault();CHG.dlNum(tg);return;}
     return;
   }
   if(typing||e.metaKey||e.ctrlKey||e.altKey)return;
@@ -1905,6 +2230,7 @@ window.addEventListener('scroll',hideTip,{passive:true});
 /* stay in sync with Home / other tabs, and roll over at midnight */
 var renderedDay=TODAY();
 function resync(){
+  if(saveT)return;  /* local edits still waiting to be written win */
   var raw=lsGet(LC_KEY),changed=false;
   if(raw!==lastRaw){loadC();changed=true;}
   if(TODAY()!==renderedDay){renderedDay=TODAY();changed=true;}
@@ -1914,7 +2240,9 @@ function resync(){
 }
 window.addEventListener('storage',function(e){if(e.key===LP_KEY){loadLP();renderView();}else if(e.key===LC_KEY||e.key===null)resync();});
 window.addEventListener('focus',resync);
-document.addEventListener('visibilitychange',function(){if(!document.hidden)resync();});
+document.addEventListener('visibilitychange',function(){if(document.hidden)flushSave();else resync();});
+window.addEventListener('pagehide',flushSave);
+window.addEventListener('beforeunload',flushSave);
 setInterval(function(){if(TODAY()!==renderedDay)resync();},60000);
 window.addEventListener('hashchange',function(){var t=tabFromHash();if(t!==tab)setTab(t);});
 
