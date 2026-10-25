@@ -713,7 +713,7 @@ function goStep(n,noScroll){
 function setView(v,noSave){
   view=v==='hist'?'hist':'week';
   $('view-week').hidden=view!=='week';$('view-hist').hidden=view!=='hist';
-  $('weekpick').style.visibility=view==='hist'?'hidden':'';
+  $('weekpick').hidden=view==='hist';
   document.querySelectorAll('.seg-btn[data-view]').forEach(function(b){var on=b.dataset.view===view;b.classList.toggle('on',on);b.setAttribute('aria-selected',on);});
   if(view==='hist')renderArchive();else expandIn($('s'+step));
   if(!noSave)saveData();
