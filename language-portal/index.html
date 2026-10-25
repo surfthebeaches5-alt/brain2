@@ -443,6 +443,9 @@ details.help a{color:var(--accent-deep);font-weight:650;}
 .auto-tg i{width:7px;height:7px;border-radius:50%;background:var(--faint);}
 .auto-tg[aria-pressed="true"]{color:var(--accent-deep);border-color:var(--accent-line);background:var(--accent-soft);}
 .auto-tg[aria-pressed="true"] i{background:var(--accent-deep);}
+.dv-daily{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin:-4px 0 16px;}
+.dv-daily label{display:flex;align-items:center;gap:8px;font-size:12.5px;font-weight:700;color:var(--ink-2);}
+.dv-daily input{width:72px;height:32px;padding:0 8px;}
 .dv-media{font-size:12px;color:var(--muted);font-weight:550;margin:-6px 0 18px;line-height:1.5;}
 .dv-media b{color:var(--ink-2);font-weight:700;}
 .dv-media.warn{color:var(--warn);}
@@ -841,7 +844,7 @@ details.help a{color:var(--accent-deep);font-weight:650;}
      The two never overlap: a minute lives in exactly one of them.
    ════════════════════════════════════════════════════════════ */
 var LP_KEY='langPortal5', LC_KEY='langChallenge1';
-var NEW_PER=20;                       // new cards introduced per study session
+var NEW_PER=20;                       // default new cards per day for each deck (each deck can change it)
 var INT=[0,1,2,4,8,16,32,64,120];     // Leitner box → interval in days
 var MS=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
 var MF=['January','February','March','April','May','June','July','August','September','October','November','December'];
@@ -1100,8 +1103,12 @@ function deckById(id){for(var i=0;i<C.decks.length;i++)if(C.decks[i].id===id)ret
 function deckStats(d){
   var t=TODAY(),r={due:0,nw:0,learn:0,mast:0,total:d.cards.length};
   d.cards.forEach(function(c){if(!c.reps){r.nw++;return;}if(c.due<=t)r.due++;if(c.box>=5)r.mast++;else r.learn++;});
-  r.study=r.due+Math.min(r.nw,NEW_PER);return r;
+  r.newLeft=newLeft(d);r.newToday=Math.min(r.nw,r.newLeft);
+  r.study=r.due+r.newToday;return r;
 }
+/* new cards per day, like Anki: a card counts toward today the first time you study it */
+function newLimit(d){var n=d.newPerDay;return n==null||n===''||isNaN(+n)?NEW_PER:Math.max(0,Math.round(+n));}
+function newLeft(d){var t=TODAY(),k=0;d.cards.forEach(function(c){if(c.firstDay===t)k++;});return Math.max(0,newLimit(d)-k);}
 function totalStudyable(){return C.decks.reduce(function(s,d){return s+deckStats(d).study;},0);}
 function nextState(c,g){
   var b=c.box||0,t=TODAY(),due;
@@ -1112,7 +1119,7 @@ function nextState(c,g){
   return {box:b,due:due};
 }
 function ivLabel(c,g){if(g===1)return 'again today';var n=diffDays(TODAY(),nextState(c,g).due);return n<31?n+'d':n<365?Math.round(n/30)+'mo':Math.round(n/365)+'y';}
-function schedule(c,g){var ns=nextState(c,g);if(g===1&&(c.box>0))c.lapses=(c.lapses||0)+1;c.box=ns.box;c.due=ns.due;c.reps=(c.reps||0)+1;}
+function schedule(c,g){var ns=nextState(c,g);if(!c.reps)c.firstDay=TODAY();if(g===1&&(c.box>0))c.lapses=(c.lapses||0)+1;c.box=ns.box;c.due=ns.due;c.reps=(c.reps||0)+1;}
 function creditFor(lang){
   var a=activeCh();
   if(a&&a.lang===lang)return a;
@@ -1743,9 +1750,11 @@ function deckViewHtml(d){
     '<button type="button" class="btn btn-danger btn-sm" data-act="delDeck">Delete deck</button></div></div>';
   h+='<div class="stats4"><div class="st hl"><b>'+s.due+'</b><span>Due now</span></div><div class="st"><b>'+s.nw+'</b><span>New</span></div><div class="st"><b>'+s.learn+'</b><span>Learning</span></div><div class="st"><b>'+s.mast+'</b><span>Mastered</span></div></div>';
   if(d.media&&d.media.n)h+=deckMediaLine(d,deckMediaChk[d.id]||null);
+  h+='<div class="dv-daily"><label>New cards per day <input class="f-input" type="number" min="0" max="999" value="'+newLimit(d)+'" data-chg="deckNew" aria-label="New cards per day"></label><span class="muted small">'+
+    (!s.nw?'No new cards left in this deck':s.newLeft?s.newLeft+' new left today':'Today’s new cards are done — more tomorrow')+'</span></div>';
   h+='<div class="study-cta">';
-  if(s.study)h+='<button type="button" class="btn btn-accent btn-lg" data-act="study">Study '+s.study+' card'+(s.study===1?'':'s')+'</button><span class="muted small">'+(s.due?s.due+' review'+(s.due===1?'':'s'):'')+(s.due&&Math.min(s.nw,NEW_PER)?' + ':'')+(Math.min(s.nw,NEW_PER)?Math.min(s.nw,NEW_PER)+' new':'')+' · keys <span class="kbd">Space</span> <span class="kbd">1</span>–<span class="kbd">4</span></span>';
-  else if(s.total)h+='<span class="chip chip-ok">All caught up</span><button type="button" class="btn btn-ghost btn-sm" data-act="studyAhead">Practice 10 anyway</button>';
+  if(s.study)h+='<button type="button" class="btn btn-accent btn-lg" data-act="study">Study '+s.study+' card'+(s.study===1?'':'s')+'</button><span class="muted small">'+(s.due?s.due+' review'+(s.due===1?'':'s'):'')+(s.due&&s.newToday?' + ':'')+(s.newToday?s.newToday+' new':'')+' · keys <span class="kbd">Space</span> <span class="kbd">1</span>–<span class="kbd">4</span></span>';
+  else if(s.total)h+='<span class="chip chip-ok">All caught up'+(s.nw&&!s.newLeft?' · new cards resume tomorrow':'')+'</span><button type="button" class="btn btn-ghost btn-sm" data-act="studyAhead">Practice 10 anyway</button>';
   h+='</div>';
   h+='<span class="f-label">Add a card</span><div class="addcard"><input class="f-input" id="ac-front" data-key="addKey" placeholder="Front" maxlength="300"><input class="f-input" id="ac-back" data-key="addKey" placeholder="Back (meaning)" maxlength="300"><input class="f-input" id="ac-extra" data-key="addKey" placeholder="Example (optional)" maxlength="400"><button type="button" class="btn btn-dark" data-act="addCard">Add</button></div>';
   var q=browseQ.trim().toLowerCase(),list=d.cards.filter(function(c){return !q||(c.front+' '+c.back+' '+(c.extra||'')).toLowerCase().indexOf(q)>=0;});
@@ -1788,7 +1797,7 @@ function startSession(deckId,ahead){
   else{
     var rev=d.cards.filter(function(c){return c.reps&&c.due<=t;});
     for(var i=rev.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1)),x=rev[i];rev[i]=rev[j];rev[j]=x;}
-    q=rev.concat(d.cards.filter(function(c){return !c.reps;}).slice(0,NEW_PER));
+    q=rev.concat(d.cards.filter(function(c){return !c.reps;}).slice(0,newLeft(d)));
   }
   if(!q.length){toast('Nothing due in this deck right now');return;}
   selDeck=d.id;sess={deckId:d.id,queue:q.map(function(c){return c.id;}),flipped:false,studied:0,total:q.length,finished:false,again:0,hasAudio:q.some(cardHasAudio),mc:null,mside:null};
@@ -2908,7 +2917,8 @@ var CHG={
   },
   apMedia:function(el){if(im.apkg){im.apkg.noMedia=!el.checked;renderImport();var f=$('#ap-media');if(f)f.focus();}},
   imDeck:function(){renderImport();},
-  deckLang:function(el){var d=deckById(selDeck);if(d){d.lang=el.value;saveC();renderFlash();}}
+  deckLang:function(el){var d=deckById(selDeck);if(d){d.lang=el.value;saveC();renderFlash();}},
+  deckNew:function(el){var d=deckById(selDeck);if(d){var v=Math.round(+el.value);d.newPerDay=isNaN(v)?NEW_PER:Math.max(0,Math.min(999,v));saveC();renderFlash();renderBadgeOnly();}}
 };
 
 document.addEventListener('click',function(e){
