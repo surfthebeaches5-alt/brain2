@@ -985,7 +985,7 @@ function googleChip() {
   const G = '<span style="font-weight:800;color:#8e71d3;margin-right:5px">G</span>';
   if (!window.GCal || !GCal.configured()) {
     ch.innerHTML = G + 'Connect Google'; ch.title = 'Set up Google Calendar sync from the Today page';
-    ch.addEventListener('click', () => { window.location.href = '../'; });
+    ch.addEventListener('click', () => { window.location.href = '../index.html'; });
   } else if (gBusy) {
     ch.innerHTML = G + 'Syncing…';
   } else if (!GCal.connected()) {
@@ -1343,7 +1343,7 @@ function renderWeek() {
       fEl.style.color = fcat.text;
       fEl.style.cursor = 'pointer';
       fEl.innerHTML = `<div class="ev-body"><div class="ev-title">${CARD_SVG} ${esc(fc.title)}</div><div class="ev-time">${fc.mid ? 'Mid-cycle payment' : 'Statement due'}${fc.paid ? ' · paid' : ''}</div></div>`;
-      fEl.addEventListener('click', () => { window.location.href = '../finances/'; });
+      fEl.addEventListener('click', () => { window.location.href = '../finances/index.html'; });
       evsWrap.appendChild(fEl);
     });
 
@@ -1355,7 +1355,7 @@ function renderWeek() {
       ccEl.style.border = '1px dashed ' + ce.color;
       ccEl.style.cursor = 'pointer';
       ccEl.innerHTML = `<div class="ev-body"><div class="ev-title">${CAP_SVG} ${esc(ce.title)}</div><div class="ev-time">${esc(ce.cls)}</div></div>`;
-      ccEl.addEventListener('click', () => { try { localStorage.setItem('learningTab', 'classes'); } catch(e) {} window.location.href = '../learning/'; });
+      ccEl.addEventListener('click', () => { try { localStorage.setItem('learningTab', 'classes'); } catch(e) {} window.location.href = '../learning/index.html'; });
       evsWrap.appendChild(ccEl);
     });
 

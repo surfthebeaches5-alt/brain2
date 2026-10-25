@@ -160,5 +160,15 @@
   }
   if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',upgradeHeader);else upgradeHeader();
 
+  /* opened from downloaded files (file://), a folder link shows a folder listing instead of the page,
+     so point links at the folder's index.html; on the published site this never runs */
+  if(location.protocol==='file:'){
+    document.addEventListener('click',function(e){
+      var a=e.target.closest&&e.target.closest('a[href]');if(!a||a.target==='_blank')return;
+      var u=new URL(a.getAttribute('href'),location.href);
+      if(u.protocol==='file:'&&/\/$/.test(u.pathname)){e.preventDefault();location.href=u.href.replace(/\/(\?|#|$)/,'/index.html$1');}
+    },true);
+  }
+
   window.B2={root:ROOT};
 })();
