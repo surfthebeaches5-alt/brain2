@@ -6,228 +6,288 @@
 <title>Wishlist</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,500;0,9..144,600;1,9..144,500&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
 *{box-sizing:border-box;margin:0;padding:0;}
-:root{
-  --bg:#f3ecd8;--surface:#fff;--sidebar:#f8f1dd;--sidebar-line:#e6dec5;
-  --ink:#1a1612;--muted:#7a7468;--line:#ececec;--warm:#faf6ec;
-  --accent:#c9b6ee;--accent-deep:#b099e0;--accent-soft:#ede5fb;
-}
 html,body{background:var(--bg);font-family:var(--b2-sans);color:var(--ink);min-height:100vh;-webkit-font-smoothing:antialiased;}
+button{font-family:inherit;}
+a{color:inherit;}
 
-/* TITLE ROW (brain.css restyles .topbar) */
+/* ── title row (brain.css restyles .topbar) ── */
 .topbar{display:flex;align-items:center;justify-content:space-between;}
+body.b2-shell .topbar.wl-top{align-items:center;}
 .topbar-left{display:flex;align-items:center;gap:14px;}
-.back-btn{display:inline-flex;align-items:center;gap:6px;padding:7px 14px;border:1px solid var(--line);border-radius:20px;font-size:12px;color:var(--muted);background:transparent;font-family:inherit;text-decoration:none;}
+.back-btn{display:inline-flex;align-items:center;gap:6px;padding:7px 14px;border:1px solid var(--line);border-radius:20px;font-size:12px;color:var(--muted);background:transparent;text-decoration:none;}
 .topbar-title{font-family:var(--b2-serif);font-size:22px;font-weight:600;letter-spacing:-0.4px;}
+.wl-sub{color:var(--muted);font-size:13.5px;font-weight:500;margin-top:6px;}
 .topbar-right{display:flex;align-items:center;gap:10px;}
-.topbar-date{font-size:11px;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted);font-weight:500;}
-.add-btn-top{display:inline-flex;align-items:center;height:34px;padding:0 15px;border:1px solid var(--ink);border-radius:10px;background:var(--ink);color:#fff;font:650 12.5px var(--b2-sans);cursor:pointer;transition:transform .15s;white-space:nowrap;}
-.add-btn-top:hover{transform:translateY(-1px);}
+.wl-search{display:flex;align-items:center;gap:8px;height:38px;width:260px;padding:0 10px 0 13px;border-radius:11px;border:1px solid var(--line);background:var(--raised);transition:border-color .15s,box-shadow .15s;}
+.wl-search:focus-within{border-color:var(--accent-line);box-shadow:0 0 0 3px var(--accent-soft);}
+.wl-search svg{width:15px;height:15px;stroke:var(--accent-deep);fill:none;stroke-width:2;flex-shrink:0;}
+.wl-search input{flex:1;min-width:0;border:none;outline:none;background:transparent;font:550 13px var(--b2-sans);color:var(--ink);}
+.wl-search input::placeholder{color:var(--faint);}
+.wl-search kbd{font:700 10.5px var(--b2-sans);color:var(--muted);background:var(--warm);border-radius:5px;padding:2px 6px;}
+.wl-search input:not(:placeholder-shown) ~ kbd{display:none;}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;height:34px;padding:0 15px;border-radius:10px;font:650 12.5px var(--b2-sans);border:1px solid var(--line);background:var(--raised);color:var(--ink-2);cursor:pointer;white-space:nowrap;text-decoration:none;transition:transform .15s,border-color .15s,color .15s;}
+.btn:hover{border-color:var(--accent-line);color:var(--accent-deep);}
+.btn.primary{background:var(--ink);border-color:var(--ink);color:#fff;}
+.btn.primary:hover{transform:translateY(-1px);color:#fff;}
+.btn.lg{height:38px;padding:0 16px;font-size:13px;}
+.btn.sm{height:28px;padding:0 11px;font-size:11.5px;border-radius:8px;}
 
-/* FRAME — aligned with the title row */
-.hub{max-width:1280px;margin:0 auto;padding:20px 40px 80px;box-sizing:border-box;width:100%;}
+/* ── frame ── */
+.hub{max-width:1280px;margin:0 auto;padding:16px 40px 80px;box-sizing:border-box;width:100%;}
 
-/* SUMMARY — stat cards */
-.summary-row{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:18px;margin-bottom:22px;}
-.sum-card{display:flex;flex-direction:column-reverse;justify-content:flex-end;gap:8px;background:var(--surface);border:1px solid var(--line);border-radius:18px;padding:18px 22px;box-shadow:0 1px 2px rgba(60,50,30,.04),0 8px 24px rgba(60,50,30,.05);}
-.sum-num{font-family:var(--b2-serif);font-size:30px;font-weight:600;line-height:1;letter-spacing:-.6px;color:var(--ink);}
-.sum-label{font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--muted);font-weight:750;}
+/* ── one-line summary strip ── */
+.strip{display:flex;align-items:center;flex-wrap:wrap;row-gap:10px;background:var(--surface);border:1px solid var(--line);border-radius:16px;box-shadow:0 1px 2px rgba(60,50,30,.04),0 8px 24px rgba(60,50,30,.05);padding:12px 6px;margin-bottom:16px;}
+.st{padding:0 22px;display:flex;align-items:baseline;gap:9px;white-space:nowrap;}
+.st+.st{border-left:1px solid var(--hair);}
+.st b{font-family:var(--b2-serif);font-size:23px;font-weight:600;letter-spacing:-.3px;}
+.st b small{font-size:14px;color:var(--muted);font-weight:500;}
+.st b .dim{color:var(--faint);}
+.st span{font-size:10.5px;letter-spacing:.13em;text-transform:uppercase;color:var(--muted);font-weight:750;}
+.mix{margin-left:auto;padding:0 20px;display:flex;flex-direction:column;gap:6px;min-width:250px;}
+.mixbar{display:flex;height:7px;border-radius:5px;overflow:hidden;background:var(--warm-2);gap:2px;}
+.mixbar i{display:block;height:100%;}
+.mixleg{display:flex;gap:12px;font-size:11px;font-weight:650;color:var(--muted);white-space:nowrap;}
+.mixleg i{display:inline-block;width:7px;height:7px;border-radius:50%;margin-right:5px;vertical-align:1px;}
 
-/* CONTROLS — filter pills + search + segmented view switch */
-.controls-wrap{margin-bottom:18px;}
-.controls-row{display:flex;align-items:center;gap:6px;flex-wrap:wrap;}
-.filter-pill{padding:6px 12px;display:inline-flex;align-items:center;gap:6px;border:none;border-radius:20px;background:var(--warm-deep);font:600 12.5px var(--b2-sans);cursor:pointer;color:var(--ink-2);transition:background .15s,color .15s;white-space:nowrap;}
-.filter-pill:hover{background:var(--accent-soft);color:var(--accent-deep);}
-.filter-pill.active,.filter-pill.p-active{background:var(--ink);color:#fff;}
-.filter-pill svg{width:13px;height:13px;flex-shrink:0;}
-.pri-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0;}
-.filter-sep{width:1px;height:20px;background:var(--line);flex-shrink:0;margin:0 6px;}
-.search-input{height:34px;padding:0 12px;border:1px solid var(--line);border-radius:10px;font:500 13px var(--b2-sans);color:var(--ink);background:var(--raised);outline:none;transition:border-color .15s,box-shadow .15s;min-width:170px;}
-.search-input:focus{border-color:var(--accent-line);box-shadow:0 0 0 3px var(--accent-soft);}
-.search-input::placeholder{color:var(--faint);}
-.view-toggle{display:inline-flex;gap:2px;padding:4px;background:var(--warm-deep);border-radius:13px;margin-left:auto;}
-.view-btn{padding:8px 16px;border:none;border-radius:10px;background:transparent;font:650 13px var(--b2-sans);cursor:pointer;color:var(--muted);transition:color .15s,background .15s;white-space:nowrap;}
-.view-btn:hover{color:var(--ink);}
-.view-btn.active{background:var(--raised);color:var(--ink);box-shadow:0 1px 3px rgba(60,50,30,.1);}
+/* ── controls ── */
+.ctrl{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:6px;}
+.seg-tabs{display:inline-flex;gap:2px;padding:4px;background:var(--warm-deep);border-radius:13px;flex-shrink:0;}
+.seg-tabs button{padding:6px 12px;border:none;border-radius:10px;background:transparent;font:650 12px var(--b2-sans);color:var(--muted);cursor:pointer;white-space:nowrap;transition:color .15s,background .15s;}
+.seg-tabs button:hover{color:var(--ink);}
+.seg-tabs button.on{background:var(--raised);color:var(--ink);box-shadow:0 1px 3px rgba(60,50,30,.1);}
+.seg-tabs small{font-size:11px;color:var(--faint);margin-left:5px;font-weight:700;}
+.cats{display:flex;gap:6px;flex-wrap:wrap;}
+.cats button{display:inline-flex;align-items:center;gap:6px;font:650 12px var(--b2-sans);padding:6px 11px;border-radius:20px;border:1px solid var(--line);color:var(--ink-2);background:transparent;cursor:pointer;white-space:nowrap;transition:background .15s,border-color .15s;}
+.cats button:hover{background:var(--raised);border-color:var(--accent-line);}
+.cats button i{width:8px;height:8px;border-radius:50%;}
+.cats button em{font-style:normal;color:var(--faint);font-weight:700;font-size:11px;}
+.cats button.on{background:var(--ink);border-color:var(--ink);color:#fff;}
+.cats button.on em{color:rgba(255,255,255,.55);}
+.grp{margin-left:auto;display:flex;align-items:center;gap:8px;}
+.grp .lbl{font-size:11px;font-weight:700;color:var(--muted);letter-spacing:.04em;}
+.grp.hide{visibility:hidden;}
 
-/* SECTIONS — each group is a card holding a list */
-.priority-section,.cat-section{background:var(--surface);border:1px solid var(--line);border-radius:18px;padding:20px 24px 10px;box-shadow:0 1px 2px rgba(60,50,30,.04),0 8px 24px rgba(60,50,30,.05);margin-bottom:18px;}
-.priority-header,.cat-header{display:flex;align-items:center;gap:10px;margin-bottom:6px;}
-.priority-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0;}
-.priority-title,.cat-title{font-family:var(--b2-serif);font-size:19px;font-weight:600;letter-spacing:-.2px;}
-.priority-count,.cat-count{font-size:11px;font-weight:700;padding:3px 9px;border-radius:20px;background:var(--warm);color:var(--muted);}
-.priority-total,.cat-total{margin-left:auto;font-family:var(--b2-serif);font-size:16px;font-weight:600;color:var(--ink-2);}
-.cat-dot{width:9px;height:9px;border-radius:50%;flex-shrink:0;}
-.cat-icon{display:inline-flex;align-items:center;flex-shrink:0;}
-.cat-icon svg{width:17px;height:17px;}
+/* ── groups ── */
+#groups{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));column-gap:10px;row-gap:16px;margin-top:16px;}
+.sec{min-width:0;}
+.sec-h{display:flex;align-items:center;gap:10px;margin-bottom:9px;min-width:0;}
+.sec-h .pd{width:10px;height:10px;border-radius:50%;flex-shrink:0;}
+.sec-h .ci{width:22px;height:22px;border-radius:7px;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.sec-h .ci svg{width:13px;height:13px;}
+.sec-h b{font-family:var(--b2-serif);font-size:17px;font-weight:600;letter-spacing:-.2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.sec-h .n{font-size:12px;color:var(--faint);font-weight:700;}
+.sec-h .line{flex:1;height:1px;background:var(--line);min-width:8px;}
+.sec-h .tot{font-size:12.5px;font-weight:700;color:var(--ink-2);white-space:nowrap;}
+.sec-h .tot small{color:var(--muted);font-weight:600;}
+.wgrid{display:grid;grid-template-columns:repeat(var(--n),minmax(0,1fr));gap:10px;}
 
-/* ITEM ROWS — list rows inside the card */
-.item-row{display:flex;align-items:center;gap:12px;padding:12px 0;transition:opacity .18s;}
-.item-row + .item-row,.priority-header + .item-row,.cat-header + .item-row{border-top:1px solid var(--hair);}
-.cat-section > .item-row:first-child{padding-top:0;}
-.item-row.purchased{opacity:0.45;}
-.item-row.purchased .item-name{text-decoration:line-through;color:var(--muted);}
+/* ── item card ── */
+.it{position:relative;display:grid;grid-template-columns:62px minmax(0,1fr);gap:12px;align-items:center;padding:9px 12px 9px 9px;border-radius:14px;background:var(--surface);border:1px solid var(--line);box-shadow:0 1px 2px rgba(60,50,30,.04);min-height:80px;cursor:pointer;outline:none;transition:border-color .15s,box-shadow .15s;}
+.it:hover,.it:focus-visible{border-color:var(--accent-line);box-shadow:0 0 0 3px var(--accent-soft),0 6px 16px rgba(60,50,30,.07);}
+.th{width:62px;height:62px;border-radius:11px;display:flex;align-items:center;justify-content:center;overflow:hidden;flex-shrink:0;}
+.th img{width:92%;height:92%;object-fit:contain;mix-blend-mode:multiply;}
+.th svg{width:24px;height:24px;opacity:.9;}
+.nm{font-size:13px;font-weight:650;line-height:1.3;color:var(--ink);display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;word-break:break-word;}
+.meta{display:flex;align-items:center;gap:6px;margin-top:5px;flex-wrap:nowrap;overflow:hidden;}
+.pr{font-family:var(--b2-serif);font-size:14.5px;font-weight:600;color:var(--ink);white-space:nowrap;}
+.pr small{font-family:var(--b2-sans);font-size:11px;color:var(--muted);font-weight:650;}
+.pr.none{font-family:var(--b2-sans);font-size:11.5px;color:var(--faint);font-weight:600;}
+.tg{font-size:10.5px;font-weight:750;padding:2px 7px;border-radius:12px;background:var(--warm);color:var(--muted);white-space:nowrap;}
+.tg.soon{background:var(--over-soft);color:var(--over);}
+.tg.mo{background:var(--accent-soft);color:var(--accent-deep);}
+.tg.age{background:transparent;color:var(--faint);padding:0;}
+.lk{margin-left:auto;font-size:12px;color:var(--faint);font-weight:700;text-decoration:none;padding:2px 3px;border-radius:5px;flex-shrink:0;}
+.lk:hover{color:var(--accent-deep);background:var(--accent-soft);}
+.pdot{position:absolute;top:9px;right:10px;width:8px;height:8px;border-radius:50%;}
+.acts{position:absolute;right:9px;bottom:9px;display:flex;gap:4px;opacity:0;pointer-events:none;transition:opacity .12s;}
+.it:hover .acts,.it:focus-within .acts{opacity:1;pointer-events:auto;}
+.it:hover .lk,.it:focus-within .lk{visibility:hidden;}
+.acts button{height:24px;padding:0 8px;border-radius:7px;background:var(--raised);border:1px solid var(--line);font:700 11px var(--b2-sans);color:var(--ink-2);display:flex;align-items:center;cursor:pointer;}
+.acts button:hover{border-color:var(--accent-line);color:var(--accent-deep);}
+.acts button.got{background:var(--ok-soft);border-color:#cfe5d6;color:var(--ok);}
+.acts button.got:hover{border-color:var(--ok);color:var(--ok);}
 
-/* Thumbnail */
-.item-thumb{width:42px;height:42px;border-radius:11px;object-fit:cover;flex-shrink:0;background:var(--warm);}
-.item-thumb-placeholder{width:42px;height:42px;border-radius:11px;flex-shrink:0;display:flex;align-items:center;justify-content:center;background:var(--warm);}
-.item-thumb-placeholder svg{width:20px;height:20px;}
+/* ── empty ── */
+.empty{grid-column:1/-1;text-align:center;padding:44px 20px;color:var(--muted);background:var(--surface);border:1px dashed var(--line);border-radius:18px;}
+.empty p{font-family:var(--b2-serif);font-size:17px;font-style:italic;margin-bottom:12px;color:var(--ink-2);}
+.linkbtn{border:none;background:none;color:var(--accent-deep);font:650 12.5px var(--b2-sans);cursor:pointer;padding:0;}
+.linkbtn:hover{text-decoration:underline;}
 
-.item-priority-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;}
-.item-info{flex:1;min-width:0;}
-.item-name{font-size:14px;font-weight:650;line-height:1.3;}
-.item-note{font-size:12px;color:var(--muted);font-weight:550;margin-top:2px;}
-.item-cat-badge{display:inline-flex;align-items:center;font-size:11.5px;font-weight:650;margin-top:3px;}
-.item-cat-badge svg{width:11px;height:11px;margin-right:4px;}
+/* ── bought list ── */
+.bcard{grid-column:1/-1;background:var(--surface);border:1px solid var(--line);border-radius:18px;padding:8px 22px;box-shadow:0 1px 2px rgba(60,50,30,.04),0 8px 24px rgba(60,50,30,.05);display:grid;grid-template-columns:repeat(2,minmax(0,1fr));column-gap:36px;}
+.brow{display:flex;align-items:center;gap:12px;padding:9px 0;border-bottom:1px solid var(--hair);min-width:0;cursor:pointer;}
+.brow .th{width:38px;height:38px;border-radius:9px;}
+.brow .th svg{width:17px;height:17px;}
+.brow .bi{flex:1;min-width:0;}
+.brow .bn{font-size:13px;font-weight:650;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.brow:hover .bn{color:var(--accent-deep);}
+.brow .bm{font-size:11.5px;color:var(--muted);font-weight:600;margin-top:1px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
 
-.item-price{font-family:var(--b2-serif);font-size:16px;font-weight:600;color:var(--ink);flex-shrink:0;min-width:50px;text-align:right;}
+/* ── footer ── */
+.foot{display:flex;align-items:center;gap:10px;margin-top:22px;padding-top:14px;border-top:1px solid var(--line);font-size:12.5px;color:var(--muted);font-weight:600;}
+.foot b{color:var(--ink-2);font-weight:700;}
+.foot .mini{display:flex;}
+.foot .mini .th{width:32px;height:32px;border-radius:9px;border:2px solid var(--bg);margin-left:-7px;}
+.foot .mini .th:first-child{margin-left:0;}
+.foot .mini .th img{width:90%;height:90%;}
+.foot .mini .th svg{width:13px;height:13px;}
+.foot .more{margin-left:auto;}
+.foot.hide{display:none;}
 
-.item-actions{display:flex;align-items:center;gap:6px;flex-shrink:0;}
-.item-link-btn{display:inline-flex;align-items:center;height:28px;padding:0 11px;border:1px solid var(--line);border-radius:8px;background:var(--raised);font:650 11.5px var(--b2-sans);color:var(--ink-2);text-decoration:none;transition:all .15s;}
-.item-link-btn:hover{border-color:var(--accent-line);color:var(--accent-deep);}
-.item-bought-btn{height:28px;padding:0 11px;border:1px solid var(--line);border-radius:8px;font:650 11.5px var(--b2-sans);cursor:pointer;transition:all .15s;background:var(--raised);color:var(--ink-2);white-space:nowrap;}
-.item-bought-btn:hover{border-color:var(--accent-line);color:var(--accent-deep);}
-.item-bought-btn.is-bought{background:var(--ok-bg);border-color:var(--ok-bg);color:var(--ok);}
-.item-edit-btn{height:28px;padding:0 11px;border:1px solid var(--line);border-radius:8px;font:650 11.5px var(--b2-sans);cursor:pointer;background:var(--raised);color:var(--ink-2);transition:all .15s;}
-.item-edit-btn:hover{border-color:var(--accent-line);color:var(--accent-deep);}
-.item-del-btn{width:24px;height:24px;border:none;border-radius:6px;background:transparent;font-size:11px;color:var(--faint);cursor:pointer;transition:all .15s;}
-.item-del-btn:hover{color:var(--over);background:var(--over-bg);}
-.item-date{font-size:11px;font-weight:700;padding:3px 9px;border-radius:20px;background:var(--accent-soft);color:var(--accent-deep);flex-shrink:0;}
+/* ── drawer ── */
+.scrim{position:fixed;inset:0;background:rgba(36,31,23,.18);z-index:1000;opacity:0;pointer-events:none;transition:opacity .2s;}
+.drawer{position:fixed;top:0;right:0;bottom:0;width:420px;max-width:100vw;background:var(--surface);border-left:1px solid var(--line);box-shadow:-20px 0 50px rgba(60,50,30,.14);z-index:1001;display:flex;flex-direction:column;transform:translateX(105%);transition:transform .22s ease;visibility:hidden;}
+body.dr-open .scrim{opacity:1;pointer-events:auto;}
+body.dr-open .drawer{transform:none;visibility:visible;}
+.dr-h{display:flex;align-items:center;justify-content:space-between;padding:22px 24px 14px;}
+.dr-t{font-family:var(--b2-serif);font-size:21px;font-weight:600;letter-spacing:-.2px;}
+.x{width:30px;height:30px;border-radius:9px;border:1px solid var(--line);display:flex;align-items:center;justify-content:center;color:var(--muted);font-weight:700;background:var(--raised);cursor:pointer;font-size:13px;}
+.x:hover{color:var(--ink);}
+.dr-b{flex:1;padding:4px 24px 20px;display:flex;flex-direction:column;gap:14px;overflow-y:auto;}
+.hero{display:grid;grid-template-columns:96px minmax(0,1fr);gap:14px;align-items:center;}
+.hero .th{width:96px;height:96px;border-radius:14px;}
+.hero .th svg{width:34px;height:34px;}
+.drop{font-size:12px;color:var(--muted);font-weight:550;line-height:1.45;}
+.drop .linkbtn{display:block;font-size:12.5px;font-weight:700;margin-bottom:2px;}
+.img-row{display:none;flex-direction:column;gap:6px;}
+.img-row.show{display:flex;}
+.img-row .row2{display:flex;gap:8px;align-items:center;}
+.img-err{font-size:11.5px;color:var(--over);font-weight:600;display:none;}
+.img-err.show{display:block;}
+.fl{display:flex;flex-direction:column;gap:6px;min-width:0;}
+.fl > label,.fl > .lab{font-size:10.5px;letter-spacing:.13em;text-transform:uppercase;color:var(--muted);font-weight:750;}
+.in{width:100%;height:38px;border-radius:10px;border:1px solid var(--line);background:var(--raised);padding:0 12px;font:600 13.5px var(--b2-sans);color:var(--ink);outline:none;transition:border-color .15s,box-shadow .15s;}
+.in::placeholder{color:var(--faint);font-weight:550;}
+.in:focus{border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-soft);}
+.in.bad{border-color:var(--over);box-shadow:0 0 0 3px var(--over-soft);}
+.in-pre{position:relative;}
+.in-pre span{position:absolute;left:12px;top:50%;transform:translateY(-50%);font:600 13.5px var(--b2-sans);color:var(--muted);pointer-events:none;}
+.in-pre .in{padding-left:24px;}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+.seg{display:flex;background:var(--warm-2);border-radius:10px;padding:3px;gap:2px;}
+.seg button{flex:1;border:none;background:transparent;text-align:center;padding:7px 4px;border-radius:8px;font:700 12px var(--b2-sans);color:var(--muted);display:flex;align-items:center;justify-content:center;gap:6px;cursor:pointer;white-space:nowrap;}
+.seg button:hover{color:var(--ink);}
+.seg button.on{background:#fff;color:var(--ink);box-shadow:0 1px 2px rgba(60,50,30,.1);}
+.seg button i{width:8px;height:8px;border-radius:50%;}
+.catpick{display:flex;flex-wrap:wrap;gap:6px;}
+.catpick button{display:inline-flex;align-items:center;gap:6px;font:650 12px var(--b2-sans);padding:6px 10px;border-radius:9px;border:1px solid var(--line);color:var(--ink-2);background:var(--raised);cursor:pointer;}
+.catpick button i{width:8px;height:8px;border-radius:50%;}
+.catpick button.on{border-color:var(--accent-line);background:var(--accent-soft);color:var(--accent-deep);}
+.dr-info{margin-top:auto;font-size:12px;color:var(--muted);font-weight:600;line-height:1.5;}
+.dr-info span{color:var(--faint);}
+.dr-f{display:flex;align-items:center;gap:8px;padding:16px 24px;border-top:1px solid var(--line);}
+.del{border:none;background:none;font:700 12.5px var(--b2-sans);color:var(--over);margin-right:auto;cursor:pointer;padding:6px 0;}
+.del:hover{text-decoration:underline;}
+.del.arm{background:var(--over-soft);padding:6px 10px;border-radius:8px;text-decoration:none;}
+.dr-f .spacer{margin-right:auto;}
 
-/* EMPTY */
-.empty-state{text-align:center;padding:56px 20px;color:var(--muted);background:var(--surface);border:1px dashed var(--line);border-radius:18px;}
-.empty-icon{font-size:2.5rem;margin-bottom:12px;}
-.empty-icon svg{width:40px;height:40px;color:var(--accent-deep);}
-.empty-text{font-family:var(--b2-serif);font-size:17px;font-style:italic;}
+/* ── toast ── */
+.toast{position:fixed;left:50%;bottom:26px;transform:translate(-50%,20px);background:var(--ink);color:#fff;font:600 13px var(--b2-sans);padding:10px 12px 10px 16px;border-radius:12px;display:flex;align-items:center;gap:14px;box-shadow:0 10px 30px rgba(36,31,23,.25);z-index:1100;opacity:0;pointer-events:none;transition:opacity .18s,transform .18s;max-width:calc(100vw - 32px);}
+.toast.show{opacity:1;transform:translate(-50%,0);pointer-events:auto;}
+.toast button{border:none;background:rgba(255,255,255,.14);color:#fff;font:700 12px var(--b2-sans);padding:5px 10px;border-radius:8px;cursor:pointer;}
+.toast button:hover{background:rgba(255,255,255,.24);}
 
-/* MODAL — card style, above the nav */
-.modal-overlay{display:none;position:fixed;inset:0;background:rgba(36,31,23,.28);backdrop-filter:blur(3px);z-index:1000;align-items:center;justify-content:center;padding:20px;}
-.modal-overlay.open{display:flex;animation:fadeIn .2s;}
-@keyframes fadeIn{from{opacity:0}to{opacity:1}}
-.modal{background:var(--surface);border-radius:18px;border:1px solid var(--line);padding:22px 24px;width:100%;max-width:520px;max-height:90vh;overflow-y:auto;box-shadow:0 1px 2px rgba(60,50,30,.04),0 24px 60px rgba(60,50,30,.18);animation:popIn .2s;}
-@keyframes popIn{from{transform:scale(.96);opacity:0}to{transform:scale(1);opacity:1}}
-.modal-title{font-family:var(--b2-serif);font-size:19px;font-weight:600;margin-bottom:18px;letter-spacing:-.2px;}
-.f-field{margin-bottom:13px;}
-.f-label{font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--muted);margin-bottom:6px;display:block;font-weight:750;}
-.f-input{width:100%;border:1px solid var(--line);border-radius:10px;padding:9px 12px;font:500 13px var(--b2-sans);color:var(--ink);background:var(--raised);outline:none;transition:border-color .15s,box-shadow .15s;}
-.f-input:focus{border-color:var(--accent-line);box-shadow:0 0 0 3px var(--accent-soft);}
-.f-row{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
-.m-actions{display:flex;gap:8px;justify-content:flex-end;margin-top:20px;}
-.m-btn{display:inline-flex;align-items:center;justify-content:center;height:34px;padding:0 15px;border-radius:10px;font:650 12.5px var(--b2-sans);cursor:pointer;border:1px solid;transition:all .15s;}
-.m-cancel{background:var(--raised);border-color:var(--line);color:var(--ink-2);}
-.m-cancel:hover{background:var(--warm);}
-.m-save{background:var(--ink);border-color:var(--ink);color:#fff;}
-.m-save:hover{transform:translateY(-1px);}
-.m-delete{background:var(--over-bg);border-color:transparent;color:var(--over);order:-1;margin-right:auto;}
-.recur-box{display:flex;align-items:center;gap:10px;padding:10px 14px;background:var(--warm);border-radius:12px;border:1px solid var(--hair);}
-.recur-box select{margin-left:auto;border:1px solid var(--line);border-radius:8px;height:28px;padding:0 8px;font:500 12px var(--b2-sans);color:var(--ink);background:var(--raised);outline:none;}
-
-.recur-badge{font-size:11px;font-weight:700;color:var(--accent-deep);background:var(--accent-soft);border-radius:20px;padding:3px 9px;flex-shrink:0;}
-.aging-badge{font-size:11px;font-weight:700;color:var(--muted);background:var(--warm);border-radius:20px;padding:3px 9px;flex-shrink:0;}
-.aging-badge.stale{color:var(--warn);background:var(--warn-bg);}
-
-@media(max-width:900px){.summary-row{grid-template-columns:repeat(2,minmax(0,1fr));}}
-@media(max-width:700px){.hub{padding:16px 16px 60px;}.priority-section,.cat-section{padding:16px 16px 6px;}.view-toggle{margin-left:0;}}
+@media(max-width:1100px){.mix{margin-left:0;}}
+@media(max-width:900px){
+  #groups{grid-template-columns:minmax(0,1fr);}
+  .sec{grid-column:1/-1 !important;}
+  .wgrid{grid-template-columns:repeat(2,minmax(0,1fr)) !important;}
+  .bcard{grid-template-columns:minmax(0,1fr);}
+  .wl-search{width:200px;}
+}
+@media(max-width:700px){
+  .hub{padding:12px 16px 60px;}
+  body.b2-shell .topbar.wl-top{flex-wrap:wrap;}
+  .topbar-right{width:100%;}
+  .wl-search{flex:1;width:auto;}
+  .st{padding:0 14px;}
+  .grp{margin-left:0;}
+}
+@media(max-width:560px){.wgrid{grid-template-columns:minmax(0,1fr) !important;}}
 </style>
 <link rel="stylesheet" href="../assets/brain.css">
 </head>
 <body>
 <script src="../assets/shell.js"></script>
 
-<!-- MODAL -->
-<div class="modal-overlay" id="modal">
-  <div class="modal">
-    <div class="modal-title" id="modal-title">Add to Wishlist</div>
-    <div class="f-field">
-      <label class="f-label">Item Name</label>
-      <input class="f-input" id="m-name" type="text" placeholder="What do you want?">
-    </div>
-    <div class="f-row">
-      <div class="f-field">
-        <label class="f-label">Category</label>
-        <select class="f-input" id="m-category">
-          <option value="BeautyCare">Beauty &amp; Care</option>
-          <option value="Style">Style &amp; Wardrobe</option>
-          <option value="Home">Home</option>
-          <option value="Art">Art &amp; Creative</option>
-          <option value="Tech">Tech &amp; Gadgets</option>
-          <option value="Books">Books &amp; Media</option>
-          <option value="Health">Health &amp; Wellness</option>
-        </select>
-      </div>
-      <div class="f-field">
-        <label class="f-label">Priority</label>
-        <select class="f-input" id="m-priority">
-          <option value="high">High — Need it soon</option>
-          <option value="medium" selected>Medium — Want it</option>
-          <option value="someday">Someday — Nice to have</option>
-        </select>
-      </div>
-    </div>
-    <div class="f-row">
-      <div class="f-field">
-        <label class="f-label">Price (optional)</label>
-        <input class="f-input" id="m-price" type="number" min="0" step="0.01" placeholder="0.00">
-      </div>
-      <div class="f-field">
-        <label class="f-label">Target Date (optional)</label>
-        <input class="f-input" id="m-date" type="month">
-      </div>
-    </div>
-    <div class="f-field">
-      <label class="f-label">Link (optional)</label>
-      <input class="f-input" id="m-link" type="text" placeholder="Amazon, brand website...">
-    </div>
-    <div class="f-field">
-      <label class="f-label">Note (optional)</label>
-      <input class="f-input" id="m-note" type="text" placeholder="Size, color, why you want it...">
-    </div>
-    <div class="f-field recur-box">
-      <input type="checkbox" id="m-recurring" style="width:16px;height:16px;accent-color:var(--accent-deep);cursor:pointer;flex-shrink:0;">
-      <div>
-        <label for="m-recurring" style="font-size:13px;font-weight:600;cursor:pointer;">Recurring / Subscription</label>
-        <div style="font-size:12px;color:var(--muted);margin-top:2px;">Check if this is a monthly or yearly charge</div>
-      </div>
-      <select id="m-recur-period">
-        <option value="mo">/ month</option>
-        <option value="yr">/ year</option>
-      </select>
-    </div>
-    <div class="m-actions">
-      <button class="m-btn m-cancel" onclick="closeModal()">Cancel</button>
-      <button class="m-btn m-delete" id="m-delete-btn" style="display:none;" onclick="deleteFromModal()">Delete</button>
-      <button class="m-btn m-save" onclick="saveItem()">Save</button>
-    </div>
-  </div>
-</div>
-
-<!-- TOPBAR -->
-<div class="topbar">
+<!-- TITLE ROW -->
+<div class="topbar wl-top">
   <div class="topbar-left">
     <a href="../" class="back-btn">
       <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"/></svg>
       Brain 2.0
     </a>
-    <div class="topbar-title">Wishlist</div>
+    <div>
+      <div class="topbar-title">Wishlist</div>
+      <div class="wl-sub">Things you want, in one glance</div>
+    </div>
   </div>
   <div class="topbar-right">
-    <span class="topbar-date" id="today-date"></span>
-    <button class="add-btn-top" onclick="openAddModal()">+ Add Item</button>
+    <label class="wl-search">
+      <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+      <input id="search" type="text" placeholder="Search your list…" autocomplete="off" aria-label="Search your list">
+      <kbd>/</kbd>
+    </label>
+    <button class="btn primary lg" id="add-btn" type="button">+ Add item</button>
   </div>
 </div>
 
 <div class="hub">
-  <div class="summary-row" id="summary-row"></div>
-  <div class="controls-wrap">
-    <div class="controls-row" id="controls-row"></div>
+  <div class="strip" id="strip"></div>
+  <div class="ctrl">
+    <div class="seg-tabs" id="state"></div>
+    <div class="cats" id="cats"></div>
+    <div class="grp" id="grp-wrap"><span class="lbl">Group by</span>
+      <div class="seg-tabs" id="grp"><button type="button" data-g="priority">Priority</button><button type="button" data-g="category">Category</button></div>
+    </div>
   </div>
-  <div id="wishlist-content"></div>
+  <div id="groups"></div>
+  <div class="foot" id="foot"></div>
 </div>
+
+<!-- EDIT / ADD DRAWER -->
+<div class="scrim" id="scrim"></div>
+<aside class="drawer" id="drawer" role="dialog" aria-modal="true" aria-labelledby="dr-title">
+  <div class="dr-h"><div class="dr-t" id="dr-title">Edit item</div><button class="x" id="dr-x" type="button" aria-label="Close">✕</button></div>
+  <div class="dr-b">
+    <div class="hero">
+      <div class="th" id="d-thumb"></div>
+      <div class="drop"><button type="button" class="linkbtn" id="d-pic-btn">Change picture</button>Paste an image link, or right-click any image → Copy Image Address</div>
+    </div>
+    <div class="img-row" id="d-img-row">
+      <div class="row2"><input class="in" id="d-image" type="text" placeholder="https://… image link" autocomplete="off"><button type="button" class="btn sm" id="d-img-clear">Remove</button></div>
+      <div class="img-err" id="d-img-err">That doesn't look like an image link — it should start with https://</div>
+    </div>
+    <div class="fl"><label for="d-name">Name</label><input class="in" id="d-name" type="text" placeholder="What do you want?" autocomplete="off"></div>
+    <div class="two">
+      <div class="fl"><label for="d-price">Price</label><div class="in-pre"><span>$</span><input class="in" id="d-price" type="number" min="0" step="0.01" placeholder="0"></div></div>
+      <div class="fl"><label for="d-date">Needed by</label><input class="in" id="d-date" type="month" placeholder="Month (optional)"></div>
+    </div>
+    <div class="fl"><span class="lab">Cost type</span><div class="seg" id="d-cost">
+      <button type="button" data-v="one">One-time</button><button type="button" data-v="mo">Monthly</button><button type="button" data-v="yr">Yearly</button>
+    </div></div>
+    <div class="fl"><span class="lab">Priority</span><div class="seg" id="d-pri"></div></div>
+    <div class="fl"><span class="lab">Category</span><div class="catpick" id="d-cat"></div></div>
+    <div class="fl"><label for="d-link">Link</label><input class="in" id="d-link" type="text" placeholder="Shop or product page (optional)" autocomplete="off"></div>
+    <div class="fl"><label for="d-note">Note</label><input class="in" id="d-note" type="text" placeholder="Size, colour, why you want it…" autocomplete="off"></div>
+    <div class="dr-info"><div id="d-added"></div><span>Esc closes · changes save when you press Save</span></div>
+  </div>
+  <div class="dr-f">
+    <button type="button" class="del" id="d-del">Delete</button>
+    <span class="spacer" id="d-spacer"></span>
+    <button type="button" class="btn" id="d-bought">✓ Mark bought</button>
+    <button type="button" class="btn primary" id="d-save">Save</button>
+  </div>
+</aside>
+
+<div class="toast" id="toast" role="status"><span id="toast-msg"></span><button type="button" id="toast-undo">Undo</button></div>
 
 <script>
 var SK='wishlist1';
+var GROUP_KEY='wishlistGroup1'; // view preference only
 
 var CATS=[
   {val:'BeautyCare', label:'Beauty & Care',    color:'#f2c4ce', dark:'#c25b73', icon:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l1.8 5.4 5.4 1.8-5.4 1.8L12 17.4l-1.8-5.4L4.8 10.2l5.4-1.8z"/></svg>'},
@@ -240,9 +300,9 @@ var CATS=[
 ];
 
 var PRIORITIES=[
-  {val:'high',   label:'High — Need it soon', dot:'#f2c4ce', badge:'#a0304a'},
-  {val:'medium', label:'Medium — Want it',    dot:'#f0dea0', badge:'#8a5a10'},
-  {val:'someday',label:'Someday',             dot:'#d9d2bd', badge:'#7a7468'},
+  {val:'high',   label:'Need it soon', dot:'#cc5a70'},
+  {val:'medium', label:'Want it',      dot:'#d9a54a'},
+  {val:'someday',label:'Someday',      dot:'#c9bfa9'},
 ];
 
 var DEFAULT_ITEMS=[
@@ -266,283 +326,431 @@ var DEFAULT_ITEMS=[
 ];
 
 var items=[];
-var currentFilter='all';
-var currentPriority='all';
+var stateView='wanting';      // 'wanting' | 'bought'
+var catFilter='all';
 var searchQuery='';
-var viewMode='priority'; // 'priority' or 'category'
+var groupMode=lsGetRaw(GROUP_KEY)==='category'?'category':'priority';
 var editingId=null;
+var draft=null;
+
+var MON=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
 
 /* ── STORAGE ── */
-function save(){localStorage.setItem(SK,JSON.stringify(items));}
+function lsGetRaw(k){try{return localStorage.getItem(k);}catch(e){return null;}}
+function lsSetRaw(k,v){try{localStorage.setItem(k,v);return true;}catch(e){return false;}}
+function save(){
+  if(!lsSetRaw(SK,JSON.stringify(items)))toast("Couldn't save — browser storage is full or blocked",null);
+}
 function load(){
-  var raw=localStorage.getItem(SK);
+  var raw=lsGetRaw(SK);
   if(raw){
     try{
       items=JSON.parse(raw);
-      // Migrate: add image field if missing
+      if(!Array.isArray(items))items=[];
       items.forEach(function(i){
-      if(i.image===undefined)i.image='';
-      if(i.recurring===undefined)i.recurring=false;
-      if(i.recurPeriod===undefined)i.recurPeriod='mo';
-      if(i.addedOn===undefined)i.addedOn=new Date().toISOString().slice(0,10);
-      // migrate old category names
-      if(i.category==='Beauty'||i.category==='Hair')i.category='BeautyCare';
-      if(i.category==='Health')i.category='Health';
-      if(i.category==='Clothing')i.category='Style';
-      if(i.category==='Home & Lifestyle')i.category='Home';
-      if(i.category==='Other')i.category='Art';
-    });
-    }catch(e){}
+        if(i.image===undefined)i.image='';
+        if(i.recurring===undefined)i.recurring=false;
+        if(i.recurPeriod===undefined)i.recurPeriod='mo';
+        if(i.addedOn===undefined)i.addedOn=new Date().toISOString().slice(0,10);
+        // migrate old category names
+        if(i.category==='Beauty'||i.category==='Hair')i.category='BeautyCare';
+        if(i.category==='Clothing')i.category='Style';
+        if(i.category==='Home & Lifestyle')i.category='Home';
+        if(i.category==='Other')i.category='Art';
+      });
+    }catch(e){items=[];}
   } else {
     items=JSON.parse(JSON.stringify(DEFAULT_ITEMS));save();
   }
 }
 
+/* ── HELPERS ── */
 function getCat(val){return CATS.find(function(c){return c.val===val;})||CATS[CATS.length-1];}
 function getPri(val){return PRIORITIES.find(function(p){return p.val===val;})||PRIORITIES[1];}
-function formatPrice(p){if(!p||p<=0)return null;return '$'+parseFloat(p).toFixed(2).replace(/\.00$/,'');}
-function formatMonth(m){
-  if(!m)return null;
-  var parts=m.split('-');
-  return ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'][parseInt(parts[1])-1]+' '+parts[0];
+function catOf(i){return getCat(i.category).val;}
+function priOf(i){return getPri(i.priority).val;}
+function shortCat(c){return c.label.split(' &')[0];}
+function esc(s){return String(s==null?'':s).replace(/[&<>"']/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];});}
+function num(p){var n=parseFloat(p);return isFinite(n)&&n>0?n:0;}
+function money(n){
+  var r=Math.round(n*100)/100;
+  return '$'+(r%1===0?r.toLocaleString('en-US'):r.toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2}));
 }
-function escHtml(s){return String(s||'').replace(/[&<>"']/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];});}
+function pad(n){return (n<10?'0':'')+n;}
+function todayISO(){var d=new Date();return d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate());}
+function thisMonth(){var d=new Date();return d.getFullYear()+'-'+pad(d.getMonth()+1);}
+function validMonth(m){return typeof m==='string'&&/^\d{4}-\d{2}$/.test(m)&&+m.slice(5)>=1&&+m.slice(5)<=12;}
+function fmtDue(m){
+  if(!validMonth(m))return '';
+  var mon=MON[+m.slice(5)-1],y=m.slice(0,4);
+  return y===String(new Date().getFullYear())?mon:mon+" '"+y.slice(2);
+}
+function isSoon(m){return validMonth(m)&&m<=thisMonth();}
+function parseDay(s){
+  var m=/^(\d{4})-(\d{2})-(\d{2})/.exec(s||'');if(!m)return null;
+  return new Date(+m[1],+m[2]-1,+m[3]);
+}
+function daysSince(s){
+  var d=parseDay(s);if(!d)return null;
+  var t=new Date();t=new Date(t.getFullYear(),t.getMonth(),t.getDate());
+  return Math.max(0,Math.round((t-d)/864e5));
+}
+function fmtDay(s){var d=parseDay(s);if(!d)return '';var y=d.getFullYear()===new Date().getFullYear()?'':', '+d.getFullYear();return MON[d.getMonth()]+' '+d.getDate()+y;}
+function safeImg(u){u=String(u||'').trim();return /^https?:\/\/\S+$/i.test(u)||/^data:image\/[a-z0-9.+-]+[;,]/i.test(u)?u:'';}
+function safeLink(u){
+  u=String(u||'').trim();if(!u||/\s/.test(u))return '';
+  if(/^https?:\/\//i.test(u))return u;
+  if(/^[a-z][a-z0-9+.-]*:/i.test(u))return '';
+  return /\./.test(u)?'https://'+u.replace(/^\/+/,''):'';
+}
+function costType(i){return i.recurring?(i.recurPeriod==='yr'?'yr':'mo'):'one';}
+function sums(list){
+  var s={one:0,mo:0,yr:0};
+  list.forEach(function(i){s[costType(i)]+=num(i.price);});
+  return s;
+}
+function sumHtml(s,emptyText){
+  var parts=[];
+  if(s.one)parts.push(money(s.one));
+  if(s.mo)parts.push(money(s.mo)+'<small>/mo</small>');
+  if(s.yr)parts.push(money(s.yr)+'<small>/yr</small>');
+  return parts.length?parts.join(' + '):(emptyText||'');
+}
+function wanting(){return items.filter(function(i){return !i.purchased;});}
+function bought(){return items.filter(function(i){return !!i.purchased;});}
+function matches(i){
+  if(catFilter!=='all'&&catOf(i)!==catFilter)return false;
+  if(searchQuery){
+    var q=searchQuery.toLowerCase();
+    return [i.name,i.note,getCat(i.category).label].some(function(s){return String(s||'').toLowerCase().indexOf(q)>=0;});
+  }
+  return true;
+}
+function byDue(a,b){
+  var da=validMonth(a.date)?a.date:'9999-99',db=validMonth(b.date)?b.date:'9999-99';
+  return da<db?-1:da>db?1:0;
+}
+var PRI_ORDER={high:0,medium:1,someday:2};
 
-/* ── SUMMARY ── */
-function renderSummary(){
-  var total=items.length;
-  var pending=items.filter(function(i){return !i.purchased;}).length;
-  var bought=items.filter(function(i){return i.purchased;}).length;
-  var oneTimeVal=items.filter(function(i){return !i.purchased&&i.price>0&&!i.recurring;}).reduce(function(s,i){return s+(parseFloat(i.price)||0);},0);
-  var recurVal=items.filter(function(i){return !i.purchased&&i.price>0&&i.recurring&&i.recurPeriod==='mo';}).reduce(function(s,i){return s+(parseFloat(i.price)||0);},0);
-  document.getElementById('summary-row').innerHTML=
-    '<div class="sum-card"><div class="sum-num">'+total+'</div><div class="sum-label">Total Items</div></div>'+
-    '<div class="sum-card"><div class="sum-num">'+pending+'</div><div class="sum-label">Still Wanting</div></div>'+
-    '<div class="sum-card"><div class="sum-num">'+(oneTimeVal>0?'$'+oneTimeVal.toFixed(0):'—')+'</div><div class="sum-label">One-Time Pending</div></div>'+
-    '<div class="sum-card"><div class="sum-num">'+(recurVal>0?'$'+recurVal.toFixed(0)+'/mo':'—')+'</div><div class="sum-label">Monthly Recurring</div></div>';
+function thumb(i){
+  var c=getCat(i.category),src=safeImg(i.image);
+  if(src)return '<div class="th" style="background:'+c.color+'40;color:'+c.dark+'" data-cat="'+c.val+'"><img src="'+esc(src)+'" alt="" loading="lazy" referrerpolicy="no-referrer"></div>';
+  return '<div class="th" style="background:'+c.color+'99;color:'+c.dark+'">'+c.icon+'</div>';
+}
+
+/* ── SUMMARY STRIP ── */
+function renderStrip(){
+  var w=wanting(),s=sums(w),tm=thisMonth();
+  var soon=w.filter(function(i){return isSoon(i.date);}).length;
+  var cnt={high:0,medium:0,someday:0};w.forEach(function(i){cnt[priOf(i)]++;});
+  var rec=[];
+  if(s.mo)rec.push(money(s.mo)+'<small>/mo</small>');
+  if(s.yr)rec.push(money(s.yr)+'<small>/yr</small>');
+  var html=
+    '<div class="st"><b>'+w.length+'</b><span>wanting</span></div>'+
+    '<div class="st"><b>'+(s.one?money(s.one):'<span class="dim">—</span>')+'</b><span>one-time</span></div>'+
+    '<div class="st"><b>'+(rec.length?rec.join(' + '):'<span class="dim">—</span>')+'</b><span>recurring</span></div>'+
+    '<div class="st" title="Due this month or already past the month you set"><b>'+soon+'</b><span>needed by '+MON[+tm.slice(5)-1]+'</span></div>';
+  html+='<div class="mix"><div class="mixbar">'+(w.length?PRIORITIES.map(function(p){return cnt[p.val]?'<i style="width:'+(cnt[p.val]/w.length*100)+'%;background:'+p.dot+'"></i>':'';}).join(''):'')+'</div>'+
+    '<div class="mixleg">'+PRIORITIES.map(function(p){return '<span><i style="background:'+p.dot+'"></i>'+p.label+' '+cnt[p.val]+'</span>';}).join('')+'</div></div>';
+  document.getElementById('strip').innerHTML=html;
 }
 
 /* ── CONTROLS ── */
 function renderControls(){
-  var html='';
-  html+='<button class="filter-pill'+(currentFilter==='all'?' active':'')+'" onclick="setFilter(\'all\')">All</button>';
-  CATS.forEach(function(c){
-    if(items.some(function(i){return i.category===c.val;}))
-      html+='<button class="filter-pill'+(currentFilter===c.val?' active':'')+'" onclick="setFilter(\''+c.val+'\')">'+c.icon+escHtml(c.label)+'</button>';
-  });
-  html+='<div class="filter-sep"></div>';
-  html+='<button class="filter-pill'+(currentPriority==='all'?' active':'')+'" onclick="setPriority(\'all\')">All</button>';
-  html+='<button class="filter-pill'+(currentPriority==='high'?' p-active':'')+'" onclick="setPriority(\'high\')"><span class="pri-dot" style="background:'+getPri('high').dot+'"></span>High</button>';
-  html+='<button class="filter-pill'+(currentPriority==='medium'?' p-active':'')+'" onclick="setPriority(\'medium\')"><span class="pri-dot" style="background:'+getPri('medium').dot+'"></span>Medium</button>';
-  html+='<button class="filter-pill'+(currentPriority==='someday'?' p-active':'')+'" onclick="setPriority(\'someday\')"><span class="pri-dot" style="background:'+getPri('someday').dot+'"></span>Someday</button>';
-  html+='<div class="filter-sep"></div>';
-  html+='<input class="search-input" type="text" placeholder="Search..." value="'+escHtml(searchQuery)+'" oninput="setSearch(this.value)">';
-  html+='<div class="view-toggle">'+
-    '<button class="view-btn'+(viewMode==='priority'?' active':'')+'" onclick="setView(\'priority\')">By Priority</button>'+
-    '<button class="view-btn'+(viewMode==='category'?' active':'')+'" onclick="setView(\'category\')">By Category</button>'+
-  '</div>';
-  document.getElementById('controls-row').innerHTML=html;
+  var w=wanting().length,b=bought().length;
+  document.getElementById('state').innerHTML=
+    '<button type="button" data-state="wanting" class="'+(stateView==='wanting'?'on':'')+'">Wanting<small>'+w+'</small></button>'+
+    '<button type="button" data-state="bought" class="'+(stateView==='bought'?'on':'')+'">Bought<small>'+b+'</small></button>';
+  var pool=stateView==='bought'?bought():wanting();
+  var cc={};pool.forEach(function(i){var k=catOf(i);cc[k]=(cc[k]||0)+1;});
+  document.getElementById('cats').innerHTML=
+    '<button type="button" data-cat="all" class="'+(catFilter==='all'?'on':'')+'">All <em>'+pool.length+'</em></button>'+
+    CATS.filter(function(c){return cc[c.val]||catFilter===c.val;}).map(function(c){
+      return '<button type="button" data-cat="'+c.val+'" class="'+(catFilter===c.val?'on':'')+'" title="'+esc(c.label)+'"><i style="background:'+c.dark+'"></i>'+esc(shortCat(c))+' <em>'+(cc[c.val]||0)+'</em></button>';
+    }).join('');
+  document.querySelectorAll('#grp button').forEach(function(bt){bt.classList.toggle('on',bt.getAttribute('data-g')===groupMode);});
+  document.getElementById('grp-wrap').classList.toggle('hide',stateView==='bought');
 }
 
-function setFilter(v){currentFilter=v;render();}
-function setPriority(v){currentPriority=v;render();}
-function setSearch(v){searchQuery=v;render();}
-function setView(v){viewMode=v;render();}
-
-/* ── FILTER ── */
-function getFiltered(){
-  return items.filter(function(i){
-    if(currentFilter!=='all'&&i.category!==currentFilter)return false;
-    if(currentPriority!=='all'&&i.priority!==currentPriority)return false;
-    if(searchQuery){var q=searchQuery.toLowerCase();return(i.name||'').toLowerCase().includes(q)||(i.note||'').toLowerCase().includes(q);}
-    return true;
-  });
+/* ── CARDS + GROUPS ── */
+function card(i,showPri){
+  var c=getCat(i.category),p=getPri(i.priority),ct=costType(i);
+  var price=num(i.price);
+  var pr=price?'<span class="pr">'+money(price)+(ct!=='one'?'<small>/'+ct+'</small>':'')+'</span>':'<span class="pr none">no price</span>';
+  var tags='';
+  var due=fmtDue(i.date);
+  if(due)tags+='<span class="tg'+(isSoon(i.date)?' soon':'')+'" title="Needed by '+esc(due)+'">by '+esc(due)+'</span>';
+  if(ct!=='one')tags+='<span class="tg mo">subscription</span>';
+  if(priOf(i)==='someday'){var d=daysSince(i.addedOn);if(d!==null)tags+='<span class="tg age">'+d+'d on list</span>';}
+  var lk=safeLink(i.link);
+  return '<div class="it" tabindex="0" data-id="'+esc(i.id)+'" title="'+esc(i.note||'')+'">'+thumb(i)+
+    '<div style="min-width:0"><div class="nm">'+esc(i.name)+'</div><div class="meta">'+pr+tags+
+    (lk?'<a class="lk" href="'+esc(lk)+'" target="_blank" rel="noopener noreferrer" title="Open link" aria-label="Open link">↗</a>':'')+'</div></div>'+
+    (showPri?'<i class="pdot" style="background:'+p.dot+'" title="'+esc(p.label)+'"></i>':'')+
+    '<div class="acts"><button type="button" class="got" data-act="got">✓ Got it</button><button type="button" data-act="edit">Edit</button></div></div>';
 }
-
-/* ── RENDER LIST ── */
-function renderList(){
-  var content=document.getElementById('wishlist-content');content.innerHTML='';
-  var filtered=getFiltered();
-  if(!filtered.length){
-    content.innerHTML='<div class="empty-state"><div class="empty-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l1.8 5.4 5.4 1.8-5.4 1.8L12 17.4l-1.8-5.4L4.8 10.2l5.4-1.8z"/></svg></div><div class="empty-text">Nothing here yet — add something you\'re dreaming of.</div></div>';
-    return;
-  }
-
-  // Flat if filtering by single cat or searching
-  if(currentFilter!=='all'||searchQuery){
-    var sec=document.createElement('div');sec.className='cat-section';
-    filtered.sort(function(a,b){
-      if(a.purchased!==b.purchased)return a.purchased?1:-1;
-      var o={high:0,medium:1,someday:2};return(o[a.priority]||1)-(o[b.priority]||1);
-    });
-    filtered.forEach(function(item){sec.appendChild(buildRow(item));});
-    content.appendChild(sec);
-    return;
-  }
-
-  if(viewMode==='priority'){
-    PRIORITIES.forEach(function(pri){
-      var priItems=filtered.filter(function(i){return i.priority===pri.val;});
-      if(!priItems.length)return;
-      // separate purchased
-      priItems.sort(function(a,b){return a.purchased?1:b.purchased?-1:0;});
-      var priTotal=priItems.filter(function(i){return !i.purchased&&i.price>0;}).reduce(function(s,i){return s+(parseFloat(i.price)||0);},0);
-      var sec=document.createElement('div');sec.className='priority-section';
-      var hdr=document.createElement('div');hdr.className='priority-header';
-      hdr.innerHTML=
-        '<div class="priority-dot" style="background:'+pri.dot+'"></div>'+
-        '<span class="priority-title">'+pri.label+'</span>'+
-        '<span class="priority-count">('+priItems.length+')</span>'+
-        (priTotal>0?'<span class="priority-total">$'+priTotal.toFixed(0)+'</span>':'');
-      sec.appendChild(hdr);
-      priItems.forEach(function(item){sec.appendChild(buildRow(item,true));});
-      content.appendChild(sec);
+function section(head,list,showPri){
+  var n=Math.min(list.length,4);
+  return '<section class="sec" style="grid-column:span '+n+';--n:'+n+'"><div class="sec-h">'+head+
+    '<span class="n">'+list.length+'</span><span class="line"></span><span class="tot">'+sumHtml(sums(list))+'</span></div>'+
+    '<div class="wgrid">'+list.map(function(i){return card(i,showPri);}).join('')+'</div></section>';
+}
+function emptyHtml(){
+  var anyFilter=catFilter!=='all'||searchQuery;
+  if(anyFilter)return '<div class="empty"><p>Nothing matches'+(searchQuery?' “'+esc(searchQuery)+'”':' this filter')+'.</p><button type="button" class="linkbtn" data-act="clear">Clear search &amp; filters</button></div>';
+  if(stateView==='bought')return '<div class="empty"><p>Nothing marked bought yet.</p><button type="button" class="linkbtn" data-state="wanting">Back to your list</button></div>';
+  return '<div class="empty"><p>Your wishlist is empty — add the first thing you’re eyeing.</p><button type="button" class="btn primary" data-act="add">+ Add item</button></div>';
+}
+function renderGroups(){
+  var el=document.getElementById('groups');
+  if(stateView==='bought'){renderBought(el);return;}
+  var list=wanting().filter(matches);
+  if(!list.length){el.innerHTML=emptyHtml();return;}
+  var h='';
+  if(groupMode==='priority'){
+    PRIORITIES.forEach(function(p){
+      var g=list.filter(function(i){return priOf(i)===p.val;}).sort(byDue);
+      if(g.length)h+=section('<i class="pd" style="background:'+p.dot+'"></i><b>'+esc(p.label)+'</b>',g,false);
     });
   } else {
-    CATS.forEach(function(cat){
-      var catItems=filtered.filter(function(i){return i.category===cat.val;});
-      if(!catItems.length)return;
-      catItems.sort(function(a,b){
-        if(a.purchased!==b.purchased)return a.purchased?1:-1;
-        var o={high:0,medium:1,someday:2};return(o[a.priority]||1)-(o[b.priority]||1);
-      });
-      var catTotal=catItems.filter(function(i){return !i.purchased&&i.price>0;}).reduce(function(s,i){return s+(parseFloat(i.price)||0);},0);
-      var sec=document.createElement('div');sec.className='cat-section';
-      var hdr=document.createElement('div');hdr.className='cat-header';
-      hdr.innerHTML=
-        '<span class="cat-icon" style="color:'+cat.dark+'">'+cat.icon+'</span>'+
-        '<span class="cat-title">'+escHtml(cat.label)+'</span>'+
-        '<span class="cat-count">('+catItems.length+')</span>'+
-        (catTotal>0?'<span class="cat-total">$'+catTotal.toFixed(0)+'</span>':'');
-      sec.appendChild(hdr);
-      catItems.forEach(function(item){sec.appendChild(buildRow(item));});
-      content.appendChild(sec);
+    CATS.forEach(function(c){
+      var g=list.filter(function(i){return catOf(i)===c.val;});
+      if(!g.length)return;
+      g.sort(function(a,b){return (PRI_ORDER[priOf(a)]-PRI_ORDER[priOf(b)])||byDue(a,b);});
+      h+=section('<span class="ci" style="background:'+c.color+'99;color:'+c.dark+'">'+c.icon+'</span><b title="'+esc(c.label)+'">'+esc(c.label)+'</b>',g,true);
     });
   }
+  el.innerHTML=h;
+}
+function boughtSort(a,b){var x=a.boughtOn||'',y=b.boughtOn||'';return x<y?1:x>y?-1:0;}
+function renderBought(el){
+  var list=bought().filter(matches).sort(boughtSort);
+  if(!list.length){el.innerHTML=emptyHtml();return;}
+  el.innerHTML='<div class="bcard">'+list.map(function(i){
+    var c=getCat(i.category),ct=costType(i),price=num(i.price);
+    var meta=[esc(shortCat(c))];
+    if(i.boughtOn&&parseDay(i.boughtOn))meta.push('bought '+esc(fmtDay(i.boughtOn)));
+    if(price)meta.push(money(price)+(ct!=='one'?'/'+ct:''));
+    return '<div class="brow" data-id="'+esc(i.id)+'">'+thumb(i)+'<div class="bi"><div class="bn">'+esc(i.name)+'</div><div class="bm">'+meta.join(' · ')+'</div></div>'+
+      '<button type="button" class="btn sm" data-act="undo-bought" title="Move back to your list">Undo</button></div>';
+  }).join('')+'</div>';
 }
 
-/* ── BUILD ROW ── */
-function buildRow(item, showCat){
-  var cat=getCat(item.category);
-  var pri=getPri(item.priority);
-  var row=document.createElement('div');
-  row.className='item-row'+(item.purchased?' purchased':'');
-
-  // Category icon tile
-  var ph=document.createElement('div');ph.className='item-thumb-placeholder';
-  ph.innerHTML=cat.icon;ph.style.color=cat.dark;
-  row.appendChild(ph);
-
-  // Priority dot
-  var dot=document.createElement('div');dot.className='item-priority-dot';
-  dot.style.background=pri.dot;dot.title=item.priority+' priority';
-  row.appendChild(dot);
-
-  // Info
-  var info=document.createElement('div');info.className='item-info';
-  var name=document.createElement('div');name.className='item-name';name.textContent=item.name;
-  info.appendChild(name);
-  if(item.note){var note=document.createElement('div');note.className='item-note';note.textContent=item.note;info.appendChild(note);}
-  if(showCat){var cb=document.createElement('span');cb.className='item-cat-badge';cb.style.color=cat.dark;cb.innerHTML=cat.icon+escHtml(cat.label);info.appendChild(cb);}
-  row.appendChild(info);
-
-  // Price + recurring badge
-  var priceStr=formatPrice(item.price);
-  if(priceStr){
-    var priceWrap=document.createElement('div');priceWrap.style.cssText='display:flex;flex-direction:column;align-items:flex-end;gap:3px;flex-shrink:0;';
-    var price=document.createElement('div');price.className='item-price';price.textContent=priceStr;priceWrap.appendChild(price);
-    if(item.recurring){var rb=document.createElement('span');rb.className='recur-badge';rb.textContent='/'+( item.recurPeriod||'mo');priceWrap.appendChild(rb);}
-    row.appendChild(priceWrap);
-  }
-  // Aging badge for Someday items
-  if(item.priority==='someday'&&item.addedOn&&!item.purchased){
-    var added=new Date(item.addedOn);var days=Math.floor((Date.now()-added.getTime())/(1000*60*60*24));
-    if(days>0){var ab=document.createElement('span');ab.className='aging-badge'+(days>=60?' stale':'');ab.textContent=days+'d';ab.title='Added '+days+' days ago';row.appendChild(ab);}
-  }
-
-  // Actions
-  var acts=document.createElement('div');acts.className='item-actions';
-  var dateStr=formatMonth(item.date);
-  if(dateStr){var de=document.createElement('span');de.className='item-date';de.textContent='by '+dateStr;acts.appendChild(de);}
-  if(item.link){var lk=document.createElement('a');lk.className='item-link-btn';lk.textContent='Link ↗';lk.href=item.link;lk.target='_blank';lk.style.textDecoration='none';acts.appendChild(lk);}
-  var bb=document.createElement('button');bb.className='item-bought-btn'+(item.purchased?' is-bought':'');
-  bb.textContent=item.purchased?'✓ Got it':'Mark Bought';
-  bb.onclick=(function(id){return function(){togglePurchased(id);};})(item.id);acts.appendChild(bb);
-  var eb=document.createElement('button');eb.className='item-edit-btn';eb.textContent='Edit';
-  eb.onclick=(function(id){return function(){openEditModal(id);};})(item.id);acts.appendChild(eb);
-  var db=document.createElement('button');db.className='item-del-btn';db.textContent='✕';
-  db.onclick=(function(id){return function(){if(confirm('Remove this item?'))deleteItem(id);};})(item.id);acts.appendChild(db);
-  row.appendChild(acts);
-  return row;
+/* ── FOOTER ── */
+function renderFoot(){
+  var el=document.getElementById('foot');
+  var b=bought();
+  if(stateView==='bought'||!b.length){el.classList.add('hide');el.innerHTML='';return;}
+  el.classList.remove('hide');
+  var y=String(new Date().getFullYear());
+  var yr=b.filter(function(i){return String(i.boughtOn||'').slice(0,4)===y;});
+  var spent=yr.reduce(function(s,i){return s+num(i.price);},0);
+  var recent=b.slice().sort(boughtSort).slice(0,7);
+  var other=b.length-yr.length;
+  el.innerHTML='<div class="mini">'+recent.map(thumb).join('')+'</div>'+
+    '<span><b>'+yr.length+' bought</b> this year'+(spent?' · '+money(spent)+' spent':'')+(other?' · '+other+' earlier':'')+'</span>'+
+    '<button type="button" class="linkbtn more" data-state="bought">See bought →</button>';
 }
 
-function togglePurchased(id){var item=items.find(function(i){return i.id===id;});if(!item)return;item.purchased=!item.purchased;save();render();}
-function deleteItem(id){items=items.filter(function(i){return i.id!==id;});save();render();}
+function render(){renderStrip();renderControls();renderGroups();renderFoot();}
 
-/* ── MODAL ── */
-function openAddModal(){
-  editingId=null;
-  document.getElementById('modal-title').textContent='Add to Wishlist';
-  ['m-name','m-price','m-date','m-link','m-note'].forEach(function(id){document.getElementById(id).value='';});
-  document.getElementById('m-recurring').checked=false;
-  document.getElementById('m-recur-period').value='mo';
-  document.getElementById('m-category').value='BeautyCare';
-  document.getElementById('m-priority').value='medium';
-  document.getElementById('m-delete-btn').style.display='none';
-  document.getElementById('modal').classList.add('open');
-  setTimeout(function(){document.getElementById('m-name').focus();},100);
+/* ── ACTIONS ── */
+function findItem(id){return items.find(function(i){return String(i.id)===String(id);});}
+var undoFn=null,toastT=null;
+function toast(msg,undo){
+  undoFn=undo||null;
+  document.getElementById('toast-msg').textContent=msg;
+  document.getElementById('toast-undo').style.display=undo?'':'none';
+  var t=document.getElementById('toast');t.classList.add('show');
+  clearTimeout(toastT);toastT=setTimeout(function(){t.classList.remove('show');undoFn=null;},5000);
 }
-function openEditModal(id){
-  var item=items.find(function(i){return i.id===id;});if(!item)return;
-  editingId=id;
-  document.getElementById('modal-title').textContent='Edit Item';
-  document.getElementById('m-name').value=item.name;
-  document.getElementById('m-category').value=item.category;
-  document.getElementById('m-priority').value=item.priority;
-  document.getElementById('m-price').value=item.price||'';
-  document.getElementById('m-date').value=item.date||'';
-  document.getElementById('m-link').value=item.link||'';
-  document.getElementById('m-note').value=item.note||'';
-  document.getElementById('m-recurring').checked=!!item.recurring;
-  document.getElementById('m-recur-period').value=item.recurPeriod||'mo';
-  document.getElementById('m-delete-btn').style.display='inline-flex';
-  document.getElementById('modal').classList.add('open');
-}
-function closeModal(){document.getElementById('modal').classList.remove('open');editingId=null;}
-function saveItem(){
-  var name=document.getElementById('m-name').value.trim();
-  if(!name){document.getElementById('m-name').focus();return;}
-  var old=editingId?items.find(function(i){return i.id===editingId;})||{}:{};
-  var item={
-    id:editingId||'w_'+Date.now(),
-    name:name,
-    category:document.getElementById('m-category').value,
-    priority:document.getElementById('m-priority').value,
-    price:parseFloat(document.getElementById('m-price').value)||0,
-    date:document.getElementById('m-date').value,
-    link:document.getElementById('m-link').value.trim(),
-    note:document.getElementById('m-note').value.trim(),
-    image:old.image||'',
-    recurring:document.getElementById('m-recurring').checked,
-    recurPeriod:document.getElementById('m-recur-period').value,
-    purchased:old.purchased||false,
-    addedOn:old.addedOn||(new Date().toISOString().slice(0,10)),
+function setBought(it,on){
+  var prev={purchased:it.purchased,had:Object.prototype.hasOwnProperty.call(it,'boughtOn'),boughtOn:it.boughtOn};
+  it.purchased=on;
+  if(on)it.boughtOn=todayISO();else delete it.boughtOn;
+  save();render();
+  return function(){
+    it.purchased=prev.purchased;
+    if(prev.had)it.boughtOn=prev.boughtOn;else delete it.boughtOn;
+    save();render();
   };
-  if(editingId){var idx=items.findIndex(function(i){return i.id===editingId;});if(idx>=0)items[idx]=item;}
-  else items.push(item);
-  save();closeModal();render();
 }
-function deleteFromModal(){if(!editingId)return;if(!confirm('Delete this item?'))return;deleteItem(editingId);closeModal();}
+function markBought(id){
+  var it=findItem(id);if(!it)return;
+  var undo=setBought(it,true);
+  toast('Marked bought — '+String(it.name||'').slice(0,40),undo);
+}
+function unmarkBought(id){
+  var it=findItem(id);if(!it)return;
+  var undo=setBought(it,false);
+  toast('Moved back to your list',undo);
+}
+function deleteItem(id){
+  var idx=items.findIndex(function(i){return String(i.id)===String(id);});if(idx<0)return;
+  var gone=items.splice(idx,1)[0];save();render();
+  toast('Deleted — '+String(gone.name||'').slice(0,40),function(){items.splice(Math.min(idx,items.length),0,gone);save();render();});
+}
 
-document.getElementById('modal').addEventListener('click',function(e){if(e.target===this)closeModal();});
-document.addEventListener('keydown',function(e){if(e.key==='Escape')closeModal();});
+/* ── DRAWER ── */
+var $=function(id){return document.getElementById(id);};
+function paintDraft(){
+  var c=getCat(draft.category),src=safeImg(draft.image);
+  var th=$('d-thumb');
+  th.style.background=c.color+(src?'40':'99');th.style.color=c.dark;
+  th.innerHTML=src?'<img src="'+esc(src)+'" alt="" referrerpolicy="no-referrer">':c.icon;
+  document.querySelectorAll('#d-cost button').forEach(function(b){b.classList.toggle('on',b.getAttribute('data-v')===draft.cost);});
+  document.querySelectorAll('#d-pri button').forEach(function(b){b.classList.toggle('on',b.getAttribute('data-v')===draft.priority);});
+  document.querySelectorAll('#d-cat button').forEach(function(b){b.classList.toggle('on',b.getAttribute('data-v')===draft.category);});
+  $('d-pic-btn').textContent=src?'Change picture':'Add a picture';
+}
+function openDrawer(id){
+  var it=id!=null?findItem(id):null;
+  editingId=it?it.id:null;
+  draft={
+    category:it?getCat(it.category).val:(catFilter!=='all'?catFilter:'BeautyCare'),
+    priority:it?priOf(it):'medium',
+    cost:it?costType(it):'one',
+    image:it?String(it.image||''):''
+  };
+  $('dr-title').textContent=it?'Edit item':'Add item';
+  $('d-name').value=it?(it.name||''):'';
+  $('d-name').classList.remove('bad');
+  $('d-price').value=it&&num(it.price)?it.price:'';
+  $('d-date').value=it&&validMonth(it.date)?it.date:'';
+  $('d-link').value=it?(it.link||''):'';
+  $('d-note').value=it?(it.note||''):'';
+  $('d-image').value=draft.image;
+  $('d-img-err').classList.remove('show');
+  $('d-img-row').classList.toggle('show',!!(draft.image&&!safeImg(draft.image)));
+  if(it){
+    var d=daysSince(it.addedOn);
+    $('d-added').textContent=d!==null?('Added '+fmtDay(it.addedOn)+' · on your list '+d+(d===1?' day':' days')):'Added date not recorded';
+    if(it.purchased&&it.boughtOn&&parseDay(it.boughtOn))$('d-added').textContent+=' · bought '+fmtDay(it.boughtOn);
+  } else $('d-added').textContent='';
+  $('d-del').style.display=it?'':'none';
+  $('d-spacer').style.display=it?'none':'';
+  resetDel();
+  $('d-bought').style.display=it?'':'none';
+  $('d-bought').textContent=it&&it.purchased?'↩ Back to wanting':'✓ Mark bought';
+  paintDraft();
+  document.body.classList.add('dr-open');
+  $('drawer').scrollTop=0;
+  setTimeout(function(){$('d-name').focus();},60);
+}
+function closeDrawer(){document.body.classList.remove('dr-open');editingId=null;draft=null;resetDel();}
+function drawerOpen(){return document.body.classList.contains('dr-open');}
+function collect(){
+  var name=$('d-name').value.trim();
+  if(!name){$('d-name').classList.add('bad');$('d-name').focus();return null;}
+  var img=$('d-image').value.trim();
+  if(img&&!safeImg(img)){$('d-img-row').classList.add('show');$('d-img-err').classList.add('show');$('d-image').focus();return null;}
+  return {
+    name:name,
+    category:draft.category,
+    priority:draft.priority,
+    price:parseFloat($('d-price').value)||0,
+    date:$('d-date').value,
+    link:$('d-link').value.trim(),
+    note:$('d-note').value.trim(),
+    image:img,
+    recurring:draft.cost!=='one',
+    recurPeriod:draft.cost==='yr'?'yr':'mo'
+  };
+}
+function saveDrawer(thenToggleBought){
+  var f=collect();if(!f)return;
+  var it;
+  if(editingId!=null){
+    it=findItem(editingId);if(!it)return closeDrawer();
+    if(!f.recurring)f.recurPeriod=it.recurPeriod||'mo';
+    Object.keys(f).forEach(function(k){it[k]=f[k];});
+  } else {
+    it={id:'w_'+Date.now(),name:f.name,category:f.category,priority:f.priority,price:f.price,date:f.date,link:f.link,note:f.note,image:f.image,
+        recurring:f.recurring,recurPeriod:f.recurPeriod,purchased:false,addedOn:todayISO()};
+    items.push(it);
+  }
+  var id=it.id;
+  closeDrawer();
+  if(thenToggleBought){
+    save();
+    if(it.purchased)unmarkBought(id);else markBought(id);
+  } else {save();render();}
+}
+var delT=null;
+function resetDel(){clearTimeout(delT);var b=$('d-del');b.classList.remove('arm');b.textContent='Delete';}
 
-function render(){renderSummary();renderControls();renderList();}
+/* drawer wiring */
+$('d-pri').innerHTML=PRIORITIES.map(function(p){return '<button type="button" data-v="'+p.val+'"><i style="background:'+p.dot+'"></i>'+esc(p.label)+'</button>';}).join('');
+$('d-cat').innerHTML=CATS.map(function(c){return '<button type="button" data-v="'+c.val+'" title="'+esc(c.label)+'"><i style="background:'+c.dark+'"></i>'+esc(shortCat(c))+'</button>';}).join('');
+$('d-cost').addEventListener('click',function(e){var b=e.target.closest('button');if(b&&draft){draft.cost=b.getAttribute('data-v');paintDraft();}});
+$('d-pri').addEventListener('click',function(e){var b=e.target.closest('button');if(b&&draft){draft.priority=b.getAttribute('data-v');paintDraft();}});
+$('d-cat').addEventListener('click',function(e){var b=e.target.closest('button');if(b&&draft){draft.category=b.getAttribute('data-v');paintDraft();}});
+$('d-pic-btn').addEventListener('click',function(){var r=$('d-img-row');r.classList.add('show');$('d-image').focus();$('d-image').select();});
+$('d-image').addEventListener('input',function(){
+  var v=this.value.trim(),ok=!v||!!safeImg(v);
+  $('d-img-err').classList.toggle('show',!ok);
+  if(ok&&draft){draft.image=v;paintDraft();}
+});
+$('d-img-clear').addEventListener('click',function(){$('d-image').value='';$('d-img-err').classList.remove('show');if(draft){draft.image='';paintDraft();}});
+$('d-name').addEventListener('input',function(){this.classList.remove('bad');});
+$('d-save').addEventListener('click',function(){saveDrawer(false);});
+$('d-bought').addEventListener('click',function(){saveDrawer(true);});
+$('d-del').addEventListener('click',function(){
+  var b=this;
+  if(!b.classList.contains('arm')){b.classList.add('arm');b.textContent='Click again to delete';delT=setTimeout(resetDel,3000);return;}
+  var id=editingId;closeDrawer();deleteItem(id);
+});
+$('dr-x').addEventListener('click',closeDrawer);
+$('scrim').addEventListener('click',closeDrawer);
+$('drawer').addEventListener('keydown',function(e){
+  if(e.key==='Enter'&&e.target.tagName==='INPUT'&&e.target.id!=='d-image'){e.preventDefault();saveDrawer(false);}
+});
 
-var DS=['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
-var MF=['January','February','March','April','May','June','July','August','September','October','November','December'];
-var now=new Date();
-document.getElementById('today-date').textContent=DS[now.getDay()]+', '+MF[now.getMonth()]+' '+now.getDate()+', '+now.getFullYear();
+/* page wiring */
+$('add-btn').addEventListener('click',function(){openDrawer(null);});
+$('search').addEventListener('input',function(){searchQuery=this.value.trim();renderControls();renderGroups();});
+$('grp').addEventListener('click',function(e){
+  var b=e.target.closest('button');if(!b)return;
+  groupMode=b.getAttribute('data-g');lsSetRaw(GROUP_KEY,groupMode);render();
+});
+$('toast-undo').addEventListener('click',function(){var f=undoFn;undoFn=null;$('toast').classList.remove('show');if(f)f();});
+document.addEventListener('click',function(e){
+  var t=e.target;
+  var st=t.closest('[data-state]');if(st){stateView=st.getAttribute('data-state');catFilter='all';render();window.scrollTo({top:0});return;}
+  var cf=t.closest('#cats [data-cat]');if(cf){catFilter=cf.getAttribute('data-cat');renderControls();renderGroups();return;}
+  var act=t.closest('[data-act]');
+  if(act){
+    var a=act.getAttribute('data-act'),host=act.closest('[data-id]'),id=host&&host.getAttribute('data-id');
+    e.stopPropagation();
+    if(a==='got')markBought(id);
+    else if(a==='edit')openDrawer(id);
+    else if(a==='undo-bought')unmarkBought(id);
+    else if(a==='add')openDrawer(null);
+    else if(a==='clear'){catFilter='all';searchQuery='';$('search').value='';renderControls();renderGroups();}
+    return;
+  }
+  if(t.closest('.lk'))return;
+  var row=t.closest('#groups [data-id]');if(row)openDrawer(row.getAttribute('data-id'));
+});
+document.addEventListener('keydown',function(e){
+  if(e.key==='Escape'){
+    if(drawerOpen()){e.preventDefault();closeDrawer();return;}
+    if(document.activeElement===$('search')&&$('search').value){$('search').value='';searchQuery='';renderControls();renderGroups();}
+    return;
+  }
+  var tag=(e.target.tagName||'').toLowerCase();
+  var typing=tag==='input'||tag==='textarea'||tag==='select'||e.target.isContentEditable;
+  if(e.key==='/'&&!typing&&!drawerOpen()&&!e.metaKey&&!e.ctrlKey){e.preventDefault();$('search').focus();return;}
+  if(e.key==='Enter'&&!typing&&e.target.classList&&e.target.classList.contains('it')){openDrawer(e.target.getAttribute('data-id'));}
+});
+/* broken picture links fall back to the category tile */
+document.addEventListener('error',function(e){
+  var img=e.target;if(!img||img.tagName!=='IMG')return;
+  var th=img.closest('.th');if(!th)return;
+  var c=getCat(th.getAttribute('data-cat')||(draft&&th.id==='d-thumb'?draft.category:''));
+  th.style.background=c.color+'99';th.style.color=c.dark;th.innerHTML=c.icon;
+},true);
 
 load();render();
 </script>

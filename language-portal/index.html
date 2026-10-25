@@ -2165,7 +2165,12 @@ function apErrText(e){
   return 'Couldn’t read this deck package. It may be damaged, or from a format this page doesn’t know yet. In Anki desktop, re-export it with “Support older Anki versions” ticked.';
 }
 function isZstd(u8){return !!u8&&u8.length>3&&u8[0]===0x28&&u8[1]===0xB5&&u8[2]===0x2F&&u8[3]===0xFD;}
-function unz(u8){return isZstd(u8)?window.fzstd.decompress(u8):u8;}
+function unz(u8,size){
+  if(!isZstd(u8))return u8;
+  /* a buffer of the known size is much faster than letting the decoder grow its own */
+  if(size>0){try{var o=window.fzstd.decompress(u8,new Uint8Array(size));if(o.length===size)return o;}catch(e){}}
+  return window.fzstd.decompress(u8);
+}
 var utf8=(typeof TextDecoder!=='undefined')?new TextDecoder('utf-8'):null;
 /* minimal protobuf reader: [{f:field, v:varint} | {f:field, b:bytes}] */
 function pbFields(u8){
@@ -2261,7 +2266,8 @@ function parseApkg(file){
 function apkgBlob(A,name){
   if(!A||!A.media[name])return Promise.resolve(null);
   var f=A.zip.file(A.media[name].z);if(!f)return Promise.resolve(null);
-  return f.async('uint8array').then(function(u8){return new Blob([unz(u8)],{type:mimeOf(name)});});
+  var size=A.modern?A.media[name].size:0;
+  return f.async('uint8array').then(function(u8){return new Blob([unz(u8,size)],{type:mimeOf(name)});});
 }
 /* field text: HTML → plain text with line breaks; sounds/images handled separately */
 function apText(html){
@@ -2425,7 +2431,7 @@ function apkgPreviewHtml(target){
   var restore=apRestorable(A,target);restore.forEach(function(nm){mediaFiles[nm]=1;});
   var needBytes=0;Object.keys(mediaFiles).forEach(function(nm){needBytes+=(A.media[nm]&&A.media[nm].size)||0;});
   A.need={files:Object.keys(mediaFiles),bytes:needBytes,restore:restore.length};
-  var h='<div class="ap"><div class="ap-head"><div style="min-width:0;flex:1"><div class="eyebrow">Anki deck'+(A.modern?'':' · older format')+'</div>'+
+  var h='<div class="ap"><div class="ap-head"><div style="min-width:0;flex:1"><div class="eyebrow">Anki deck</div>'+
     '<b class="ap-name">'+esc(apDeckLabel(apDefaultName(A))||A.fname)+'</b>'+
     '<div class="ap-meta">'+plural(total,'note')+(b.nAud?' · '+plural(b.nAud,'audio file')+'':'')+(b.nImg?' · '+plural(b.nImg,'picture')+'':'')+(b.bytes?' · '+fmtBytes(b.bytes):'')+'</div></div></div>';
   var sel=function(k,lbl,opts,val){return '<div class="f-field"><label class="f-label" for="ap-'+k+'">'+lbl+'</label><select class="f-input" id="ap-'+k+'" data-chg="apOpt" data-k="'+k+'">'+opts.map(function(x){return '<option value="'+esc(x[0])+'"'+(String(x[0])===String(val)?' selected':'')+'>'+esc(x[1])+'</option>';}).join('')+'</select></div>';};
@@ -2487,7 +2493,7 @@ function doApkgImport(){
   var step=function(i){
     if(tok!==apkgTok)return Promise.reject(apErr('msg','Import cancelled.'));
     if(i>=names.length)return Promise.resolve();
-    var chunk=names.slice(i,i+40);
+    var chunk=names.slice(i,i+120);
     return Promise.all(chunk.map(function(nm){return apkgBlob(A,nm).then(function(b){return b?[deckId+'/'+nm,b]:null;});})).then(function(recs){
       recs=recs.filter(Boolean);
       return mediaPutMany(recs).then(function(){recs.forEach(function(r){if(!had[r[0]])written.push(r[0]);});});
