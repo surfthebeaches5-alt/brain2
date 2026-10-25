@@ -8,56 +8,68 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
-  :root{
-    --bg:#f3ecd8; --surface:#fff; --side:#f8f1dd;
-    --lilac:#b099e0; --lilac-soft:#c9b6ee;
-    --ink:#2e2a24; --muted:#7a7264; --line:#e5dcc6;
-    --ok:#7aa37a; --warn:#cb9a4f; --bad:#c46a6a;
-  }
+/* tokens come from ../assets/brain.css */
+  :root{--card-shadow:0 1px 2px rgba(60,50,30,.04),0 8px 24px rgba(60,50,30,.05);}
   *{box-sizing:border-box;margin:0;padding:0}
-  body{background:var(--bg);color:var(--ink);font-family:'Plus Jakarta Sans',sans-serif;min-height:100vh}
-  .wrap{max-width:860px;margin:0 auto;padding:28px 18px 64px}
-  a.back{display:inline-flex;align-items:center;gap:6px;color:var(--muted);text-decoration:none;font-size:.85rem;font-weight:600;margin-bottom:18px}
-  a.back:hover{color:var(--ink)}
-  h1{font-family:'Fraunces',serif;font-weight:700;font-size:2rem;letter-spacing:-.01em}
-  .sub{color:var(--muted);font-size:.95rem;margin-top:6px;max-width:56ch;line-height:1.55}
-  .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,340px),1fr));gap:16px;margin-top:26px}
-  .card{background:var(--surface);border:1px solid var(--line);border-left:3px solid var(--lilac);border-radius:12px;padding:20px}
-  .card h2{font-family:'Fraunces',serif;font-weight:600;font-size:1.15rem;display:flex;align-items:center;gap:8px}
-  .card p{color:var(--muted);font-size:.88rem;line-height:1.55;margin-top:8px}
-  .btn{display:inline-flex;align-items:center;gap:8px;margin-top:16px;border:none;border-radius:9px;padding:11px 18px;font-family:inherit;font-size:.9rem;font-weight:700;cursor:pointer;background:var(--lilac);color:#fff}
-  .btn:hover{background:var(--lilac-soft)}
-  .btn.ghost{background:transparent;color:var(--ink);border:1.5px solid var(--line)}
-  .btn.ghost:hover{border-color:var(--lilac)}
-  .btn:disabled{opacity:.45;cursor:not-allowed}
-  .stat{display:flex;align-items:baseline;gap:8px;margin-top:14px}
-  .stat b{font-family:'Fraunces',serif;font-size:1.6rem;font-weight:700}
-  .stat span{color:var(--muted);font-size:.82rem}
-  .keys{margin-top:14px;border-top:1px dashed var(--line);padding-top:12px;display:none}
+  body{background:var(--bg);color:var(--ink);font-family:var(--b2-sans,'Plus Jakarta Sans',sans-serif);min-height:100vh;-webkit-font-smoothing:antialiased}
+  button{font-family:inherit}
+
+  /* ── TITLE ROW (brain.css turns .topbar into the title row) ── */
+  .topbar{display:flex;align-items:center;justify-content:space-between}
+  .topbar-left{display:flex;align-items:center;gap:14px}
+  .topbar-title{font-family:var(--b2-serif);font-size:34px;font-weight:600}
+  a.back{display:none}
+
+  /* ── FRAME: a narrow column, left-aligned with the title ── */
+  .wrap{max-width:1280px;margin:0 auto;padding:20px 40px 80px}
+  .col{max-width:920px}
+  .sub{color:var(--muted);font-size:13.5px;font-weight:500;max-width:64ch;line-height:1.6}
+  .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,340px),1fr));gap:18px;margin-top:22px}
+  .card{background:var(--surface);border:1px solid var(--line);border-radius:18px;padding:22px 24px;box-shadow:var(--card-shadow);min-width:0}
+  .card h2{font-family:var(--b2-serif);font-weight:600;font-size:19px;letter-spacing:-.2px;display:flex;align-items:center;gap:10px}
+  .card h2 svg{color:var(--accent-deep);flex-shrink:0}
+  .card p{color:var(--muted);font-size:13px;line-height:1.6;margin-top:8px}
+  .btn{display:inline-flex;align-items:center;gap:7px;margin-top:16px;height:34px;padding:0 15px;border:1px solid var(--ink);border-radius:10px;font:650 12.5px var(--b2-sans);cursor:pointer;background:var(--ink);color:#fff;transition:opacity .15s,border-color .15s,color .15s}
+  .btn:hover{opacity:.88}
+  .btn.ghost{background:var(--raised);color:var(--ink-2);border-color:var(--line)}
+  .btn.ghost:hover{opacity:1;border-color:var(--accent-line);color:var(--accent-deep)}
+  .btn:disabled{opacity:.4;cursor:not-allowed}
+  .stat{display:flex;align-items:baseline;gap:10px;margin-top:16px;padding-top:16px;border-top:1px solid var(--hair)}
+  .stat b{font-family:var(--b2-serif);font-size:30px;font-weight:600;letter-spacing:-.5px;line-height:1}
+  .stat span{color:var(--muted);font-size:12.5px;font-weight:600}
+  .keys{margin-top:12px;display:none;max-height:260px;overflow-y:auto}
   .keys.show{display:block}
-  .keyrow{display:flex;justify-content:space-between;gap:10px;font-size:.82rem;padding:5px 0;border-bottom:1px solid #f4efe2}
-  .keyrow code{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:.78rem;color:var(--ink);word-break:break-all}
-  .keyrow span{color:var(--muted);white-space:nowrap}
-  .note{margin-top:22px;background:var(--side);border:1px solid var(--line);border-radius:12px;padding:16px 18px;font-size:.86rem;line-height:1.6;color:var(--muted)}
-  .note b{color:var(--ink)}
-  .msg{margin-top:14px;border-radius:9px;padding:11px 14px;font-size:.86rem;font-weight:600;display:none;align-items:flex-start;gap:8px;line-height:1.5}
+  .keyrow{display:flex;justify-content:space-between;gap:10px;font-size:12px;padding:8px 0;border-bottom:1px solid var(--hair)}
+  .keyrow:last-child{border-bottom:none}
+  .keyrow code{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:11.5px;color:var(--ink-2);word-break:break-all}
+  .keyrow span{color:var(--muted);white-space:nowrap;font-weight:600}
+  .note{margin-top:18px;background:var(--warm);border:1px solid var(--line);border-radius:14px;padding:16px 20px;font-size:13px;line-height:1.6;color:var(--muted)}
+  .note b{color:var(--ink);font-weight:650}
+  .msg{margin-top:14px;border-radius:10px;padding:11px 14px;font-size:12.5px;font-weight:600;display:none;align-items:flex-start;gap:8px;line-height:1.5}
+  .msg svg{flex-shrink:0;margin-top:1px}
   .msg.show{display:flex}
-  .msg.ok{background:#eef4ec;color:#4c7a4c;border:1px solid #cfe0cd}
-  .msg.warn{background:#f8f0e0;color:#8a6420;border:1px solid #ead9b8}
-  .msg.bad{background:#f8e9e9;color:#9c3f3f;border:1px solid #eccfcf}
-  .choice{margin-top:14px;display:none;gap:10px;flex-wrap:wrap}
+  .msg.ok{background:var(--ok-bg);color:var(--ok)}
+  .msg.warn{background:var(--warn-bg);color:var(--warn)}
+  .msg.bad{background:var(--over-bg);color:var(--over)}
+  .choice{margin-top:2px;display:none;gap:8px;flex-wrap:wrap}
   .choice.show{display:flex}
-  .toggle{background:none;border:none;font-family:inherit;font-size:.8rem;font-weight:700;color:var(--lilac);cursor:pointer;margin-top:12px;padding:0;display:inline-flex;align-items:center;gap:5px}
+  .toggle{display:flex;background:none;border:none;font:650 12px var(--b2-sans);color:var(--accent-deep);cursor:pointer;margin-top:12px;padding:0;align-items:center;gap:5px}
+  .toggle:hover{text-decoration:underline}
   input[type=file]{display:none}
-  @media (max-width:520px){ h1{font-size:1.6rem} .card{padding:16px} }
+  @media (max-width:760px){ .wrap{padding:16px 16px 60px} .card{padding:18px} }
 </style>
 <link rel="stylesheet" href="../assets/brain.css">
 </head>
 <body>
 <script src="../assets/shell.js"></script>
+<div class="topbar">
+  <div class="topbar-left">
+    <a class="back" href="../" id="backLink"></a>
+    <h1 class="topbar-title">Backup &amp; Restore</h1>
+  </div>
+</div>
 <div class="wrap">
-  <a class="back" href="../" id="backLink"></a>
-  <h1>Backup &amp; Restore</h1>
+<div class="col">
   <p class="sub">Everything you enter in Brain 2.0 lives inside this browser on this device. Export it to a file to keep it safe, move it to another device, or carry it to a new home for the site.</p>
 
   <div class="grid">
@@ -88,6 +100,7 @@
   <div class="note">
     <b>How restoring works:</b> importing writes each section from the file into this browser. If a section already exists here <b>and</b> in the file, the file's version replaces it — so import onto a fresh device, or export a safety copy from this device first. Sections that exist only on this device are left untouched.
   </div>
+</div>
 </div>
 
 <script>

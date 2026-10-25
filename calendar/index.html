@@ -621,6 +621,7 @@
 </head>
 <body>
 <script src="../assets/shell.js"></script>
+<script src="../assets/gcal.js"></script>
 
 <!-- ============ TOPBAR (shared title row) ============ -->
 <div class="topbar">
@@ -955,6 +956,49 @@ function esc(s) {
 }
 
 /* ============ LEGEND ============ */
+/* ============ GOOGLE CALENDAR LAYER (assets/gcal.js, shared with Today) ============ */
+let gEvents = [], gRange = null, showGoogle = true, gBusy = false;
+function googleForDate(dStr) {
+  if (!showGoogle) return [];
+  return gEvents.filter(e => e.date <= dStr && (e.endDate || e.date) >= dStr)
+    .sort((a,b) => (a.allDay?0:1)-(b.allDay?0:1) || (a.time||'').localeCompare(b.time||''));
+}
+function gTint(hex, a) {
+  const m = /^#?([0-9a-f]{6})$/i.exec(hex||''); if (!m) return 'rgba(169,143,224,'+a+')';
+  const n = parseInt(m[1],16); return 'rgba('+(n>>16)+','+((n>>8)&255)+','+(n&255)+','+a+')';
+}
+function openGoogleEvent(ge) { if (ge.link) window.open(ge.link, '_blank', 'noopener'); }
+function loadGoogle(force) {
+  if (!window.GCal || !GCal.configured()) { gEvents = []; return Promise.resolve(); }
+  if (!GCal.connected()) { const c = GCal.cached(); gEvents = c ? (c.events||[]) : []; renderLegend(); render(); return Promise.resolve(); }
+  const from = new Date(currentDate.getFullYear(), currentDate.getMonth()-1, 20), to = new Date(currentDate.getFullYear(), currentDate.getMonth()+2, 10);
+  if (gBusy || (!force && gRange && from >= gRange[0] && to <= gRange[1])) return Promise.resolve();
+  gBusy = true; renderLegend();
+  return GCal.events(from, to).then(list => { gEvents = list; gRange = [from, to]; })
+    .catch(err => { if (err.code !== 'auth') showToast(err.message); })
+    .then(() => { gBusy = false; renderLegend(); render(); });
+}
+function googleChip() {
+  const ch = document.createElement('div');
+  ch.className = 'leg-chip';
+  ch.style.background = '#fff'; ch.style.color = '#7a7468'; ch.style.border = '1.5px solid #ddd0f5';
+  const G = '<span style="font-weight:800;color:#8e71d3;margin-right:5px">G</span>';
+  if (!window.GCal || !GCal.configured()) {
+    ch.innerHTML = G + 'Connect Google'; ch.title = 'Set up Google Calendar sync from the Today page';
+    ch.addEventListener('click', () => { window.location.href = '../'; });
+  } else if (gBusy) {
+    ch.innerHTML = G + 'Syncing…';
+  } else if (!GCal.connected()) {
+    ch.innerHTML = G + 'Refresh from Google'; ch.title = 'Google sign-ins last an hour — click to refresh';
+    ch.addEventListener('click', () => { GCal.signIn().then(() => loadGoogle(true)).catch(err => showToast(err.message)); });
+  } else {
+    if (showGoogle) ch.classList.add('active');
+    ch.innerHTML = G + 'Google'; ch.title = 'Show or hide your Google Calendar events';
+    ch.addEventListener('click', () => { showGoogle = !showGoogle; renderLegend(); render(); });
+  }
+  return ch;
+}
+
 function renderLegend() {
   const el = document.getElementById('legend');
   el.innerHTML = '';
@@ -990,6 +1034,7 @@ function renderLegend() {
   recChip.title = 'Show hardwired recurring reminders (weekly audit, monthly plan, …)';
   recChip.addEventListener('click', () => { showRecurring = !showRecurring; renderLegend(); render(); });
   el.appendChild(recChip);
+  el.appendChild(googleChip());
 }
 
 /* ============ NAV ============ */
@@ -1067,7 +1112,8 @@ function renderMonth() {
     const recItems = recurringForDate(dStr);
     const finItems = financeForDate(dStr);
     const classItems = classForDate(dStr);
-    const totalItems = dayEvs.length + recItems.length + finItems.length + classItems.length;
+    const gItems = googleForDate(dStr);
+    const totalItems = dayEvs.length + gItems.length + recItems.length + finItems.length + classItems.length;
 
     const cell = document.createElement('div');
     cell.className = 'month-cell' + (isOther?' other-month':'') + (isToday(cellDate)?' today':'');
@@ -1114,6 +1160,21 @@ function renderMonth() {
       chip.appendChild(textEl);
       chip.appendChild(delEl);
       evsWrap.appendChild(chip);
+      shown++;
+    }
+
+    for (const ge of gItems) {
+      if (capped && shown >= MAX_MONTH) break;
+      const gc = document.createElement('div');
+      gc.className = 'month-event-chip';
+      gc.style.background = gTint(ge.color, .16);
+      gc.style.color = '#4f473a';
+      gc.style.boxShadow = 'inset 3px 0 0 ' + ge.color;
+      gc.style.cursor = 'pointer';
+      gc.title = (ge.calName ? ge.calName + ' · ' : '') + ge.title + ' — opens in Google Calendar';
+      gc.innerHTML = `<span class="chip-text">${ge.time ? esc(formatTime(ge.time)) + ' ' : ''}${esc(ge.title)}</span>`;
+      gc.addEventListener('click', e => { e.stopPropagation(); openGoogleEvent(ge); });
+      evsWrap.appendChild(gc);
       shown++;
     }
 
@@ -1249,6 +1310,19 @@ function renderWeek() {
       evsWrap.appendChild(evEl);
     });
 
+    googleForDate(dStr).forEach(ge => {
+      const gEl = document.createElement('div');
+      gEl.className = 'week-event';
+      gEl.style.background = gTint(ge.color, .16);
+      gEl.style.color = '#4f473a';
+      gEl.style.boxShadow = 'inset 3px 0 0 ' + ge.color;
+      gEl.style.cursor = 'pointer';
+      gEl.title = 'Opens in Google Calendar';
+      gEl.innerHTML = `<div class="ev-body"><div class="ev-title">${esc(ge.title)}</div><div class="ev-time">${ge.allDay ? 'All day' : esc(formatTime(ge.time)) + (ge.endTime ? ' – ' + esc(formatTime(ge.endTime)) : '')}${ge.calName ? ' · ' + esc(ge.calName) : ''}</div></div>`;
+      gEl.addEventListener('click', () => openGoogleEvent(ge));
+      evsWrap.appendChild(gEl);
+    });
+
     recurringForDate(dStr).forEach(rc => {
       const cat = getCat(rc.cat);
       const rEl = document.createElement('div');
@@ -1370,6 +1444,13 @@ function saveEvent() {
       events[idx].note = note;
       events[idx].cat = pendingCat;
     }
+  } else if (window.GCal && GCal.configured()) {
+    const ev = {title, date, time};
+    const run = () => GCal.create(ev);
+    (GCal.connected() ? run().catch(err => { if (err.code === 'auth') return GCal.signIn().then(run); throw err; }) : GCal.signIn().then(run))
+      .then(() => { closeModal(); showToast('Added to Google Calendar ✓'); return loadGoogle(true); })
+      .catch(err => showToast(err.message));
+    return;
   } else {
     events.push({id: id(), title, date, time, cat: pendingCat, note, done: false});
   }
@@ -1540,6 +1621,10 @@ migrateEventCats();
 buildActiveCats();
 renderLegend();
 render();
+loadGoogle(false);
+// fetch more Google events when navigating past the loaded window
+const _render = render;
+render = function () { _render(); if (window.GCal && GCal.connected()) loadGoogle(false); };
 </script>
 </body>
 </html>
