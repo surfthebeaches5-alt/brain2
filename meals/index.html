@@ -122,7 +122,7 @@ a{color:inherit;}
 .store+.store{margin-top:16px;}
 .sh{display:flex;align-items:center;gap:9px;padding-bottom:6px;}
 .sh b{font-size:13.5px;font-weight:750;}
-.sh span{margin-left:auto;font-size:12px;color:var(--muted);font-weight:700;}
+.sh .sub{margin-left:auto;font-size:12px;color:var(--muted);font-weight:700;}
 .it{display:flex;align-items:center;gap:10px;padding:8px 0;border-top:1px solid var(--hair);font-size:13.5px;font-weight:600;}
 .it .grow{flex:1;min-width:0;}
 .it .grow>span{display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
@@ -199,7 +199,7 @@ a{color:inherit;}
 .mc.on{border-color:var(--accent-deep);box-shadow:0 0 0 3px var(--accent-soft);}
 .mc.on .sel{background:var(--accent-deep);border-color:var(--accent-deep);}
 .mc .day{position:absolute;left:10px;top:10px;background:rgba(255,253,248,.95);color:var(--ink);}
-.mc .type{position:absolute;left:10px;bottom:10px;background:rgba(255,253,248,.95);color:var(--muted);}
+.mc .type{position:absolute;left:10px;top:10px;background:rgba(255,253,248,.95);color:var(--muted);}
 .mc .ings{margin-top:10px;}
 .mc .ing{font-size:11px;padding:2px 7px;max-width:150px;}
 .mc.new{border:1.5px dashed var(--line);background:transparent;align-items:center;justify-content:center;gap:6px;color:var(--muted);font-weight:650;font-size:13px;min-height:200px;}
@@ -208,13 +208,13 @@ a{color:inherit;}
 .pk+.pk{border-top:1px solid var(--hair);}
 .pk .ph{width:40px;height:40px;border-radius:10px;}
 .pk .ph svg{width:18px;}
-.pk select{border:none;background:none;font:800 10.5px var(--b2-sans);letter-spacing:.12em;color:var(--muted);width:46px;padding:0;cursor:pointer;outline:none;}
+.pk select{border:none;background:none;font:800 10.5px var(--b2-sans);letter-spacing:.12em;color:var(--muted);width:56px;padding:0;cursor:pointer;outline:none;flex-shrink:0;}
 .pk select:focus{color:var(--accent-deep);}
 .pk .grow{flex:1;min-width:0;}
 .pk b{font-size:13.5px;font-weight:650;display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
 .pk small{font-size:11.5px;color:var(--muted);font-weight:600;}
 .mini{display:flex;align-items:center;gap:8px;padding:6px 0;font-size:13px;font-weight:600;}
-.mini span{margin-left:auto;color:var(--ink-2);font-weight:700;font-size:12.5px;}
+.mini .amt{margin-left:auto;color:var(--ink-2);font-weight:700;font-size:12.5px;}
 .tot{display:flex;justify-content:space-between;align-items:baseline;margin:14px 0 16px;padding-top:12px;border-top:1px solid var(--hair);}
 .tot b{font-family:var(--b2-serif);font-size:26px;font-weight:600;}
 .tip{margin-top:14px;padding:11px 12px;border-radius:12px;background:var(--accent-soft);border:1px solid var(--accent-line);font-size:12.5px;font-weight:600;color:var(--ink-2);line-height:1.45;}
@@ -284,6 +284,9 @@ a{color:inherit;}
   .din .st{grid-column:3;align-items:flex-start;flex-direction:row;}
   .card{padding:18px 16px;}
   .page-sub{white-space:normal;}
+  body.b2-shell .topbar-right{flex-shrink:1;min-width:0;max-width:100%;}
+  .tab-bar-inner{overflow-x:auto;min-width:0;scrollbar-width:none;}
+  .tab-btn{padding:8px 12px;}
 }
 @media(max-width:520px){
   .sgrid,.mgrid,.mgrid.four{grid-template-columns:1fr;}
@@ -707,7 +710,7 @@ function renderShop(){
   h+=L.stores.map(function(st){
     var rows=L.by[st].slice().sort(function(a,b){return (b.forDinner?2:b.kind==='staple'?1:0)-(a.forDinner?2:a.kind==='staple'?1:0);});
     var sub=rows.reduce(function(t,r){return t+(r.skipped?0:r.price);},0);
-    return '<div class="store"><div class="sh">'+fav(st)+'<b>'+esc(st)+'</b><span>'+(sub>0?money(sub):'')+'</span></div>'+rows.map(lineHtml).join('')+'</div>';
+    return '<div class="store"><div class="sh">'+fav(st)+'<b>'+esc(st)+'</b><span class="sub">'+(sub>0?money(sub):'')+'</span></div>'+rows.map(lineHtml).join('')+'</div>';
   }).join('');
   h+='<button class="addrow" data-act="oneoff-add"><b>+</b> Add a one-off item</button>';
   h+='<div class="total"><div><span>Estimated total'+(L.done?' · '+L.done+' of '+L.count+' in the cart':'')+'</span><br><b>'+(L.total>0?'~'+money(L.total):'—')+'</b></div><button class="btn primary" data-act="done-shop">Done shopping</button></div>';
@@ -718,7 +721,7 @@ function lineHtml(r){
   if(r.forDinner)sub='for '+r.dinners.join(' & ')+(r.kind==='staple'?' · '+r.status:'');
   else if(r.kind==='manual')sub='one-off';
   else if(r.skipped)sub='skipped this week';
-  else sub=r.status==='out'?'out · no dinner needs it this week':'staple · low';
+  else sub=livePlan()?(r.status==='out'?'out · no dinner needs it this week':'low · no dinner needs it this week'):'staple · '+r.status;
   var name=esc(r.name)+(r.count>1?' ×'+r.count:'');
   var right;
   if(r.canSkip&&r.skipped)right='<button class="btn sm" data-act="skip" data-id="'+esc(r.id)+'" title="Put it back on the list">Skipped ✓</button>';
@@ -928,23 +931,28 @@ function markMade(id,day){var m=getGoto(id);if(!m)return;var T=today();m.lastMad
 var pickWeek=null,pickSel=[],pickManual=false,pickFilter='all';
 function openPick(next){
   var wp=livePlan();
-  if(next||!wp){pickWeek=next?addDaysISO(wp?wp.weekStart:nextPlanStart(),wp?7:0):nextPlanStart();pickSel=[];}
-  else{pickWeek=wp.weekStart;pickSel=planDinners(wp).map(function(x){return {gotoId:x.meal.id,day:x.d.day};});}
-  if(next&&wp&&pickWeek<=wp.weekStart)pickWeek=addDaysISO(wp.weekStart,7);
-  pickManual=!!(pickSel.length&&!next&&wp);pickFilter='all';
-  picking=true;curTab='week';
+  if(next){pickWeek=wp?addDaysISO(wp.weekStart,7):nextPlanStart();pickSel=[];pickManual=false;}
+  else if(wp){pickWeek=wp.weekStart;pickSel=planDinners(wp).map(function(x){return {gotoId:x.meal.id,day:x.d.day};});pickManual=pickSel.length>0;}
+  else{pickWeek=nextPlanStart();pickSel=[];pickManual=false;}
+  pickFilter='all';picking=true;curTab='week';
   document.querySelectorAll('.tab-btn').forEach(function(b){b.classList.toggle('active',b.getAttribute('data-tab')==='week');});
   showView('pick');render();window.scrollTo(0,0);
 }
 function pickBought(){var wp=livePlan();return wp&&wp.weekStart===pickWeek?boughtKeys(wp):[];}
 function availableDays(){var T=today(),out=[];for(var i=0;i<7;i++){var d=addDaysISO(pickWeek,i);if(d>=T)out.push(d);}return out.length?out:[addDaysISO(pickWeek,6)];}
+var DAY_PATTERNS={1:[0],2:[0,3],3:[0,2,4],4:[0,1,3,6],5:[0,1,3,4,6],6:[0,1,2,3,4,6],7:[0,1,2,3,4,5,6]};
+function mealUrgency(m){
+  // dinners that use something about to go off come first; then ones with fresh things to buy
+  var T=today(),u=100;
+  m.staples.forEach(function(id){var s=getStaple(id);if(!s||!isPerishable(s)||s.status==='out'||!fromISO(s.boughtOn))return;u=Math.min(u,shelfDays(s)-Math.max(0,diffDays(s.boughtOn,T)));});
+  if(u===100&&extrasOf(m).length)u=60;
+  return u;
+}
 function autoDays(){
   var days=availableDays(),n=pickSel.length;if(!n)return;
-  var bought=pickBought();
-  // dinners that need fresh things go earlier in the week
-  var fresh=function(sel){var m=getGoto(sel.gotoId);if(!m)return 0;return extrasOf(m).length+m.staples.map(getStaple).filter(function(s){return s&&isPerishable(s);}).length;};
-  var order=pickSel.slice().sort(function(a,b){return fresh(b)-fresh(a);});
-  order.forEach(function(sel,i){var idx=n===1?0:Math.round(i*(days.length-1)/(n-1));sel.day=days[Math.min(idx,days.length-1)];});
+  var order=pickSel.map(function(p,i){var m=getGoto(p.gotoId);return {p:p,i:i,u:m?mealUrgency(m):100};}).sort(function(a,b){return a.u-b.u||a.i-b.i;});
+  var idx=days.length===7&&DAY_PATTERNS[n]?DAY_PATTERNS[n]:order.map(function(o,i){return n===1?0:Math.round(i*(days.length-1)/(n-1));});
+  order.forEach(function(o,i){o.p.day=days[Math.min(idx[i]!=null?idx[i]:days.length-1,days.length-1)];});
 }
 function togglePick(id){
   var i=pickSel.findIndex(function(p){return p.gotoId===id;});
@@ -997,7 +1005,7 @@ function renderPick(){
     var m=x.m,a=x.a,sel=selBy[m.id],full=a.total&&!a.missing.length,hint=pickHint(m,a,urg);
     var meta=[];if(m.minutes)meta.push(esc(m.minutes)+' min');if(m.lastMade)meta.push('made '+esc(shortDate(m.lastMade)));
     return '<button class="mc'+(sel?' on':'')+'" data-act="pick-toggle" data-id="'+esc(m.id)+'" aria-pressed="'+(sel?'true':'false')+'">'+photo(m)+
-      (sel&&sel.day?'<span class="day chip">'+dowShort(sel.day)+'</span>':'')+(!isDinnerType(m)?'<span class="type chip">'+esc(m.type)+'</span>':'')+
+      (sel&&sel.day?'<span class="day chip">'+dowShort(sel.day)+'</span>':'')+(!isDinnerType(m)&&!(sel&&sel.day)?'<span class="type chip">'+esc(m.type)+'</span>':'')+
       '<span class="sel">'+(sel?'✓':'')+'</span><div class="b"><div class="t">'+esc(m.name)+'</div>'+(meta.length?'<div class="m">'+meta.join(' · ')+'</div>':'')+
       '<div class="have'+(full?'':' part')+'"><div class="bar"><i style="width:'+(a.total?Math.round(a.have/a.total*100):0)+'%"></i></div><span>have '+a.have+' of '+a.total+'</span></div>'+
       '<div class="hint '+hint.cls+'">'+esc(hint.t)+'</div></div></button>';
@@ -1025,7 +1033,7 @@ function renderPickSide(bought){
   var stores=Object.keys(by).sort(storeSort),tot=lines.reduce(function(t,L){return t+L.price;},0);
   if(sel.length){
     h+='<div class="eyebrow" style="margin:16px 0 6px">'+(stores.length?'This adds to your list':'Nothing to buy for these')+'</div>';
-    h+=stores.map(function(st){return '<div class="mini">'+fav(st,'sm')+esc(st)+' · '+by[st].n+' item'+(by[st].n!==1?'s':'')+'<span>'+(by[st].c>0?money(by[st].c):'')+'</span></div>';}).join('');
+    h+=stores.map(function(st){return '<div class="mini">'+fav(st,'sm')+esc(st)+' · '+by[st].n+' item'+(by[st].n!==1?'s':'')+'<span class="amt">'+(by[st].c>0?money(by[st].c):'')+'</span></div>';}).join('');
   }
   h+='<div class="tot"><span class="card-m">For these dinners</span><b>'+(tot>0?'~'+money(tot):'$0')+'</b></div>';
   h+='<button class="btn primary wide" data-act="pick-build">Build my list →</button>';
@@ -1055,8 +1063,9 @@ function buildPlan(){
 /* ══════════════ GO-TO MEALS ══════════════ */
 function renderMeals(){
   var grid=document.getElementById('meal-grid');
+  var bought=boughtKeys(livePlan());
   grid.innerHTML=data.goto.map(function(m){
-    var a=analyze(m),full=a.total&&!a.missing.length;
+    var a=analyze(m,bought),full=a.total&&!a.missing.length;
     var meta=[esc(m.type||'Any')];if(m.minutes)meta.unshift(esc(m.minutes)+' min');if(m.lastMade)meta.push('made '+esc(shortDate(m.lastMade)));
     var chips=a.items.map(function(i){return '<span class="ing'+(i.have?'':' need')+'" title="'+esc(i.name)+'">'+esc(i.name)+'</span>';}).join('')||'<span class="ing">No ingredients set</span>';
     return '<button class="mc" data-act="meal-edit" data-id="'+esc(m.id)+'">'+photo(m)+'<div class="b"><div class="t">'+esc(m.name)+'</div><div class="m">'+meta.join(' · ')+'</div>'+
@@ -1122,7 +1131,6 @@ function saveMeal(){
   if(safeImg(img))m.img=img;else delete m.img;
   if(extras.length)m.extras=extras;else delete m.extras;
   save();closeMealModal();
-  if(picking&&!editingMealId){}
   render();
 }
 function deleteMealFromModal(){
