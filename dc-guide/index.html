@@ -3,155 +3,240 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>DC Guide</title>
+<title>Out in DC</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css"/>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,ital,wght@9..144,0,500;9..144,0,600;9..144,0,700;9..144,1,400&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,ital,wght@9..144,0,500;9..144,0,600;9..144,0,700;9..144,1,400;9..144,1,500&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
+/* Out in DC — what's around, pick one thing, put it on the calendar, go.
+   Merges the old DC Passport (saved spots on a map, key dcPassport1) and DC Guide
+   (monthly / anytime suggestions + quick links, key dcGuide1). Tokens come from ../assets/brain.css;
+   the category colours below are data colours (they encode the category of a pin / row). */
 *{box-sizing:border-box;margin:0;padding:0;}
-html,body{background:var(--bg);font-family:var(--b2-sans,'Plus Jakarta Sans',system-ui,sans-serif);color:var(--ink);min-height:100vh;-webkit-font-smoothing:antialiased;}
+:root{--shadow:0 1px 2px rgba(60,50,30,.04),0 8px 24px rgba(60,50,30,.05);
+  --c-food:#e0855e;--c-drinks:#cf6a7e;--c-arts:#6b8bd0;--c-outdoors:#5f9f72;--c-events:#d79a3c;--c-markets:#a7825a;--c-night:#9a72d0;--c-other:#8a9090;}
+html,body{background:var(--bg);font-family:var(--b2-sans,'Plus Jakarta Sans',system-ui,sans-serif);color:var(--ink);min-height:100vh;-webkit-font-smoothing:antialiased;font-size:14px;}
 button,input,select,textarea{font-family:inherit;}
-:root{--card-shadow:0 1px 2px rgba(60,50,30,.04),0 8px 24px rgba(60,50,30,.05);}
+a{color:inherit;text-decoration:none;}
 
-/* ── TITLE ROW (brain.css turns .topbar into the title row) ── */
-.topbar{display:flex;align-items:center;justify-content:space-between;}
+/* ── title row (brain.css styles .topbar) ── */
+.topbar{display:flex;align-items:flex-end;justify-content:space-between;}
 .topbar-left{display:flex;align-items:center;gap:14px;}
 .topbar-title{font-family:var(--b2-serif);font-size:34px;font-weight:600;}
+.topbar-sub{color:var(--muted);font-size:13.5px;font-weight:500;margin-top:8px;}
 .topbar-right{display:flex;align-items:center;gap:10px;}
+body.b2-shell .topbar .topbar-right{flex-shrink:1;min-width:0;}
 .back-btn{display:none;}
 
-/* ── FRAME ── */
+/* ── "Find more" dock: the user's DC event sites ── */
+.dock{display:flex;gap:8px;align-items:center;flex-wrap:wrap;justify-content:flex-end;position:relative;}
+.dock-l{font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--faint);font-weight:750;margin-right:4px;}
+.dk{position:relative;width:38px;height:38px;border-radius:11px;background:var(--raised);border:1px solid var(--line);display:flex;align-items:center;justify-content:center;
+  font:800 11.5px var(--b2-sans);color:var(--ink-2);box-shadow:0 1px 2px rgba(60,50,30,.05);transition:transform .14s,border-color .14s;flex-shrink:0;}
+.dk:hover{transform:translateY(-1px);border-color:var(--accent-line);}
+.dk img{position:absolute;inset:0;margin:auto;width:20px;height:20px;border-radius:4px;background:var(--raised);}
+.dk .tip{position:absolute;top:calc(100% + 7px);left:50%;transform:translateX(-50%);background:var(--ink);color:#fff;font:600 11px var(--b2-sans);padding:4px 8px;border-radius:6px;white-space:nowrap;pointer-events:none;opacity:0;transition:opacity .12s;z-index:5;}
+.dk:hover .tip{opacity:1;}
+.dk.plus{border-style:dashed;color:var(--faint);background:transparent;box-shadow:none;font:500 17px var(--b2-sans);cursor:pointer;}
+.dk.plus:hover{color:var(--accent-deep);}
+
+/* ── frame + shared parts ── */
 .hub{max-width:1280px;margin:0 auto;padding:20px 40px 80px;}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:18px;padding:22px 24px;box-shadow:var(--shadow);}
+.card-h{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:12px;}
+.card-t{font-family:var(--b2-serif);font-size:19px;font-weight:600;letter-spacing:-.2px;}
+.card-m{font-size:12px;color:var(--muted);font-weight:600;}
+.eyebrow{font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--muted);font-weight:750;}
+.btn{display:inline-flex;align-items:center;gap:6px;height:34px;padding:0 15px;border-radius:10px;font:650 12.5px var(--b2-sans);border:1px solid var(--line);background:var(--raised);color:var(--ink-2);cursor:pointer;white-space:nowrap;transition:border-color .15s,color .15s,opacity .15s;}
+.btn:hover{border-color:var(--accent-line);color:var(--accent-deep);}
+.btn.primary{background:var(--ink);border-color:var(--ink);color:#fff;}
+.btn.primary:hover{opacity:.88;color:#fff;}
+.btn.soft{background:var(--accent-soft);border-color:var(--accent-line);color:var(--accent-deep);}
+.btn.ok{background:var(--ok-bg);border-color:var(--ok-bg);color:var(--ok);}
+.btn.sm{height:28px;padding:0 11px;font-size:11.5px;border-radius:8px;}
+.btn.icon{width:28px;padding:0;justify-content:center;letter-spacing:1px;color:var(--muted);}
+.dot{width:10px;height:10px;border-radius:50%;flex-shrink:0;display:inline-block;}
+.grid{display:grid;grid-template-columns:repeat(12,minmax(0,1fr));gap:18px;margin-top:18px;align-items:start;}
+.s7{grid-column:span 7;}.s5{grid-column:span 5;}
 
-/* ── MONTH TABS: the shared segmented control ── */
-.month-strip-wrap{max-width:100%;overflow-x:auto;scrollbar-width:none;margin-bottom:22px;}
-.month-strip-wrap::-webkit-scrollbar{display:none;}
-.month-strip{display:inline-flex;gap:2px;padding:4px;background:var(--warm-deep);border-radius:13px;}
-.month-tab{padding:8px 14px;border:none;border-radius:10px;background:transparent;font:650 13px var(--b2-sans);color:var(--muted);cursor:pointer;white-space:nowrap;display:inline-flex;align-items:center;gap:6px;transition:color .15s,background .15s;}
-.month-tab:hover{color:var(--ink);}
-.month-tab.active{background:var(--raised);color:var(--ink);box-shadow:0 1px 3px rgba(60,50,30,.1);}
-.month-tab-count{font-size:10.5px;font-weight:750;background:var(--accent-soft);color:var(--accent-deep);padding:1px 6px;border-radius:20px;line-height:1.5;}
-.month-tab-count.empty{display:none;}
+/* ── this weekend ── */
+.wk{display:grid;grid-template-columns:auto 1fr auto;gap:22px;align-items:center;padding:18px 24px;margin-bottom:18px;}
+.wk .when{padding-right:22px;border-right:1px solid var(--hair);}
+.wk .when b{display:block;font-family:var(--b2-serif);font-size:20px;font-weight:600;white-space:nowrap;margin-top:2px;}
+.wk .t{font-size:16px;font-weight:700;line-height:1.35;}
+.wk .t em{font-style:normal;color:var(--accent-deep);cursor:pointer;}
+.wk .t em:hover{text-decoration:underline;}
+.wk .s{font-size:12.5px;color:var(--muted);font-weight:600;margin-top:3px;}
+.wk .wk-acts{display:flex;gap:8px;}
+.wk .t.empty{font-weight:600;color:var(--ink-2);font-size:14.5px;}
 
-/* ── QUICK LINKS ── */
-.resources-panel{background:var(--surface);border:1px solid var(--line);border-radius:18px;padding:18px 24px;margin-bottom:28px;box-shadow:var(--card-shadow);}
-.resources-hdr{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:12px;}
-.resources-title{font-family:var(--b2-serif);font-size:19px;font-weight:600;letter-spacing:-.2px;}
-.resources-links{display:flex;gap:6px;flex-wrap:wrap;align-items:center;}
-.resource-link{display:inline-flex;align-items:center;gap:7px;height:30px;padding:0 6px 0 12px;border:1px solid var(--line);border-radius:9px;font:650 12px var(--b2-sans);color:var(--ink-2);text-decoration:none;background:var(--raised);transition:border-color .15s,color .15s;cursor:pointer;}
-.resource-link svg{color:var(--accent-deep);}
-.resource-link:hover{border-color:var(--accent-line);color:var(--accent-deep);}
-.resource-link-del{background:none;border:none;color:var(--faint);cursor:pointer;font-size:10px;width:20px;height:20px;border-radius:6px;line-height:1;flex-shrink:0;}
-.resource-link-del:hover{background:var(--over-bg);color:var(--over);}
-.resources-empty{font-size:13px;color:var(--muted);}
-.add-resource-btn{display:inline-flex;align-items:center;gap:5px;height:28px;padding:0 11px;border:1px solid var(--accent-line);border-radius:8px;font:650 11.5px var(--b2-sans);color:var(--accent-deep);background:var(--accent-soft);cursor:pointer;}
-.add-resource-btn:hover{border-color:var(--accent);}
-.resource-add-inline{display:none;gap:8px;align-items:center;margin-top:14px;padding-top:14px;border-top:1px solid var(--hair);}
-.resource-add-inline.open{display:flex;}
-.res-inp{border:1px solid var(--line);border-radius:10px;padding:8px 12px;font:500 13px var(--b2-sans);color:var(--ink);background:var(--raised);outline:none;transition:border-color .15s,box-shadow .15s;}
-.res-inp:focus,.f-inp:focus{border-color:var(--accent-line);box-shadow:0 0 0 3px var(--accent-soft);}
-.res-inp.wide{flex:1;min-width:160px;}
-.res-save-btn{height:34px;padding:0 15px;background:var(--ink);color:#fff;border:1px solid var(--ink);border-radius:10px;font:650 12.5px var(--b2-sans);cursor:pointer;flex-shrink:0;}
-.res-cancel-btn{width:30px;height:30px;background:transparent;color:var(--faint);border:none;border-radius:8px;font-size:12px;cursor:pointer;}
-.res-cancel-btn:hover{background:var(--warm);color:var(--ink);}
+/* ── map ── */
+.mapcard{padding:0;overflow:hidden;position:relative;isolation:isolate;}
+#map{height:470px;background:#efe9da;z-index:0;}
+#map.picking{cursor:crosshair;}
+#map .leaflet-tile-pane{filter:grayscale(.85) sepia(.2) brightness(1.05) contrast(.86);}
+.leaflet-container{font-family:var(--b2-sans);}
+.overlay{position:absolute;left:18px;right:18px;top:16px;z-index:500;display:flex;justify-content:space-between;align-items:flex-start;gap:12px;pointer-events:none;}
+.overlay>*{pointer-events:auto;}
+.chiprow{display:flex;flex-wrap:wrap;gap:6px;}
+.fpill{display:inline-flex;align-items:center;gap:7px;font:600 12.5px var(--b2-sans);padding:6px 12px;border-radius:20px;background:var(--raised);border:1px solid var(--line);color:var(--ink-2);white-space:nowrap;cursor:pointer;box-shadow:0 2px 8px rgba(60,50,30,.12);}
+.fpill:hover{color:var(--ink);}
+.fpill i{width:8px;height:8px;border-radius:50%;}
+.fpill small{font-size:11px;color:var(--faint);font-weight:700;}
+.fpill.on{background:var(--ink);border-color:var(--ink);color:#fff;}
+.fpill.on small{color:rgba(255,255,255,.6);}
+.seg{display:inline-flex;gap:2px;padding:3px;background:rgba(255,253,248,.96);border:1px solid var(--line);border-radius:12px;box-shadow:0 2px 8px rgba(60,50,30,.12);flex-shrink:0;}
+.seg button{padding:6px 12px;border:none;background:transparent;border-radius:9px;font:650 12px var(--b2-sans);color:var(--muted);cursor:pointer;white-space:nowrap;}
+.seg button:hover{color:var(--ink);}
+.seg button.on{background:var(--ink);color:#fff;}
+.legend{position:absolute;left:18px;bottom:14px;z-index:500;display:flex;gap:14px;align-items:center;padding:8px 12px;border-radius:10px;background:rgba(255,253,248,.95);border:1px solid var(--line);font-size:11.5px;font-weight:650;color:var(--muted);}
+.legend i{display:inline-block;width:10px;height:10px;border-radius:50%;background:var(--ink-2);margin-right:6px;vertical-align:-1px;}
+.legend i.evp{border-radius:3px;transform:rotate(45deg);}
+.pickbar{position:absolute;left:50%;top:64px;transform:translateX(-50%);z-index:600;display:none;align-items:center;gap:10px;padding:8px 8px 8px 14px;border-radius:12px;background:var(--ink);color:#fff;font-size:12.5px;font-weight:600;box-shadow:0 8px 24px rgba(36,31,23,.25);white-space:nowrap;}
+.pickbar.on{display:flex;}
+.pickbar b{color:#d9ccf6;}
+.pickbar button{height:26px;padding:0 10px;border-radius:7px;border:1px solid rgba(255,255,255,.25);background:transparent;color:#fff;font:650 11.5px var(--b2-sans);cursor:pointer;}
+.pin{width:16px;height:16px;border-radius:50%;border:2.5px solid #fff;box-shadow:0 1px 4px rgba(0,0,0,.35);transition:transform .15s;}
+.pin.evp{border-radius:5px;transform:rotate(45deg);}
+.pin.done{opacity:.45;}
+.pin.approx{border-style:dashed;}
+.pin.big{width:22px;height:22px;box-shadow:0 0 0 5px rgba(142,113,211,.25),0 1px 4px rgba(0,0,0,.35);}
+.leaflet-popup-content-wrapper{border-radius:14px;border:1px solid var(--line);background:var(--surface);box-shadow:0 12px 34px rgba(60,50,30,.18);}
+.leaflet-popup-tip{background:var(--surface);}
+.leaflet-popup-content{margin:14px 16px;font-size:13px;color:var(--ink);min-width:220px;}
+.pp b{font-size:14.5px;font-weight:700;display:block;}
+.pp .pm{display:block;font-size:12px;color:var(--muted);font-weight:600;margin:3px 0 10px;line-height:1.45;}
+.pp p{font-size:12.5px;color:var(--ink-2);margin:0 0 12px;line-height:1.45;}
+.pp .pa{display:flex;gap:6px;flex-wrap:wrap;}
+.pp .pl{font-size:11.5px;font-weight:700;color:var(--ok);margin:-4px 0 10px;}
+.pp .px{font-size:11.5px;color:var(--muted);margin-top:10px;}
+.pp .px a{color:var(--accent-deep);font-weight:650;cursor:pointer;}
 
-/* ── SECTION HEADLINE: Fraunces ink with one italic lavender word ── */
-.page-hero{margin-bottom:16px;display:flex;align-items:flex-end;justify-content:space-between;gap:20px;}
-.hero-month{font-family:var(--b2-serif);font-size:38px;font-weight:600;letter-spacing:-.8px;line-height:1.05;color:var(--ink);}
-.hero-month em{font-style:italic;font-weight:500;color:var(--accent-deep);}
-.hero-sub{font-size:13.5px;color:var(--muted);margin-top:8px;font-weight:500;}
-.hero-stats{display:flex;gap:26px;}
-.hero-stat-num{font-family:var(--b2-serif);font-size:28px;font-weight:600;line-height:1;letter-spacing:-.5px;}
-.hero-stat-lbl{font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--muted);font-weight:750;margin-top:6px;}
+/* ── this month list ── */
+.tabs{display:inline-flex;gap:2px;padding:4px;background:var(--warm-deep);border-radius:13px;}
+.tabs button{padding:5px 11px;border:none;background:transparent;border-radius:10px;font:650 12px var(--b2-sans);color:var(--muted);cursor:pointer;white-space:nowrap;}
+.tabs button:hover{color:var(--ink);}
+.tabs button.on{background:var(--raised);color:var(--ink);box-shadow:0 1px 3px rgba(60,50,30,.1);}
+.ev{display:grid;grid-template-columns:52px minmax(0,1fr) auto;gap:14px;align-items:center;padding:12px 0;}
+.ev+.ev{border-top:1px solid var(--hair);}
+.ev.done .ev-main,.ev.done .date{opacity:.55;}
+.date{text-align:center;border-radius:12px;background:var(--warm);padding:7px 0;}
+.date span{display:block;font-size:10px;letter-spacing:.12em;font-weight:800;color:var(--muted);white-space:nowrap;}
+.date b{display:block;font-family:var(--b2-serif);font-size:19px;font-weight:600;line-height:1.1;}
+.date.any b{font-size:12.5px;font-family:var(--b2-sans);font-weight:750;color:var(--ink-2);padding:3px 0;}
+.date.any span:empty{display:none;}
+.ev .t{font-size:14px;font-weight:700;display:flex;align-items:center;gap:8px;min-width:0;}
+.ev .t .nm{cursor:pointer;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.ev .t .nm:hover{color:var(--accent-deep);}
+.ev .t .dot{width:8px;height:8px;}
+.ev .m{font-size:12px;color:var(--muted);font-weight:600;margin-top:3px;line-height:1.45;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;}
+.acts{display:flex;gap:6px;align-items:center;justify-content:flex-end;}
+.planned{font-size:11.5px;font-weight:700;color:var(--ok);white-space:nowrap;cursor:pointer;}
+.planned:hover{text-decoration:underline;}
+.planned.past{color:var(--muted);}
+.chip{display:inline-flex;align-items:center;gap:5px;font-size:11px;font-weight:700;padding:3px 9px;border-radius:20px;background:var(--warm);color:var(--muted);white-space:nowrap;}
+.chip.ok{background:var(--ok-bg);color:var(--ok);}
+.empty-l{padding:22px 4px 10px;color:var(--muted);font-size:13px;line-height:1.55;}
+.empty-l b{display:block;font-family:var(--b2-serif);font-style:italic;font-weight:500;font-size:17px;color:var(--ink-2);margin-bottom:4px;}
+.addrow{display:flex;align-items:center;gap:8px;margin-top:10px;padding:0 6px 0 12px;height:40px;border-radius:10px;border:1.5px dashed var(--line);color:var(--faint);transition:border-color .15s;}
+.addrow:focus-within{border-color:var(--accent-line);border-style:solid;background:var(--raised);}
+.addrow b{color:var(--accent-deep);font-size:15px;}
+.addrow input{flex:1;min-width:0;border:none;background:transparent;outline:none;font:550 13px var(--b2-sans);color:var(--ink);}
+.addrow input::placeholder{color:var(--faint);}
+.later{margin-top:12px;font-size:12px;color:var(--muted);font-weight:600;display:flex;gap:6px;flex-wrap:wrap;align-items:center;}
+.later button{border:none;background:var(--warm);color:var(--ink-2);font:650 11.5px var(--b2-sans);padding:3px 9px;border-radius:20px;cursor:pointer;}
+.later button:hover,.later button.on{background:var(--accent-soft);color:var(--accent-deep);}
 
-/* ── FILTERS ── */
-.filter-bar{display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin-bottom:20px;padding-bottom:18px;border-bottom:1px solid var(--line);}
-#filter-cats{display:contents;}
-.filter-label{font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--muted);font-weight:750;flex-shrink:0;margin-right:4px;}
-.f-pill{padding:6px 12px;border:none;border-radius:20px;font:600 12.5px var(--b2-sans);cursor:pointer;background:var(--warm-deep);color:var(--ink-2);transition:background .15s,color .15s;white-space:nowrap;display:inline-flex;align-items:center;gap:6px;}
-.f-pill:hover{color:var(--ink);}
-.f-pill.active{background:var(--ink);color:#fff;}
-.f-pill.price-active{background:var(--ink);color:#fff;}
-.filter-sep{width:1px;height:20px;background:var(--line);flex-shrink:0;margin:0 8px;}
-.filter-bar select.f-inp{width:auto;}
-.add-btn{display:inline-flex;align-items:center;height:34px;padding:0 15px;border:1px solid var(--ink);border-radius:10px;background:var(--ink);color:#fff;font:650 12.5px var(--b2-sans);cursor:pointer;white-space:nowrap;flex-shrink:0;transition:opacity .15s;}
-.add-btn:hover{opacity:.88;}
+/* ── want to try ── */
+.row{display:flex;align-items:center;gap:12px;padding:11px 0;}
+.row+.row{border-top:1px solid var(--hair);}
+.grow{flex:1;min-width:0;}
+.r-t{font-weight:650;font-size:14px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;cursor:pointer;}
+.r-t:hover{color:var(--accent-deep);}
+.r-s{font-size:12px;color:var(--muted);font-weight:550;margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.want-more{margin-top:8px;border:none;background:none;font:650 12.5px var(--b2-sans);color:var(--accent-deep);cursor:pointer;padding:4px 0;}
+.want-more:hover{text-decoration:underline;}
+.foot-note{margin-top:12px;}
 
-/* ── CARDS ── */
-.cards-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:18px;}
-.event-card{background:var(--surface);border:1px solid var(--line);border-radius:18px;overflow:hidden;transition:transform .2s,border-color .2s;display:flex;flex-direction:column;box-shadow:var(--card-shadow);}
-.event-card:hover{transform:translateY(-2px);border-color:var(--accent-line);}
-.event-card.done .card-body{opacity:.6;}
-.card-banner{width:100%;height:160px;object-fit:cover;display:block;flex-shrink:0;}
-/* no decorative colour stripes: category colour lives in the chip's dot */
-.card-banner-placeholder{display:none;}
-.card-body{padding:20px 22px 16px;flex:1;display:flex;flex-direction:column;gap:6px;}
-.card-cat-row{display:flex;align-items:center;gap:5px;flex-wrap:wrap;margin-bottom:4px;}
-.cat-badge,.price-badge,.hood-badge{display:inline-flex;align-items:center;gap:6px;padding:3px 9px;border-radius:20px;font-size:11px;font-weight:700;white-space:nowrap;background:var(--warm);color:var(--muted);}
-.cat-badge{color:var(--ink-2);}
-.cat-badge::before{content:'';width:7px;height:7px;border-radius:50%;background:var(--c,var(--accent));flex-shrink:0;}
-.card-title{font-family:var(--b2-serif);font-size:19px;font-weight:600;letter-spacing:-.2px;line-height:1.25;}
-.card-meta{font-size:12px;color:var(--accent-deep);font-weight:650;display:flex;flex-wrap:wrap;gap:8px;}
-.card-meta-item{display:flex;align-items:center;gap:4px;}
-.card-note{font-size:12.5px;color:var(--muted);line-height:1.6;flex:1;margin-top:2px;}
-.card-footer{display:flex;align-items:center;gap:6px;margin:0 22px;padding:12px 0 14px;border-top:1px solid var(--hair);}
-.status-btn{display:inline-flex;align-items:center;gap:5px;height:28px;padding:0 11px;border-radius:8px;font:650 11.5px var(--b2-sans);cursor:pointer;border:1px solid;transition:border-color .15s;}
-.status-want{background:var(--accent-soft);border-color:var(--accent-line);color:var(--accent-deep);}
-.status-want:hover{border-color:var(--accent);}
-.status-done{background:var(--ok-bg);border-color:var(--ok-bg);color:var(--ok);}
-.card-link-btn{display:inline-flex;align-items:center;gap:4px;height:28px;padding:0 11px;border:1px solid var(--line);border-radius:8px;font:650 11.5px var(--b2-sans);color:var(--ink-2);background:var(--raised);text-decoration:none;}
-.card-link-btn:hover{border-color:var(--accent-line);color:var(--accent-deep);}
-.dots-wrap{position:relative;margin-left:auto;flex-shrink:0;}
-.dots-btn{width:28px;height:28px;border-radius:8px;border:1px solid var(--line);background:var(--raised);cursor:pointer;font-size:12px;color:var(--muted);display:flex;align-items:center;justify-content:center;letter-spacing:1px;}
-.dots-btn:hover{border-color:var(--accent-line);color:var(--accent-deep);}
-.dots-menu{position:absolute;right:0;bottom:calc(100% + 6px);background:var(--raised);border:1px solid var(--line);border-radius:12px;box-shadow:0 18px 50px rgba(60,50,30,.16);min-width:130px;padding:6px;display:none;z-index:50;}
-.dots-menu.open{display:block;animation:popIn .15s;}
-@keyframes popIn{from{opacity:0;transform:scale(.96)}to{opacity:1;transform:scale(1)}}
-.dots-item{display:block;padding:8px 10px;border-radius:8px;font:600 12.5px var(--b2-sans);color:var(--ink-2);cursor:pointer;border:none;background:transparent;width:100%;text-align:left;}
-.dots-item:hover{background:var(--accent-soft);color:var(--accent-deep);}
-.dots-item.danger{color:var(--over);}
-.dots-item.danger:hover{background:var(--over-bg);color:var(--over);}
+/* ── floating layers: popover, menus, link editor, toast (all above the nav, which is z 500) ── */
+.pop{position:absolute;z-index:1000;width:310px;background:var(--raised);border:1px solid var(--line);border-radius:16px;box-shadow:0 18px 50px rgba(60,50,30,.2);padding:16px;display:none;}
+.pop.open{display:block;animation:popIn .15s;}
+@keyframes popIn{from{opacity:0;transform:translateY(-4px)}to{opacity:1;transform:none}}
+.pop .pt{font-family:var(--b2-serif);font-size:16px;font-weight:600;}
+.pop .ps{font-size:12px;color:var(--muted);font-weight:600;margin:2px 0 12px;line-height:1.4;}
+.dchips{display:flex;gap:6px;margin-bottom:10px;}
+.dchips button{flex:1;min-width:0;text-align:center;padding:7px 0;border-radius:10px;border:1px solid var(--line);background:var(--raised);font:700 11.5px var(--b2-sans);color:var(--ink-2);line-height:1.25;cursor:pointer;}
+.dchips button small{display:block;font-size:10px;color:var(--muted);font-weight:700;letter-spacing:.06em;}
+.dchips button:hover:not(:disabled){border-color:var(--accent-line);}
+.dchips button.on{background:var(--accent-soft);border-color:var(--accent-deep);color:var(--accent-deep);}
+.dchips button.on small{color:var(--accent-deep);}
+.dchips button:disabled{opacity:.4;cursor:default;}
+.prow{display:flex;gap:8px;margin-bottom:12px;}
+.prow > *{flex:1;min-width:0;}
+.pfoot{display:flex;justify-content:space-between;align-items:center;gap:10px;}
+.pmsg{font-size:11.5px;color:var(--over);font-weight:600;margin-top:8px;display:none;}
+.f-inp{width:100%;border:1px solid var(--line);border-radius:10px;padding:9px 12px;font:500 13px var(--b2-sans);color:var(--ink);background:var(--raised);outline:none;transition:border-color .15s,box-shadow .15s;height:38px;}
+textarea.f-inp{height:auto;}
+.f-inp:focus{border-color:var(--accent-line);box-shadow:0 0 0 3px var(--accent-soft);}
+.menu{position:absolute;z-index:1000;background:var(--raised);border:1px solid var(--line);border-radius:12px;box-shadow:0 18px 50px rgba(60,50,30,.16);min-width:170px;padding:6px;display:none;}
+.menu.open{display:block;animation:popIn .12s;}
+.menu button{display:block;width:100%;text-align:left;padding:8px 10px;border-radius:8px;border:none;background:transparent;font:600 12.5px var(--b2-sans);color:var(--ink-2);cursor:pointer;}
+.menu button:hover{background:var(--accent-soft);color:var(--accent-deep);}
+.menu button.danger{color:var(--over);}
+.menu button.danger:hover{background:var(--over-bg);color:var(--over);}
+.links-ed{width:380px;}
+.lrow{display:flex;gap:6px;align-items:center;margin-bottom:6px;}
+.lrow .f-inp{height:32px;padding:6px 10px;font-size:12.5px;}
+.lrow .f-inp:first-child{flex:0 0 36%;}
+.lrow button{width:26px;height:26px;border:none;border-radius:7px;background:transparent;color:var(--faint);cursor:pointer;font-size:13px;flex-shrink:0;}
+.lrow button:hover{background:var(--warm-deep);color:var(--ink);}
+.lrow button.x:hover{background:var(--over-bg);color:var(--over);}
+.toast{position:fixed;left:50%;bottom:26px;transform:translateX(-50%) translateY(20px);z-index:1200;display:flex;align-items:center;gap:12px;padding:10px 10px 10px 16px;border-radius:12px;background:var(--ink);color:#fff;font:600 13px var(--b2-sans);box-shadow:0 12px 34px rgba(36,31,23,.3);opacity:0;pointer-events:none;transition:opacity .18s,transform .18s;max-width:calc(100vw - 32px);}
+.toast.on{opacity:1;transform:translateX(-50%);pointer-events:auto;}
+.toast button{height:26px;padding:0 10px;border-radius:7px;border:1px solid rgba(255,255,255,.3);background:transparent;color:#fff;font:650 11.5px var(--b2-sans);cursor:pointer;}
+.toast button:empty{display:none;}
 
-/* ── EMPTY ── */
-.empty{text-align:center;padding:56px 20px;color:var(--muted);background:var(--surface);border:1px dashed var(--line);border-radius:18px;grid-column:1/-1;}
-.empty-icon{display:flex;align-items:center;justify-content:center;width:48px;height:48px;margin:0 auto 14px;border-radius:50%;background:var(--accent-soft);font-size:20px;}
-.empty-text{font-family:var(--b2-serif);font-size:21px;font-style:italic;color:var(--ink);margin-bottom:6px;}
-.empty-sub{font-size:13px;}
-
-/* ── MODAL ── */
-.modal-overlay{display:none;position:fixed;inset:0;background:rgba(36,31,23,.28);backdrop-filter:blur(3px);z-index:1000;align-items:center;justify-content:center;padding:20px;}
+/* ── modals ── */
+.modal-overlay{display:none;position:fixed;inset:0;background:rgba(36,31,23,.28);backdrop-filter:blur(3px);z-index:1100;align-items:center;justify-content:center;padding:20px;}
 .modal-overlay.open{display:flex;animation:fadeIn .2s;}
 @keyframes fadeIn{from{opacity:0}to{opacity:1}}
-.modal{background:var(--surface);border-radius:18px;border:1px solid var(--line);padding:24px 26px;width:100%;max-width:560px;max-height:90vh;overflow-y:auto;box-shadow:0 30px 70px rgba(36,31,23,.22);animation:popBig .2s;}
-@keyframes popBig{from{transform:scale(.97);opacity:0}to{transform:scale(1);opacity:1}}
+.modal{background:var(--surface);border-radius:18px;border:1px solid var(--line);padding:24px 26px;width:100%;max-width:560px;max-height:90vh;overflow-y:auto;box-shadow:0 30px 70px rgba(36,31,23,.22);}
 .modal-title{font-family:var(--b2-serif);font-size:22px;font-weight:600;margin-bottom:18px;letter-spacing:-.3px;}
 .f-field{margin-bottom:14px;}
 .f-lbl{font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--muted);font-weight:750;margin-bottom:6px;display:block;}
-.f-lbl span{color:var(--faint);font-size:11.5px!important;font-weight:500;}
-.f-inp{width:100%;border:1px solid var(--line);border-radius:10px;padding:9px 12px;font:500 13px var(--b2-sans);color:var(--ink);background:var(--raised);outline:none;transition:border-color .15s,box-shadow .15s;}
+.f-lbl span{color:var(--faint);font-weight:500;letter-spacing:0;text-transform:none;font-size:11px;}
 .f-row{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
-.f-row3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;}
 .f-hint{font-size:11.5px;color:var(--muted);margin-top:5px;}
+.f-loc{display:flex;align-items:center;gap:8px;flex-wrap:wrap;font-size:12.5px;color:var(--ink-2);font-weight:600;}
+.f-loc .grow{min-width:140px;}
 .m-actions{display:flex;gap:8px;justify-content:flex-end;margin-top:20px;padding-top:16px;border-top:1px solid var(--hair);}
-.m-btn{display:inline-flex;align-items:center;height:34px;padding:0 16px;border-radius:10px;font:650 12.5px var(--b2-sans);cursor:pointer;border:1px solid;transition:opacity .15s,border-color .15s;}
-.m-cancel{background:var(--raised);border-color:var(--line);color:var(--ink-2);}
-.m-cancel:hover{border-color:var(--accent-line);color:var(--accent-deep);}
-.m-save{background:var(--ink);border-color:var(--ink);color:#fff;}
-.m-save:hover{opacity:.88;}
-.m-delete{background:var(--over-bg);border-color:var(--over-bg);color:var(--over);margin-right:auto;order:-1;}
-.cat-selector{display:flex;gap:5px;flex-wrap:wrap;}
-.cat-sel-btn{display:inline-flex;align-items:center;gap:6px;padding:6px 11px;border:none;border-radius:20px;font:600 12px var(--b2-sans);cursor:pointer;background:var(--warm-deep);color:var(--ink-2);transition:background .15s,color .15s;}
+.m-del{background:var(--over-bg);border-color:var(--over-bg);color:var(--over);margin-right:auto;}
+.m-del:hover{border-color:var(--over);color:var(--over);}
+.cat-selector,.tag-picker{display:flex;gap:5px;flex-wrap:wrap;}
+.cat-sel-btn,.tag-option{display:inline-flex;align-items:center;gap:6px;padding:6px 11px;border:none;border-radius:20px;font:600 12px var(--b2-sans);cursor:pointer;background:var(--warm-deep);color:var(--ink-2);transition:background .15s,color .15s;}
 .cat-sel-btn::before{content:'';width:7px;height:7px;border-radius:50%;background:var(--c,var(--accent));}
 .cat-sel-btn.on{background:var(--ink);color:#fff;}
+.tag-option.selected{background:var(--accent-soft);color:var(--accent-deep);box-shadow:0 0 0 1px var(--accent-line) inset;}
 .img-preview{width:100%;height:120px;border-radius:10px;object-fit:cover;margin-top:8px;display:none;border:1px solid var(--line);}
 .img-preview.show{display:block;}
+#sp-geo-status{font-size:12px;margin-top:5px;min-height:16px;}
 
+@media(max-width:1100px){
+  .s7,.s5{grid-column:span 12;}
+}
 @media(max-width:860px){
-  body.b2-shell .topbar{flex-wrap:wrap;align-items:center;}
+  body.b2-shell .topbar{flex-wrap:wrap;align-items:flex-start;}
   .hub{padding:16px 16px 60px;}
-  .page-hero{flex-direction:column;gap:10px;align-items:flex-start;}
-  .hero-month{font-size:30px;}
-  .filter-sep{display:none;}
+  .wk{grid-template-columns:1fr;gap:12px;}
+  .wk .when{border-right:none;padding-right:0;}
+  .overlay{flex-direction:column;}
+  .chiprow .fpill{padding:5px 10px;font-size:12px;}
+  #map{height:420px;}
+  .legend{display:none;}
+  .ev{grid-template-columns:48px minmax(0,1fr);}
+  .ev .acts{grid-column:2;justify-content:flex-start;}
+  .links-ed,.pop{width:calc(100vw - 32px);max-width:380px;}
 }
 </style>
 <link rel="stylesheet" href="../assets/brain.css">
@@ -159,13 +244,99 @@ button,input,select,textarea{font-family:inherit;}
 <body>
 <script src="../assets/shell.js"></script>
 
-<!-- ITEM MODAL -->
+<!-- TITLE ROW -->
+<div class="topbar">
+  <div class="topbar-left">
+    <a href="../" class="back-btn">
+      <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"/></svg>
+      Brain 2.0
+    </a>
+    <div>
+      <div class="topbar-title">Out in DC</div>
+      <div class="topbar-sub">What’s around you — pick one thing, put it on the calendar, go.</div>
+    </div>
+  </div>
+  <div class="topbar-right">
+    <div class="dock" id="dock"></div>
+  </div>
+</div>
+
+<div class="hub">
+
+  <!-- THIS WEEKEND: built from your own saved places and events -->
+  <section class="card wk" id="wk"></section>
+
+  <!-- MAP -->
+  <section class="card mapcard">
+    <div id="map"></div>
+    <div class="overlay">
+      <div class="chiprow" id="chips"></div>
+      <div class="seg" id="seg"></div>
+    </div>
+    <div class="pickbar" id="pickbar"><span id="pick-text"></span><button type="button" id="pick-cancel">Cancel</button></div>
+    <div class="legend" id="legend"></div>
+  </section>
+
+  <div class="grid">
+    <!-- THIS MONTH -->
+    <section class="card s7">
+      <div class="card-h"><div class="card-t">This month in DC</div><div class="tabs" id="mtabs"></div></div>
+      <div id="month-list"></div>
+      <form class="addrow" id="addrow" autocomplete="off">
+        <b>+</b><input id="add-input" type="text" placeholder="Add something you saw — paste a link or a name">
+      </form>
+      <div class="later" id="later"></div>
+    </section>
+
+    <!-- WANT TO TRY -->
+    <section class="card s5">
+      <div class="card-h"><div class="card-t">Want to try</div><div style="display:flex;gap:10px;align-items:center"><span class="card-m" id="want-count"></span><button class="btn sm soft" type="button" data-act="add-spot">+ Place</button></div></div>
+      <div id="want-list"></div>
+      <div class="card-m foot-note">“Been ✓” just takes it off this list — no counting, no passport.</div>
+    </section>
+  </div>
+</div>
+
+<!-- PLAN IT POPOVER -->
+<div class="pop" id="plan-pop" role="dialog" aria-label="Plan it">
+  <div class="pt">Plan it</div>
+  <div class="ps" id="plan-sub"></div>
+  <div class="dchips" id="plan-days"></div>
+  <input class="f-inp" type="date" id="plan-date" style="display:none;margin-bottom:10px">
+  <div class="prow">
+    <input class="f-inp" type="time" id="plan-time" aria-label="Start time">
+    <select class="f-inp" id="plan-len" aria-label="How long">
+      <option value="60">1 hour</option><option value="90">1.5 hours</option><option value="120">2 hours</option>
+      <option value="180">3 hours</option><option value="240">4 hours</option><option value="0">All day</option>
+    </select>
+  </div>
+  <div class="pfoot"><span class="card-m" id="plan-dest"></span><button class="btn sm primary" type="button" id="plan-go">Add to calendar</button></div>
+  <div class="pmsg" id="plan-msg"></div>
+</div>
+
+<!-- ROW MENU -->
+<div class="menu" id="row-menu"></div>
+
+<!-- FIND MORE: link editor -->
+<div class="pop links-ed" id="links-ed">
+  <div class="pt" style="margin-bottom:10px">Find more — your DC sites</div>
+  <div id="links-rows"></div>
+  <form class="lrow" id="links-add" style="margin-top:10px;padding-top:10px;border-top:1px solid var(--hair)">
+    <input class="f-inp" name="label" placeholder="Name" maxlength="40">
+    <input class="f-inp" name="url" placeholder="https://…">
+    <button type="submit" class="btn sm primary" style="width:auto;color:#fff">Add</button>
+  </form>
+</div>
+
+<div class="toast" id="toast"><span id="toast-t"></span><button type="button" id="toast-b"></button></div>
+
+<!-- ITEM MODAL (a suggestion / event — dcGuide1) -->
 <div class="modal-overlay" id="modal">
   <div class="modal">
-    <div class="modal-title" id="modal-title">Add Suggestion</div>
+    <div class="modal-title" id="modal-title">Add something</div>
     <div class="f-field">
-      <label class="f-lbl">Name / Event Title</label>
-      <input class="f-inp" id="m-name" type="text" placeholder="e.g. Georgetown Waterfront Walk">
+      <label class="f-lbl" for="m-name">Name / Event Title</label>
+      <input class="f-inp" id="m-name" type="text" placeholder="What is it?">
     </div>
     <div class="f-row">
       <div class="f-field">
@@ -173,40 +344,18 @@ button,input,select,textarea{font-family:inherit;}
         <div class="cat-selector" id="cat-selector"></div>
       </div>
       <div class="f-field">
-        <label class="f-lbl">Month</label>
-        <select class="f-inp" id="m-month">
-          <option value="evergreen">📌 Anytime / Year-Round</option>
-        </select>
-        <div class="f-hint">Pick "Anytime" for restaurants, parks & go-to spots</div>
+        <label class="f-lbl" for="m-month">Month</label>
+        <select class="f-inp" id="m-month"></select>
+        <div class="f-hint">“Anytime” for restaurants, parks &amp; go-to spots</div>
       </div>
     </div>
     <div class="f-row">
       <div class="f-field">
-        <label class="f-lbl">Neighborhood</label>
-        <select class="f-inp" id="m-hood">
-          <option value="">— Any / TBD —</option>
-          <option>Georgetown</option>
-          <option>Dupont Circle</option>
-          <option>14th St / U Street</option>
-          <option>Adams Morgan</option>
-          <option>Capitol Hill</option>
-          <option>Navy Yard / Yards Park</option>
-          <option>National Mall</option>
-          <option>Penn Quarter / Chinatown</option>
-          <option>Logan Circle</option>
-          <option>Shaw</option>
-          <option>Columbia Heights</option>
-          <option>Foggy Bottom</option>
-          <option>H Street Corridor</option>
-          <option>Petworth</option>
-          <option>NoMa / Union Market</option>
-          <option>Wharf / Southwest</option>
-          <option>Chevy Chase</option>
-          <option>Other</option>
-        </select>
+        <label class="f-lbl" for="m-hood">Neighborhood</label>
+        <select class="f-inp" id="m-hood"></select>
       </div>
       <div class="f-field">
-        <label class="f-lbl">Price Tier</label>
+        <label class="f-lbl" for="m-price">Price Tier</label>
         <select class="f-inp" id="m-price">
           <option value="free">Free</option>
           <option value="$">$ — Under $20</option>
@@ -216,460 +365,1082 @@ button,input,select,textarea{font-family:inherit;}
       </div>
     </div>
     <div class="f-field">
-      <label class="f-lbl">When / Dates <span style="font-weight:400;letter-spacing:0;text-transform:none;font-size:9px;">(optional)</span></label>
-      <input class="f-inp" id="m-dates" type="text" placeholder="e.g. Every Fri · June 7–9 · Weekends only">
+      <label class="f-lbl" for="m-dates">When / Dates <span>(optional — e.g. a date, a range, “every Sat”)</span></label>
+      <input class="f-inp" id="m-dates" type="text" placeholder="When is it?">
     </div>
     <div class="f-field">
-      <label class="f-lbl">Cover Image URL <span style="font-weight:400;letter-spacing:0;text-transform:none;font-size:9px;">(optional — right-click any image → Copy Image Address)</span></label>
-      <input class="f-inp" id="m-img" type="text" placeholder="https://..." oninput="previewImg(this.value)">
+      <label class="f-lbl">Map pin</label>
+      <div class="f-loc"><span class="grow" id="m-loc-text"></span><button type="button" class="btn sm" id="m-loc-pick">Pick on map</button><button type="button" class="btn sm" id="m-loc-reset">Use neighborhood</button></div>
+    </div>
+    <div class="f-field">
+      <label class="f-lbl" for="m-link">Link <span>(optional)</span></label>
+      <input class="f-inp" id="m-link" type="text" placeholder="https://…">
+    </div>
+    <div class="f-field">
+      <label class="f-lbl" for="m-img">Cover Image URL <span>(optional)</span></label>
+      <input class="f-inp" id="m-img" type="text" placeholder="https://…">
       <img class="img-preview" id="img-preview" alt="">
     </div>
     <div class="f-field">
-      <label class="f-lbl">Link <span style="font-weight:400;letter-spacing:0;text-transform:none;font-size:9px;">(optional)</span></label>
-      <input class="f-inp" id="m-link" type="text" placeholder="https://...">
-    </div>
-    <div class="f-field">
-      <label class="f-lbl">Notes <span style="font-weight:400;letter-spacing:0;text-transform:none;font-size:9px;">(optional)</span></label>
-      <textarea class="f-inp" id="m-note" rows="2" style="resize:vertical;min-height:60px;" placeholder="Dress code, best time to go, book ahead..."></textarea>
+      <label class="f-lbl" for="m-note">Notes <span>(optional)</span></label>
+      <textarea class="f-inp" id="m-note" rows="2" style="resize:vertical;min-height:60px;" placeholder="Best time to go, book ahead…"></textarea>
     </div>
     <div class="m-actions">
-      <button class="m-btn m-cancel" onclick="closeModal()">Cancel</button>
-      <button class="m-btn m-delete" id="m-del-btn" style="display:none;" onclick="deleteFromModal()">Delete</button>
-      <button class="m-btn m-save" onclick="saveItem()">Save</button>
+      <button class="btn m-del" id="m-del-btn" type="button" style="display:none;">Delete</button>
+      <button class="btn" type="button" data-close="modal">Cancel</button>
+      <button class="btn primary" type="button" id="m-save">Save</button>
     </div>
   </div>
 </div>
 
-<!-- TOPBAR -->
-<div class="topbar">
-  <div class="topbar-left">
-    <a href="../" class="back-btn">
-      <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"/></svg>
-      Brain 2.0
-    </a>
-    <div class="topbar-title">DC Guide</div>
-  </div>
-  <div class="topbar-right">
-    <div class="topbar-date" id="today-date"></div>
-    <button class="add-btn" onclick="openAddModal()">+ Add Suggestion</button>
+<!-- SPOT MODAL (a saved place — dcPassport1) -->
+<div class="modal-overlay" id="sp-modal">
+  <div class="modal" style="max-width:520px">
+    <div class="modal-title" id="sp-title">Add a place</div>
+    <div class="f-field">
+      <label class="f-lbl" for="sp-name">Name</label>
+      <input class="f-inp" id="sp-name" type="text" placeholder="Place name">
+    </div>
+    <div class="f-row">
+      <div class="f-field">
+        <label class="f-lbl" for="sp-category">Category</label>
+        <select class="f-inp" id="sp-category"></select>
+      </div>
+      <div class="f-field">
+        <label class="f-lbl" for="sp-city">Area</label>
+        <select class="f-inp" id="sp-city">
+          <option value="DC">Washington, DC</option>
+          <option value="MD">Maryland</option>
+          <option value="VA">Virginia</option>
+        </select>
+      </div>
+    </div>
+    <div class="f-field">
+      <label class="f-lbl" for="sp-search">Find it <span>— type a place name and press Enter</span></label>
+      <div style="display:flex;gap:8px;">
+        <input class="f-inp" id="sp-search" type="text" placeholder="Search OpenStreetMap" style="flex:1;">
+        <button type="button" class="btn primary" id="sp-search-btn" style="height:38px">Search</button>
+      </div>
+      <div id="sp-geo-status"></div>
+    </div>
+    <div class="f-field">
+      <label class="f-lbl" for="sp-coords">Or paste coordinates <span>— “38.9, -77.03” from Google Maps</span></label>
+      <div style="display:flex;gap:8px;">
+        <input class="f-inp" id="sp-coords" type="text" placeholder="lat, lng" style="flex:1;">
+        <button type="button" class="btn" id="sp-pick" style="height:38px">Pick on map</button>
+      </div>
+      <input type="hidden" id="sp-lat"><input type="hidden" id="sp-lng">
+      <div class="f-hint" id="sp-ll-text"></div>
+    </div>
+    <div class="f-field">
+      <label class="f-lbl" for="sp-note">Note <span>(optional)</span></label>
+      <input class="f-inp" id="sp-note" type="text" placeholder="Must-orders, happy hour, why you want to go…">
+    </div>
+    <div class="f-field">
+      <label class="f-lbl" for="sp-link">Link <span>(optional)</span></label>
+      <input class="f-inp" id="sp-link" type="text" placeholder="Website, Google Maps, Instagram…">
+    </div>
+    <div class="f-field">
+      <label class="f-lbl">Tags</label>
+      <div class="tag-picker" id="tag-picker"></div>
+    </div>
+    <div class="m-actions">
+      <button class="btn m-del" id="sp-del-btn" type="button" style="display:none;">Delete</button>
+      <button class="btn" type="button" data-close="sp-modal">Cancel</button>
+      <button class="btn primary" type="button" id="sp-save">Save</button>
+    </div>
   </div>
 </div>
 
-<div class="hub">
-
-  <!-- MONTH TABS -->
-  <div class="month-strip-wrap">
-    <div class="month-strip" id="month-strip"></div>
-  </div>
-
-  <!-- RESOURCES PANEL -->
-  <div class="resources-panel">
-    <div class="resources-hdr">
-      <span class="resources-title">Quick links</span>
-      <button class="add-resource-btn" id="add-res-btn" onclick="toggleAddResource()">+ Add Link</button>
-    </div>
-    <div class="resources-links" id="resources-links"></div>
-    <div class="resource-add-inline" id="res-add-form">
-      <input class="res-inp" id="res-label" placeholder="Label (e.g. DC Events)" style="width:140px;">
-      <input class="res-inp wide" id="res-url" placeholder="https://..." onkeydown="if(event.key==='Enter')saveResource();">
-      <button class="res-save-btn" onclick="saveResource()">Add</button>
-      <button class="res-cancel-btn" onclick="toggleAddResource()">✕</button>
-    </div>
-  </div>
-
-  <!-- PAGE HERO -->
-  <div class="page-hero">
-    <div>
-      <div class="hero-month" id="hero-month"></div>
-      <div class="hero-sub" id="hero-sub"></div>
-    </div>
-    <div class="hero-stats" id="hero-stats"></div>
-  </div>
-
-  <!-- FILTER BAR -->
-  <div class="filter-bar">
-    <span class="filter-label">Category</span>
-    <button class="f-pill active" id="fpill-cat-all" onclick="setCatFilter('all',this)">All</button>
-    <div id="filter-cats"></div>
-    <div class="filter-sep"></div>
-    <span class="filter-label">Neighborhood</span>
-    <select class="f-inp" id="filter-hood" style="min-width:150px;padding:6px 10px;font-size:12.5px;" onchange="setHoodFilter(this.value)">
-      <option value="">All areas</option>
-    </select>
-    <div class="filter-sep"></div>
-    <span class="filter-label">Price</span>
-    <button class="f-pill active" id="fpill-price-all" onclick="setPriceFilter('all',this)">All</button>
-    <button class="f-pill" onclick="setPriceFilter('free',this)">Free</button>
-    <button class="f-pill" onclick="setPriceFilter('$',this)">$</button>
-    <button class="f-pill" onclick="setPriceFilter('$$',this)">$$</button>
-    <button class="f-pill" onclick="setPriceFilter('$$$',this)">$$$</button>
-  </div>
-
-  <div class="cards-grid" id="cards-grid"></div>
-</div>
-
+<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
+<script src="../assets/gcal.js"></script>
 <script>
-var SK = 'dcGuide1';
-var MONTHS = ['January','February','March','April','May','June','July','August','September','October','November','December'];
-var MONTHS_S = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
-var DAYS = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+/* ═════════════════ STORAGE KEYS ═════════════════
+   dcPassport1     [spot]  {id,name,category,city,lat,lng,note,link,visited,rating,tags}
+                           + optional plannedEventId, plannedFor, plannedTime, plannedVia, addedAt
+   dcGuide1        {items:[{id,name,category,month,price,hood,dates,img,link,note,status}], resources:[{id,label,url}]}
+                           items also take optional lat/lng (exact pin) + the planned* fields
+   dcWeekendSeen1  {list:[{k,wk,at,skip}]}  what the weekend card already suggested (so it rotates)
+   lifeCalendar1   shared with Calendar / Today — Plan it adds {id,title,date,time,endTime,cat,note,done} */
+var SPOT_KEY='dcPassport1', GUIDE_KEY='dcGuide1', SEEN_KEY='dcWeekendSeen1', CAL_KEY='lifeCalendar1';
+var MONTHS=['January','February','March','April','May','June','July','August','September','October','November','December'];
+var MS=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+var DAYS=['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+var DS=['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
 
-var CATS = [
-  {id:'food',    label:'Food',      icon:'🍽', color:'#e07a20', bg:'#f7d9b0', ink:'#7a4010'},
-  {id:'drinks',  label:'Drinks',    icon:'🍸', color:'#e05070', bg:'#fce8ef', ink:'#a0304a'},
-  {id:'dancing', label:'Dancing',   icon:'💃', color:'#9050d0', bg:'#e8d4f0', ink:'#5a2a7a'},
-  {id:'arts',    label:'Arts',      icon:'🎨', color:'#2080c0', bg:'#d4e8f8', ink:'#1a3a6a'},
-  {id:'outdoors',label:'Outdoors',  icon:'🌿', color:'#30a060', bg:'#d8eee8', ink:'#1a4a2a'},
-  {id:'events',  label:'Events',    icon:'🎉', color:'#c0a020', bg:'#fff5d6', ink:'#6a4a08'},
-  {id:'markets', label:'Markets',   icon:'🛍', color:'#a06030', bg:'#f2e8d8', ink:'#5a3a18'},
-  {id:'nightlife',label:'Nightlife',icon:'✨', color:'#7040b0', bg:'#ede0ff', ink:'#4a1a7a'},
-];
+function $(id){return document.getElementById(id);}
+function esc(s){return String(s==null?'':s).replace(/[&<>"']/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];});}
+function safeUrl(u){u=String(u||'').trim();if(!u)return '';if(/^(https?:)?\/\//i.test(u))return u;if(/^[a-z][a-z0-9+.-]*:/i.test(u))return '';return 'https://'+u;}
+function host(u){try{return new URL(safeUrl(u)).hostname.replace(/^www\./,'');}catch(e){return '';}}
+function lsGet(k,fb){try{var r=localStorage.getItem(k);return r?JSON.parse(r):fb;}catch(e){return fb;}}
+function lsSet(k,v){try{localStorage.setItem(k,JSON.stringify(v));}catch(e){}}
+function pad(n){return String(n).padStart(2,'0');}
+function dk(d){return d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate());}
+function fromDk(s){var p=String(s).split('-');return new Date(+p[0],+p[1]-1,+p[2]);}
+function sod(d){return new Date(d.getFullYear(),d.getMonth(),d.getDate());}
+function addDays(d,n){var x=new Date(d);x.setDate(x.getDate()+n);return x;}
+function fmtTime(t){if(!t)return '';var p=t.split(':'),h=+p[0],m=+p[1];return (h%12||12)+(m?':'+pad(m):'')+(h<12?'am':'pm');}
+function today(){return sod(new Date());}
 
-var HOODS = ['Georgetown','Dupont Circle','14th St / U Street','Adams Morgan','Capitol Hill',
+/* ═════════════════ CATEGORIES ═════════════════
+   One set of map/filter groups. Each record keeps its own category value; the old Passport
+   categories and the Guide categories are only mapped onto these groups for display. */
+var GROUPS=[
+  {id:'food',label:'Food',color:'#e0855e'},
+  {id:'drinks',label:'Drinks',color:'#cf6a7e'},
+  {id:'arts',label:'Arts & museums',color:'#6b8bd0'},
+  {id:'outdoors',label:'Outdoors',color:'#5f9f72'},
+  {id:'events',label:'Events',color:'#d79a3c'},
+  {id:'markets',label:'Markets',color:'#a7825a'},
+  {id:'night',label:'Dancing & nightlife',color:'#9a72d0'},
+  {id:'other',label:'Other',color:'#8a9090'}];
+function grp(id){return GROUPS.find(function(g){return g.id===id;})||GROUPS[GROUPS.length-1];}
+// passport categories (dcPassport1 spot.category)
+var SPOT_CATS=[
+  {val:'Museum',label:'Museum & Culture',group:'arts'},
+  {val:'Restaurant',label:'Restaurant',group:'food'},
+  {val:'Bar',label:'Bar',group:'drinks'},
+  {val:'Cafe',label:'Café',group:'food'},
+  {val:'Nature',label:'Nature',group:'outdoors'},
+  {val:'Experience',label:'Experience',group:'events'},
+  {val:'Shop',label:'Shop',group:'markets'},
+  {val:'Other',label:'Other',group:'other'}];
+// guide categories (dcGuide1 item.category)
+var CATS=[
+  {id:'food',label:'Food',group:'food'},
+  {id:'drinks',label:'Drinks',group:'drinks'},
+  {id:'dancing',label:'Dancing',group:'night'},
+  {id:'arts',label:'Arts',group:'arts'},
+  {id:'outdoors',label:'Outdoors',group:'outdoors'},
+  {id:'events',label:'Events',group:'events'},
+  {id:'markets',label:'Markets',group:'markets'},
+  {id:'nightlife',label:'Nightlife',group:'night'}];
+var PRESET_TAGS=[
+  {val:'brunch',label:'Brunch'},{val:'happyhour',label:'Happy hour'},{val:'datenight',label:'Date night'},
+  {val:'girlsnight',label:'Girls night'},{val:'solo',label:'Solo-friendly'},{val:'work',label:'Work-friendly'},
+  {val:'splurge',label:'Splurge'},{val:'keto',label:'Low-carb / Keto'},{val:'latenight',label:'Late night'}];
+function tagLabel(v){var t=PRESET_TAGS.find(function(t){return t.val===v;});return t?t.label:v;}
+
+/* Neighborhood centres (approximate) — guide items have a neighborhood but no coordinates,
+   so their pin starts here until you set the exact spot. Also used to name the area of a saved spot. */
+var HOODS=['Georgetown','Dupont Circle','14th St / U Street','Adams Morgan','Capitol Hill',
   'Navy Yard / Yards Park','National Mall','Penn Quarter / Chinatown','Logan Circle','Shaw',
   'Columbia Heights','Foggy Bottom','H Street Corridor','Petworth','NoMa / Union Market',
   'Wharf / Southwest','Chevy Chase','Other'];
+var HOOD_LL={
+  'Georgetown':[38.9072,-77.0656],'Dupont Circle':[38.9097,-77.0434],'14th St / U Street':[38.9170,-77.0318],
+  'Adams Morgan':[38.9216,-77.0425],'Capitol Hill':[38.8868,-76.9965],'Navy Yard / Yards Park':[38.8752,-77.0030],
+  'National Mall':[38.8893,-77.0230],'Penn Quarter / Chinatown':[38.8990,-77.0215],'Logan Circle':[38.9097,-77.0297],
+  'Shaw':[38.9128,-77.0220],'Columbia Heights':[38.9284,-77.0327],'Foggy Bottom':[38.9007,-77.0500],
+  'H Street Corridor':[38.9002,-76.9930],'Petworth':[38.9418,-77.0230],'NoMa / Union Market':[38.9078,-77.0012],
+  'Wharf / Southwest':[38.8795,-77.0250],'Chevy Chase':[38.9640,-77.0752]};
+// extra centres used only to name where a saved spot is
+var AREA_LL=Object.assign({},HOOD_LL,{
+  'Downtown':[38.9010,-77.0300],'Farragut':[38.9025,-77.0390],'West End':[38.9050,-77.0510],'Kalorama':[38.9160,-77.0490],
+  'Woodley Park':[38.9250,-77.0530],'Cleveland Park':[38.9345,-77.0580],'Forest Hills':[38.9445,-77.0610],
+  'Mount Vernon Triangle':[38.9030,-77.0170],'Brookland':[38.9330,-76.9940],'Anacostia':[38.8620,-76.9870],
+  'Eckington':[38.9150,-77.0020],'Bloomingdale':[38.9170,-77.0120],'Glover Park':[38.9220,-77.0740],
+  'Tenleytown':[38.9480,-77.0800],'Southwest Waterfront':[38.8770,-77.0170]});
+function km(a,b,c,d){var R=6371,toR=Math.PI/180,dl=(c-a)*toR,dn=(d-b)*toR;var x=Math.sin(dl/2)*Math.sin(dl/2)+Math.cos(a*toR)*Math.cos(c*toR)*Math.sin(dn/2)*Math.sin(dn/2);return 2*R*Math.atan2(Math.sqrt(x),Math.sqrt(1-x));}
+function nearestArea(lat,lng){
+  var best=null,bd=1e9;Object.keys(AREA_LL).forEach(function(n){var p=AREA_LL[n],d=km(lat,lng,p[0],p[1]);if(d<bd){bd=d;best=n;}});
+  return bd<1.8?best:'';
+}
 
-var data = {items:[], resources:[]};
-var currentMonth = 'evergreen'; // start on Anytime
-var filterCat = 'all';
-var filterPrice = 'all';
-var filterHood = '';
-var editingId = null;
+/* ═════════════════ DATA ═════════════════ */
+// the original DC Passport starter spots (only used when dcPassport1 has never been saved)
+var DEFAULT_SPOTS = [
+  {id:'d1', name:'Folger Library',category:'Museum',city:'DC',lat:38.8894,lng:-77.0040,note:'Stunning library & Shakespeare collection',link:'https://www.folger.edu/',visited:false,rating:0,tags:[]},
+  {id:'d2', name:'Spy Museum',category:'Museum',city:'DC',lat:38.8994,lng:-77.0214,note:'Interactive spy experiences',link:'https://www.spymuseum.org/',visited:false,rating:0,tags:[]},
+  {id:'d3', name:'National Building Museum',category:'Museum',city:'DC',lat:38.8969,lng:-77.0215,note:'Architecture & design',link:'',visited:false,rating:0,tags:[]},
+  {id:'d4', name:'The Gogo Museum',category:'Museum',city:'DC',lat:38.9072,lng:-77.0320,note:'',link:'',visited:false,rating:0,tags:[]},
+  {id:'d5', name:'Planet Word DC',category:'Museum',city:'DC',lat:38.8997,lng:-77.0290,note:'Language & words museum',link:'',visited:false,rating:0,tags:[]},
+  {id:'d6', name:'AMA Museum',category:'Museum',city:'DC',lat:38.8960,lng:-77.0270,note:'',link:'',visited:false,rating:0,tags:[]},
+  {id:'d7', name:'Hillwood Museum',category:'Museum',city:'DC',lat:38.9398,lng:-77.0607,note:'',link:'',visited:false,rating:0,tags:[]},
+  {id:'d8', name:'Historic Congressional Cemetery',category:'Experience',city:'DC',lat:38.8800,lng:-76.9856,note:'Beautiful historic grounds',link:'',visited:false,rating:0,tags:[]},
+  {id:'d9', name:'Advance the Dream',category:'Experience',city:'DC',lat:38.9072,lng:-77.0369,note:'',link:'',visited:false,rating:0,tags:[]},
+  {id:'d10',name:'Tabard Inn',category:'Restaurant',city:'DC',lat:38.9074,lng:-77.0443,note:'Cozy neighborhood classic',link:'',visited:false,rating:0,tags:[]},
+  {id:'d11',name:'Casamara',category:'Restaurant',city:'DC',lat:38.9100,lng:-77.0420,note:'',link:'',visited:false,rating:0,tags:[]},
+  {id:'d12',name:'Maison Bar à Vins',category:'Bar',city:'DC',lat:38.9090,lng:-77.0430,note:'Wine bar',link:'',visited:false,rating:0,tags:[]},
+  {id:'d13',name:"L'Avant Garde",category:'Restaurant',city:'DC',lat:38.9080,lng:-77.0400,note:'',link:'',visited:false,rating:0,tags:[]},
+  {id:'d14',name:'Reynolds',category:'Restaurant',city:'DC',lat:38.9070,lng:-77.0390,note:'',link:'',visited:false,rating:0,tags:[]},
+  {id:'d15',name:'Amelie',category:'Bar',city:'DC',lat:38.9065,lng:-77.0450,note:'French wine bar',link:'',visited:false,rating:0,tags:[]},
+  {id:'d16',name:'Floriana',category:'Restaurant',city:'DC',lat:38.9130,lng:-77.0460,note:'',link:'',visited:false,rating:0,tags:[]},
+  {id:'d17',name:'Maydan',category:'Restaurant',city:'DC',lat:38.9145,lng:-77.0315,note:'Middle Eastern — splurge worthy',link:'',visited:false,rating:0,tags:['splurge']},
+  {id:'d18',name:'Little Black Bird',category:'Bar',city:'DC',lat:38.9110,lng:-77.0350,note:'',link:'',visited:false,rating:0,tags:[]},
+  {id:'d19',name:'Occidental',category:'Restaurant',city:'DC',lat:38.8972,lng:-77.0353,note:'',link:'',visited:false,rating:0,tags:[]},
+  {id:'d20',name:'Press Club',category:'Bar',city:'DC',lat:38.9060,lng:-77.0310,note:'',link:'',visited:false,rating:0,tags:[]},
+  {id:'d21',name:'Siam House',category:'Restaurant',city:'DC',lat:38.9200,lng:-77.0480,note:'Thai',link:'',visited:false,rating:0,tags:[]},
+  {id:'d22',name:'All Souls',category:'Bar',city:'DC',lat:38.9220,lng:-77.0410,note:'',link:'',visited:false,rating:0,tags:[]},
+  {id:'d23',name:'Doi Moi',category:'Restaurant',city:'DC',lat:38.9145,lng:-77.0320,note:'Bold Vietnamese · HH Weekdays 5–7pm · ½ off drinks, $5 daiquiris',link:'',visited:false,rating:0,tags:['happyhour']},
+  {id:'d24',name:"Rumi's Kitchen",category:'Restaurant',city:'DC',lat:38.9030,lng:-77.0220,note:'Persian · HH Weekdays 4–6pm · $10 cocktails',link:'',visited:false,rating:0,tags:['happyhour']},
+  {id:'d25',name:'Tokyo Pearl',category:'Restaurant',city:'DC',lat:38.9118,lng:-77.0437,note:'Sushi · HH Tue–Sun 4–10pm · $8 happy hour',link:'',visited:false,rating:0,tags:['happyhour','keto']},
+  {id:'d26',name:'Bar Chinois',category:'Bar',city:'DC',lat:38.9030,lng:-77.0218,note:'Chinese cuisine & French cocktails · HH Daily 5–7pm · ½ priced cocktails + $1 dumplings',link:'',visited:false,rating:0,tags:['happyhour']},
+  {id:'d27',name:'Dumplings & Beyond',category:'Restaurant',city:'DC',lat:38.9005,lng:-77.0222,note:'',link:'',visited:false,rating:0,tags:[]},
+  {id:'d28',name:'Pho 75',category:'Restaurant',city:'DC',lat:38.8958,lng:-77.0144,note:'',link:'',visited:false,rating:0,tags:['healthy']},
+  {id:'d29',name:'Corso Italian',category:'Restaurant',city:'DC',lat:38.9080,lng:-77.0350,note:'$8 spritzes',link:'',visited:false,rating:0,tags:['happyhour']},
+  {id:'d30',name:'Zaytinya',category:'Restaurant',city:'DC',lat:38.8997,lng:-77.0215,note:'$6 pides, $9 glasses',link:'',visited:false,rating:0,tags:['happyhour','splurge']},
+  {id:'d31',name:'Inca Social',category:'Bar',city:'DC',lat:38.9100,lng:-77.0400,note:'Ladies margs',link:'',visited:false,rating:0,tags:['happyhour']},
+  {id:'d32',name:'Momoyama',category:'Restaurant',city:'DC',lat:38.9050,lng:-77.0380,note:'Mom & pop Asian restaurant',link:'',visited:false,rating:0,tags:[]},
+  {id:'d33',name:'Lapis',category:'Restaurant',city:'DC',lat:38.9110,lng:-77.0420,note:'Afghan',link:'',visited:false,rating:0,tags:[]},
+  {id:'d34',name:'Chez Billy Sud',category:'Restaurant',city:'DC',lat:38.9030,lng:-77.0560,note:'French',link:'',visited:false,rating:0,tags:[]},
+];
+// the original DC Guide starter items + links (only used when dcGuide1 has never been saved)
+function defaultGuide(){return {
+  items:[
+    {id:'ex1',name:'Eastern Market',category:'markets',month:'evergreen',price:'free',hood:'Capitol Hill',dates:'Every weekend',img:'',link:'https://www.easternmarket-dc.org',note:'Saturday is farmers market, Sunday is flea market. Get there before 10am.',status:'want'},
+    {id:'ex2',name:'9:30 Club',category:'nightlife',month:4,price:'$$',hood:'14th St / U Street',dates:'Check calendar',img:'',link:'https://www.930.com',note:'Best live music venue in DC. Always worth checking what\'s on.',status:'want'},
+    {id:'ex3',name:'National Cherry Blossom Festival',category:'events',month:3,price:'free',hood:'National Mall',dates:'Late March – Early April',img:'',link:'',note:'Peak bloom usually first week of April. Go early morning.',status:'done'},
+    {id:'ex4',name:'Rosalys',category:'food',month:'evergreen',price:'$',hood:'Georgetown',dates:'',img:'',link:'',note:'Cute French-inspired café. Perfect for a slow Sunday brunch.',status:'want'},
+    {id:'ex5',name:'Yards Park',category:'outdoors',month:'evergreen',price:'free',hood:'Navy Yard / Yards Park',dates:'Best May–Sept',img:'',link:'',note:'Free concerts and events all summer. Great waterfront vibes.',status:'want'},
+    {id:'ex6',name:'Smithsonian Folklife Festival',category:'events',month:5,price:'free',hood:'National Mall',dates:'Late June – July 4th',img:'',link:'',note:'One of the best free events in DC every summer.',status:'want'},
+    {id:'ex7',name:'Salsa Night at Decades',category:'dancing',month:'evergreen',price:'$',hood:'Penn Quarter / Chinatown',dates:'Thursday nights',img:'',link:'',note:'Latin night — get there by 10pm.',status:'want'},
+  ],
+  resources:[
+    {id:'r1',label:'The DC List',url:'https://thedclist.com'},
+    {id:'r2',label:'Meetup DC',url:'https://www.meetup.com/find/?location=us--dc--Washington&source=EVENTS'},
+    {id:'r3',label:'DC Events (Eventbrite)',url:'https://www.eventbrite.com/d/dc--washington/events/'},
+    {id:'r4',label:'Do512 DC',url:'https://dc.do512.com'},
+  ]
+};}
 
-// ── STORAGE ──
-function save(){localStorage.setItem(SK,JSON.stringify(data));}
+var spots=[], guide={items:[],resources:[]};
 function load(){
-  var raw=localStorage.getItem(SK);
+  var raw=null;try{raw=localStorage.getItem(SPOT_KEY);}catch(e){}
+  if(raw){try{var s=JSON.parse(raw);spots=Array.isArray(s)?s:[];}catch(e){spots=[];}}
+  else{spots=JSON.parse(JSON.stringify(DEFAULT_SPOTS));saveSpots();}
+  spots.forEach(function(s){if(!s.tags)s.tags=[];});
+  raw=null;try{raw=localStorage.getItem(GUIDE_KEY);}catch(e){}
   if(raw){
-    try{
-      var parsed=JSON.parse(raw);
-      // Support old format (array) and new format (object)
-      if(Array.isArray(parsed)){data={items:parsed,resources:[]};}
-      else{data=parsed;if(!data.items)data.items=[];if(!data.resources)data.resources=[];}
-    }catch(e){data={items:[],resources:[]};}
-  } else {
-    data={
-      items:[
-        {id:'ex1',name:'Eastern Market',category:'markets',month:'evergreen',price:'free',hood:'Capitol Hill',dates:'Every weekend',img:'',link:'https://www.easternmarket-dc.org',note:'Saturday is farmers market, Sunday is flea market. Get there before 10am.',status:'want'},
-        {id:'ex2',name:'9:30 Club',category:'nightlife',month:4,price:'$$',hood:'14th St / U Street',dates:'Check calendar',img:'',link:'https://www.930.com',note:'Best live music venue in DC. Always worth checking what\'s on.',status:'want'},
-        {id:'ex3',name:'National Cherry Blossom Festival',category:'events',month:3,price:'free',hood:'National Mall',dates:'Late March – Early April',img:'',link:'',note:'Peak bloom usually first week of April. Go early morning.',status:'done'},
-        {id:'ex4',name:'Rosalys',category:'food',month:'evergreen',price:'$',hood:'Georgetown',dates:'',img:'',link:'',note:'Cute French-inspired café. Perfect for a slow Sunday brunch.',status:'want'},
-        {id:'ex5',name:'Yards Park',category:'outdoors',month:'evergreen',price:'free',hood:'Navy Yard / Yards Park',dates:'Best May–Sept',img:'',link:'',note:'Free concerts and events all summer. Great waterfront vibes.',status:'want'},
-        {id:'ex6',name:'Smithsonian Folklife Festival',category:'events',month:5,price:'free',hood:'National Mall',dates:'Late June – July 4th',img:'',link:'',note:'One of the best free events in DC every summer.',status:'want'},
-        {id:'ex7',name:'Salsa Night at Decades',category:'dancing',month:'evergreen',price:'$',hood:'Penn Quarter / Chinatown',dates:'Thursday nights',img:'',link:'',note:'Latin night — get there by 10pm.',status:'want'},
-      ],
-      resources:[
-        {id:'r1',label:'The DC List',url:'https://thedclist.com'},
-        {id:'r2',label:'Meetup DC',url:'https://www.meetup.com/find/?location=us--dc--Washington&source=EVENTS'},
-        {id:'r3',label:'DC Events (Eventbrite)',url:'https://www.eventbrite.com/d/dc--washington/events/'},
-        {id:'r4',label:'Do512 DC',url:'https://dc.do512.com'},
-      ]
-    };
-    save();
+    try{var p=JSON.parse(raw);
+      if(Array.isArray(p))guide={items:p,resources:[]};          // oldest format: just the items
+      else{guide=p||{};if(!guide.items)guide.items=[];if(!guide.resources)guide.resources=[];}
+    }catch(e){guide={items:[],resources:[]};}
+  }else{guide=defaultGuide();saveGuide();}
+}
+function saveSpots(){lsSet(SPOT_KEY,spots);}
+function saveGuide(){lsSet(GUIDE_KEY,guide);}
+
+/* ═════════════════ READING "WHEN" TEXT ═════════════════
+   item.dates is free text. We read what we can: explicit dates ("Oct 31", "June 7–9", "10/30–11/1",
+   "Late March – Early April"), weekly patterns ("Every weekend", "Thursday nights", "Saturdays") and
+   "daily". Anything else is just shown as written. */
+var MON_RX=/\b(?:(early|mid|late)[\s-]+)?(jan(?:uary)?|feb(?:ruary)?|mar(?:ch)?|apr(?:il)?|may|june?|july?|aug(?:ust)?|sept?(?:ember)?|oct(?:ober)?|nov(?:ember)?|dec(?:ember)?)\b\.?(?:\s+(\d{1,2})(?:st|nd|rd|th)?\b(?!\s*(?::|am|pm)))?(?:\s*-\s*(\d{1,2})(?:st|nd|rd|th)?\b(?!\s*(?::|am|pm|\/)))?/gi;
+function monIdx(s){return ['jan','feb','mar','apr','may','jun','jul','aug','sep','oct','nov','dec'].indexOf(s.slice(0,3).toLowerCase());}
+function lastDay(y,m){return new Date(y,m+1,0).getDate();}
+function parseWhen(text,monthHint){
+  var raw=String(text||'');if(!raw.trim())return null;
+  var t=raw.replace(/[–—]/g,'-');var lo=t.toLowerCase();
+  var out=null;
+  if(/\b(daily|every ?day|nightly|every night)\b/.test(lo))out={kind:'daily'};
+  // weekly
+  if(!out&&/\b(every|weekly|weekends?|weekdays|(?:sun|mon|tues|wednes|thurs|fri|satur)days|nights)\b/.test(lo)){
+    var days={};
+    if(/\bweekends?\b/.test(lo)){days[6]=1;days[0]=1;}
+    if(/\bweekdays\b/.test(lo)){[1,2,3,4,5].forEach(function(d){days[d]=1;});}
+    var DN={sun:0,mon:1,tue:2,wed:3,thu:4,fri:5,sat:6};
+    var rng=/\b(sun|mon|tue|wed|thu|fri|sat)[a-z]*\s*-\s*(sun|mon|tue|wed|thu|fri|sat)[a-z]*/g,m;
+    while((m=rng.exec(lo))){var a=DN[m[1]],b=DN[m[2]];for(var i=0;i<7;i++){var d=(a+i)%7;days[d]=1;if(d===b)break;}}
+    var one=/\b(sun|mon|tue|wed|thu|fri|sat)(?:day|days|s|\.)?\b|\b(sun|mon|tues|wednes|thurs|fri|satur)days?\b/g;
+    while((m=one.exec(lo))){var k=(m[1]||m[2]).slice(0,3);days[DN[k]]=1;}
+    var list=Object.keys(days).map(Number);
+    if(list.length)out={kind:'weekly',days:list};
   }
+  if(!out){
+    var pts=[],m2;MON_RX.lastIndex=0;
+    while((m2=MON_RX.exec(t))){
+      if(m2[2].toLowerCase()==='may'&&m2[2][0]!=='M')continue;        // "may" the verb
+      pts.push({q:(m2[1]||'').toLowerCase(),m:monIdx(m2[2]),d1:m2[3]?+m2[3]:0,d2:m2[4]?+m2[4]:0});
+    }
+    var nr=/\b(\d{1,2})\/(\d{1,2})(?:\/\d{2,4})?\b/g,m3;
+    if(!pts.length)while((m3=nr.exec(t))){var mm=+m3[1]-1,dd=+m3[2];if(mm>=0&&mm<12&&dd>=1&&dd<=31)pts.push({q:'',m:mm,d1:dd,d2:0});}
+    if(pts.length){
+      var y=today().getFullYear();
+      if(typeof monthHint==='number'&&pts[0].m!==monthHint&&Math.abs(pts[0].m-monthHint)>6)y+=0; // keep it simple
+      var mk=function(p,end,yr){
+        if(p.d1){var d=end&&p.d2?p.d2:p.d1;return new Date(yr,p.m,Math.min(d,lastDay(yr,p.m)));}
+        if(p.q==='early')return new Date(yr,p.m,end?10:1);
+        if(p.q==='mid')return new Date(yr,p.m,end?20:10);
+        if(p.q==='late')return new Date(yr,p.m,end?lastDay(yr,p.m):20);
+        return new Date(yr,p.m,end?lastDay(yr,p.m):1);
+      };
+      var a0=pts[0],b0=pts.length>1?pts[1]:pts[0];
+      var s=mk(a0,false,y),e=mk(b0,true,y);
+      if(e<s)e=mk(b0,true,y+1);
+      // an old date range has almost certainly come round again: look at next year's
+      if(e<addDays(today(),-150)){s=mk(a0,false,y+1);e=mk(b0,true,b0.m<a0.m?y+2:y+1);}
+      var precise=pts.slice(0,2).every(function(p){return !!p.d1;});
+      out={kind:'dates',s:s,e:e,precise:precise};
+    }
+  }
+  if(out){var tm=parseTime(raw);if(tm)out.time=tm;}
+  return out;
+}
+function parseTime(text){
+  var m=/(\d{1,2})(?::(\d{2}))?\s*(?:-\s*\d{1,2}(?::\d{2})?\s*)?(am|pm)\b/i.exec(String(text||'').replace(/[–—]/g,'-'));
+  if(!m)return '';var h=+m[1]%12;if(m[3].toLowerCase()==='pm')h+=12;return pad(h)+':'+(m[2]||'00');
 }
 
-function getCat(id){return CATS.find(function(c){return c.id===id;})||CATS[0];}
+/* ═════════════════ ONE VIEW OF EVERYTHING ═════════════════ */
+function spotThing(s){
+  var area=s.city&&s.city!=='DC'?{MD:'Maryland',VA:'Virginia'}[s.city]||s.city:'';
+  if(!area&&s.lat&&s.lng)area=nearestArea(s.lat,s.lng);
+  var cat=SPOT_CATS.find(function(c){return c.val===s.category;})||SPOT_CATS[SPOT_CATS.length-1];
+  return {key:'spot:'+s.id,kind:'spot',ref:s,name:s.name||'Untitled',group:cat.group,catLabel:cat.label,hood:area,
+    price:(s.tags||[]).indexOf('splurge')>=0?'$$$':'',note:s.note||'',link:s.link||'',tags:s.tags||[],
+    lat:s.lat||null,lng:s.lng||null,exact:!!(s.lat&&s.lng),done:!!s.visited,evergreen:true,month:'evergreen',when:null};
+}
+function itemThing(i){
+  var c=CATS.find(function(x){return x.id===i.category;})||CATS[0];
+  var ll=(i.lat!=null&&i.lng!=null)?[i.lat,i.lng]:(HOOD_LL[i.hood]||null);
+  return {key:'item:'+i.id,kind:'item',ref:i,name:i.name||'Untitled',group:c.group,catLabel:c.label,hood:i.hood&&i.hood!=='Other'?i.hood:'',
+    price:i.price||'',note:i.note||'',link:i.link||'',tags:[],lat:ll?ll[0]:null,lng:ll?ll[1]:null,exact:i.lat!=null&&i.lng!=null,
+    done:i.status==='done',evergreen:i.month==='evergreen'||i.month==null,month:i.month,when:parseWhen(i.dates,i.month),dates:i.dates||''};
+}
+var THINGS=[];
+function rebuild(){THINGS=spots.map(spotThing).concat(guide.items.map(itemThing));}
+function thing(key){return THINGS.find(function(t){return t.key===key;});}
+function priceLabel(p){return p==='free'?'Free':(p||'');}
 
-// ── MONTH STRIP ──
-function buildMonthStrip(){
-  var strip=document.getElementById('month-strip');strip.innerHTML='';
-  // Evergreen tab first
-  var evCnt=data.items.filter(function(x){return x.month==='evergreen';}).length;
-  var evBtn=document.createElement('button');
-  evBtn.className='month-tab evergreen'+(currentMonth==='evergreen'?' active':'');
-  evBtn.innerHTML='📌 Anytime'+(evCnt>0?'<span class="month-tab-count">'+evCnt+'</span>':'');
-  evBtn.onclick=function(){currentMonth='evergreen';render();};
-  strip.appendChild(evBtn);
-  // Month tabs
-  MONTHS_S.forEach(function(m,i){
-    var cnt=data.items.filter(function(x){return x.month===i;}).length;
-    var btn=document.createElement('button');
-    btn.className='month-tab'+(currentMonth===i?' active':'');
-    btn.innerHTML=m+(cnt>0?'<span class="month-tab-count">'+cnt+'</span>':'');
-    btn.onclick=(function(mi){return function(){currentMonth=mi;render();};})(i);
-    strip.appendChild(btn);
+/* planned = a date on the calendar that hasn't passed (and, for local events, still exists) */
+function calEvents(){var d=lsGet(CAL_KEY,null);return d?(Array.isArray(d)?d:(d.events||[])):[];}
+function planOf(t){
+  var r=t.ref;if(!r.plannedFor)return null;
+  if(r.plannedVia!=='google'&&r.plannedEventId){if(!calEvents().some(function(e){return e.id===r.plannedEventId;}))return null;}
+  var d=fromDk(r.plannedFor);return {date:d,time:r.plannedTime||'',past:d<today()};
+}
+function planLabel(p){var d=p.date;var near=(d-today())/864e5<7;return (near?DS[d.getDay()]:DS[d.getDay()]+' '+MS[d.getMonth()]+' '+d.getDate())+(p.time?' '+fmtTime(p.time):'');}
+
+/* ═════════════════ THIS WEEKEND ═════════════════
+   No AI, no internet: candidates are your own things —
+   • guide items whose dates fall on the coming Fri–Sun, or that repeat weekly on those days,
+   • everything on your Want to try list (saved spots + anytime items you haven't been to).
+   Ranked: actually happening that weekend first, then free / cheaper, then not suggested lately.
+   A nearby second thing (same neighborhood or a short walk) is paired with it when there is one.
+   dcWeekendSeen1 remembers what was suggested, so it rotates week to week, and "Another idea" cycles. */
+function weekendOf(now){
+  var d=sod(now),dow=d.getDay();
+  var fri=dow===0?addDays(d,5):addDays(d,5-dow);       // Sunday → look at next weekend
+  if(dow===6)fri=addDays(d,-1);
+  var days=[fri,addDays(fri,1),addDays(fri,2)].filter(function(x){return x>=d;});
+  return {fri:fri,sun:addDays(fri,2),days:days,key:dk(fri),next:dow===0};
+}
+function seenLoad(){var s=lsGet(SEEN_KEY,null);if(!s||!Array.isArray(s.list))s={list:[]};return s;}
+function seenSave(s){
+  var cut=Date.now()-60*864e5;s.list=s.list.filter(function(e){return e.at>cut;}).slice(-200);lsSet(SEEN_KEY,s);
+}
+function hash(str){var h=0;for(var i=0;i<str.length;i++){h=(h*31+str.charCodeAt(i))|0;}return Math.abs(h);}
+var PRICE_SCORE={free:30,'$':20,'':10,'$$':6,'$$$':0};
+function isWant(t){return t.evergreen&&!t.done;}
+function weekendCandidates(wk,seen){
+  var wkDows=wk.days.map(function(d){return d.getDay();});
+  var out=[];
+  THINGS.forEach(function(t){
+    if(t.done)return;
+    var p=planOf(t);if(p&&!p.past)return;                  // already on the calendar
+    var c={t:t,score:0,day:null,why:'',happening:false},w=t.when;
+    if(w&&w.kind==='weekly'){
+      var hit=wk.days.filter(function(d){return w.days.indexOf(d.getDay())>=0;});
+      if(!hit.length)return;                                  // e.g. Thursday nights: not a weekend thing
+      c.day=pickDay(hit);c.score+=80;c.happening=true;
+      c.why=w.days.indexOf(6)>=0&&w.days.indexOf(0)>=0?'every weekend':'every '+DAYS[c.day.getDay()];
+    }else if(w&&w.kind==='daily'){c.day=pickDay(wk.days);c.score+=60;c.happening=true;c.why='on every day';}
+    else if(w&&w.kind==='dates'){
+      var ov=wk.days.filter(function(d){return d>=w.s&&d<=w.e;});
+      var len=(w.e-w.s)/864e5;
+      if(ov.length){
+        c.day=pickDay(ov);
+        if(w.precise&&len<=21){c.score+=100;c.happening=true;c.why=len<1?'on '+DS[c.day.getDay()]+' '+MS[c.day.getMonth()]+' '+c.day.getDate():'on through '+DS[w.e.getDay()]+' '+MS[w.e.getMonth()]+' '+w.e.getDate();}
+        else if(len<=31){c.score+=45;c.happening=true;c.why='around this weekend';}
+        else{c.score+=10;c.why='in season';}
+      }else{
+        if(!t.evergreen||(w.precise&&len<=21))return;        // dated and not this weekend
+        c.score-=30;                                          // out of season ("Best May–Sept")
+      }
+    }else if(!t.evergreen){
+      var months=wk.days.map(function(d){return d.getMonth();});
+      if(months.indexOf(t.month)<0)return;
+      c.score+=15;c.why='this month';
+    }
+    if(!c.happening&&!isWant(t)&&t.evergreen)return;
+    c.score+=PRICE_SCORE[t.price]!=null?PRICE_SCORE[t.price]:10;
+    c.score+=seenPenalty(seen,t.key,wk.key);
+    c.score+=(hash(t.key+wk.key)%10)/2;                      // a little week-to-week variety
+    if(!c.day)c.day=pickDay(wk.days);
+    out.push(c);
   });
+  out.sort(function(a,b){return b.score-a.score;});
+  return out;
 }
-
-// ── RESOURCES ──
-function renderResources(){
-  var wrap=document.getElementById('resources-links');wrap.innerHTML='';
-  if(!data.resources.length){
-    wrap.innerHTML='<span class="resources-empty">No links yet — add shortcuts to your favourite DC event sites.</span>';
+function pickDay(list){
+  var sat=list.find(function(d){return d.getDay()===6;});if(sat)return sat;
+  var sun=list.find(function(d){return d.getDay()===0;});return sun||list[0];
+}
+function seenPenalty(seen,key,wkKey){
+  var p=0,now=Date.now();
+  seen.list.forEach(function(e){
+    if(e.k!==key)return;
+    if(e.wk===wkKey){if(e.skip)p=Math.min(p,-1000-e.skip/1e13);}       // skipped this weekend: to the back, oldest skip first
+    else if(now-e.at<28*864e5)p=Math.min(p,now-e.at<14*864e5?-40:-25);  // suggested on a recent weekend
+  });
+  return p;
+}
+var RANK={markets:0,outdoors:1,arts:2,events:3,other:3,food:4,drinks:5,night:6};
+function isEat(g){return g==='food'||g==='drinks';}
+function findPartner(a,cands,seen,wk){
+  if(a.t.lat==null)return null;
+  var best=null,bs=-1e9;
+  cands.forEach(function(c){
+    var t=c.t;if(t===a.t||t.lat==null)return;
+    if(!c.happening&&!isWant(t))return;
+    var d=km(a.t.lat,a.t.lng,t.lat,t.lng);
+    var same=a.t.hood&&t.hood&&a.t.hood===t.hood;
+    if(d>1.6&&!same)return;
+    if(c.happening&&!c.day)return;
+    var s=0;
+    if(isEat(a.t.group)!==isEat(t.group))s+=30;else if(a.t.group!==t.group)s+=8;else s-=15;
+    if(a.t.group==='night'&&t.group==='night')s-=30;
+    s-=d*12;s+=(PRICE_SCORE[t.price]!=null?PRICE_SCORE[t.price]:10)/3;
+    s+=Math.max(-60,seenPenalty(seen,t.key,wk.key))/2;
+    if(c.happening&&a.happening&&dk(c.day)!==dk(a.day))s-=50;
+    if(s>bs){bs=s;best=c;}
+  });
+  return best;
+}
+function partOfDay(t,when){
+  var tm=when&&when.time;if(tm){var h=+tm.split(':')[0];return h<12?'morning':h<17?'afternoon':h<21?'evening':'night';}
+  var brunch=/brunch/i.test(t.note)||(t.tags||[]).indexOf('brunch')>=0;
+  return {markets:'morning',outdoors:'morning',arts:'afternoon',events:'afternoon',other:'afternoon',food:brunch?'brunch':'evening',drinks:'evening',night:'night'}[t.group]||'afternoon';
+}
+function suggestion(){
+  var wk=weekendOf(new Date()),seen=seenLoad();
+  var cands=weekendCandidates(wk,seen);
+  if(!cands.length)return {wk:wk,none:true};
+  var a=cands[0],b=findPartner(a,cands,seen,wk);
+  var pair=[a].concat(b?[b]:[]);
+  pair.sort(function(x,y){return (RANK[x.t.group]||3)-(RANK[y.t.group]||3);});
+  var first=pair[0],second=pair[1]||null;
+  var day=a.happening?a.day:(b&&b.happening?b.day:a.day);
+  var part=partOfDay(first.t,first.t.when);
+  // record what we showed for this weekend (once), so next weekend leans to something else
+  var changed=false;
+  pair.forEach(function(c){if(!seen.list.some(function(e){return e.k===c.t.key&&e.wk===wk.key;})){seen.list.push({k:c.t.key,wk:wk.key,at:Date.now()});changed=true;}});
+  if(changed)seenSave(seen);
+  return {wk:wk,a:a,b:b,first:first,second:second,day:day,part:part,count:cands.length};
+}
+function headline(s){
+  var dayName=DAYS[s.day.getDay()];
+  var h=s.part==='brunch'?dayName+' brunch: ':dayName+' '+s.part+': ';
+  h+='<em data-act="show" data-k="'+esc(s.first.t.key)+'">'+esc(s.first.t.name)+'</em>';
+  if(s.second){
+    var t=s.second.t,link='<em data-act="show" data-k="'+esc(t.key)+'">'+esc(t.name)+'</em>';
+    if(t.group==='food'){var meal=/brunch/i.test(t.note)||(t.tags||[]).indexOf('brunch')>=0||s.part==='morning'?'brunch':s.part==='afternoon'?'an early dinner':'dinner';h+=', then '+meal+' at '+link;}
+    else if(t.group==='drinks')h+=', then drinks at '+link;
+    else h+=', then '+link;
+  }
+  return h+'?';
+}
+function reasonLine(s){
+  var ts=[s.first.t].concat(s.second?[s.second.t]:[]),bits=[];
+  var prices=ts.map(function(t){return t.price;});
+  if(prices.every(function(p){return p==='free';}))bits.push('Free');
+  else{var known=prices.filter(Boolean).map(priceLabel);if(known.length)bits.push(known.filter(function(v,i,a){return a.indexOf(v)===i;}).join(' + '));}
+  var hoods=ts.map(function(t){return t.hood;}).filter(Boolean).filter(function(v,i,a){return a.indexOf(v)===i;});
+  if(hoods.length)bits.push(hoods.join(' + '));
+  if(s.second&&s.first.t.lat!=null&&s.second.t.lat!=null){
+    var mins=Math.round(km(s.first.t.lat,s.first.t.lng,s.second.t.lat,s.second.t.lng)*1.3/5*60);
+    if(mins>=3&&mins<=25&&s.first.t.exact&&s.second.t.exact)bits.push(mins+' min walk apart');
+  }
+  var all=[s.a].concat(s.b?[s.b]:[]);
+  all.forEach(function(c){if(c.happening&&c.why)bits.push(all.length>1?esc(c.t.name)+' '+c.why:c.why);});
+  var saved=all.filter(function(c){return isWant(c.t);});
+  if(saved.length===2)bits.push('you saved both in “Want to try”');
+  else if(saved.length===1)bits.push(all.length>1?esc(saved[0].t.name)+' is on your “Want to try”':'you saved it in “Want to try”');
+  return bits.map(function(b){return b;}).join(' · ');
+}
+var currentSug=null;
+function renderWeekend(){
+  var s=suggestion();currentSug=s;var wk=s.wk;
+  var range=wk.days[0],end=wk.sun;
+  var label=MS[range.getMonth()]+' '+range.getDate()+(dk(range)===dk(end)?'':' – '+(end.getMonth()!==range.getMonth()?MS[end.getMonth()]+' ':'')+end.getDate());
+  var whenHtml='<div class="when"><span class="eyebrow">'+(wk.next?'Next weekend':'This weekend')+'</span><b>'+label+'</b></div>';
+  if(s.none){
+    $('wk').innerHTML=whenHtml+'<div><div class="t empty">Nothing lined up yet.</div><div class="s">Save a place you want to try, or paste an event you saw — ideas for the weekend come from what you save here.</div></div>'+
+      '<div class="wk-acts"><button class="btn primary" type="button" data-act="focus-add">+ Add something</button></div>';
     return;
   }
-  data.resources.forEach(function(r){
-    var a=document.createElement('a');a.className='resource-link';a.href=r.url;a.target='_blank';
-    a.innerHTML='<svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>'+
-      '<span>'+r.label+'</span>'+
-      '<button class="resource-link-del" title="Remove" onclick="removeResource(\''+r.id+'\');event.preventDefault();event.stopPropagation();">✕</button>';
-    wrap.appendChild(a);
+  $('wk').innerHTML=whenHtml+'<div><div class="t">'+headline(s)+'</div><div class="s">'+reasonLine(s)+'</div></div>'+
+    '<div class="wk-acts">'+(s.count>1?'<button class="btn" type="button" data-act="another">Another idea ↻</button>':'')+'<button class="btn primary" type="button" data-act="plan-weekend">Plan it</button></div>';
+}
+function anotherIdea(){
+  if(!currentSug||currentSug.none)return;
+  var seen=seenLoad(),wkKey=currentSug.wk.key,seq=Date.now();
+  [currentSug.a].concat(currentSug.b?[currentSug.b]:[]).forEach(function(c,i){
+    var e=seen.list.find(function(x){return x.k===c.t.key&&x.wk===wkKey;});
+    if(!e){e={k:c.t.key,wk:wkKey,at:Date.now()};seen.list.push(e);}
+    e.skip=seq+i;
   });
-}
-function toggleAddResource(){
-  var form=document.getElementById('res-add-form');
-  var open=form.classList.toggle('open');
-  if(open){document.getElementById('res-label').focus();}
-  else{document.getElementById('res-label').value='';document.getElementById('res-url').value='';}
-}
-function saveResource(){
-  var label=document.getElementById('res-label').value.trim();
-  var url=document.getElementById('res-url').value.trim();
-  if(!label||!url)return;
-  if(!url.startsWith('http'))url='https://'+url;
-  data.resources.push({id:'r_'+Date.now(),label:label,url:url});
-  save();renderResources();toggleAddResource();
-}
-function removeResource(id){
-  data.resources=data.resources.filter(function(r){return r.id!==id;});
-  save();renderResources();
+  seenSave(seen);renderWeekend();
 }
 
-// ── HERO ──
-function renderHero(){
-  var monthItems=data.items.filter(function(x){return x.month===currentMonth;});
-  var done=monthItems.filter(function(x){return x.status==='done';}).length;
-  var isEvergreen=currentMonth==='evergreen';
-  var titleHtml=isEvergreen?'<em>Anytime</em> in DC':MONTHS[currentMonth]+' <em>2026</em>';
-  document.getElementById('hero-month').innerHTML=titleHtml;
-  document.getElementById('hero-month').className='hero-month'+(isEvergreen?' evergreen-title':'');
-  document.getElementById('hero-sub').textContent=monthItems.length+' suggestion'+(monthItems.length!==1?'s':'')+
-    (isEvergreen?' · Year-round spots & go-to places':' · Washington, D.C.');
-  document.getElementById('hero-stats').innerHTML=
-    '<div class="hero-stat"><div class="hero-stat-num">'+done+'</div><div class="hero-stat-lbl">Done</div></div>'+
-    '<div class="hero-stat" style="margin-left:4px;"><div class="hero-stat-num">'+(monthItems.length-done)+'</div><div class="hero-stat-lbl">To Do</div></div>';
-}
-
-// ── FILTER CATS ──
-function buildFilterCats(){
-  var wrap=document.getElementById('filter-cats');wrap.innerHTML='';
-  var monthItems=data.items.filter(function(x){return x.month===currentMonth;});
-  CATS.forEach(function(c){
-    if(!monthItems.some(function(x){return x.category===c.id;}))return;
-    var btn=document.createElement('button');
-    btn.className='f-pill'+(filterCat===c.id?' active':'');
-    btn.textContent=c.label;btn.style.setProperty('--c',c.color);
-    btn.insertAdjacentHTML('afterbegin','<span style="width:7px;height:7px;border-radius:50%;background:var(--c)"></span>');
-    btn.onclick=(function(cid,el){return function(){setCatFilter(cid,el);};})(c.id,btn);
-    wrap.appendChild(btn);
+/* ═════════════════ MAP ═════════════════ */
+var map=null,layer=null,markers={},mapGroup='all',mapMode='all',pickCb=null,selKey=null;
+function initMap(){
+  map=L.map('map',{zoomControl:false,scrollWheelZoom:false,zoomSnap:0.1}).setView([38.9035,-77.031],13.4);
+  L.control.zoom({position:'bottomright'}).addTo(map);
+  L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png',{attribution:'© OpenStreetMap contributors',maxZoom:19}).addTo(map);
+  layer=L.layerGroup().addTo(map);
+  // the wheel zooms the map only after you click into it, so the page still scrolls past it
+  map.on('click',function(e){
+    map.scrollWheelZoom.enable();
+    if(pickCb){var cb=pickCb;stopPick();cb(e.latlng.lat,e.latlng.lng);}
   });
+  map.on('mouseout',function(){map.scrollWheelZoom.disable();});
+  if(window.ResizeObserver)new ResizeObserver(function(){map.invalidateSize();}).observe($('map'));
 }
-function buildHoodFilter(){
-  var sel=document.getElementById('filter-hood');
-  var current=sel.value;
-  sel.innerHTML='<option value="">All areas</option>';
-  var usedHoods=[...new Set(data.items.filter(function(x){return x.month===currentMonth&&x.hood;}).map(function(x){return x.hood;}))].sort();
-  usedHoods.forEach(function(h){
-    var o=document.createElement('option');o.value=h;o.textContent=h;if(h===current)o.selected=true;sel.appendChild(o);
-  });
-}
-function setCatFilter(val,el){
-  filterCat=val;
-  document.querySelectorAll('#filter-cats .f-pill, #fpill-cat-all').forEach(function(b){b.classList.remove('active');});
-  el.classList.add('active');
-  renderCards();
-}
-function setPriceFilter(val,el){
-  filterPrice=val;
-  var isAll=val==='all';
-  document.querySelectorAll('.filter-bar .f-pill:not(#fpill-cat-all):not([id^="fpill-cat"])').forEach(function(b){b.classList.remove('active','price-active');});
-  el.classList.add(isAll?'active':'price-active');
-  renderCards();
-}
-function setHoodFilter(val){filterHood=val;renderCards();}
-
-// ── CARDS ──
-function renderCards(){
-  var grid=document.getElementById('cards-grid');grid.innerHTML='';
-  var filtered=data.items.filter(function(x){
-    if(x.month!==currentMonth)return false;
-    if(filterCat!=='all'&&x.category!==filterCat)return false;
-    if(filterPrice!=='all'&&x.price!==filterPrice)return false;
-    if(filterHood&&x.hood!==filterHood)return false;
+function evMonth(){return typeof monthTab==='number'?monthTab:today().getMonth();}
+function mapThings(){
+  var em=evMonth();
+  return THINGS.filter(function(t){
+    if(t.lat==null||t.lng==null)return false;
+    if(mapGroup!=='all'&&t.group!==mapGroup)return false;
+    var isEvent=!t.evergreen;
+    if(isEvent&&t.month!==em)return false;
+    if(mapMode==='month')return isEvent;
+    if(mapMode==='want')return isWant(t);
     return true;
   });
-  if(!filtered.length){
-    var label=currentMonth==='evergreen'?'Anytime':MONTHS[currentMonth];
-    grid.innerHTML='<div class="empty"><div class="empty-icon">🗺</div><div class="empty-text">Nothing here yet</div><div class="empty-sub">Add your first DC suggestion for '+label+'</div></div>';
-    return;
-  }
-  filtered.forEach(function(item){grid.appendChild(makeCard(item));});
 }
-
-function makeCard(item){
-  var cat=getCat(item.category);
-  var card=document.createElement('div');
-  card.className='event-card'+(item.status==='done'?' done':'');
-
-  // Banner image or color strip
-  if(item.img){
-    var img=document.createElement('img');img.className='card-banner';img.src=item.img;img.alt=item.name;
-    img.onerror=function(){img.style.display='none';var strip=document.createElement('div');strip.className='card-banner-placeholder';strip.style.background=cat.color;card.insertBefore(strip,card.firstChild);};
-    card.appendChild(img);
-  } else {
-    var strip=document.createElement('div');strip.className='card-banner-placeholder';strip.style.background=cat.color;
-    card.appendChild(strip);
-  }
-
-  // Body
-  var body=document.createElement('div');body.className='card-body';
-  // Cat row
-  var catRow=document.createElement('div');catRow.className='card-cat-row';
-  var catBadge=document.createElement('span');catBadge.className='cat-badge';
-  catBadge.style.setProperty('--c',cat.color);catBadge.textContent=cat.label;
-  var priceBadge=document.createElement('span');priceBadge.className='price-badge';priceBadge.textContent=item.price==='free'?'Free':item.price;
-  catRow.appendChild(catBadge);catRow.appendChild(priceBadge);
-  if(item.hood){var hoodBadge=document.createElement('span');hoodBadge.className='hood-badge';hoodBadge.textContent=item.hood;catRow.appendChild(hoodBadge);}
-  body.appendChild(catRow);
-
-  var title=document.createElement('div');title.className='card-title';title.textContent=item.name;body.appendChild(title);
-  if(item.dates){
-    var meta=document.createElement('div');meta.className='card-meta';
-    var metaItem=document.createElement('span');metaItem.className='card-meta-item';metaItem.textContent=item.dates;meta.appendChild(metaItem);
-    body.appendChild(meta);
-  }
-  if(item.note){var note=document.createElement('div');note.className='card-note';note.textContent=item.note;body.appendChild(note);}
-  card.appendChild(body);
-
-  // Footer
-  var footer=document.createElement('div');footer.className='card-footer';
-  var statusBtn=document.createElement('button');
-  statusBtn.className='status-btn '+(item.status==='done'?'status-done':'status-want');
-  statusBtn.textContent=item.status==='done'?'✓ Been here':'♡ Want to go';
-  statusBtn.onclick=(function(id){return function(){
-    var it=data.items.find(function(x){return x.id===id;});
-    if(it)it.status=it.status==='done'?'want':'done';
-    save();render();
-  };})(item.id);
-  footer.appendChild(statusBtn);
-
-  if(item.link){
-    var linkBtn=document.createElement('a');linkBtn.className='card-link-btn';linkBtn.href=item.link;linkBtn.target='_blank';
-    linkBtn.innerHTML='↗ Link';footer.appendChild(linkBtn);
-  }
-
-  // Dots menu
-  var dotsWrap=document.createElement('div');dotsWrap.className='dots-wrap';
-  var dotsBtn=document.createElement('button');dotsBtn.className='dots-btn';dotsBtn.textContent='···';
-  var dotsMenu=document.createElement('div');dotsMenu.className='dots-menu';
-  var editItem=document.createElement('button');editItem.className='dots-item';editItem.textContent='✏ Edit';
-  editItem.onclick=(function(id){return function(){dotsMenu.classList.remove('open');openEditModal(id);};})(item.id);
-  var delItem=document.createElement('button');delItem.className='dots-item danger';delItem.textContent='✕ Delete';
-  delItem.onclick=(function(id){return function(){if(confirm('Remove this suggestion?')){data.items=data.items.filter(function(x){return x.id!==id;});save();render();}};})(item.id);
-  dotsMenu.appendChild(editItem);dotsMenu.appendChild(delItem);
-  dotsBtn.onclick=function(e){e.stopPropagation();document.querySelectorAll('.dots-menu.open').forEach(function(m){if(m!==dotsMenu)m.classList.remove('open');});dotsMenu.classList.toggle('open');};
-  dotsWrap.appendChild(dotsBtn);dotsWrap.appendChild(dotsMenu);
-  footer.appendChild(dotsWrap);
-  card.appendChild(footer);
-  return card;
+function pinIcon(t,big){
+  var cls='pin'+(t.evergreen?'':' evp')+(t.done?' done':'')+(t.exact?'':' approx')+(big?' big':'');
+  var s=big?22:16;
+  return L.divIcon({className:'',html:'<div class="'+cls+'" style="background:'+grp(t.group).color+'"></div>',iconSize:[s,s],iconAnchor:[s/2,s/2],popupAnchor:[0,-s/2]});
 }
-
-// ── IMAGE PREVIEW ──
-function previewImg(url){
-  var prev=document.getElementById('img-preview');
-  if(url.trim()){prev.src=url;prev.classList.add('show');prev.onerror=function(){prev.classList.remove('show');};}
-  else{prev.classList.remove('show');}
+function popupHtml(t){
+  var meta=[t.catLabel===grp(t.group).label?t.catLabel:grp(t.group).label,t.hood,priceLabel(t.price)].concat((t.tags||[]).map(tagLabel)).filter(Boolean);
+  if(!t.evergreen&&t.dates)meta.push(t.dates);
+  var p=planOf(t),k=esc(t.key),link=safeUrl(t.link);
+  return '<div class="pp"><b>'+esc(t.name)+'</b><span class="pm">'+esc(meta.join(' · '))+'</span>'+
+    (t.note?'<p>'+esc(t.note)+'</p>':'')+
+    (p&&!p.past?'<div class="pl">✓ on your calendar · '+esc(planLabel(p))+'</div>':'')+
+    '<div class="pa"><button class="btn sm primary" type="button" data-act="plan" data-k="'+k+'">Plan it</button>'+
+    (t.done?'<button class="btn sm ok" type="button" data-act="unbeen" data-k="'+k+'">Been ✓</button>':'<button class="btn sm" type="button" data-act="been" data-k="'+k+'">Been ✓</button>')+
+    (link?'<a class="btn sm" href="'+esc(link)+'" target="_blank" rel="noopener">Site ↗</a>':'')+
+    '<button class="btn sm" type="button" data-act="edit" data-k="'+k+'">Edit</button></div>'+
+    (t.kind==='item'?'<div class="px">'+(t.exact?'Pinned exactly · <a data-act="pick" data-k="'+k+'">move pin</a>':'Pin is the middle of '+esc(t.hood)+' · <a data-act="pick" data-k="'+k+'">set exact spot</a>')+'</div>':'')+
+    '</div>';
 }
-
-// ── MODAL ──
-function buildModalCats(selectedId){
-  var wrap=document.getElementById('cat-selector');wrap.innerHTML='';
-  CATS.forEach(function(c){
-    var btn=document.createElement('button');btn.className='cat-sel-btn';btn.type='button';btn.dataset.id=c.id;
-    btn.textContent=c.label;btn.style.setProperty('--c',c.color);
-    btn.onclick=function(){
-      wrap.querySelectorAll('.cat-sel-btn').forEach(function(b){b.classList.remove('on');});
-      btn.classList.add('on');
-    };
-    wrap.appendChild(btn);
-    if(c.id===(selectedId||'food'))btn.click();
+function renderMap(){
+  if(map){layer.clearLayers();markers={};}
+  if(map)mapThings().forEach(function(t){
+    var big=t.key===selKey;
+    var mk=L.marker([t.lat,t.lng],{icon:pinIcon(t,big),zIndexOffset:big?1000:(t.evergreen?0:200),title:t.name});
+    mk.bindPopup(function(){return popupHtml(thing(t.key)||t);},{closeButton:false,offset:[0,-2],maxWidth:300});
+    mk.on('click',function(){selKey=t.key;});
+    mk.addTo(layer);markers[t.key]=mk;
+  });
+  // chips: All + the groups that exist
+  var pool=THINGS.filter(function(t){return t.lat!=null;});
+  var counts={};pool.forEach(function(t){counts[t.group]=(counts[t.group]||0)+1;});
+  var g0=mapGroup;mapGroup='all';var allCount=mapThings().length;mapGroup=g0;
+  var hasShop=spots.some(function(s){return s.category==='Shop';});
+  $('chips').innerHTML='<button class="fpill'+(mapGroup==='all'?' on':'')+'" type="button" data-act="grp" data-g="all">All <small>'+allCount+'</small></button>'+
+    GROUPS.filter(function(g){return counts[g.id];}).map(function(g){
+      var label=g.id==='markets'&&hasShop?'Markets & shops':g.label;
+      return '<button class="fpill'+(mapGroup===g.id?' on':'')+'" type="button" data-act="grp" data-g="'+g.id+'"><i style="background:'+g.color+'"></i>'+esc(label)+'</button>';
+    }).join('');
+  var mName=MONTHS[evMonth()];
+  $('seg').innerHTML=[['all','Everything'],['month',mName],['want','Want to try']].map(function(o){
+    return '<button type="button" class="'+(mapMode===o[0]?'on':'')+'" data-act="mode" data-m="'+o[0]+'">'+esc(o[1])+'</button>';}).join('');
+  $('legend').innerHTML='<span><i></i>Saved spot</span><span><i class="evp"></i>Happening in '+esc(mName)+'</span>';
+}
+function showOnMap(key){
+  var t=thing(key);if(!t)return;
+  if(t.lat==null){startPickFor(key);return;}
+  selKey=key;
+  if(!t.evergreen&&t.month!==evMonth()&&typeof t.month==='number'){monthTab=t.month;renderMonth();}
+  if(mapGroup!=='all'&&mapGroup!==t.group)mapGroup='all';
+  if(mapMode==='want'&&!isWant(t))mapMode='all';
+  if(mapMode==='month'&&t.evergreen)mapMode='all';
+  renderMap();
+  var card=document.querySelector('.mapcard');var r=card.getBoundingClientRect();
+  if(r.top<70||r.bottom>innerHeight)window.scrollTo({top:scrollY+r.top-90,behavior:'smooth'});
+  map.flyTo([t.lat,t.lng],Math.max(map.getZoom(),15),{duration:.6});
+  setTimeout(function(){var m=markers[key];if(m)m.openPopup();},650);
+}
+/* pick a point on the map (exact spot for a guide item, or a place's location from its modal) */
+function startPick(text,cb){
+  pickCb=cb;$('pick-text').innerHTML=text;$('pickbar').classList.add('on');$('map').classList.add('picking');map.closePopup();
+  var card=document.querySelector('.mapcard');var r=card.getBoundingClientRect();
+  if(r.top<70||r.bottom>innerHeight)window.scrollTo({top:scrollY+r.top-90,behavior:'smooth'});
+}
+function stopPick(){pickCb=null;$('pickbar').classList.remove('on');$('map').classList.remove('picking');}
+function startPickFor(key){
+  var t=thing(key);if(!t)return;
+  startPick('Click the map where <b>'+esc(t.name)+'</b> is',function(lat,lng){
+    t.ref.lat=+lat.toFixed(5);t.ref.lng=+lng.toFixed(5);
+    if(t.kind==='spot')saveSpots();else saveGuide();
+    selKey=key;render();toast('Pinned '+t.name);
   });
 }
-function buildModalMonths(selected){
-  var sel=document.getElementById('m-month');
-  // Clear all except the evergreen option already in HTML
-  sel.innerHTML='<option value="evergreen">📌 Anytime / Year-Round</option>';
-  MONTHS.forEach(function(m,i){var o=document.createElement('option');o.value=i;o.textContent=m;sel.appendChild(o);});
-  if(selected!==undefined&&selected!==null)sel.value=selected;
-  else sel.value=currentMonth;
-}
-function openAddModal(){
-  editingId=null;
-  document.getElementById('modal-title').textContent='Add Suggestion';
-  document.getElementById('m-del-btn').style.display='none';
-  ['m-name','m-dates','m-link','m-note','m-img'].forEach(function(id){document.getElementById(id).value='';});
-  document.getElementById('m-price').value='free';
-  document.getElementById('m-hood').value='';
-  document.getElementById('img-preview').classList.remove('show');
-  buildModalCats();buildModalMonths();
-  document.getElementById('modal').classList.add('open');
-  setTimeout(function(){document.getElementById('m-name').focus();},100);
-}
-function openEditModal(id){
-  var item=data.items.find(function(x){return x.id===id;});if(!item)return;
-  editingId=id;
-  document.getElementById('modal-title').textContent='Edit Suggestion';
-  document.getElementById('m-del-btn').style.display='inline-flex';
-  document.getElementById('m-name').value=item.name;
-  document.getElementById('m-dates').value=item.dates||'';
-  document.getElementById('m-link').value=item.link||'';
-  document.getElementById('m-note').value=item.note||'';
-  document.getElementById('m-img').value=item.img||'';
-  document.getElementById('m-price').value=item.price||'free';
-  document.getElementById('m-hood').value=item.hood||'';
-  previewImg(item.img||'');
-  buildModalCats(item.category);buildModalMonths(item.month);
-  document.getElementById('modal').classList.add('open');
-}
-function closeModal(){document.getElementById('modal').classList.remove('open');editingId=null;}
-function saveItem(){
-  var name=document.getElementById('m-name').value.trim();if(!name)return;
-  var catId='food';
-  document.querySelectorAll('#cat-selector .cat-sel-btn').forEach(function(b){if(b.classList.contains('on'))catId=b.dataset.id;});
-  var monthVal=document.getElementById('m-month').value;
-  var monthParsed=monthVal==='evergreen'?'evergreen':parseInt(monthVal);
-  var item={
-    id:editingId||'i_'+Date.now(),
-    name:name,category:catId,month:monthParsed,
-    price:document.getElementById('m-price').value,
-    hood:document.getElementById('m-hood').value,
-    dates:document.getElementById('m-dates').value.trim(),
-    img:document.getElementById('m-img').value.trim(),
-    link:document.getElementById('m-link').value.trim(),
-    note:document.getElementById('m-note').value.trim(),
-    status:editingId?(data.items.find(function(x){return x.id===editingId;})||{}).status||'want':'want',
-  };
-  if(editingId){var idx=data.items.findIndex(function(x){return x.id===editingId;});if(idx>=0)data.items[idx]=item;}
-  else data.items.push(item);
-  save();closeModal();
-  currentMonth=item.month;
-  filterCat='all';filterPrice='all';filterHood='';
-  render();
-}
-function deleteFromModal(){
-  if(!editingId)return;if(!confirm('Delete this suggestion?'))return;
-  data.items=data.items.filter(function(x){return x.id!==editingId;});
-  save();closeModal();render();
-}
-document.getElementById('modal').addEventListener('click',function(e){if(e.target===this)closeModal();});
-document.addEventListener('click',function(e){if(!e.target.closest('.dots-wrap'))document.querySelectorAll('.dots-menu.open').forEach(function(m){m.classList.remove('open');});});
-document.addEventListener('keydown',function(e){if(e.key==='Escape')closeModal();});
 
-// ── RENDER ──
-function render(){
-  buildMonthStrip();
-  renderResources();
-  renderHero();
-  buildFilterCats();
-  buildHoodFilter();
-  renderCards();
+/* ═════════════════ THIS MONTH ═════════════════
+   Tabs are computed from today's date: <this month> · <next month> · Anytime. */
+var monthTab=today().getMonth();
+function badge(t){
+  var w=t.when,n=today();
+  if(w&&w.kind==='dates'){
+    var len=(w.e-w.s)/864e5;
+    if(len<1)return {span:DS[w.s.getDay()].toUpperCase(),b:w.s.getDate()};
+    if(len<=6)return {span:DS[w.s.getDay()].toUpperCase()+'–'+DS[w.e.getDay()].toUpperCase(),b:w.s.getDate()};
+    if(w.s<n&&w.e>=n)return {span:'UNTIL',b:MS[w.e.getMonth()]+' '+w.e.getDate(),any:true};
+    return {span:MS[w.s.getMonth()].toUpperCase(),b:w.s.getDate()};
+  }
+  if(w&&w.kind==='weekly'){
+    if(w.days.length===2&&w.days.indexOf(6)>=0&&w.days.indexOf(0)>=0)return {span:'',b:'Wknds',any:true};
+    return {span:'EVERY',b:w.days.slice().sort(function(a,b){return ((a+6)%7)-((b+6)%7);}).map(function(d){return DS[d];}).slice(0,2).join('/'),any:true};
+  }
+  if(w&&w.kind==='daily')return {span:'',b:'Daily',any:true};
+  if(!t.evergreen)return {span:'',b:MS[t.month],any:true};
+  return {span:'',b:'Any',any:true};
+}
+function sortKey(t){var w=t.when;if(w&&w.kind==='dates')return w.e<today()?5e12+w.s.getTime():w.s.getTime();if(w&&(w.kind==='weekly'||w.kind==='daily'))return 1;return 4e12;}
+function monthItems(m){
+  return THINGS.filter(function(t){return t.kind==='item'&&(m==='any'?t.evergreen:t.month===m);})
+    .sort(function(a,b){return (a.done-b.done)||(sortKey(a)-sortKey(b));});
+}
+function evRow(t){
+  var b=badge(t),p=planOf(t),k=esc(t.key),link=safeUrl(t.link);
+  var meta=[t.hood,priceLabel(t.price)?(t.price==='free'?'free':t.price):''];
+  if(t.dates&&!(t.when&&t.when.kind==='weekly'&&/^every\s+\w+$/i.test(t.dates)))meta.push(t.dates);
+  if(t.note)meta.push(t.note);
+  var acts;
+  if(t.done)acts='<span class="chip ok">Been ✓</span>';
+  else if(p&&!p.past)acts='<span class="planned" data-act="plan" data-k="'+k+'" title="Change the plan">✓ on your calendar · '+esc(planLabel(p))+'</span>';
+  else acts=(link?'<a class="btn sm" href="'+esc(link)+'" target="_blank" rel="noopener">Site ↗</a>':'')+'<button class="btn sm primary" type="button" data-act="plan" data-k="'+k+'">Plan it</button>';
+  return '<div class="ev'+(t.done?' done':'')+'" data-k="'+k+'">'+
+    '<div class="date'+(b.any?' any':'')+'"><span>'+esc(b.span)+'</span><b>'+esc(b.b)+'</b></div>'+
+    '<div class="ev-main" style="min-width:0"><div class="t"><i class="dot" style="background:'+grp(t.group).color+'"></i><span class="nm" data-act="show" data-k="'+k+'" title="Show on map">'+esc(t.name)+'</span></div>'+
+    '<div class="m">'+esc(meta.filter(Boolean).join(' · '))+'</div></div>'+
+    '<div class="acts">'+acts+'<button class="btn sm icon" type="button" data-act="menu" data-k="'+k+'" aria-label="More">···</button></div></div>';
+}
+function renderMonth(){
+  var cur=today().getMonth(),nxt=(cur+1)%12;
+  var tabs=[[cur,MONTHS[cur]],[nxt,MONTHS[nxt]],['any','Anytime']];
+  $('mtabs').innerHTML=tabs.map(function(o){return '<button type="button" class="'+(monthTab===o[0]?'on':'')+'" data-act="tab" data-m="'+o[0]+'">'+esc(o[1])+'</button>';}).join('');
+  var list=monthItems(monthTab);
+  var label=monthTab==='any'?'anytime':MONTHS[monthTab];
+  $('month-list').innerHTML=list.length?list.map(evRow).join(''):
+    '<div class="empty-l"><b>Nothing saved for '+esc(label)+' yet.</b>Seen something on one of your sites? Paste the link below.</div>';
+  // other months that have things saved, so nothing gets lost
+  var others={};guide.items.forEach(function(i){if(typeof i.month==='number'&&i.month!==cur&&i.month!==nxt)others[i.month]=(others[i.month]||0)+1;});
+  var keys=Object.keys(others).map(Number).sort(function(a,b){return ((a-cur+12)%12)-((b-cur+12)%12);});
+  $('later').innerHTML=keys.length?'<span>Saved for other months:</span>'+keys.map(function(m){return '<button type="button" class="'+(monthTab===m?'on':'')+'" data-act="tab" data-m="'+m+'">'+MS[m]+' · '+others[m]+'</button>';}).join(''):'';
 }
 
-var now=new Date();
-document.getElementById('today-date').textContent=DAYS[now.getDay()]+', '+MONTHS[now.getMonth()]+' '+now.getDate()+', '+now.getFullYear();
+/* ═════════════════ WANT TO TRY ═════════════════ */
+var wantAll=false;
+function renderWant(){
+  var list=THINGS.filter(isWant);
+  list.forEach(function(t,i){t._i=i;t._p=planOf(t);});
+  list.sort(function(a,b){
+    var ap=a._p&&!a._p.past?0:1,bp=b._p&&!b._p.past?0:1;if(ap!==bp)return ap-bp;
+    var aa=a.ref.addedAt||0,ba=b.ref.addedAt||0;if(aa!==ba)return ba-aa;
+    if(a.kind!==b.kind)return a.kind==='item'?-1:1;
+    return a._i-b._i;
+  });
+  $('want-count').textContent=list.length+' place'+(list.length===1?'':'s');
+  var show=wantAll?list:list.slice(0,7);
+  $('want-list').innerHTML=list.length?show.map(function(t){
+    var k=esc(t.key),p=t._p,sub=[t.hood,priceLabel(t.price)?(t.price==='free'?'free':t.price):''];
+    if(p&&p.past)sub.unshift('planned '+DS[p.date.getDay()]+' '+MS[p.date.getMonth()]+' '+p.date.getDate()+' — did you go?');
+    else if(t.dates)sub.push(t.dates);
+    if(t.note)sub.push(t.note);
+    return '<div class="row" data-k="'+k+'"><i class="dot" style="background:'+grp(t.group).color+'"></i>'+
+      '<div class="grow"><div class="r-t" data-act="show" data-k="'+k+'" title="Show on map">'+esc(t.name)+'</div><div class="r-s">'+esc(sub.filter(Boolean).join(' · '))+'</div></div>'+
+      '<button class="btn sm" type="button" data-act="been" data-k="'+k+'">Been ✓</button>'+
+      (p&&!p.past?'<span class="planned" data-act="plan" data-k="'+k+'">✓ '+esc(planLabel(p))+'</span>':'<button class="btn sm primary" type="button" data-act="plan" data-k="'+k+'">Plan it</button>')+
+      '</div>';
+  }).join('')+(list.length>7?'<button class="want-more" type="button" data-act="want-all">'+(wantAll?'Show fewer':'Show all '+list.length)+'</button>':''):
+    '<div class="empty-l"><b>Your list is empty.</b>Add a place you keep meaning to try — it’ll show up on the map and in weekend ideas.</div>';
+}
+
+/* ═════════════════ FIND MORE (quick links from dcGuide1.resources) ═════════════════ */
+function initials(label){
+  var w=String(label||'').replace(/\(.*?\)/g,'').split(/\s+/).filter(function(x){return x&&!/^(the|a|an|of)$/i.test(x);});
+  return ((w[0]||'?')[0]+(w[1]?w[1][0]:'')).toUpperCase();
+}
+function renderDock(){
+  $('dock').innerHTML='<span class="dock-l">Find more</span>'+guide.resources.map(function(r){
+    var u=safeUrl(r.url),h=host(r.url);
+    return '<a class="dk" href="'+esc(u||'#')+'" target="_blank" rel="noopener" aria-label="'+esc(r.label)+'">'+esc(initials(r.label||h))+
+      (h?'<img src="https://icons.duckduckgo.com/ip3/'+esc(h)+'.ico" alt="" loading="lazy" onerror="this.remove()">':'')+'<span class="tip">'+esc(r.label||h)+'</span></a>';
+  }).join('')+'<button class="dk plus" type="button" data-act="links" title="Add or edit links" aria-label="Add or edit links">+</button>';
+}
+function renderLinksEd(){
+  $('links-rows').innerHTML=guide.resources.length?guide.resources.map(function(r,i){
+    return '<div class="lrow" data-i="'+i+'"><input class="f-inp" data-f="label" value="'+esc(r.label)+'" aria-label="Name"><input class="f-inp" data-f="url" value="'+esc(r.url)+'" aria-label="Link">'+
+      '<button type="button" data-lact="up" title="Move left">‹</button><button type="button" class="x" data-lact="del" title="Remove">×</button></div>';
+  }).join(''):'<div class="card-m" style="padding:4px 0 6px">No links yet — add the sites where you find things to do.</div>';
+}
+
+/* ═════════════════ FLOATING LAYERS ═════════════════ */
+function placeNear(el,anchor,align){
+  el.style.left='0px';el.style.top='0px';
+  var r=anchor.getBoundingClientRect(),w=el.offsetWidth,h=el.offsetHeight;
+  var left=align==='left'?r.left:r.right-w;left=Math.max(12,Math.min(left,innerWidth-w-12));
+  var top=r.bottom+8;if(top+h>innerHeight-8&&r.top-h-8>70)top=r.top-h-8;
+  el.style.left=(left+scrollX)+'px';el.style.top=(top+scrollY)+'px';
+}
+function closeFloats(except){['plan-pop','row-menu','links-ed'].forEach(function(id){if(id!==except)$(id).classList.remove('open');});}
+var toastT=null,toastFn=null;
+function toast(msg,btn,fn){
+  $('toast-t').textContent=msg;$('toast-b').textContent=btn||'';toastFn=fn||null;
+  $('toast').classList.add('on');clearTimeout(toastT);toastT=setTimeout(function(){$('toast').classList.remove('on');},btn?6000:3200);
+}
+$('toast-b').addEventListener('click',function(){var f=toastFn;$('toast').classList.remove('on');if(f)f();});
+
+/* ═════════════════ PLAN IT ═════════════════ */
+var plan=null;   // {keys, date, title, note, group}
+function defaultTime(t){
+  var tm=(t.when&&t.when.time)||parseTime(t.note);if(tm)return tm;
+  var brunch=/brunch/i.test(t.note)||(t.tags||[]).indexOf('brunch')>=0;
+  if((t.tags||[]).indexOf('happyhour')>=0&&t.group==='drinks')return '17:30';
+  return {markets:'10:00',outdoors:'10:30',arts:'13:00',events:'18:00',other:'14:00',food:brunch?'11:00':'19:00',drinks:'19:00',night:'21:30'}[t.group]||'18:00';
+}
+function nextDow(from,dow){var d=sod(from);while(d.getDay()!==dow)d=addDays(d,1);return d;}
+function defaultDate(t){
+  var n=today(),wk=weekendOf(new Date()),w=t.when;
+  if(w&&w.kind==='dates'&&w.e>=n){var s=w.s<n?n:w.s;if((w.e-w.s)/864e5<=6)return s;var ov=wk.days.filter(function(d){return d>=w.s&&d<=w.e;});return ov.length?pickDay(ov):s;}
+  if(w&&w.kind==='weekly'){var hit=wk.days.filter(function(d){return w.days.indexOf(d.getDay())>=0;});if(hit.length)return pickDay(hit);
+    var best=null;w.days.forEach(function(dw){var d=nextDow(n,dw);if(!best||d<best)best=d;});return best;}
+  return pickDay(wk.days);
+}
+function openPlan(keys,anchor,opts){
+  opts=opts||{};
+  var ts=keys.map(thing).filter(Boolean);if(!ts.length)return;
+  var t0=ts[0];
+  var date=opts.date||(t0.ref.plannedFor&&fromDk(t0.ref.plannedFor)>=today()?fromDk(t0.ref.plannedFor):defaultDate(t0));
+  plan={keys:keys,ts:ts,date:date};
+  $('plan-sub').textContent=ts.map(function(t){return t.name;}).join(', then ')+(t0.hood?' · '+ts.map(function(t){return t.hood;}).filter(function(v,i,a){return v&&a.indexOf(v)===i;}).join(' + '):'');
+  $('plan-time').value=opts.time||t0.ref.plannedTime||defaultTime(t0);
+  $('plan-len').value=String(ts.length>1?180:(t0.group==='night'?180:120));
+  $('plan-msg').style.display='none';
+  renderPlanDays();
+  var g=useGoogle();
+  $('plan-dest').textContent=g?'Goes to Google Calendar':'Goes to Calendar · Social';
+  $('plan-go').disabled=false;$('plan-go').textContent='Add to calendar';
+  closeFloats('plan-pop');
+  var pop=$('plan-pop');pop.classList.add('open');placeNear(pop,anchor,'right');
+}
+function renderPlanDays(){
+  var d=plan.date,n=today();
+  var dow=d.getDay(),inWk=dow===5||dow===6||dow===0;
+  var fri=inWk?addDays(d,-((dow+2)%7)):weekendOf(new Date()).fri;
+  var chips=[0,1,2].map(function(i){var x=addDays(fri,i);return '<button type="button" data-day="'+dk(x)+'"'+(x<n?' disabled':'')+' class="'+(inWk&&dk(x)===dk(d)?'on':'')+'"><small>'+DS[x.getDay()].toUpperCase()+'</small>'+x.getDate()+'</button>';}).join('');
+  chips+='<button type="button" data-day="other" class="'+(inWk?'':'on')+'"><small>OTHER</small>'+(inWk?'…':MS[d.getMonth()]+' '+d.getDate())+'</button>';
+  $('plan-days').innerHTML=chips;
+  var di=$('plan-date');di.value=dk(d);di.min=dk(n);di.style.display=inWk?'none':'block';
+}
+$('plan-days').addEventListener('click',function(e){
+  var b=e.target.closest('button');if(!b||b.disabled)return;
+  var v=b.getAttribute('data-day');
+  if(v==='other'){$('plan-date').style.display='block';$('plan-date').focus();try{$('plan-date').showPicker();}catch(x){}return;}
+  plan.date=fromDk(v);renderPlanDays();
+});
+$('plan-date').addEventListener('change',function(){if(this.value){plan.date=fromDk(this.value);renderPlanDays();}});
+function useGoogle(){return !!(window.GCal&&GCal.configured()&&(GCal.connected()||GCal.everConnected()));}
+function withGoogle(fn){
+  if(GCal.connected())return fn().catch(function(err){if(err.code==='auth')return GCal.signIn().then(fn);throw err;});
+  return GCal.signIn().then(fn);
+}
+function addMinutes(tm,mins){var p=tm.split(':');var t=Math.min(23*60+59,+p[0]*60+ +p[1]+mins);return pad(Math.floor(t/60))+':'+pad(t%60);}
+$('plan-go').addEventListener('click',function(){
+  if(!plan)return;
+  var len=+$('plan-len').value,time=len?($('plan-time').value||''):'';
+  var ev={title:plan.ts.map(function(t){return t.name;}).join(', then '),date:dk(plan.date),time:time,endTime:time?addMinutes(time,len):''};
+  var where=plan.ts.map(function(t){return t.hood;}).filter(function(v,i,a){return v&&a.indexOf(v)===i;}).join(' + ');
+  var links=plan.ts.map(function(t){return safeUrl(t.link);}).filter(Boolean);
+  var note=['Out in DC'+(where?' · '+where:'')].concat(links).join(' · ');
+  var btn=this,p=plan;
+  dropOldLocal(p.ts);
+  if(useGoogle()){
+    btn.disabled=true;btn.textContent='Adding…';
+    withGoogle(function(){return GCal.create({title:ev.title,date:ev.date,time:ev.time,endTime:ev.endTime,location:where?where+', Washington, DC':''});})
+      .then(function(r){markPlanned(p,ev,r&&r.id,'google');closeFloats();toast('On your Google Calendar · '+DS[p.date.getDay()]+(ev.time?' '+fmtTime(ev.time):''));})
+      .catch(function(err){var id=addLocal(ev,note);markPlanned(p,ev,id,'local');closeFloats();toast('Google didn’t take it ('+err.message+') — saved to your Brain calendar instead');});
+  }else{
+    var id=addLocal(ev,note);markPlanned(p,ev,id,'local');closeFloats();
+    toast('On your calendar · '+DS[p.date.getDay()]+' '+MS[p.date.getMonth()]+' '+p.date.getDate()+(ev.time?' · '+fmtTime(ev.time):''),'Open calendar',function(){location.href='../calendar/'+(location.protocol==='file:'?'index.html':'');});
+  }
+});
+function calCat(){
+  var cats=lsGet('calCategories1',null);
+  if(Array.isArray(cats)&&cats.length){var s=cats.find(function(c){return c.id==='social'||/social|friends|fun/i.test(c.label||'');});return s?s.id:'social';}
+  return 'social';
+}
+function addLocal(ev,note){
+  var d=lsGet(CAL_KEY,null);var obj=Array.isArray(d)?{events:d}:(d||{events:[]});if(!Array.isArray(obj.events))obj.events=[];
+  var id='ev'+Date.now().toString(36)+Math.floor(Math.random()*1e4);
+  obj.events.push({id:id,title:ev.title,date:ev.date,time:ev.time,endTime:ev.endTime,cat:calCat(),note:note,done:false});
+  lsSet(CAL_KEY,Array.isArray(d)?obj.events:obj);
+  return id;
+}
+function dropOldLocal(ts){
+  var ids=ts.map(function(t){return t.ref.plannedVia!=='google'&&t.ref.plannedEventId;}).filter(Boolean);if(!ids.length)return;
+  var d=lsGet(CAL_KEY,null);if(!d)return;var arr=Array.isArray(d)?d:(d.events||[]);
+  var kept=arr.filter(function(e){return ids.indexOf(e.id)<0;});if(kept.length===arr.length)return;
+  if(Array.isArray(d))lsSet(CAL_KEY,kept);else{d.events=kept;lsSet(CAL_KEY,d);}
+}
+function markPlanned(p,ev,id,via){
+  p.ts.forEach(function(t){var r=t.ref;r.plannedEventId=id||'';r.plannedFor=ev.date;r.plannedTime=ev.time||'';r.plannedVia=via;});
+  saveSpots();saveGuide();render();
+}
+
+/* ═════════════════ ACTIONS ═════════════════ */
+function setBeen(key,on){
+  var t=thing(key);if(!t)return;
+  if(t.kind==='spot')t.ref.visited=on;else t.ref.status=on?'done':'want';
+  if(t.kind==='spot')saveSpots();else saveGuide();
+  map&&map.closePopup();render();
+  if(on)toast('Took '+t.name+' off your list','Undo',function(){setBeen(key,false);});
+}
+function deleteThing(key){
+  var t=thing(key);if(!t)return;
+  if(!confirm('Delete “'+t.name+'”?'))return;
+  if(t.kind==='spot'){spots=spots.filter(function(s){return s!==t.ref;});saveSpots();}
+  else{guide.items=guide.items.filter(function(i){return i!==t.ref;});saveGuide();}
+  closeModals();render();
+}
+function openMenu(key,anchor){
+  var t=thing(key);if(!t)return;var k=esc(key);
+  $('row-menu').innerHTML='<button type="button" data-act="edit" data-k="'+k+'">Edit</button>'+
+    '<button type="button" data-act="show" data-k="'+k+'">'+(t.lat!=null?'Show on map':'Put on map')+'</button>'+
+    (t.kind==='item'&&t.lat!=null?'<button type="button" data-act="pick" data-k="'+k+'">'+(t.exact?'Move pin':'Set exact spot')+'</button>':'')+
+    (t.done?'<button type="button" data-act="unbeen" data-k="'+k+'">Not been yet</button>':'<button type="button" data-act="been" data-k="'+k+'">Been ✓</button>')+
+    '<button type="button" class="danger" data-act="del" data-k="'+k+'">Delete</button>';
+  closeFloats('row-menu');var m=$('row-menu');m.classList.add('open');placeNear(m,anchor,'right');
+}
+document.addEventListener('click',function(e){
+  var el=e.target.closest('[data-act]');
+  if(!e.target.closest('.pop,.menu,[data-act="plan"],[data-act="plan-weekend"],[data-act="menu"],[data-act="links"]'))closeFloats();
+  if(!el)return;
+  var act=el.getAttribute('data-act'),key=el.getAttribute('data-k');
+  if(act!=='plan'&&act!=='plan-weekend'&&act!=='menu'&&act!=='links')closeFloats();
+  switch(act){
+    case 'plan':e.preventDefault();openPlan([key],el);break;
+    case 'plan-weekend':if(currentSug&&!currentSug.none)openPlan([currentSug.first.t.key].concat(currentSug.second?[currentSug.second.t.key]:[]),el,{date:currentSug.day,time:defaultTime(currentSug.first.t)});break;
+    case 'another':anotherIdea();break;
+    case 'been':setBeen(key,true);break;
+    case 'unbeen':setBeen(key,false);break;
+    case 'edit':map&&map.closePopup();openEdit(key);break;
+    case 'del':deleteThing(key);break;
+    case 'show':showOnMap(key);break;
+    case 'pick':startPickFor(key);break;
+    case 'menu':openMenu(key,el);break;
+    case 'grp':mapGroup=el.getAttribute('data-g');renderMap();break;
+    case 'mode':mapMode=el.getAttribute('data-m');renderMap();break;
+    case 'tab':var v=el.getAttribute('data-m');monthTab=v==='any'?'any':+v;renderMonth();renderMap();break;
+    case 'want-all':wantAll=!wantAll;renderWant();break;
+    case 'add-spot':openSpotModal(null);break;
+    case 'focus-add':$('add-input').focus();$('add-input').scrollIntoView({block:'center',behavior:'smooth'});break;
+    case 'links':
+      var ed=$('links-ed');if(ed.classList.contains('open')){ed.classList.remove('open');break;}
+      closeFloats('links-ed');renderLinksEd();ed.classList.add('open');placeNear(ed,el,'right');ed.querySelector('#links-add input').focus();break;
+  }
+});
+$('pick-cancel').addEventListener('click',function(){var reopen=pickReopen;stopPick();if(reopen)reopen();});
+document.addEventListener('keydown',function(e){
+  if(e.key!=='Escape')return;
+  if(pickCb){var reopen=pickReopen;stopPick();if(reopen)reopen();return;}
+  closeFloats();closeModals();
+});
+window.addEventListener('resize',function(){closeFloats();});
+
+/* link editor */
+$('links-rows').addEventListener('change',function(e){
+  var row=e.target.closest('.lrow');if(!row)return;var r=guide.resources[+row.getAttribute('data-i')];if(!r)return;
+  var f=e.target.getAttribute('data-f'),v=e.target.value.trim();
+  if(f==='url'){if(!v)return;if(!/^[a-z][a-z0-9+.-]*:/i.test(v))v='https://'+v;}
+  if(f==='label'&&!v)v=host(r.url);
+  r[f]=v;saveGuide();renderDock();
+});
+$('links-rows').addEventListener('click',function(e){
+  var b=e.target.closest('button[data-lact]');if(!b)return;var i=+b.closest('.lrow').getAttribute('data-i');
+  if(b.getAttribute('data-lact')==='del')guide.resources.splice(i,1);
+  else if(i>0){var t=guide.resources[i];guide.resources[i]=guide.resources[i-1];guide.resources[i-1]=t;}
+  saveGuide();renderDock();renderLinksEd();
+});
+$('links-add').addEventListener('submit',function(e){
+  e.preventDefault();var f=this.elements,l=f.label.value.trim(),u=f.url.value.trim();if(!u){f.url.focus();return;}
+  if(!/^[a-z][a-z0-9+.-]*:/i.test(u))u='https://'+u;
+  guide.resources.push({id:'r_'+Date.now(),label:l||host(u),url:u});saveGuide();renderDock();renderLinksEd();
+  f.label.value='';f.url.value='';f.label.focus();
+});
+
+/* "+ Add something you saw — paste a link or a name" */
+function guessName(u){
+  try{var url=new URL(safeUrl(u));var segs=url.pathname.split('/').filter(Boolean).filter(function(s){return !/^(events?|e|p|tickets?|d|find|calendar|\d+)$/i.test(s);});
+    var last=(segs.pop()||'').replace(/\.[a-z]{2,5}$/i,'').replace(/[-_]+(tickets?|\d{6,})\b/gi,'').replace(/[-_+]+/g,' ').replace(/\b\d{6,}\b/g,'').trim();
+    if(last&&/[a-z]/i.test(last))return last.replace(/\b\w/g,function(c){return c.toUpperCase();});
+  }catch(e){}
+  return '';
+}
+$('addrow').addEventListener('submit',function(e){
+  e.preventDefault();var v=$('add-input').value.trim();if(!v)return;
+  var isUrl=/^(https?:\/\/|www\.)\S+$/i.test(v)||/^[\w-]+(\.[\w-]+)+\/\S*$/.test(v);
+  openItemModal(null,{name:isUrl?guessName(v):v,link:isUrl?safeUrl(v):'',month:monthTab==='any'?'evergreen':monthTab});
+  $('add-input').value='';
+});
+
+/* ═════════════════ ITEM MODAL (dcGuide1) ═════════════════ */
+var editingItem=null,itemLL=null,pickReopen=null;
+function fillSelects(){
+  $('m-month').innerHTML='<option value="evergreen">Anytime / year-round</option>'+MONTHS.map(function(m,i){return '<option value="'+i+'">'+m+'</option>';}).join('');
+  $('m-hood').innerHTML='<option value="">— Any / TBD —</option>'+HOODS.map(function(h){return '<option>'+esc(h)+'</option>';}).join('');
+  $('sp-category').innerHTML=SPOT_CATS.map(function(c){return '<option value="'+c.val+'">'+esc(c.label)+'</option>';}).join('');
+}
+function buildModalCats(sel){
+  $('cat-selector').innerHTML=CATS.map(function(c){return '<button type="button" class="cat-sel-btn'+(c.id===(sel||'food')?' on':'')+'" data-id="'+c.id+'" style="--c:'+grp(c.group).color+'">'+esc(c.label)+'</button>';}).join('');
+}
+$('cat-selector').addEventListener('click',function(e){var b=e.target.closest('.cat-sel-btn');if(!b)return;this.querySelectorAll('.cat-sel-btn').forEach(function(x){x.classList.toggle('on',x===b);});});
+function locText(){
+  var h=$('m-hood').value;
+  $('m-loc-text').textContent=itemLL?'Exact spot set ('+itemLL[0].toFixed(4)+', '+itemLL[1].toFixed(4)+')':(HOOD_LL[h]?'Middle of '+h+' (approximate)':'Not on the map yet — pick a neighborhood or a spot');
+  $('m-loc-reset').style.display=itemLL?'':'none';
+}
+$('m-hood').addEventListener('change',locText);
+$('m-loc-reset').addEventListener('click',function(){itemLL=null;locText();});
+$('m-loc-pick').addEventListener('click',function(){
+  var name=$('m-name').value.trim()||'it';
+  $('modal').classList.remove('open');
+  pickReopen=function(){pickReopen=null;$('modal').classList.add('open');};
+  startPick('Click the map where <b>'+esc(name)+'</b> is',function(lat,lng){itemLL=[+lat.toFixed(5),+lng.toFixed(5)];locText();var r=pickReopen;if(r)r();});
+});
+$('m-img').addEventListener('input',function(){previewImg(this.value);});
+function previewImg(url){var p=$('img-preview');var u=safeUrl(url);if(u){p.src=u;p.classList.add('show');p.onerror=function(){p.classList.remove('show');};}else p.classList.remove('show');}
+function openItemModal(item,pre){
+  editingItem=item;pre=pre||{};
+  $('modal-title').textContent=item?'Edit':'Add something';
+  $('m-del-btn').style.display=item?'':'none';
+  var src=item||{};
+  $('m-name').value=src.name||pre.name||'';
+  $('m-dates').value=src.dates||'';
+  $('m-link').value=src.link||pre.link||'';
+  $('m-note').value=src.note||'';
+  $('m-img').value=src.img||'';
+  $('m-price').value=src.price||'free';
+  $('m-hood').value=src.hood||'';
+  var mo=item?src.month:(pre.month!=null?pre.month:'evergreen');
+  $('m-month').value=mo==null?'evergreen':String(mo);
+  itemLL=item&&item.lat!=null&&item.lng!=null?[item.lat,item.lng]:null;
+  buildModalCats(src.category);previewImg(src.img||'');locText();
+  $('modal').classList.add('open');
+  setTimeout(function(){(item||!pre.name?$('m-name'):$('m-dates')).focus();},60);
+}
+$('m-save').addEventListener('click',function(){
+  var name=$('m-name').value.trim();if(!name){$('m-name').focus();return;}
+  var on=document.querySelector('#cat-selector .cat-sel-btn.on');
+  var mv=$('m-month').value;
+  var fields={name:name,category:on?on.getAttribute('data-id'):'food',month:mv==='evergreen'?'evergreen':parseInt(mv,10),
+    price:$('m-price').value,hood:$('m-hood').value,dates:$('m-dates').value.trim(),img:$('m-img').value.trim(),
+    link:$('m-link').value.trim(),note:$('m-note').value.trim()};
+  if(editingItem){
+    Object.assign(editingItem,fields);
+    if(itemLL){editingItem.lat=itemLL[0];editingItem.lng=itemLL[1];}else{delete editingItem.lat;delete editingItem.lng;}
+  }else{
+    var it=Object.assign({id:'i_'+Date.now()},fields,{status:'want',addedAt:Date.now()});
+    if(itemLL){it.lat=itemLL[0];it.lng=itemLL[1];}
+    guide.items.push(it);
+  }
+  saveGuide();
+  var m=fields.month,cur=today().getMonth();
+  if(m==='evergreen')monthTab='any';else if(m===cur||m===(cur+1)%12||!editingItem)monthTab=m;
+  closeModals();render();
+});
+$('m-del-btn').addEventListener('click',function(){if(editingItem)deleteThing('item:'+editingItem.id);});
+
+/* ═════════════════ SPOT MODAL (dcPassport1) ═════════════════ */
+var editingSpot=null,spotTags=[];
+function openSpotModal(spot){
+  editingSpot=spot;spotTags=spot?(spot.tags||[]).slice():[];
+  $('sp-title').textContent=spot?'Edit place':'Add a place';
+  $('sp-del-btn').style.display=spot?'':'none';
+  $('sp-name').value=spot?spot.name:'';
+  $('sp-category').value=spot?spot.category:'Restaurant';
+  $('sp-city').value=spot?spot.city||'DC':'DC';
+  $('sp-note').value=spot?spot.note||'':'';
+  $('sp-link').value=spot?spot.link||'':'';
+  $('sp-search').value='';$('sp-geo-status').textContent='';
+  setSpotLL(spot&&spot.lat?spot.lat:null,spot&&spot.lng?spot.lng:null);
+  buildTagPicker();
+  $('sp-modal').classList.add('open');
+  setTimeout(function(){$('sp-name').focus();},60);
+}
+function setSpotLL(lat,lng){
+  $('sp-lat').value=lat==null?'':lat;$('sp-lng').value=lng==null?'':lng;
+  $('sp-coords').value=lat==null?'':lat+', '+lng;
+  $('sp-ll-text').textContent=lat==null?'No location yet — search, paste, or pick on the map.':'Pinned at '+(+lat).toFixed(5)+', '+(+lng).toFixed(5);
+}
+function buildTagPicker(){
+  $('tag-picker').innerHTML=PRESET_TAGS.map(function(t){return '<button type="button" class="tag-option'+(spotTags.indexOf(t.val)>=0?' selected':'')+'" data-t="'+t.val+'">'+esc(t.label)+'</button>';}).join('');
+}
+$('tag-picker').addEventListener('click',function(e){
+  var b=e.target.closest('.tag-option');if(!b)return;var v=b.getAttribute('data-t'),i=spotTags.indexOf(v);
+  if(i>=0)spotTags.splice(i,1);else spotTags.push(v);b.classList.toggle('selected',i<0);
+});
+$('sp-coords').addEventListener('input',function(){
+  var parts=this.value.trim().split(/[\s,]+/).filter(Boolean);
+  if(parts.length>=2){var la=parseFloat(parts[0]),ln=parseFloat(parts[1]);
+    if(!isNaN(la)&&!isNaN(ln)&&la>=-90&&la<=90&&ln>=-180&&ln<=180){$('sp-lat').value=la;$('sp-lng').value=ln;$('sp-ll-text').textContent='Pinned at '+la.toFixed(5)+', '+ln.toFixed(5);}}
+});
+$('sp-pick').addEventListener('click',function(){
+  var name=$('sp-name').value.trim()||'it';
+  $('sp-modal').classList.remove('open');
+  pickReopen=function(){pickReopen=null;$('sp-modal').classList.add('open');};
+  startPick('Click the map where <b>'+esc(name)+'</b> is',function(lat,lng){setSpotLL(+lat.toFixed(5),+lng.toFixed(5));var r=pickReopen;if(r)r();});
+});
+function geocodeName(){
+  var q=$('sp-search').value.trim();if(!q)return;
+  var st=$('sp-geo-status');st.style.color='var(--muted)';st.textContent='Searching…';
+  fetch('https://nominatim.openstreetmap.org/search?format=json&limit=1&q='+encodeURIComponent(q+' Washington DC'),{headers:{'Accept':'application/json'}})
+    .then(function(r){return r.json();})
+    .then(function(d){
+      if(d&&d.length){var la=+(+d[0].lat).toFixed(5),ln=+(+d[0].lon).toFixed(5);setSpotLL(la,ln);
+        st.style.color='var(--ok)';st.textContent='✓ Found: '+d[0].display_name.split(',').slice(0,3).join(',');}
+      else{st.style.color='var(--over)';st.textContent='✗ Not found — try adding “DC”, paste coordinates, or pick on the map';}
+    }).catch(function(){st.style.color='var(--over)';st.textContent='✗ Search failed — paste coordinates or pick on the map';});
+}
+$('sp-search-btn').addEventListener('click',geocodeName);
+$('sp-search').addEventListener('keydown',function(e){if(e.key==='Enter'){e.preventDefault();geocodeName();}});
+$('sp-save').addEventListener('click',function(){
+  var name=$('sp-name').value.trim();if(!name){$('sp-name').focus();return;}
+  var la=parseFloat($('sp-lat').value),ln=parseFloat($('sp-lng').value);
+  var fields={name:name,category:$('sp-category').value,city:$('sp-city').value,lat:isNaN(la)?null:la,lng:isNaN(ln)?null:ln,
+    note:$('sp-note').value.trim(),link:$('sp-link').value.trim(),tags:spotTags.slice()};
+  var key;
+  if(editingSpot){Object.assign(editingSpot,fields);key='spot:'+editingSpot.id;}
+  else{var s=Object.assign({id:'s_'+Date.now()},fields,{visited:false,rating:0,addedAt:Date.now()});spots.push(s);key='spot:'+s.id;}
+  saveSpots();closeModals();render();
+  if(fields.lat!=null)showOnMap(key);
+});
+$('sp-del-btn').addEventListener('click',function(){if(editingSpot)deleteThing('spot:'+editingSpot.id);});
+
+function openEdit(key){var t=thing(key);if(!t)return;if(t.kind==='spot')openSpotModal(t.ref);else openItemModal(t.ref);}
+function closeModals(){['modal','sp-modal'].forEach(function(id){$(id).classList.remove('open');});editingItem=null;editingSpot=null;}
+document.querySelectorAll('[data-close]').forEach(function(b){b.addEventListener('click',closeModals);});
+['modal','sp-modal'].forEach(function(id){$(id).addEventListener('mousedown',function(e){if(e.target===this)closeModals();});});
+
+/* ═════════════════ RENDER ═════════════════ */
+function render(){rebuild();renderDock();renderWeekend();renderMap();renderMonth();renderWant();}
+window.addEventListener('storage',function(e){
+  if(e.key===SPOT_KEY||e.key===GUIDE_KEY){load();render();}
+  else if(e.key===CAL_KEY){render();}
+});
+
+fillSelects();
 load();
+try{initMap();}catch(e){$('map').innerHTML='<div class="empty-l" style="padding:24px">The map couldn’t load (offline?). Everything else still works.</div>';map=null;}
 render();
 </script>
 </body>

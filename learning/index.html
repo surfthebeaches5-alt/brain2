@@ -97,7 +97,7 @@
   .sea button.on b{color:var(--ink)}
   .sea button.on small{color:var(--muted)}
   .sea button.fut b{color:var(--faint)}
-  .sea button.now b::after{content:"";display:inline-block;width:5px;height:5px;border-radius:50%;background:var(--accent-deep);margin-left:5px;vertical-align:2px}
+  .sea button.cur-s b::after{content:"";display:inline-block;width:5px;height:5px;border-radius:50%;background:var(--accent-deep);margin-left:5px;vertical-align:2px}
 
   /* ── overview hero ── */
   .hero2{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:44px;padding:26px 30px}
@@ -902,7 +902,7 @@ var SEA=(function(){
     var idx=list.indexOf(selected()), from=Math.max(0,Math.min(idx-2,list.length-5)), view=list.slice(from,from+5), cur=current();
     return '<div class="sea" role="tablist" aria-label="Seasons">'+view.map(function(s){
       var st=status(s);
-      return '<button class="'+(s.id===sel?'on ':'')+(st==='future'?'fut ':'')+(s.id===cur.id?'now':'')+'" onclick="SEA.select('+U.a(s.id)+')" title="'+U.esc(s.name)+'"><b>'+U.esc(shortName(s))+'</b><small>'+U.esc(U.range(s.start,s.end))+'</small></button>';
+      return '<button class="'+(s.id===sel?'on ':'')+(st==='future'?'fut ':'')+(s.id===cur.id?'cur-s':'')+'" onclick="SEA.select('+U.a(s.id)+')" title="'+U.esc(s.name)+'"><b>'+U.esc(shortName(s))+'</b><small>'+U.esc(U.range(s.start,s.end))+'</small></button>';
     }).join('')+'</div>';
   }
   /* ── edit dates modal ── */
@@ -1496,7 +1496,7 @@ function coursesHtml(p){
     var isNow=k&&k.ci===ci;
     var row='<div class="crow'+(done?' done':'')+'" onclick="CO.toggleExpand('+A(c.cid)+')" role="button" aria-expanded="'+open+'"><button class="n" title="Mark complete" onclick="event.stopPropagation();CO.toggleCourse('+ci+')">'+(done?'✓':(ci+1))+'</button>'+
       '<span class="t"><span>'+esc(c.name)+'</span>'+(c.link?'<a class="tx" style="opacity:1" href="'+esc(U.safeUrl(c.link))+'" target="_blank" rel="noopener" title="Open" onclick="event.stopPropagation()">↗</a>':'')+'</span>'+
-      '<span class="bar"><i style="width:'+pct+'%"></i></span><span class="x">'+(c.modules.length?dn+'/'+c.modules.length:(done?'1/1':'0/1'))+'</span>'+
+      '<span class="bar"><i style="width:'+pct+'%"></i></span><span class="x">'+(c.modules.length?dn+'/'+c.modules.length:(done?'1/1':c.pct?Math.round(c.pct)+'%':'0/1'))+'</span>'+
       '<span class="dd">'+(done?U.due('done','plain'):isNow?U.due('now','blue'):'')+'<button class="tx ed" title="Course link" onclick="event.stopPropagation();CO.editCourseLink('+ci+')">✎</button><button class="tx" title="Remove course" onclick="event.stopPropagation();CO.delCourse('+ci+')">✕</button></span></div>';
     if(!open)return row;
     return '<div class="copen">'+row+c.modules.map(function(m,mi){return m2(ci,mi,m,isNow&&k.mi===mi);}).join('')+addMod(ci)+'</div>';
@@ -1516,7 +1516,7 @@ function render(){
   /* up next */
   var up;
   if(k){var c=p.courses[k.ci];
-    var sub=isFlat(p)?(k.mi>=0?'module '+(k.mi+1)+' of '+c.modules.length:''):('Course '+(k.ci+1)+' · '+c.name+(k.mi>=0?' · module '+(k.mi+1)+' of '+c.modules.length:''));
+    var sub=isFlat(p)?(k.mi>=0?'module '+(k.mi+1)+' of '+c.modules.length:(c.pct?Math.round(c.pct)+'% through':'')):(k.mi>=0?'Course '+(k.ci+1)+' · '+c.name+' · module '+(k.mi+1)+' of '+c.modules.length:'Course '+(k.ci+1)+' of '+p.courses.length+(c.pct?' · '+Math.round(c.pct)+'% through':''));
     var openUrl=U.safeUrl(c.link||p.url);
     up='<div class="upn"><span class="ic">▶</span><div style="min-width:0"><div class="tt">'+esc(nx)+'</div><div class="ss">'+esc(sub)+'</div></div><div class="acts">'+(openUrl?'<a class="btn sm" href="'+esc(openUrl)+'" target="_blank" rel="noopener">Open ↗</a>':'')+'<button class="btn sm primary" onclick="CO.markNext()">Mark done ✓</button></div></div>';
   }else if(s.tt){up='<div class="soft-empty" style="color:var(--ok)">✓ Everything complete — nice work.</div>';}
@@ -1618,3 +1618,924 @@ var api={
 return api;
 })();
 </script>
+<script>
+/* ════════════ SELF-STUDY (curriculum1) ════════════
+   [{id,title,subtitle,theme,status:'catalog'|'next'|'active'|'done',seasonId?,season{start,end},intention,why,
+     integration{require,zoom,know},rhythm{shortMin,days[0-6, Sun=0],longDay,longMin},calendarSync,rollForward,
+     units[{id,title,question,start,end,sessions[{id,date,minutes,kind,text,done,movedFrom?}]}],proofWeek{start,end,idea}?,
+     materials[{type,label,url}],proof[{id,date,title,words,text}]}] */
+var SS=(function(){
+var KEY='curriculum1', list=[], activeId=null, openUnits={}, openAcc={why:true}, movePop=null, run=null, showAllProof=false, importHidden=false, P=null;
+var esc=U.esc, A=U.a;
+var KINDS={read:'Read',listen:'Listen',watch:'Watch',write:'Write',do:'Do'};
+var THEMEC=['#c25b73','#5f9568','#c0863a','#5f88b8','#8e71d3','#5fa39a'];
+var MAT={book:'Book',podcast:'Podcast',youtube:'YouTube',video:'Video',article:'Article',course:'Course',talk:'Talk',trip:'Trip',website:'Website',other:'Other'};
+var STATUS={catalog:'In catalog',next:'Maybe next season',active:'Studying now',done:'Done'};
+function norm(c){
+  c=c||{};
+  var o={id:c.id||U.uid('c'),title:String(c.title||'Untitled'),subtitle:c.subtitle||'',theme:c.theme||'',status:STATUS[c.status]?c.status:'catalog',
+    season:{start:(c.season&&c.season.start)||'',end:(c.season&&c.season.end)||''},intention:c.intention||'',why:c.why||'',
+    integration:{require:(c.integration&&c.integration.require)||'',zoom:(c.integration&&c.integration.zoom)||'',know:(c.integration&&c.integration.know)||''},
+    rhythm:c.rhythm&&typeof c.rhythm==='object'?{shortMin:+c.rhythm.shortMin||20,days:Array.isArray(c.rhythm.days)?c.rhythm.days.map(Number):[],longDay:c.rhythm.longDay==null||c.rhythm.longDay===''?null:+c.rhythm.longDay,longMin:+c.rhythm.longMin||90}:null,
+    calendarSync:!!c.calendarSync,rollForward:c.rollForward!==false,
+    units:(Array.isArray(c.units)?c.units:[]).map(function(u){return {id:u.id||U.uid('u'),title:u.title||'',question:u.question||'',start:u.start||'',end:u.end||'',
+      sessions:(Array.isArray(u.sessions)?u.sessions:[]).map(function(s){var x={id:s.id||U.uid('s'),date:U.valid(s.date)?s.date:'',minutes:+s.minutes||20,kind:KINDS[s.kind]?s.kind:'read',text:s.text||'',done:!!s.done};if(s.movedFrom)x.movedFrom=s.movedFrom;return x;})};}),
+    proofWeek:c.proofWeek&&U.valid(c.proofWeek.start)?{start:c.proofWeek.start,end:c.proofWeek.end||c.proofWeek.start,idea:c.proofWeek.idea||''}:null,
+    materials:(Array.isArray(c.materials)?c.materials:[]).filter(function(m){return m&&m.label;}),
+    proof:(Array.isArray(c.proof)?c.proof:[]).map(function(p){return {id:p.id||U.uid('j'),date:p.date||'',title:p.title||'',words:+p.words||0,text:p.text||''};})};
+  if(c.seasonId)o.seasonId=c.seasonId;
+  if(c.importedFrom)o.importedFrom=c.importedFrom;
+  return o;
+}
+function load(){
+  var l=U.lsGet(KEY);list=Array.isArray(l)?l.map(norm):[];
+  list.forEach(function(c){if(U.valid(c.season.start))SEA.ensure(c.season.start);});
+  rollAll();
+}
+function save(){U.lsSet(KEY,list);}
+function get(id){for(var i=0;i<list.length;i++){if(list[i].id===id)return list[i];}return null;}
+function byDate(x,y){if(!x.date&&!y.date)return 0;if(!x.date)return 1;if(!y.date)return -1;return x.date.localeCompare(y.date);}
+function flat(c){var out=[];c.units.forEach(function(u,i){u.sessions.forEach(function(s){out.push({c:c,u:u,ui:i,s:s,date:s.date});});});return out.sort(byDate);}
+function seasonId(c){
+  if(c.seasonId&&SEA.get(c.seasonId))return c.seasonId;
+  if(U.valid(c.season.start)){var s=SEA.of(c.season.start)||SEA.ensure(c.season.start);if(s)return s.id;}
+  if(c.status==='active')return SEA.current().id;
+  return null;
+}
+function inSeason(c,s){if(c.status==='catalog')return false;var sid=seasonId(c);if(sid===s.id)return true;
+  return c.status==='active'&&SEA.isCurrent(s)&&!c.seasonId&&!U.valid(c.season.start);}
+function inSeasonList(s){return list.filter(function(c){return inSeason(c,s);});}
+function activeIn(s){return inSeasonList(s).filter(function(c){return c.status==='active';});}
+function stats(c){var f=flat(c),d=f.filter(function(x){return x.s.done;});return {done:d.length,total:f.length,pct:f.length?Math.round(d.length/f.length*100):0,minutes:d.reduce(function(t,x){return t+(+x.s.minutes||0);},0)};}
+function next(c){var t=U.today(),f=flat(c).filter(function(x){return !x.s.done;});return f.filter(function(x){return x.date>=t;})[0]||f.filter(function(x){return !x.date;})[0]||null;}
+function isSlot(c,d){var r=c.rhythm;if(!r)return true;var any=(r.days&&r.days.length)||r.longDay!=null;if(!any)return true;var w=U.dow(d);return r.days.indexOf(w)>=0||(r.longDay!=null&&+r.longDay===w);}
+/* missed sessions slide forward to the next study day — never "late" */
+function roll(c){
+  if(c.status!=='active'||c.rollForward===false)return false;
+  var t=U.today(), all=[];c.units.forEach(function(u){u.sessions.forEach(function(s){if(!s.done&&U.valid(s.date))all.push(s);});});
+  all.sort(byDate);
+  var last=U.add(t,-1), pushing=false, changed=false;
+  all.forEach(function(s){
+    if(s.date<t||(pushing&&s.date<=last)){
+      var d=U.add(last,1), g=0;while(!isSlot(c,d)&&g++<14)d=U.add(d,1);
+      if(!s.movedFrom)s.movedFrom=s.date;s.date=d;changed=true;pushing=true;
+    }else pushing=false;
+    if(s.date>last)last=s.date;
+  });
+  return changed;
+}
+function rollAll(){var ch=false;list.forEach(function(c){if(roll(c))ch=true;});if(ch)save();}
+function unitState(c,u,i){
+  var t=U.today();
+  if(U.valid(u.start)&&U.valid(u.end)){if(u.end<t)return 'done';if(u.start<=t)return 'cur';return 'future';}
+  var n=u.sessions.length, d=u.sessions.filter(function(s){return s.done;}).length;
+  if(n&&d===n)return 'done';
+  var firstOpen=c.units.findIndex(function(x){return !(x.sessions.length&&x.sessions.every(function(s){return s.done;}));});
+  return i===firstOpen?'cur':'future';
+}
+function seasonChanged(){var s=SEA.selected(),c=get(activeId);if(c&&inSeason(c,s))return;var f=activeIn(s)[0]||inSeasonList(s)[0];if(f){activeId=f.id;openUnits={};}}
+function active(){
+  var c=get(activeId);if(c)return c;var s=SEA.selected();
+  c=activeIn(s)[0]||inSeasonList(s)[0]||list.filter(function(x){return x.status==='active';})[0]||null;
+  activeId=c?c.id:null;return c;
+}
+function rhythmText(r){
+  if(!r)return 'Not set yet';var ds=(r.days||[]).slice().sort(function(a,b){return ((a+6)%7)-((b+6)%7);});
+  var parts=[];
+  if(ds.length)parts.push(r.shortMin+' min '+(ds.length>=5?'most days':ds.map(function(d){return U.DS[d];}).join(' · ')));
+  if(r.longDay!=null)parts.push(r.longMin+' min '+U.DS[r.longDay]);
+  return parts.join(' + ')||'Not set yet';
+}
+function themeColor(theme){var ts=themes();var i=ts.indexOf(theme);return THEMEC[(i<0?0:i)%THEMEC.length];}
+function themes(){var t=[];list.forEach(function(c){var k=c.theme||'';if(t.indexOf(k)<0)t.push(k);});return t;}
+function short(c){return c.title.length>26?c.title.split(/[:—–-]/)[0].trim():c.title;}
+
+/* ── legacy import (selfStudy1 from the old Learning page) ── */
+function legacyPlans(){
+  var db=U.lsGet('selfStudy1');if(!db)return [];var plans=Array.isArray(db)?db:(db.plans||[]);if(!Array.isArray(plans))return [];
+  return plans.filter(function(p){return p&&typeof p==='object'&&!list.some(function(c){return c.importedFrom==='selfStudy1:'+(p.id||p.title);});});
+}
+function importLegacy(){
+  var plans=legacyPlans(), n=0;
+  plans.forEach(function(p){
+    function mk(text,date,done){return {id:U.uid('s'),date:U.valid(date)?date:'',minutes:30,kind:'do',text:String(text||''),done:!!done};}
+    var c=norm({title:p.title||p.name||'Self-study plan',subtitle:p.subtitle||p.description||'',theme:p.theme||p.category||'',why:p.why||p.purpose||p.goal||'',intention:p.intention||''});
+    c.importedFrom='selfStudy1:'+(p.id||p.title);
+    c.units=(Array.isArray(p.modules)?p.modules:[]).map(function(m,i){
+      var ses=[];(m.tasks||[]).forEach(function(t){ses.push(mk(t.label||t.title,t.due,t.done));});(m.coursework||[]).forEach(function(w){ses.push(mk(w.title||w.source,w.due,w.done));});
+      if(!ses.length&&m.title)ses.push(mk(m.title,m.due,m.done));
+      var ds=ses.map(function(s){return s.date;}).filter(U.valid).concat(U.valid(m.due)?[m.due]:[]).sort();
+      return {id:U.uid('u'),title:m.title||('Unit '+(i+1)),question:m.question||m.objective||m.description||'',start:ds[0]||'',end:ds[ds.length-1]||'',sessions:ses.sort(byDate)};
+    });
+    var extra=[];(p.tasks||[]).forEach(function(t){extra.push(mk(t.label||t.title,t.due,t.done));});(p.milestones||[]).forEach(function(m){extra.push(mk(m.text||m.title,m.due,m.done));});
+    if(extra.length){var ds=extra.map(function(s){return s.date;}).filter(U.valid).sort();c.units.push({id:U.uid('u'),title:'Tasks & milestones',question:'',start:ds[0]||'',end:ds[ds.length-1]||'',sessions:extra.sort(byDate)});}
+    var all=[];c.units.forEach(function(u){u.sessions.forEach(function(s){if(s.date)all.push(s.date);});});all.sort();
+    if(all.length){c.season={start:all[0],end:all[all.length-1]};var se=SEA.ensure(all[0]);if(se)c.seasonId=se.id;}
+    var open=c.units.some(function(u){return u.sessions.some(function(s){return !s.done;});});
+    c.status=p.archived?'done':(open?(all.length?'active':'next'):(all.length?'done':'catalog'));
+    list.push(c);n++;
+  });
+  rollAll();save();if(list[list.length-1])activeId=list[list.length-1].id;APP.render();U.toast('Imported '+n+' plan'+(n===1?'':'s')+' into your curriculum');
+}
+
+/* ── render ── */
+function switcher(){
+  var s=SEA.selected(), c=active(), na=activeIn(s).length;
+  var items=list.filter(function(x){return x.status!=='catalog'||x.id===activeId;}).map(function(x){var st=stats(x),sid=seasonId(x),inS=inSeason(x,s),grp=null;
+    if(inS)sid=s.id;else if(!sid)grp='none';var se=SEA.get(sid);
+    return {id:x.id,label:x.title,sub:[x.subtitle,STATUS[x.status],st.total?st.pct+'%':''].filter(Boolean).join(' · '),right:st.total?st.pct+'%':'',color:TR.self.c,seasonId:grp?null:sid,group:grp,seasonName:se?se.name:''};});
+  var tag=c?[(SEA.get(seasonId(c))||{}).name,U.valid(c.season.start)?U.range(c.season.start,c.season.end):''].filter(Boolean).join(' · '):'';
+  return SW.html('self',{items:items,current:c?{id:c.id,label:c.title,tag:tag,color:TR.self.c}:null,emptyLabel:'Nothing planned yet',
+    hint:na+' active '+(SEA.isCurrent(s)?'this season':'in '+s.name),searchPh:'Search self-study…',noneInSeason:'Nothing planned for '+s.name+' yet.',
+    noun:'topic',nouns:'topics',addLabel:'+ Add a course idea',addFn:'SS.openCourse()',extraGroups:[{key:'none',label:'Not scheduled'}],
+    right:c?'<button class="btn sm ssb" onclick="SS.openPlan()">✦ Plan my season</button><button class="btn sm" onclick="SS.openCourse('+A(c.id)+')">Edit</button>':''});
+}
+function dayWord(d){var t=U.today();if(d===t)return 'Today';if(d===U.add(t,1))return 'Tomorrow';return U.wd(d);}
+function nextCard(c){
+  var nx=next(c);
+  if(!nx){
+    var st=stats(c);
+    return '<section class="card nextses s8"><div class="eb">Next session</div><div class="tt">'+(st.total&&st.done===st.total?'All sessions done':'No sessions planned yet')+'</div>'+
+      '<div class="ss" style="font-size:14px">'+(st.total&&st.done===st.total?'Lovely work. Write a proof of learning, or plan the next season.':'Pick dates and a realistic rhythm — the units and sessions spread themselves out.')+'</div>'+
+      '<div class="row2"><button class="btn go" onclick="SS.openPlan()">✦ Plan my season</button></div></section>';
+  }
+  var s=nx.s, u=nx.u, ui=nx.ui;
+  var mat=c.materials[0];
+  var later=flat(c).filter(function(x){return !x.s.done&&x.s!==s&&(!x.date||!s.date||x.date>=s.date);}).slice(0,2);
+  var running=run&&run.sid===s.id;
+  return '<section class="card nextses s8"><div class="eb">Next session'+(s.movedFrom?'<span class="roll">↻ moved from '+esc(U.wd(s.movedFrom))+' — no stress</span>':'')+'</div>'+
+    '<div class="tt">'+(s.date?esc(dayWord(s.date))+' · '+esc(U.wmd(s.date))+' · ':'')+esc(s.minutes)+' min</div>'+
+    (s.text?'<div class="what">'+esc(s.text)+'</div>':'<div class="what ph" onclick="SS.editSession('+A(c.id)+','+A(s.id)+')">'+esc(KINDS[s.kind])+' session — add what you’ll do</div>')+
+    '<div class="ss">Unit '+(ui+1)+(u.question?' · '+esc(u.question):u.title?' · '+esc(u.title):'')+'</div>'+
+    '<div class="row2">'+(running?'<button class="btn go" onclick="SS.finish()" id="ss-run">■ Finish · <span id="ss-clock">0:00</span></button>':'<button class="btn go" onclick="SS.start('+A(s.id)+')">▶ Start session</button>')+
+      '<button class="btn" onclick="SS.toggleSession('+A(c.id)+','+A(s.id)+')">Done ✓</button>'+
+      '<span style="position:relative;display:inline-flex"><button class="btn" onclick="SS.toggleMove('+A(s.id)+',event)" aria-expanded="'+(movePop===s.id)+'">Move ⌄</button>'+(movePop===s.id?movePopHtml(c,s):'')+'</span>'+
+      (mat?'<span class="card-m" style="margin-left:auto">Material: '+(U.safeUrl(mat.url)?'<a href="'+esc(U.safeUrl(mat.url))+'" target="_blank" rel="noopener"><b style="color:var(--ink-2)">'+esc(mat.label)+'</b> ↗</a>':'<b style="color:var(--ink-2)">'+esc(mat.label)+'</b>')+'</span>':'')+
+    '</div>'+
+    (later.length?'<div class="then"><em>Then</em>'+later.map(function(x,i){return (i?'<span style="color:var(--faint)">·</span>':'')+'<span>'+esc(x.date?U.wmd(x.date):'No date')+' · '+esc(x.s.minutes)+' min · '+esc(KINDS[x.s.kind])+(x.s.text?' — '+esc(x.s.text):'')+'</span>';}).join('')+'</div>':'')+
+  '</section>';
+}
+function movePopHtml(c,s){
+  var t=U.today(), nd=U.add(t,1), g=0;while(!isSlot(c,nd)&&g++<14)nd=U.add(nd,1);
+  return '<div class="movepop" style="left:0;top:40px" onclick="event.stopPropagation()">'+
+    '<button onclick="SS.moveSession('+A(c.id)+','+A(s.id)+','+A(U.add(t,1))+')">Tomorrow · '+esc(U.wmd(U.add(t,1)))+'</button>'+
+    '<button onclick="SS.moveSession('+A(c.id)+','+A(s.id)+','+A(nd)+')">Next study day · '+esc(U.wmd(nd))+'</button>'+
+    '<label>Pick a date <input type="date" min="'+t+'" onchange="SS.moveSession('+A(c.id)+','+A(s.id)+',this.value)"></label></div>';
+}
+function glance(c){
+  var st=stats(c), s=SEA.get(seasonId(c));
+  var wk='';if(U.valid(c.season.start)&&U.valid(c.season.end)){var tw=Math.max(1,Math.ceil((U.diff(c.season.start,c.season.end)+1)/7)),cw=Math.floor(U.diff(c.season.start,U.today())/7)+1;wk=cw<1?'starts '+U.md(c.season.start):cw>tw?'finished':'week '+cw+' of '+tw;}
+  return '<section class="card s4"><div class="card-h"><div class="card-t">This season</div><span class="card-m">'+esc(wk||(s?s.name:''))+'</span></div>'+
+    '<div class="focus'+(c.intention?'':' ph')+'" style="border-left-color:var(--ss);font-size:14.5px;margin-bottom:10px" onclick="SS.openCourse('+A(c.id)+')" title="Edit intention">'+(c.intention?esc(c.intention):'Set an intention for this season…')+'</div>'+
+    '<div class="gl-row"><span>Rhythm</span><b>'+esc(rhythmText(c.rhythm))+'</b></div>'+
+    '<div class="gl-row"><span>Sessions</span><b>'+st.done+' of '+st.total+' done</b></div>'+
+    '<div class="gl-row"><span>Time so far</span><b>'+esc(U.hm(st.minutes))+'</b></div>'+
+    '<div class="gl-row"><span>Calendar</span>'+(c.calendarSync?'<b class="okc">✓ on Today &amp; Calendar <button class="more" style="color:var(--muted);margin-left:4px" onclick="SS.setSync(false)">turn off</button></b>':'<b><button class="more" onclick="SS.setSync(true)">Add sessions to my calendar</button></b>')+'</div>'+
+  '</section>';
+}
+function sesRow(c,s){
+  var t=U.today(), isT=!s.done&&s.date===t;
+  return '<div class="ses'+(s.done?' done':'')+(isT?' today':'')+'"><button class="check'+(s.done?' on':'')+'" aria-label="Done" onclick="SS.toggleSession('+A(c.id)+','+A(s.id)+')">'+(s.done?'✓':'')+'</button>'+
+    '<span class="d">'+(s.date?esc(U.wmd(s.date)):'No date')+'</span><span class="m">'+esc(s.minutes)+' min</span><span class="k">'+esc(KINDS[s.kind])+'</span>'+
+    '<span class="t'+(s.text?'':' ph')+'" onclick="SS.editSession('+A(c.id)+','+A(s.id)+')" title="Edit session">'+(s.text?esc(s.text):'Add what you’ll do…')+(s.movedFrom&&!s.done?'<span class="mv">↻ from '+esc(U.wd(s.movedFrom))+'</span>':'')+'</span>'+
+    '<span class="acts">'+(isT?U.due('today','gentle'):'')+(s.done?'':'<span class="dpk tx ed" title="Move to another day" onclick="U.pickDate(this)">↻<input type="date" value="'+esc(s.date)+'" onchange="SS.moveSession('+A(c.id)+','+A(s.id)+',this.value)" aria-label="Move to"></span>')+
+    '<button class="tx ed" title="Edit" onclick="SS.editSession('+A(c.id)+','+A(s.id)+')">✎</button></span></div>';
+}
+function planCard(c){
+  var units=c.units, pw=c.proofWeek, t=U.today();
+  var head='<div class="card-h"><div><div class="card-t">Season plan</div><div class="card-m" style="margin-top:3px">'+
+    esc([U.valid(c.season.start)?U.range(c.season.start,c.season.end):'No dates yet',units.length?units.length+' unit'+(units.length===1?'':'s')+(pw?' + a proof week':''):''].filter(Boolean).join(' · '))+'</div></div>'+
+    '<div style="display:flex;gap:8px"><button class="btn sm" onclick="SS.addUnit()">+ Unit</button>'+(units.length?'<button class="btn sm" onclick="SS.openPlan()">Re-spread dates</button>':'')+'</div></div>';
+  if(!units.length)return '<section class="card s8">'+head+'<div class="soft-empty">Break the topic into 2–3 units, each with a guiding question. <button class="more" onclick="SS.openPlan()">Plan my season</button> lays them out with dated sessions.</div></section>';
+  /* timeline */
+  var dated=units.every(function(u){return U.valid(u.start)&&U.valid(u.end);});
+  var tl='';
+  if(dated){
+    var segs=units.map(function(u,i){return {s:u.start,e:u.end,i:i,st:unitState(c,u,i)};});
+    if(pw)segs.push({s:pw.start,e:pw.end,proof:true});
+    var s0=segs[0].s, e0=segs[segs.length-1].e, tot=Math.max(1,U.diff(s0,e0)+1);
+    var cols=segs.map(function(x){return Math.max(1,U.diff(x.s,x.e)+1)+'fr';}).join(' ');
+    tl='<div class="tl"><div class="lane" style="grid-template-columns:'+cols+'">'+segs.map(function(x){
+      if(x.proof)return '<button class="seg wrap" onclick="SS.editProof()">Proof<small>'+esc(U.range(x.s,x.e))+'</small></button>';
+      return '<button class="seg '+(x.st==='done'?'done':x.st==='cur'?'cur':'')+'" onclick="SS.toggleUnit('+A(units[x.i].id)+',true)">'+(x.st==='done'?'✓ ':'')+'Unit '+(x.i+1)+(x.st==='cur'?' · now':'')+'<small>'+esc(U.range(x.s,x.e))+'</small></button>';}).join('')+'</div>';
+    var weeks=Math.ceil(tot/7), step=Math.max(1,Math.ceil(weeks/10)), ticks='';
+    for(var w=0;w<weeks;w+=step){var d=U.add(s0,w*7), pos=w*7/tot*100;if(pos>93)break;ticks+='<span style="left:'+pos+'%">'+esc(U.md(d))+'</span>';}
+    tl+='<div class="ticks">'+ticks+'</div>';
+    if(t>=s0&&t<=e0)tl+='<span class="today" style="left:'+(U.diff(s0,t)/tot*100)+'%"></span>';
+    tl+='</div>';
+  }
+  var curIdx=-1;units.forEach(function(u,i){if(curIdx<0&&unitState(c,u,i)==='cur')curIdx=i;});
+  if(openUnits.__c!==c.id){openUnits={__c:c.id};if(curIdx>=0)openUnits[units[curIdx].id]=true;else{var fu=units.find(function(u,i){return unitState(c,u,i)!=='done';});if(fu)openUnits[fu.id]=true;}}
+  var rows=units.map(function(u,i){
+    var st=unitState(c,u,i), open=!!openUnits[u.id], n=u.sessions.length, d=u.sessions.filter(function(s){return s.done;}).length;
+    var rr=st==='done'?'✓ '+d+' of '+n+' sessions':st==='cur'?d+' of '+n+' sessions':n+' sessions planned';
+    var row='<div class="unit'+(st==='done'?' done':'')+'" onclick="SS.toggleUnit('+A(u.id)+')" role="button" aria-expanded="'+open+'"><span class="chev">'+(open?'⌄':st==='done'?'✓':'›')+'</span>'+
+      '<div class="q"><small>Unit '+(i+1)+(U.valid(u.start)?' · '+esc(U.range(u.start,u.end)):'')+'</small>'+(u.question?esc(u.question):u.title?esc(u.title):'<span class="ph">Add a guiding question</span>')+'</div><span class="rr">'+esc(rr)+'</span></div>';
+    if(!open)return row;
+    var ses=u.sessions.slice().sort(byDate);
+    return '<div class="uopen">'+row+ses.map(function(s){return sesRow(c,s);}).join('')+
+      '<div style="display:flex;gap:8px;align-items:center;margin:6px 0 0 30px"><button class="addt" style="margin:0;flex:1" onclick="SS.addSession('+A(u.id)+')"><b>+</b>Add a session…'+(U.valid(u.end)?'<span>unit runs through '+esc(U.md(u.end))+'</span>':'')+'</button><button class="btn sm" onclick="SS.editUnit('+A(u.id)+')">Edit unit</button></div></div>';
+  }).join('');
+  if(pw)rows+='<div class="unit" onclick="SS.editProof()" role="button"><span class="chev">›</span><div class="q"><small style="color:var(--ss)">Proof week · '+esc(U.range(pw.start,pw.end))+'</small>'+(pw.idea?esc(pw.idea):'<span class="ph">What will you make to show what you learned?</span>')+'</div><span class="rr">optional</span></div>';
+  var past=flat(c).filter(function(x){return !x.s.done&&x.date&&U.valid(c.season.end)&&x.date>c.season.end;}).length;
+  var note=past?'<div class="soft-empty" style="margin-top:8px">↻ '+past+' session'+(past===1?' has':'s have')+' slid past '+esc(U.md(c.season.end))+'. <button class="more" onclick="SS.openPlan()">Re-spread to fit</button> — or just let them run long.</div>':'';
+  return '<section class="card s8">'+head+tl+rows+note+'</section>';
+}
+function sideCards(c){
+  var acc=[['why','Why I’m studying this',[c.why,c.intention&&!c.why?c.intention:''].filter(Boolean)[0]||''],['require','What does it take to understand it?',c.integration.require],['zoom','How will I zoom out?',c.integration.zoom],['know','How will I know I’m learning?',c.integration.know]];
+  var big='<section class="card"><div class="card-h"><div class="card-t">Why &amp; big picture</div><button class="more" onclick="SS.openCourse('+A(c.id)+')">Edit</button></div>'+
+    acc.map(function(x){var op=!!openAcc[x[0]];return '<button class="acc" onclick="SS.acc('+A(x[0])+')" aria-expanded="'+op+'">'+esc(x[1])+'<span class="c">'+(op?'⌄':'›')+'</span></button>'+(op?'<div class="acc-b'+(x[2]?'':' ph')+'">'+(x[2]?esc(x[2]):'Not written yet — add it with Edit.')+'</div>':'');}).join('')+'</section>';
+  var pr=c.proof.slice().sort(function(x,y){return (y.date||'').localeCompare(x.date||'');});
+  var words=pr.reduce(function(t,p){return t+(+p.words||0);},0);
+  var shown=showAllProof?pr:pr.slice(0,4);
+  var proof='<section class="card"><div class="card-h"><div class="card-t">Proof of learning</div><button class="more" onclick="SS.writeProof()">✎ Write</button></div>'+
+    (pr.length?shown.map(function(p){return '<button class="mini-j" onclick="SS.writeProof('+A(p.id)+')"><span>'+esc(U.md(p.date))+'</span><span class="jt">'+esc(p.title||'Untitled')+'</span><small>'+(+p.words||0).toLocaleString()+' w</small></button>';}).join('')+
+      (pr.length>4?'<button class="more" style="margin-top:6px" onclick="SS.toggleAllProof()">'+(showAllProof?'Show fewer':'Show all '+pr.length)+'</button>':'')+
+      '<div class="card-m" style="margin-top:8px">'+words.toLocaleString()+' words so far</div>'
+      :'<div class="soft-empty">A few hundred words now and then — what surprised you, what you’d explain to a friend.</div>')+'</section>';
+  var linked=LIB.linkedTo('self',c.id);
+  var mats=c.materials.map(function(m,i){var u=U.safeUrl(m.url);var inner='<em>'+esc(MAT[m.type]||m.type||'Other')+'</em><span>'+esc(m.label)+'</span>';
+    return (u?'<a class="mt" href="'+esc(u)+'" target="_blank" rel="noopener">'+inner+' ↗':'<span class="mt">'+inner)+'<button class="tx" title="Remove" onclick="event.preventDefault();event.stopPropagation();SS.delMaterial('+i+')">✕</button>'+(u?'</a>':'</span>');}).join('')+
+    linked.map(function(it){var u=U.safeUrl(it.url);return (u?'<a class="mt" href="'+esc(u)+'" target="_blank" rel="noopener">':'<span class="mt">')+'<em>'+esc(LIB.typeLabel(it.type))+'</em><span>'+esc(it.title)+'</span>'+(u?'</a>':'</span>');}).join('');
+  var mat='<section class="card"><div class="card-h"><div class="card-t">Materials</div><div style="display:flex;gap:12px"><button class="more" onclick="SS.addMaterial()">+ Add</button><button class="more" onclick="LIB.showFor(\'self\','+A(c.id)+')">Resources →</button></div></div>'+
+    (mats?'<div class="chipsrow">'+mats+'</div>':'<div class="soft-empty">Books, podcasts, playlists, a conversation partner, a trip…</div>')+'</section>';
+  return '<div class="s4 stack">'+big+proof+mat+'</div>';
+}
+function catalogHtml(){
+  var ts=themes();
+  var head='<div class="sec-l" style="margin-top:34px"><div><div class="card-t" style="font-size:22px">Personal curriculum</div><div class="card-m" style="margin-top:4px">Your course catalog — pick 1–3 a season; the rest wait here, no pressure</div></div><button class="btn sm" onclick="SS.openCourse()">+ Add a course idea</button></div>';
+  if(!list.length)return head+'<div class="empty" style="padding:30px"><h3>Your catalog is empty</h3><p>Add a course idea — a topic you’d love to explore some season. No dates needed yet; give it a theme to group it with others.</p><button class="btn soft" onclick="SS.openCourse()">+ Add a course idea</button></div>';
+  var sel=SEA.selected(), startS=SEA.status(sel)==='past'?SEA.current():sel;
+  var shelves=ts.map(function(th,ti){
+    var items=list.filter(function(c){return (c.theme||'')===th;});
+    return '<div class="shelf"><div class="eyebrow"><i style="background:'+THEMEC[ti%THEMEC.length]+'"></i>'+esc(th||'Unsorted')+'</div>'+items.map(function(c){
+      var se=SEA.get(seasonId(c));
+      var st=c.status==='active'?U.due(se&&se.id!==SEA.current().id?'Studying · '+se.name:'Studying now','gentle'):c.status==='next'?U.due('Maybe next season','plain'):c.status==='done'?'<span class="chip ok">✓ Done'+(se?' · '+esc(se.name):'')+'</span>':'<span class="chip" style="font-size:10.5px">In catalog</span>';
+      var acts=(c.status==='catalog'||c.status==='next')?'<button class="btn sm ssb" onclick="SS.startCourse('+A(c.id)+')">Start in '+esc(startS.name)+'</button>':'<button class="btn sm" onclick="SS.setActive('+A(c.id)+');window.scrollTo(0,0)">Open</button>';
+      return '<div class="cc'+(c.status==='active'?' act':'')+'" tabindex="0"><div class="tt">'+esc(c.title)+(c.subtitle?'<span>'+esc(c.subtitle)+'</span>':'')+'</div><div class="st">'+st+'</div>'+
+        '<div class="hov">'+acts+'<button class="btn sm" onclick="SS.openCourse('+A(c.id)+')">Edit</button></div></div>';
+    }).join('')+'</div>';
+  }).join('');
+  return head+'<div class="shelves">'+shelves+'</div>';
+}
+function render(){
+  var host=document.getElementById('tab-self'), c=active();
+  var lp=importHidden?[]:legacyPlans();
+  var banner=lp.length?'<div class="banner"><span class="grow">Found '+lp.length+' self-study plan'+(lp.length===1?'':'s')+' from the old Learning page. Bring '+(lp.length===1?'it':'them')+' into your curriculum? Your old data stays untouched.</span><button class="btn sm primary" onclick="SS.importLegacy()">Import</button><button class="btn sm" onclick="SS.hideImport()">Not now</button></div>':'';
+  if(!c){
+    host.innerHTML=switcher()+banner+'<div class="empty"><h3>Self-study, one season at a time</h3><p>Pick a topic from your curriculum below (or add one), then plan it into a season — dated units, a realistic rhythm, and a next session you can just start.</p>'+
+      '</div>'+catalogHtml();
+    return;
+  }
+  host.innerHTML=switcher()+banner+
+    '<div class="grid">'+nextCard(c)+glance(c)+'</div>'+
+    '<div class="grid" style="margin-top:18px">'+planCard(c)+sideCards(c)+'</div>'+
+    catalogHtml();
+  if(run)tick();
+}
+
+/* ── actions ── */
+function cur(){return get(activeId);}
+function findS(cid,sid){var c=get(cid);if(!c)return {};for(var i=0;i<c.units.length;i++){var u=c.units[i];for(var j=0;j<u.sessions.length;j++){if(u.sessions[j].id===sid)return {c:c,u:u,s:u.sessions[j]};}}return {c:c};}
+function toggleSession(cid,sid){var r=findS(cid,sid);if(!r.s)return;r.s.done=!r.s.done;if(run&&run.sid===sid)run=null;movePop=null;save();APP.render();}
+function moveSession(cid,sid,d){var r=findS(cid,sid);if(!r.s||!U.valid(d))return;if(!r.s.movedFrom&&r.s.date&&r.s.date!==d)r.s.movedFrom=r.s.date;r.s.date=d;movePop=null;save();APP.render();U.toast('Moved to '+U.wmd(d));}
+function toggleMove(sid,e){if(e)e.stopPropagation();movePop=movePop===sid?null:sid;APP.render();}
+document.addEventListener('click',function(e){if(movePop&&!(e.target.closest&&e.target.closest('.movepop'))){movePop=null;if(APP.cur()==='self')APP.render();}});
+function start(sid){run={sid:sid,t0:Date.now()};APP.render();}
+function tick(){clearInterval(tick._i);tick._i=setInterval(function(){var el=document.getElementById('ss-clock');if(!el||!run){clearInterval(tick._i);return;}var s=Math.floor((Date.now()-run.t0)/1000);el.textContent=Math.floor(s/60)+':'+String(s%60).padStart(2,'0');},1000);}
+function finish(){if(!run)return;var c=cur(), r=findS(c.id,run.sid);run=null;if(r.s){r.s.done=true;save();U.toast('Session done — nice.');}APP.render();}
+function sessionForm(c,u,s){
+  var isNew=!s;s=s||{date:'',minutes:(c.rhythm&&c.rhythm.shortMin)||20,kind:'read',text:''};
+  if(isNew){var d=U.today();if(U.valid(u.start)&&u.start>d)d=u.start;var g=0;while(!isSlot(c,d)&&g++<14)d=U.add(d,1);s.date=d;}
+  FORM.open({title:isNew?'Add a session':'Session',sub:c.title+' · Unit '+(c.units.indexOf(u)+1),fields:[
+    {row:[{name:'date',type:'date',label:'Date',value:s.date},{name:'minutes',type:'number',label:'Minutes',value:s.minutes,min:5},{name:'kind',type:'select',label:'Kind',value:s.kind,options:Object.keys(KINDS).map(function(k){return {v:k,l:KINDS[k]};})}]},
+    {name:'text',type:'textarea',label:'What you’ll do',value:s.text,placeholder:'e.g. chapter, episode, exercise or prompt'},
+    {name:'unit',type:'select',label:'Unit',value:u.id,options:c.units.map(function(x,i){return {v:x.id,l:'Unit '+(i+1)+(x.question?' · '+x.question:'')};})}],
+    onSave:function(v){
+      var target=c.units.find(function(x){return x.id===v.unit;})||u;
+      var o=isNew?{id:U.uid('s'),done:false}:s;
+      if(o.date!==v.date&&o.date&&!isNew&&!o.movedFrom&&!o.done)o.movedFrom=o.date;
+      o.date=U.valid(v.date)?v.date:'';o.minutes=Math.max(5,+v.minutes||20);o.kind=v.kind;o.text=v.text.trim();
+      if(isNew)target.sessions.push(o);else if(target!==u){u.sessions=u.sessions.filter(function(x){return x!==o;});target.sessions.push(o);}
+      target.sessions.sort(byDate);save();APP.render();},
+    onDelete:isNew?null:function(){u.sessions=u.sessions.filter(function(x){return x!==s;});save();APP.render();},deleteLabel:'Delete session'});
+}
+function editSession(cid,sid){var r=findS(cid,sid);if(r.s)sessionForm(r.c,r.u,r.s);}
+function addSession(uid){var c=cur();var u=c&&c.units.find(function(x){return x.id===uid;});if(u)sessionForm(c,u,null);}
+function toggleUnit(uid,force){if(force)openUnits[uid]=true;else openUnits[uid]=!openUnits[uid];APP.render();}
+function addUnit(){var c=cur();if(!c)return;var u={id:U.uid('u'),title:'',question:'',start:'',end:'',sessions:[]};
+  var last=c.units[c.units.length-1];if(last&&U.valid(last.end)){u.start=U.add(last.end,1);u.end=U.add(last.end,21);}
+  c.units.push(u);openUnits[u.id]=true;save();editUnit(u.id,true);}
+function editUnit(uid,isNew){
+  var c=cur(), u=c.units.find(function(x){return x.id===uid;});if(!u)return;var i=c.units.indexOf(u);
+  FORM.open({title:'Unit '+(i+1),sub:c.title,fields:[{name:'question',type:'textarea',label:'Guiding question',value:u.question,placeholder:'What do you want to understand?'},
+    {name:'title',label:'Short title',opt:'optional',value:u.title},{row:[{name:'start',type:'date',label:'Starts',value:u.start},{name:'end',type:'date',label:'Ends',value:u.end}]}],
+    onSave:function(v){u.question=v.question.trim();u.title=v.title.trim();u.start=v.start;u.end=v.end;save();APP.render();},
+    onDelete:function(){if(u.sessions.some(function(s){return s.done;})&&!confirm('This unit has finished sessions. Remove it anyway?'))return;c.units=c.units.filter(function(x){return x!==u;});save();APP.render();},deleteLabel:'Remove unit'});
+}
+function editProof(){
+  var c=cur();if(!c)return;var pw=c.proofWeek||{start:'',end:'',idea:''};
+  FORM.open({title:'Proof week',sub:'Optional — a small thing you make to show what you learned.',fields:[{name:'idea',type:'textarea',label:'Idea',value:pw.idea,placeholder:'An essay, a zine, a talk with a friend, a map…'},{row:[{name:'start',type:'date',label:'Starts',value:pw.start},{name:'end',type:'date',label:'Ends',value:pw.end}]}],
+    onSave:function(v){if(!U.valid(v.start)){c.proofWeek=null;}else c.proofWeek={start:v.start,end:U.valid(v.end)?v.end:U.add(v.start,6),idea:v.idea.trim()};save();APP.render();},
+    onDelete:c.proofWeek?function(){c.proofWeek=null;save();APP.render();}:null,deleteLabel:'No proof week'});
+}
+function writeProof(pid){
+  var c=cur();if(!c)return;var p=pid?c.proof.find(function(x){return x.id===pid;}):null;
+  FORM.open({title:p?'Proof of learning':'Write it down',sub:c.title,wide:true,fields:[{row:[{name:'date',type:'date',label:'Date',value:p?p.date:U.today()},{name:'words',type:'number',label:'Words',opt:'if written elsewhere',value:p&&!p.text?p.words:'',min:0}]},
+    {name:'title',label:'Title',value:p?p.title:'',placeholder:'What is this piece about?'},{name:'text',type:'textarea',label:'Writing',rows:10,value:p?p.text:'',placeholder:'What surprised you? What would you explain to a friend?'}],
+    onSave:function(v){if(!v.title.trim()&&!v.text.trim()){alert('Give it a title or write something.');return false;}
+      var o=p||{id:U.uid('j')};o.date=U.valid(v.date)?v.date:U.today();o.title=v.title.trim()||v.text.trim().split(/\s+/).slice(0,6).join(' ');o.text=v.text;o.words=v.text.trim()?U.words(v.text):(+v.words||0);
+      if(!p)c.proof.push(o);save();APP.render();U.toast(o.words+' words saved');},
+    onDelete:p?function(){c.proof=c.proof.filter(function(x){return x!==p;});save();APP.render();}:null});
+}
+function addMaterial(){var c=cur();if(!c)return;FORM.open({title:'Add a material',sub:c.title,fields:[{row:[{name:'type',type:'select',label:'Type',value:'book',options:Object.keys(MAT).map(function(k){return {v:k,l:MAT[k]};})},{name:'label',label:'Name',placeholder:'Title or short note'}]},{name:'url',label:'Link',opt:'optional',placeholder:'https://…'}],
+  onSave:function(v){if(!v.label.trim())return false;c.materials.push({type:v.type,label:v.label.trim(),url:U.safeUrl(v.url)});save();APP.render();}});}
+function delMaterial(i){var c=cur();if(!c)return;c.materials.splice(i,1);save();APP.render();}
+function setSync(v){var c=cur();if(!c)return;c.calendarSync=!!v;save();APP.render();U.toast(v?'Sessions will show on Today and Calendar':'Sessions removed from your calendar view');}
+function openCourse(id){
+  var c=id?get(id):null, isNew=!c;
+  c=c||norm({status:'catalog'});
+  var n=Math.max(3,c.units.length), uf=[];for(var i=0;i<n;i++)uf.push({name:'u'+i,label:'Unit '+(i+1)+' · guiding question',value:c.units[i]?c.units[i].question:'',placeholder:i===0?'What do you want to understand first?':''});
+  FORM.open({title:isNew?'Add a course idea':'Edit '+c.title,sub:isNew?'A topic for your personal curriculum. Dates come later, with Plan my season.':'',wide:true,fields:[
+    {name:'title',label:'Title',value:isNew?'':c.title,placeholder:'Course title'},
+    {name:'subtitle',label:'Subtitle',opt:'optional',value:c.subtitle,placeholder:'What it’s really about'},
+    {row:[{name:'theme',label:'Theme',value:c.theme,list:themes().filter(Boolean),placeholder:'Groups it in your catalog'},{name:'status',type:'select',label:'Status',value:c.status,options:Object.keys(STATUS).map(function(k){return {v:k,l:STATUS[k]};})}]},
+    {name:'intention',label:'Intention for this season',value:c.intention,placeholder:'How you want to approach it'},
+    {name:'why',type:'textarea',label:'Why I’m studying this',value:c.why}].concat(uf).concat([
+    {name:'require',type:'textarea',label:'Big picture · What does it take to understand it?',value:c.integration.require},
+    {name:'zoom',type:'textarea',label:'Big picture · How will I zoom out?',value:c.integration.zoom},
+    {name:'know',type:'textarea',label:'Big picture · How will I know I’m learning?',value:c.integration.know}]),
+    onSave:function(v){
+      if(!v.title.trim()){alert('Give it a title.');return false;}
+      c.title=v.title.trim();c.subtitle=v.subtitle.trim();c.theme=v.theme.trim();c.status=v.status;c.intention=v.intention.trim();c.why=v.why.trim();
+      c.integration={require:v.require.trim(),zoom:v.zoom.trim(),know:v.know.trim()};
+      for(var i=0;i<n;i++){var q=(v['u'+i]||'').trim();if(c.units[i])c.units[i].question=q;else if(q)c.units.push({id:U.uid('u'),title:'',question:q,start:'',end:'',sessions:[]});}
+      if(c.status==='active'&&!seasonId(c)){var s=SEA.selected();c.seasonId=(SEA.status(s)==='past'?SEA.current():s).id;}
+      if(isNew)list.push(c);
+      if(c.status==='active')activeId=c.id;
+      save();APP.render();},
+    onDelete:isNew?null:function(){list=list.filter(function(x){return x!==c;});if(activeId===c.id)activeId=null;save();APP.render();},confirm:'Delete this course and its plan, sessions and writing?',deleteLabel:'Delete course'});
+}
+function startCourse(id){
+  var c=get(id);if(!c)return;var s=SEA.selected();if(SEA.status(s)==='past')s=SEA.current();
+  activeId=c.id;openPlan(c.id,s.id);
+}
+
+/* ── Plan my season drawer ── */
+var DPICK=[[1,'M'],[2,'T'],[3,'W'],[4,'T'],[5,'F'],[6,'S'],[0,'S']];
+function evenWeeks(){var planDays=U.diff(P.start,P.end)+1-(P.proof?7:0), avail=Math.max(P.units.length,Math.floor(planDays/7)), n=P.units.length;
+  var each=Math.max(1,Math.floor(avail/n)), rem=Math.max(0,avail-each*n);P.units.forEach(function(u,i){u.weeks=each+(i<rem?1:0);});}
+function openPlan(id,seasonOverride){
+  var c=get(id||activeId);if(!c)return;
+  var s=SEA.get(seasonOverride)||SEA.get(c.seasonId)||SEA.of(c.season.start)||(SEA.status(SEA.selected())!=='past'?SEA.selected():SEA.current());
+  var t=U.today(), useOld=!seasonOverride&&U.valid(c.season.start)&&U.valid(c.season.end);
+  var start=useOld?c.season.start:(t>s.start&&t<=s.end?t:s.start), end=useOld?c.season.end:s.end;
+  var r=c.rhythm||{shortMin:20,days:[2,4,6],longDay:0,longMin:90};
+  var units=(c.units.length?c.units:[null,null,null]).map(function(u){return {id:u?u.id:null,label:u?(u.question||u.title):'',weeks:u&&U.valid(u.start)&&U.valid(u.end)&&useOld?Math.max(1,Math.round((U.diff(u.start,u.end)+1)/7)):0,locked:u?u.sessions.some(function(x){return x.done;}):false};});
+  P={cid:c.id,seasonId:s.id,start:start,end:end,shortMin:r.shortMin||20,days:(r.days||[]).slice(),longDay:r.longDay==null?'':String(r.longDay),longMin:r.longMin||90,units:units,proof:c.proofWeek?true:!c.units.length,calendarSync:c.calendarSync||!c.rhythm,rollForward:c.rollForward!==false};
+  if(P.units.some(function(u){return !u.weeks;}))evenWeeks();
+  drawPlan();document.getElementById('planScrim').classList.add('show');document.getElementById('planDrawer').classList.add('show');
+}
+function closePlan(){P=null;document.getElementById('planScrim').classList.remove('show');document.getElementById('planDrawer').classList.remove('show');}
+function layout(){
+  var planEnd=P.proof?U.add(P.end,-7):P.end;if(planEnd<P.start)planEnd=P.end;
+  var total=U.diff(P.start,planEnd)+1, sumW=P.units.reduce(function(t,u){return t+Math.max(1,u.weeks);},0), cursor=P.start, out=[];
+  P.units.forEach(function(u,i){
+    var len=i===P.units.length-1?U.diff(cursor,planEnd)+1:Math.max(1,Math.round(total*Math.max(1,u.weeks)/sumW));
+    var e=U.add(cursor,len-1);if(e>planEnd)e=planEnd;if(e<cursor)e=cursor;out.push({start:cursor,end:e});cursor=U.add(e,1);
+  });
+  return {units:out,proof:P.proof&&planEnd<P.end?{start:U.add(planEnd,1),end:P.end}:null};
+}
+function slots(from,to){var res=[], d=from, ld=P.longDay===''?null:+P.longDay, g=0;
+  while(d<=to&&g++<800){var w=U.dow(d);if(ld!==null&&ld===w)res.push({date:d,long:true,minutes:+P.longMin});else if(P.days.indexOf(w)>=0)res.push({date:d,long:false,minutes:+P.shortMin});d=U.add(d,1);}return res;}
+function planCount(L){var t=U.today(),n=0;L.units.forEach(function(u){n+=slots(u.start>t?u.start:t,u.end).length;});return n;}
+function drawPlan(){
+  if(!P)return;var c=get(P.cid), L=layout(), n=planCount(L), ld=P.longDay===''?null:+P.longDay;
+  var hrs=Math.round(((P.days.filter(function(d){return d!==ld;}).length*P.shortMin)+(ld!==null?+P.longMin:0))/30)/2;
+  var sOpts=SEA.all().slice().reverse().map(function(s){return '<option value="'+esc(s.id)+'"'+(s.id===P.seasonId?' selected':'')+'>'+esc(s.name)+'</option>';}).join('');
+  var mins=[10,15,20,25,30,45,60].map(function(m){return '<option value="'+m+'"'+(+P.shortMin===m?' selected':'')+'>'+m+' min</option>';}).join('');
+  var lmins=[45,60,90,120,180].map(function(m){return '<option value="'+m+'"'+(+P.longMin===m?' selected':'')+'>'+m+' min</option>';}).join('');
+  var lday='<option value="">No long session</option>'+[0,1,2,3,4,5,6].map(function(d){return '<option value="'+d+'"'+(String(P.longDay)===String(d)?' selected':'')+'>'+['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'][d]+'</option>';}).join('');
+  var segCols=L.units.map(function(u){return Math.max(1,U.diff(u.start,u.end)+1)+'fr';}).concat(L.proof?[Math.max(1,U.diff(L.proof.start,L.proof.end)+1)*1.6+'fr']:[]).join(' ');
+  var nShort=P.days.filter(function(d){return d!==ld;}).length;
+  document.getElementById('planDrawer').innerHTML=
+    '<div class="dr-h"><span class="eyebrow" style="color:var(--ss)">'+esc(c.title)+'</span><div class="card-t" style="margin-top:4px">Plan my season</div><div class="card-m" style="margin-top:4px">Pick the dates and a realistic rhythm — the units and sessions spread themselves out. Finished sessions stay as they are.</div></div>'+
+    '<div class="dr-b">'+
+      '<div class="stp"><span class="n">1</span><div><div class="l">Season &amp; dates</div><div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap"><select class="in2" id="pl-season" onchange="SS.planSet(\'season\',this.value)" aria-label="Season">'+sOpts+'</select>'+
+        '<input class="in2" type="date" id="pl-start" value="'+esc(P.start)+'" onchange="SS.planSet(\'start\',this.value)" aria-label="Start"><span class="card-m">→</span><input class="in2" type="date" id="pl-end" value="'+esc(P.end)+'" onchange="SS.planSet(\'end\',this.value)" aria-label="End"></div></div></div>'+
+      '<div class="stp"><span class="n">2</span><div><div class="l">Rhythm</div>'+
+        '<div style="display:flex;align-items:center;gap:10px;margin-bottom:8px;flex-wrap:wrap"><select class="in2" id="pl-short" onchange="SS.planSet(\'shortMin\',this.value)" aria-label="Short session length">'+mins+'</select><div class="dpick">'+DPICK.map(function(d){return '<button class="'+(P.days.indexOf(d[0])>=0?'on':'')+'" onclick="SS.planDay('+d[0]+')" aria-pressed="'+(P.days.indexOf(d[0])>=0)+'" title="'+U.DS[d[0]]+'">'+d[1]+'</button>';}).join('')+'</div></div>'+
+        '<div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap"><span class="card-m">plus one long session</span><select class="in2" id="pl-lday" onchange="SS.planSet(\'longDay\',this.value)" aria-label="Long session day">'+lday+'</select>'+(ld!==null?'<select class="in2" id="pl-lmin" onchange="SS.planSet(\'longMin\',this.value)" aria-label="Long session length">'+lmins+'</select>':'')+'</div></div></div>'+
+      '<div class="stp"><span class="n">3</span><div><div class="l">Units</div>'+
+        P.units.map(function(u,i){return '<div class="urow"><span>Unit '+(i+1)+(u.label?' · '+esc(u.label):'')+'</span><span class="w"><button onclick="SS.planWeeks('+i+',-1)" aria-label="Fewer weeks">−</button>'+u.weeks+' wk'+(u.weeks===1?'':'s')+'<button onclick="SS.planWeeks('+i+',1)" aria-label="More weeks">+</button>'+(P.units.length>1&&!u.locked?'<button onclick="SS.planUnit('+i+')" title="Remove unit" aria-label="Remove unit">✕</button>':'')+'</span></div>';}).join('')+
+        '<div style="display:flex;gap:8px;align-items:center;margin:4px 0 6px"><button class="btn sm" onclick="SS.planUnit(-1)">+ Unit</button><button class="btn sm" onclick="SS.planEven()">Even split</button></div>'+
+        '<button class="tg2" onclick="SS.planSet(\'proof\',!'+P.proof+')"><span class="sw'+(P.proof?' on':'')+'"></span>End with a proof week</button></div></div>'+
+      '<div class="stp"><span class="n">4</span><div><div class="l">Preview</div><div class="prev" style="grid-template-columns:'+segCols+'">'+L.units.map(function(u){return '<i title="'+esc(U.range(u.start,u.end))+'">'+esc(U.range(u.start,u.end))+'</i>';}).join('')+(L.proof?'<i class="w">'+esc(U.range(L.proof.start,L.proof.end))+'</i>':'')+'</div>'+
+        '<div class="card-m" style="margin-top:8px">'+n+' session'+(n===1?'':'s')+' · '+(nShort?nShort+' short':'')+(nShort&&ld!==null?' + ':'')+(ld!==null?'1 long':'')+(nShort||ld!==null?' a week · about '+hrs+' hour'+(hrs===1?'':'s')+' a week':'pick at least one day')+'</div></div></div>'+
+      '<div class="stp"><span class="n">5</span><div><div class="l">Options</div>'+
+        '<button class="tg2" onclick="SS.planSet(\'calendarSync\',!'+P.calendarSync+')"><span class="sw'+(P.calendarSync?' on':'')+'"></span><div>Add sessions to my calendar<small>shows on Today and Calendar</small></div></button>'+
+        '<button class="tg2" onclick="SS.planSet(\'rollForward\',!'+P.rollForward+')"><span class="sw'+(P.rollForward?' on':'')+'"></span><div>Missed sessions roll forward gently<small>never marked late — the plan just slides</small></div></button></div></div>'+
+    '</div>'+
+    '<div class="dr-f"><button class="btn" onclick="SS.closePlan()">Cancel</button><button class="btn go" style="margin-left:auto" id="pl-go" onclick="SS.applyPlan()">Spread it out ✦</button></div>';
+}
+function planSet(k,v){
+  if(!P)return;
+  if(k==='season'){var s=SEA.get(v);if(s){P.seasonId=s.id;var t=U.today();P.start=t>s.start&&t<=s.end?t:s.start;P.end=s.end;evenWeeks();}}
+  else if(k==='start'||k==='end'){if(U.valid(v))P[k]=v;if(P.end<P.start)P.end=P.start;}
+  else if(k==='proof'||k==='calendarSync'||k==='rollForward')P[k]=!!v;
+  else P[k]=v;
+  drawPlan();
+}
+function planDay(d){if(!P)return;var i=P.days.indexOf(d);if(i>=0)P.days.splice(i,1);else P.days.push(d);drawPlan();}
+function planWeeks(i,dlt){if(!P)return;P.units[i].weeks=Math.max(1,P.units[i].weeks+dlt);drawPlan();}
+function planUnit(i){if(!P)return;if(i<0)P.units.push({id:null,label:'',weeks:2});else P.units.splice(i,1);drawPlan();}
+function planEven(){if(!P)return;evenWeeks();drawPlan();}
+function applyPlan(){
+  if(!P)return;var c=get(P.cid);if(!c)return;
+  if(!P.days.length&&P.longDay===''){alert('Pick at least one study day.');return;}
+  var L=layout(), t=U.today(), made=0;
+  var kept=P.units.map(function(pu){return pu.id?c.units.find(function(x){return x.id===pu.id;}):null;});
+  var orphan=[];c.units.forEach(function(u){if(kept.indexOf(u)<0)u.sessions.forEach(function(s){if(!s.done&&s.text)orphan.push(s);});});
+  var units=P.units.map(function(pu,i){var u=kept[i]||{id:U.uid('u'),title:'',question:'',sessions:[]};u.start=L.units[i].start;u.end=L.units[i].end;return u;});
+  if(orphan.length)units[units.length-1].sessions=units[units.length-1].sessions.concat(orphan);
+  var SK=['read','listen','watch'], LK=['write','do'], si=0, li=0;
+  units.forEach(function(u){
+    var keep=u.sessions.filter(function(s){return s.done;}), pool=u.sessions.filter(function(s){return !s.done;}).sort(byDate);
+    var sl=slots(u.start>t?u.start:t,u.end);
+    var gen=sl.map(function(slot,j){var o=pool[j];var kind=o?o.kind:slot.long?LK[li++%2]:SK[si++%3];return {id:o?o.id:U.uid('s'),date:slot.date,minutes:slot.minutes,kind:kind,text:o?o.text:'',done:false};});
+    made+=gen.length;
+    var left=pool.slice(sl.length).filter(function(s){return s.text;});left.forEach(function(s){s.date=u.end;delete s.movedFrom;});
+    u.sessions=keep.concat(gen,left).sort(byDate);
+  });
+  c.units=units;c.season={start:P.start,end:P.end};c.seasonId=P.seasonId;
+  c.rhythm={shortMin:+P.shortMin,days:P.days.slice(),longDay:P.longDay===''?null:+P.longDay,longMin:+P.longMin};
+  c.proofWeek=L.proof?{start:L.proof.start,end:L.proof.end,idea:(c.proofWeek&&c.proofWeek.idea)||''}:null;
+  c.calendarSync=P.calendarSync;c.rollForward=P.rollForward;
+  if(c.status!=='active')c.status='active';
+  activeId=c.id;openUnits={};save();closePlan();
+  if(SEA.selected().id!==c.seasonId)SEA.select(c.seasonId);else APP.render();
+  U.toast('Planned '+made+' session'+(made===1?'':'s')+' across '+units.length+' unit'+(units.length===1?'':'s'));
+}
+
+/* ── for the overview ── */
+function sessionsBetween(from,to,s){var out=[];(s?inSeasonList(s):list).filter(function(c){return c.status==='active'||c.status==='done';}).forEach(function(c){flat(c).forEach(function(x){if(x.date&&x.date>=from&&x.date<=to)out.push(x);});});return out;}
+function milestones(from,to,s){var out=[];inSeasonList(s).forEach(function(c){c.units.forEach(function(u,i){if(U.valid(u.start)&&u.start>=from&&u.start<=to)out.push({date:u.start,title:short(c)+' · Unit '+(i+1)+' begins',sub:u.question||u.title||'',track:'self'});});
+  if(c.proofWeek&&c.proofWeek.start>=from&&c.proofWeek.start<=to)out.push({date:c.proofWeek.start,title:short(c)+' · Proof week',sub:c.proofWeek.idea||'',track:'self'});});return out;}
+
+return {load:load,render:render,seasonChanged:seasonChanged,inSeason:inSeason,inSeasonList:inSeasonList,activeIn:activeIn,stats:stats,next:next,flat:flat,short:short,seasonId:seasonId,
+  sessionsBetween:sessionsBetween,milestones:milestones,all:function(){return list;},get:get,KINDS:KINDS,
+  setActive:function(id){activeId=id;openUnits={};movePop=null;APP.render();},
+  toggleSession:toggleSession,moveSession:moveSession,toggleMove:toggleMove,start:start,finish:finish,editSession:editSession,addSession:addSession,toggleUnit:toggleUnit,addUnit:addUnit,editUnit:editUnit,
+  editProof:editProof,writeProof:writeProof,toggleAllProof:function(){showAllProof=!showAllProof;APP.render();},addMaterial:addMaterial,delMaterial:delMaterial,setSync:setSync,
+  acc:function(k){openAcc[k]=!openAcc[k];APP.render();},openCourse:openCourse,startCourse:startCourse,importLegacy:importLegacy,hideImport:function(){importHidden=true;APP.render();},
+  openPlan:openPlan,closePlan:closePlan,planSet:planSet,planDay:planDay,planWeeks:planWeeks,planUnit:planUnit,planEven:planEven,applyPlan:applyPlan,rollAll:rollAll,
+  planOpen:function(){return !!P;}};
+})();
+</script>
+<script>
+/* ════════════ RESOURCES (learnLibrary1 — was the "Library" tab) ════════════
+   Items {id,title,url,type,subject,status:'queued'|'doing'|'done'} + optional links[{track,id}], image, author,
+   progress{at,of}, addedOn, doneOn. Types: video, playlist, podcast, article, book, course, website, tool. */
+var LIB=(function(){
+  var KEY='learnLibrary1';
+  var DB, editId=null, fType='all', fStatus='all', fFor='all', q='', sug=null;
+  var TYPEMETA={video:'Video',playlist:'Playlist',podcast:'Podcast',article:'Article',book:'Book',course:'Course',website:'Website',tool:'Tool'};
+  var SUBJECTS=['Philosophy','Personal Development','Psychology','Health & Wellness','Technology & AI','Business & Career','Finance & Money','Politics & Society','History','Science','Languages','Arts & Culture','Other'];
+  var TABS=[['all','All',null],['article','Articles',['article']],['video','Videos',['video','playlist']],['podcast','Podcasts',['podcast']],['book','Books',['book']],['course','Courses',['course']],['web','Websites & tools',['website','tool']]];
+  var GEN=['linear-gradient(135deg,#d9ccf3,#bfaee8)','linear-gradient(135deg,#cfe3c9,#a9cfa3)','linear-gradient(135deg,#d6e3f2,#aec6e4)','linear-gradient(135deg,#f3e2c4,#e3c58f)','linear-gradient(135deg,#f2d3d9,#e0a9b4)','linear-gradient(135deg,#d3ebe7,#a2d0c8)'];
+  var SOFT=['#f0eafc','#e4efe3','#e5edf7','#f7eedb','#f9e4e8','#e3f1ee'];
+  var AV=['#cb9a4f','#5f88b8','#5f9568','#7e9cc4','#a98fe0','#cf8a93'];
+  var esc=U.esc, A=U.a;
+  function uid(){return Math.random().toString(36).slice(2,9)}
+  function g(id){return document.getElementById(id)}
+  function find(id){return DB.items.filter(function(x){return x.id===id})[0]}
+  function load(){
+    try{var r=localStorage.getItem(KEY); DB=r?JSON.parse(r):null;}catch(e){DB=null;}
+    if(!DB||!Array.isArray(DB.items)){DB=seed();return;}
+    DB.items.forEach(function(it){
+      if(!it.id)it.id=uid();
+      if(['queued','doing','done'].indexOf(it.status)<0)it.status='queued';
+      if(!TYPEMETA[it.type])it.type=guessType(it.url||'');
+      if(!Array.isArray(it.links))delete it.links;
+    });
+  }
+  function save(){try{localStorage.setItem(KEY,JSON.stringify(DB));}catch(e){}}
+  function seed(){
+    return {items:[
+      {id:uid(),title:'Crash Course Philosophy (full playlist)',url:'https://www.youtube.com/playlist?list=PL8dPuuaLjXtNgK6MZucdYldNkMybYIHKR',type:'playlist',subject:'Philosophy',status:'queued'},
+      {id:uid(),title:'But what is a neural network? — 3Blue1Brown',url:'https://www.youtube.com/watch?v=aircAruvnKk',type:'video',subject:'Technology & AI',status:'queued'},
+      {id:uid(),title:'Huberman Lab — Sleep toolkit',url:'https://open.spotify.com/show/79CkJF3UJTHFV8Dse3Oy0P',type:'podcast',subject:'Health & Wellness',status:'queued'},
+      {id:uid(),title:'How to take smart notes (talk)',url:'https://www.youtube.com/watch?v=Xc2vmsTODGY',type:'video',subject:'Personal Development',status:'done'}
+    ]};
+  }
+  function host(u){return U.host(u);}
+  function platLabel(u){var hh=host(u);if(/youtube\.com|youtu\.be/.test(hh))return 'YouTube';if(/spotify\.com/.test(hh))return 'Spotify';if(/podcasts\.apple\.com/.test(hh))return 'Apple Podcasts';if(/vimeo\.com/.test(hh))return 'Vimeo';if(/ted\.com/.test(hh))return 'TED';return hh||'';}
+  function guessType(u){
+    u=String(u||'');var hh=host(u), path='';try{path=new URL(u).pathname;}catch(e){}
+    if(/youtube\.com|youtu\.be/.test(hh)&&/[?&]list=|\/playlist/.test(u)&&!/[?&]v=/.test(u))return 'playlist';
+    if(/youtube\.com\/(watch|shorts|embed)|youtu\.be\/|vimeo\.com|ted\.com\/talks|dailymotion|nebula\.tv/.test(u))return 'video';
+    if(/spotify\.com\/(show|episode)|podcasts\.apple|overcast\.fm|pocketcasts|podbean|libsyn|anchor\.fm|\/podcast/.test(u))return 'podcast';
+    if(/goodreads\.com|openlibrary\.org|books\.google|bookshop\.org|gutenberg\.org|\/dp\/|\/book\//.test(u))return 'book';
+    if(/coursera\.org|edx\.org|udemy\.com|khanacademy\.org|skillshare\.com|futurelearn|masterclass\.com|codecademy|domestika|linkedin\.com\/learning/.test(u))return 'course';
+    if(/github\.com|notion\.so|figma\.com|observablehq|chrome\.google\.com\/webstore|apps\.apple\.com|play\.google\.com/.test(u))return 'tool';
+    if(/medium\.com|substack\.com|\/blog\/|\/article|\/news\/|\/\d{4}\/\d{2}\//.test(u)||path.split('/').filter(Boolean).pop()&&/[-_]/.test(path.split('/').filter(Boolean).pop()))return 'article';
+    return 'website';
+  }
+  function guessTitle(u){
+    try{var x=new URL(u);var seg=x.pathname.split('/').filter(Boolean).pop()||'';seg=decodeURIComponent(seg).replace(/\.(html?|php|aspx?)$/,'');
+      if(/youtube|youtu\.be|spotify|apple\.com/.test(x.hostname)||!seg||/^[\w-]{8,}$/.test(seg)&&!/[-_]/.test(seg))return '';
+      seg=seg.replace(/[-_]+/g,' ').trim();if(!/[a-z]/i.test(seg))return '';return seg.charAt(0).toUpperCase()+seg.slice(1);}catch(e){return '';}
+  }
+  function ytId(u){var m=/(?:[?&]v=|youtu\.be\/|\/embed\/|\/shorts\/)([\w-]{11})/.exec(u||'');return m?m[1]:'';}
+  function thumb(it){if(it.image)return U.safeUrl(it.image);var id=ytId(it.url);return id?'https://i.ytimg.com/vi/'+id+'/hqdefault.jpg':'';}
+  function typeLabel(t){return TYPEMETA[t]||'Link';}
+  function isUrl(s){return /^(https?:\/\/)?([\w-]+\.)+[a-z]{2,}(\/\S*)?$/i.test(String(s||'').trim())&&!/\s/.test(String(s).trim());}
+
+  /* "For" targets: formal classes, online courses, self-study topics */
+  function targets(){
+    var out=[];
+    CL.all().forEach(function(c){out.push({track:'formal',id:c.id,label:CL.shortCode(c)||c.name,full:CL.label(c),color:'var(--fm)'});});
+    CO.all().forEach(function(p){out.push({track:'online',id:p.id,label:p.name,full:p.name,color:'var(--on)'});});
+    SS.all().forEach(function(c){var idea=c.status==='catalog'||c.status==='next';out.push({track:'self',id:c.id,label:c.title+(idea?' · idea':''),full:c.title,color:idea?'var(--idea)':'var(--ss)',idea:idea});});
+    return out;
+  }
+  function targetOf(l){if(!l)return null;var ts=targets();for(var i=0;i<ts.length;i++){if(ts[i].track===l.track&&ts[i].id===l.id)return ts[i];}return null;}
+  function link(it){return it.links&&it.links[0]?targetOf(it.links[0]):null;}
+  function tag(it){var t=link(it);return t?'<span class="rtag" title="'+esc(t.full)+'"><i style="background:'+t.color+'"></i>'+esc(t.label)+'</span>':'';}
+  function src(it){return [it.author,platLabel(it.url)].filter(Boolean).join(' · ')||typeLabel(it.type);}
+  function linkedTo(track,id){return DB.items.filter(function(it){return it.links&&it.links.some(function(l){return l.track===track&&l.id===id;});});}
+
+  function matches(it,ignoreStatus,ignoreType){
+    if(!ignoreType&&fType!=='all'){var tb=TABS.filter(function(t){return t[0]===fType;})[0];if(tb&&tb[2].indexOf(it.type)<0)return false;}
+    if(!ignoreStatus&&fStatus!=='all'&&it.status!==fStatus)return false;
+    if(fFor!=='all'){if(fFor==='none'){if(link(it))return false;}else{var l=it.links&&it.links[0];if(!l||(l.track+':'+l.id)!==fFor)return false;}}
+    if(q&&!isUrl(q)){var s=(it.title+' '+(it.author||'')+' '+(it.subject||'')+' '+host(it.url)).toLowerCase();if(s.indexOf(q.toLowerCase())<0)return false;}
+    return true;
+  }
+  function acts(it){
+    var nxt=it.status==='queued'?['doing','▶ Start']:it.status==='doing'?['done','✓ Done']:['queued','↺ Again'];
+    return '<div class="racts"><button onclick="event.stopPropagation();LIB.setStatus('+A(it.id)+','+A(nxt[0])+')" title="Change status">'+nxt[1]+'</button><button onclick="event.stopPropagation();LIB.edit('+A(it.id)+')" title="Edit" aria-label="Edit">⋮</button></div>';
+  }
+  function genBg(it){return GEN[U.hash(it.title)%GEN.length];}
+  function vidTile(it){
+    var th=thumb(it), dur=it.type==='playlist'?(it.progress&&it.progress.of?it.progress.of+' videos':'playlist'):'';
+    return '<div class="ri'+(it.status==='done'?' done':'')+'" onclick="LIB.open('+A(it.id)+')">'+acts(it)+'<div class="vthumb"><div class="vgen" style="background:'+genBg(it)+'"><span>'+esc(it.title)+'</span></div>'+
+      (th?'<img src="'+esc(th)+'" alt="" loading="lazy" onerror="this.remove()">':'')+(dur?'<span class="dur">'+esc(dur)+'</span>':'')+'<span class="play">▶</span></div>'+
+      '<div class="rt">'+esc(it.title)+'</div><div class="rs">'+esc(src(it)+(it.type==='playlist'?' · playlist':''))+'</div>'+tag(it)+'</div>';
+  }
+  function podTile(it){
+    var th=thumb(it);
+    return '<div class="ri'+(it.status==='done'?' done':'')+'" onclick="LIB.open('+A(it.id)+')">'+acts(it)+'<div class="cover sq"><div class="sqgen" style="background:'+genBg(it)+'"><span>'+esc(it.title)+'</span></div>'+(th?'<img src="'+esc(th)+'" alt="" loading="lazy" onerror="this.remove()">':'')+'</div>'+
+      '<div class="rt">'+esc(it.title)+'</div><div class="rs">'+esc(src(it))+'</div>'+tag(it)+'</div>';
+  }
+  function bookTile(it){
+    var th=thumb(it);
+    return '<div class="ri'+(it.status==='done'?' done':'')+'" onclick="LIB.open('+A(it.id)+')">'+acts(it)+'<div class="cover book"><div class="gcov" style="background:linear-gradient(160deg,#e9dfc9,#d9c9a8)"><span class="g1">'+esc(it.title)+'</span><span class="g2">'+esc(it.author||'')+'</span></div>'+(th?'<img src="'+esc(th)+'" alt="" loading="lazy" onerror="this.remove()">':'')+'</div>'+
+      '<div class="rt">'+esc(it.title)+'</div><div class="rs">'+esc(it.author||'Book')+'</div>'+tag(it)+'</div>';
+  }
+  function artTile(it){
+    var site=it.author||host(it.url)||'Article';
+    return '<div class="ri'+(it.status==='done'?' done':'')+'" onclick="LIB.open('+A(it.id)+')">'+acts(it)+'<div class="atile" style="--c:'+SOFT[U.hash(site)%SOFT.length]+'"><span class="site">'+esc(site)+'</span><span class="at">'+esc(it.title)+'</span><span class="mins">Article</span></div>'+
+      '<div class="rt">'+esc(it.title)+'</div><div class="rs">'+esc(site)+'</div>'+tag(it)+'</div>';
+  }
+  function readTile(it){return it.type==='book'?bookTile(it):artTile(it);}
+  function toolTile(it){
+    var nm=it.title||host(it.url);
+    return '<div class="rtool ri'+(it.status==='done'?' done':'')+'" onclick="LIB.open('+A(it.id)+')"><span class="av" style="background:'+AV[U.hash(nm)%AV.length]+'">'+esc(nm.trim().charAt(0).toUpperCase()||'?')+'</span>'+
+      '<div class="grow"><div class="eyebrow" style="font-size:9.5px">'+esc(typeLabel(it.type))+'</div><div class="rt" style="margin:1px 0 0">'+esc(it.title)+'</div><div class="rs">'+esc(it.author||host(it.url)||'')+'</div></div>'+tag(it)+acts(it)+'<span class="ar">↗</span></div>';
+  }
+  function tileFor(it){if(it.type==='video'||it.type==='playlist')return vidTile(it);if(it.type==='podcast')return podTile(it);if(it.type==='book'||it.type==='article')return readTile(it);return toolTile(it);}
+  function shelf(title,n,body,cls,tabKey){return '<div class="shelf-h"><div><span class="st-t">'+title+'</span><span class="st-n">'+esc(n)+'</span></div>'+(tabKey?'<button class="more" onclick="LIB.setType('+A(tabKey)+')">See all →</button>':'')+'</div><div class="'+cls+'">'+body+'</div>';}
+  function progLabel(it){var p=it.progress||{};var u=it.type==='book'?'p. ':it.type==='playlist'?'Video ':it.type==='podcast'?'Episode ':it.type==='course'?'Lesson ':'';return {at:(p.at!=null&&p.at!=='')?u+p.at:'Started',of:p.of?'of '+p.of:'',pct:p.of?Math.min(100,(+p.at||0)/p.of*100):0};}
+  function nowCard(it){
+    var t=link(it), col=t?t.color:'var(--accent-deep)', pl=progLabel(it), th=thumb(it);
+    var verb={book:'Reading',article:'Reading',video:'Watching',playlist:'Watching',podcast:'Listening',course:'Taking',website:'Using',tool:'Using'}[it.type]||'In progress';
+    var vis=(it.type==='video'||it.type==='playlist')?'<div class="vthumb" style="width:150px;flex-shrink:0;align-self:flex-start"><div class="vgen" style="background:'+genBg(it)+'"><span style="font-size:13px">'+esc(it.title)+'</span></div>'+(th?'<img src="'+esc(th)+'" alt="" onerror="this.remove()">':'')+'</div>':
+      it.type==='podcast'?'<div class="cover sq" style="width:104px;flex-shrink:0"><div class="sqgen" style="background:'+genBg(it)+'"><span style="font-size:14px">'+esc(it.title)+'</span></div>'+(th?'<img src="'+esc(th)+'" alt="" onerror="this.remove()">':'')+'</div>':
+      '<div class="cover book" style="width:104px;flex-shrink:0"><div class="gcov" style="background:linear-gradient(160deg,#e9dfc9,#d9c9a8);padding:14px 8px"><span class="g1" style="font-size:14px">'+esc(it.title)+'</span><span class="g2"></span></div>'+(th?'<img src="'+esc(th)+'" alt="" onerror="this.remove()">':'')+'</div>';
+    var step=it.type==='book'?['+10 pages',10]:['Next +1',1];
+    var u=U.safeUrl(it.url);
+    return '<section class="card s4 now">'+vis+'<div style="flex:1;min-width:0"><div class="eyebrow" style="color:'+col+'">'+esc(verb)+' · '+esc(typeLabel(it.type))+'</div><div class="nt">'+esc(it.title)+'</div><div class="rs">'+esc(src(it))+'</div>'+tag(it)+
+      '<div class="bar" style="margin-top:12px"><i style="width:'+pl.pct+'%;background:'+col+'"></i></div><div class="np"><span>'+esc(pl.at)+'</span><span>'+esc(pl.of)+'</span></div>'+
+      '<div class="nb"><button class="btn sm" onclick="LIB.bump('+A(it.id)+','+step[1]+')">'+step[0]+'</button><button class="btn sm primary" onclick="LIB.setStatus('+A(it.id)+',\'done\')">Done ✓</button>'+(u?'<a class="btn sm" href="'+esc(u)+'" target="_blank" rel="noopener">Open ↗</a>':'')+'</div></div></section>';
+  }
+  function seasonCard(){
+    var s=SEA.selected(), done=DB.items.filter(function(it){return it.status==='done'&&it.doneOn&&it.doneOn>=s.start&&it.doneOn<=s.end;}).length;
+    var doing=DB.items.filter(function(it){return it.status==='doing';}).length, saved=DB.items.filter(function(it){return it.status==='queued';}).length;
+    var by={};DB.items.forEach(function(it){var t=link(it);if(!t)return;var k=t.track+':'+t.id;(by[k]=by[k]||{t:t,n:0}).n++;});
+    var arr=Object.keys(by).map(function(k){return by[k];}).sort(function(x,y){return y.n-x.n;}).slice(0,5), mx=arr[0]?arr[0].n:1;
+    return '<section class="card s4"><div class="card-h" style="margin-bottom:10px"><div class="card-t">This season</div><span class="card-m">'+esc(s.name)+'</span></div>'+
+      '<div class="kst"><div><b>'+done+'</b><span>done</span></div><div><b>'+doing+'</b><span>in progress</span></div><div><b>'+saved+'</b><span>saved</span></div></div>'+
+      (arr.length?arr.map(function(x){return '<div class="byk"><span title="'+esc(x.t.full)+'"><i style="background:'+x.t.color+'"></i>'+esc(x.t.label)+'</span><span class="bar"><i style="width:'+(x.n/mx*100)+'%;background:'+x.t.color+';opacity:.75"></i></span><b>'+x.n+'</b></div>';}).join(''):
+        '<div class="soft-empty">Link resources to a class, course or self-study topic with “For” to see where your learning goes.</div>')+'</section>';
+  }
+  function render(){
+    var host=g('tab-resources');var all=DB.items;
+    var cnt={};TABS.forEach(function(t){cnt[t[0]]=t[2]?all.filter(function(it){return t[2].indexOf(it.type)>=0&&matches(it,true,true);}).length:all.filter(function(it){return matches(it,true,true);}).length;});
+    var sc={all:0,queued:0,doing:0,done:0};all.forEach(function(it){if(matches(it,true)){sc.all++;sc[it.status]++;}});
+    /* For chips: only targets that have resources, plus the current filter */
+    var used={};all.forEach(function(it){var t=link(it);if(t)used[t.track+':'+t.id]=t;});
+    if(fFor!=='all'&&fFor!=='none'&&!used[fFor]){var p=fFor.split(':'),tt=targetOf({track:p[0],id:p.slice(1).join(':')});if(tt)used[fFor]=tt;}
+    var chips='<button class="'+(fFor==='all'?'on':'')+'" onclick="LIB.setFor(\'all\')">All</button>'+Object.keys(used).map(function(k){var t=used[k];return '<button class="'+(fFor===k?'on':'')+'" onclick="LIB.setFor('+A(k)+')" title="'+esc(t.full)+'"><i style="background:'+t.color+'"></i>'+esc(t.label)+'</button>';}).join('')+
+      (all.some(function(it){return !link(it);})&&Object.keys(used).length?'<button class="'+(fFor==='none'?'on':'')+'" onclick="LIB.setFor(\'none\')" style="color:'+(fFor==='none'?'#fff':'var(--faint)')+'">Unlinked</button>':'');
+    var head='<div class="rbar"><div class="seg-tabs" role="tablist" aria-label="Type">'+TABS.map(function(t){return '<button class="'+(fType===t[0]?'on':'')+'" onclick="LIB.setType('+A(t[0])+')">'+esc(t[1])+(t[0]!=='all'&&cnt[t[0]]?'<small>'+cnt[t[0]]+'</small>':'')+'</button>';}).join('')+'</div>'+
+      '<div class="addbox"><svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg><input id="res-add" placeholder="Paste a link or search…" value="'+esc(q)+'" oninput="LIB.query(this.value)" onkeydown="LIB.addKey(event)" autocomplete="off" aria-label="Paste a link or search"><span class="hintx">auto-detects video, podcast, article</span><div id="res-sug"></div></div></div>'+
+      '<div class="fbar"><span class="lbl">For</span><div class="cats2">'+chips+'</div>'+
+      '<div class="seg-tabs sm" role="tablist" aria-label="Status">'+[['all','All'],['queued','Saved'],['doing','In progress'],['done','Done']].map(function(s){return '<button class="'+(fStatus===s[0]?'on':'')+'" onclick="LIB.setStatusF('+A(s[0])+')">'+s[1]+(s[0]!=='all'&&sc[s[0]]?'<small>'+sc[s[0]]+'</small>':'')+'</button>';}).join('')+'</div></div>';
+    var body='';
+    if(!all.length){body='<div class="empty" style="margin-top:20px"><h3>Nothing saved yet</h3><p>Paste a YouTube, podcast, article or book link in the box above — it figures out what it is.</p></div>';}
+    else if(q&&!isUrl(q)||fType!=='all'){
+      var list=all.filter(function(it){return matches(it);}).sort(function(x,y){var r={doing:0,queued:1,done:2};return r[x.status]-r[y.status];});
+      if(!list.length)body='<div class="empty" style="margin-top:20px"><h3>Nothing here</h3><p>No resources match — clear the filters or add something new.</p></div>';
+      else if(q&&!isUrl(q)){body='<section class="card" style="padding:6px 22px;margin-top:20px">'+list.map(drow).join('')+'</section>';}
+      else{var tb=TABS.filter(function(t){return t[0]===fType;})[0];var cls=fType==='video'?'rgrid v':fType==='course'||fType==='web'?'rgrid t':'rgrid';
+        body='<div class="shelf-h"><div><span class="st-t">'+esc(tb[1])+'</span><span class="st-n">'+list.length+'</span></div><button class="more" onclick="LIB.setType(\'all\')">← All shelves</button></div><div class="'+cls+'">'+list.map(tileFor).join('')+'</div>';}
+    }else{
+      var showDone=fStatus==='done', base=all.filter(function(it){return matches(it)&&(showDone||fStatus!=='all'||it.status!=='done');});
+      var doing=all.filter(function(it){return it.status==='doing'&&matches(it,true);});
+      var top='';
+      if(fStatus==='all'||fStatus==='doing'){
+        var nc=doing.slice(0,2).map(nowCard).join('');
+        if(doing.length<2)nc+='<section class="card '+(doing.length?'s4':'s8')+'" style="display:flex;flex-direction:column;justify-content:center;border-style:dashed;box-shadow:none;background:transparent"><div class="card-t" style="font-size:16px">'+(doing.length?'One thing at a time':'Nothing in progress')+'</div><div class="soft-empty">Hover a resource and press ▶ Start — it shows up here with your place in it.</div></section>';
+        top='<div class="grid" style="margin-top:20px">'+nc+seasonCard()+'</div>';
+      }
+      var W=base.filter(function(it){return it.type==='video'||it.type==='playlist';}), L=base.filter(function(it){return it.type==='podcast';}),
+          R=base.filter(function(it){return it.type==='book'||it.type==='article';}), T=base.filter(function(it){return ['course','website','tool'].indexOf(it.type)>=0;});
+      var lbl=showDone?'done':fStatus==='doing'?'in progress':'saved';
+      body=top+
+        (W.length?shelf('Watch',W.length+' '+lbl,W.slice(0,5).map(vidTile).join(''),'vrow','video'):'')+
+        (L.length?shelf('Listen',L.length+' '+lbl,L.slice(0,6).map(podTile).join(''),'prow','podcast'):'')+
+        (R.length?shelf('Read',(function(){var b=R.filter(function(x){return x.type==='book';}).length,a=R.length-b;return [b?b+' book'+(b===1?'':'s'):'',a?a+' article'+(a===1?'':'s'):''].filter(Boolean).join(' · ');})(),R.slice(0,6).map(readTile).join(''),'prow',R.every(function(x){return x.type==='book';})?'book':R.every(function(x){return x.type==='article';})?'article':null):'')+
+        (T.length?shelf('Courses, websites &amp; tools',String(T.length),T.slice(0,6).map(toolTile).join(''),'trow',T.every(function(x){return x.type==='course';})?'course':T.every(function(x){return x.type!=='course';})?'web':null):'');
+      if(!W.length&&!L.length&&!R.length&&!T.length)body+='<div class="empty" style="margin-top:24px"><h3>Nothing here</h3><p>No resources match these filters yet.</p></div>';
+      if(!showDone){
+        var dn=all.filter(function(it){return it.status==='done'&&matches(it,true);}).sort(function(x,y){return (y.doneOn||'').localeCompare(x.doneOn||'');});
+        var s=SEA.selected(), ins=dn.filter(function(it){return it.doneOn&&it.doneOn>=s.start&&it.doneOn<=s.end;}).length;
+        if(dn.length)body+='<div class="shelf-h"><div><span class="st-t">Done lately</span><span class="st-n">'+(ins?ins+' '+esc(SEA.isCurrent(s)?'this season':'in '+s.name):dn.length+' done')+'</span></div><button class="more" onclick="LIB.setStatusF(\'done\')">See all →</button></div><section class="card" style="padding:6px 22px">'+dn.slice(0,5).map(drow).join('')+'</section>';
+      }
+    }
+    host.innerHTML=head+body;
+    var sb=g('res-sug');if(sb)sb.innerHTML=sugHtml();
+  }
+  function drow(it){
+    return '<div class="drow" onclick="LIB.open('+A(it.id)+')"><button class="check'+(it.status==='done'?' on':'')+'" onclick="event.stopPropagation();LIB.setStatus('+A(it.id)+','+A(it.status==='done'?'queued':'done')+')" aria-label="Done">'+(it.status==='done'?'✓':'')+'</button><span class="eyebrow" style="width:70px;flex-shrink:0">'+esc(typeLabel(it.type))+'</span><span class="r-t">'+esc(it.title)+'</span>'+tag(it)+
+      '<span class="card-m" style="width:56px;text-align:right;flex-shrink:0">'+esc(it.status==='done'?U.md(it.doneOn):it.status==='doing'?'in progress':'saved')+'</span><div class="racts" style="opacity:1"><button onclick="event.stopPropagation();LIB.edit('+A(it.id)+')" aria-label="Edit">⋮</button></div></div>';
+  }
+  function sugHtml(){
+    if(!q||!isUrl(q))return '';var u=U.safeUrl(q), t=guessType(u);
+    return '<div class="addsug"><button onclick="LIB.addFromBox()"><b>+</b> Add as '+esc(typeLabel(t).toLowerCase())+'<small>'+esc(platLabel(u)||host(u))+'</small></button></div>';
+  }
+  function query(v){q=v;
+    var caret=null, el=g('res-add');if(el)caret=el.selectionStart;
+    render();el=g('res-add');if(el){el.focus();try{el.setSelectionRange(caret,caret);}catch(e){}}}
+  function addKey(e){if(e.key==='Enter'){if(isUrl(q))addFromBox();}else if(e.key==='Escape'){query('');}}
+  function addFromBox(){var u=U.safeUrl(q);q='';openModal(null,{url:u});}
+  function open(id){var it=find(id);if(!it)return;var u=U.safeUrl(it.url);if(u)window.open(u,'_blank','noopener');else openModal(id);}
+  function setStatus(id,st){var it=find(id);if(!it)return;it.status=st;if(st==='done')it.doneOn=U.today();else delete it.doneOn;save();APP.render();}
+  function bump(id,n){var it=find(id);if(!it)return;it.progress=it.progress||{};it.progress.at=(+it.progress.at||0)+n;if(it.progress.of&&it.progress.at>=it.progress.of){it.progress.at=it.progress.of;}save();APP.render();}
+  function forOptions(sel){
+    var ts=targets(), grp={formal:[],online:[],self:[]};ts.forEach(function(t){grp[t.track].push(t);});
+    var h='<option value="">— Not linked —</option>';
+    [['formal','Formal classes'],['online','Online courses'],['self','Self-study']].forEach(function(gp){if(!grp[gp[0]].length)return;
+      h+='<optgroup label="'+gp[1]+'">'+grp[gp[0]].map(function(t){var k=t.track+':'+t.id;return '<option value="'+esc(k)+'"'+(k===sel?' selected':'')+'>'+esc(t.track==='formal'?t.full:t.label)+'</option>';}).join('')+'</optgroup>';});
+    return h;
+  }
+  function openModal(id,pre){
+    editId=id||null;
+    var it=id?find(id):Object.assign({title:'',url:'',type:'article',subject:'',status:'queued'},pre||{});
+    if(!it)return;
+    if(!id&&it.url){it.type=guessType(it.url);it.title=it.title||guessTitle(it.url);}
+    if(!id&&fFor!=='all'&&fFor!=='none')it.links=[{track:fFor.split(':')[0],id:fFor.split(':').slice(1).join(':')}];
+    g('lmTitle').textContent=id?'Edit resource':'Add a resource';
+    g('lmName').value=it.title||'';g('lmUrl').value=it.url||'';g('lmType').value=TYPEMETA[it.type]?it.type:'article';g('lmStatus').value=it.status||'queued';
+    g('lmAuthor').value=it.author||'';g('lmImage').value=it.image||'';
+    g('lmAt').value=it.progress&&it.progress.at!=null?it.progress.at:'';g('lmOf').value=it.progress&&it.progress.of?it.progress.of:'';
+    var l=it.links&&it.links[0];g('lmFor').innerHTML=forOptions(l?l.track+':'+l.id:'');
+    var subSel=g('lmSubject');
+    subSel.innerHTML='<option value="">— None —</option>'+SUBJECTS.map(function(s){return '<option>'+esc(s)+'</option>';}).join('');
+    var curSub=it.subject||'';if(curSub&&SUBJECTS.indexOf(curSub)<0){subSel.insertAdjacentHTML('beforeend','<option>'+esc(curSub)+'</option>');}
+    subSel.value=curSub;
+    g('lmSave').textContent=id?'Save':'Add resource';g('lmDel').style.display=id?'inline-flex':'none';
+    typeChange();APP.openModal('libModal');
+    setTimeout(function(){(it.url&&!it.title?g('lmName'):g(it.url?'lmName':'lmUrl')).focus();},40);
+  }
+  function typeChange(){var t=g('lmType').value;g('lmAtLbl').firstChild.textContent=t==='book'?'Page I’m on ':t==='playlist'?'Video I’m on ':t==='podcast'?'Episode I’m on ':'Where I am ';g('lmOfLbl').firstChild.textContent=t==='book'?'Pages ':t==='playlist'?'Videos ':t==='podcast'?'Episodes ':'Out of ';}
+  function urlInput(){var u=g('lmUrl').value.trim();if(!u)return;if(!editId)g('lmType').value=guessType(U.safeUrl(u));if(!g('lmName').value.trim()){var t=guessTitle(U.safeUrl(u));if(t)g('lmName').value=t;}typeChange();}
+  function saveItem(){
+    var url=U.safeUrl(g('lmUrl').value), title=g('lmName').value.trim()||host(url);
+    if(!title){alert('Give it a title or a link first.');return}
+    var it=editId?find(editId):{id:uid(),addedOn:U.today()};
+    var prevStatus=it.status;
+    it.title=title;it.url=url;it.type=g('lmType').value;it.subject=g('lmSubject').value;it.status=g('lmStatus').value;
+    var au=g('lmAuthor').value.trim(), im=g('lmImage').value.trim(), at=g('lmAt').value, of=g('lmOf').value, fo=g('lmFor').value;
+    if(au)it.author=au;else delete it.author;
+    if(im)it.image=U.safeUrl(im);else delete it.image;
+    if(at!==''||of!==''){it.progress={at:at===''?0:+at};if(of!=='')it.progress.of=+of;}else delete it.progress;
+    if(fo){var p=fo.split(':');it.links=[{track:p[0],id:p.slice(1).join(':')}];}else delete it.links;
+    if(it.status==='done'&&prevStatus!=='done')it.doneOn=U.today();if(it.status!=='done')delete it.doneOn;
+    if(!editId)DB.items.unshift(it);
+    save();APP.closeModal('libModal');APP.render();if(!editId)U.toast('Added to '+(it.type==='video'||it.type==='playlist'?'Watch':it.type==='podcast'?'Listen':it.type==='book'||it.type==='article'?'Read':'Courses, websites & tools'));editId=null;
+  }
+  function delFromModal(){
+    if(!editId)return;if(!confirm('Remove this from your resources?'))return;
+    DB.items=DB.items.filter(function(x){return x.id!==editId});editId=null;save();APP.closeModal('libModal');APP.render();
+  }
+  return {
+    load:load,render:render,open:open,edit:function(id){openModal(id);},openAdd:function(){openModal(null);},save:saveItem,delFromModal:delFromModal,urlInput:urlInput,typeChange:typeChange,
+    setStatus:setStatus,bump:bump,query:query,addKey:addKey,addFromBox:addFromBox,linkedTo:linkedTo,typeLabel:typeLabel,guessType:guessType,ytId:ytId,
+    setType:function(t){fType=t;APP.render();window.scrollTo(0,0);},setStatusF:function(s){fStatus=s;APP.render();},setFor:function(k){fFor=k;APP.render();},
+    showFor:function(track,id){fFor=track+':'+id;fType='all';fStatus='all';q='';APP.tab('resources');},
+    count:function(){return DB.items.length;}
+  };
+})();
+</script>
+<script>
+/* ════════════ OVERVIEW (a snapshot of the selected season across all three tracks) ════════════ */
+var OV=(function(){
+  var esc=U.esc, A=U.a, showAllPast=false;
+  function weekRange(){var t=U.today();return [t,U.add(t,6)];}
+  function formalItems(s){var out=[];CL.inSeasonList(s).forEach(function(c){CL.allTasks(c).forEach(function(x){out.push(x);});});return out;}
+  function trackCards(s){
+    var cls=CL.inSeasonList(s), pr=CO.inSeasonList(s), ss=SS.inSeasonList(s), act=ss.filter(function(c){return c.status==='active';});
+    /* formal */
+    var tot=0,dn=0,units=0;cls.forEach(function(c){var p=CL.prog(c);tot+=p.total;dn+=p.done;var u=parseFloat(c.units);if(!isNaN(u))units+=u;});
+    var fpct=tot?Math.round(dn/tot*100):0, t=U.today();
+    var und=formalItems(s).filter(function(x){return !x.t.done&&x.due;}).sort(function(x,y){return x.due.localeCompare(y.due);});
+    var late=und.filter(function(x){return x.due<t;}).length, fnext=und.filter(function(x){return x.due>=t;})[0]||und[0];
+    var fcard=card('formal',fpct,cls.length+' class'+(cls.length===1?'':'es'),[units?units+' units':'',tot?fpct+'% overall':''].filter(Boolean).join(' · ')||'Nothing tracked yet',
+      fnext?esc(fnext.t.label):'<span style="color:var(--muted)">'+(cls.length?'All caught up':'No classes this season')+'</span>',(fnext?(fnext.due<t?'':U.dueChip(fnext.due)):'')+(late?' '+U.due(late+' late','over'):''));
+    /* online */
+    var op=pr.length?Math.round(pr.reduce(function(a,p){return a+CO.stats(p).pct;},0)/pr.length):0, q=CO.all().filter(function(p){return p.status==='queued';}).length;
+    var on=pr.filter(function(p){return p.status==='active'&&CO.cursor(p);})[0];
+    var ocard=card('online',op,pr.length+' course'+(pr.length===1?'':'s'),[pr.length?op+'% overall':'',q?q+' queued':''].filter(Boolean).join(' · ')||'Nothing active',
+      on?esc(CO.nextLabel(on)):'<span style="color:var(--muted)">'+(pr.length?'All caught up':'Nothing active')+'</span>',on&&on.targetDate?U.due('goal '+U.md(on.targetDate),'plain'):'');
+    /* self-study */
+    var st=act.reduce(function(a,c){var x=SS.stats(c);a.d+=x.done;a.t+=x.total;return a;},{d:0,t:0}), spct=st.t?Math.round(st.d/st.t*100):0;
+    var nx=null;act.forEach(function(c){var n=SS.next(c);if(n&&(!nx||(n.date&&(!nx.date||n.date<nx.date))))nx=n;});
+    var scard=card('self',spct,act.length+' active',act.map(function(c){return SS.short(c);}).join(' · ')||'Pick a topic from your curriculum',
+      nx?esc((nx.date===t?'Today':nx.date?U.wd(nx.date):'Next')+' · '+(nx.s.text||SS.KINDS[nx.s.kind]+' session')):'<span style="color:var(--muted)">'+(act.length?'Plan your sessions':'Nothing planned')+'</span>',nx?U.due(nx.s.minutes+' min','gentle'):'');
+    return '<div class="grid" style="margin-top:18px">'+fcard+ocard+scard+'</div>';
+  }
+  function card(k,pct,big,sub,nx,chip){
+    return '<section class="card s4 tsum"><div class="top">'+trackIcon(k)+'<div class="card-t">'+TR[k].label+'</div><button class="more" onclick="APP.tab('+A(k)+')">Open →</button></div>'+
+      '<div class="mid">'+U.ring(pct,TR[k].hex)+'<div style="min-width:0"><b>'+esc(big)+'</b><span>'+esc(sub)+'</span></div></div>'+
+      '<div class="nx"><em>Next</em><span class="t">'+nx+'</span>'+(chip||'')+'</div></section>';
+  }
+  function hero(s){
+    var st=SEA.status(s), W=SEA.weeks(s), t=U.today(), wn=SEA.weekNo(s,t);
+    var big=st==='now'?'Week '+wn+' <small>of '+W+'</small>':st==='past'?W+' weeks <small>· finished</small>':'Starts <small>in '+U.diff(t,s.start)+' days</small>';
+    var things=CL.inSeasonList(s).length+CO.inSeasonList(s).length+SS.inSeasonList(s).filter(function(c){return c.status!=='catalog';}).length;
+    var r=weekRange(), dueWk=formalItems(s).filter(function(x){return !x.t.done&&x.due&&x.due>=r[0]&&x.due<=r[1];}).length+SS.sessionsBetween(r[0],r[1],s).filter(function(x){return !x.s.done;}).length;
+    var left=st==='now'?Math.max(0,Math.ceil(U.diff(t,s.end)/7)):st==='past'?0:W;
+    /* what's due each week: formal deadlines · online modules finished / goal dates · self-study sessions */
+    var bars=[], flags=[], fm=formalItems(s), ss=SS.sessionsBetween(s.start,s.end,s), on=CO.inSeasonList(s), mx=1;
+    for(var i=0;i<W;i++){
+      var a=U.add(s.start,i*7), b=U.add(a,6);
+      var f=fm.filter(function(x){return x.due>=a&&x.due<=b;}).length;
+      var o=0;on.forEach(function(p){if(p.targetDate>=a&&p.targetDate<=b)o++;p.courses.forEach(function(c){c.modules.forEach(function(m){if(m.doneOn&&m.doneOn>=a&&m.doneOn<=b)o++;});});});
+      var se=ss.filter(function(x){return x.date>=a&&x.date<=b;}).length;
+      bars.push([f,o,se]);mx=Math.max(mx,f+o+se);
+      var fl='';CL.inSeasonList(s).forEach(function(c){c.modules.forEach(function(m){if(!fl&&m.due>=a&&m.due<=b&&/midterm|final|exam/i.test(m.title))fl=m.title.replace(/\b(oral|exam)\b/ig,'').trim().split(/\s+/)[0]||'Exam';});});
+      flags.push(fl);
+    }
+    var H=66, cols='repeat('+W+',minmax(0,1fr))';
+    var bh=bars.map(function(x,i){var cls=st==='past'||(st==='now'&&i<wn-1)?'past':(st==='now'&&i===wn-1)?'now':'';var z=x[0]+x[1]+x[2]===0;
+      var px=function(n){return Math.max(n?4:0,Math.round(n/mx*H));};
+      return '<div class="wk '+cls+(z?' zero':'')+'" title="Week '+(i+1)+': '+x[0]+' due · '+x[1]+' online · '+x[2]+' sessions">'+(z?'<i style="height:3px"></i>':(x[2]?'<i style="height:'+px(x[2])+'px;background:var(--ss)"></i>':'')+(x[1]?'<i style="height:'+px(x[1])+'px;background:var(--on)"></i>':'')+(x[0]?'<i style="height:'+px(x[0])+'px;background:var(--fm)"></i>':''))+'</div>';}).join('');
+    return '<section class="card hero2"><div style="min-width:0">'+
+        '<span class="eyebrow">'+esc(s.name)+' · '+esc(U.range(s.start,s.end))+'</span>'+
+        '<div class="big">'+big+'</div>'+
+        '<div class="focus'+(s.focus?'':' ph')+'" onclick="SEA.editFocus()" title="Edit"><b>This season I’m focusing on</b>'+(s.focus?esc(s.focus):'Add a sentence about what matters this season…')+'</div>'+
+      '</div><div style="display:flex;flex-direction:column;min-width:0">'+
+        '<div class="kp"><div><b>'+things+'</b><span>things on</span></div><div><b>'+(st==='now'?dueWk:'—')+'</b><span>due this week</span></div><div><b>'+left+'</b><span>weeks left</span></div></div>'+
+        '<div style="display:flex;justify-content:space-between"><span class="eyebrow">What’s due each week</span><span class="card-m">'+(st==='now'?'this week highlighted':'')+'</span></div>'+
+        '<div class="weeks" style="grid-template-columns:'+cols+'">'+bh+'</div><div class="flags" style="grid-template-columns:'+cols+'">'+flags.map(function(f){return '<span>'+esc(f)+'</span>';}).join('')+'</div>'+
+        '<div class="legend"><span><i style="background:var(--fm)"></i>Formal</span><span><i style="background:var(--on)"></i>Online</span><span><i style="background:var(--ss)"></i>Self-study</span></div>'+
+      '</div></section>';
+  }
+  function tk(k,check,label,sub,chip,done){
+    return '<div class="tk'+(done?' done':'')+'"><button class="check'+(done?' on':'')+'" aria-label="Done" onclick="'+check+'">'+(done?'✓':'')+'</button><span class="sw" style="background:'+TR[k].c+'"></span><span class="t">'+esc(label)+'<small>'+esc(sub)+'</small></span>'+(chip||'')+'</div>';
+  }
+  function thisWeek(s){
+    var r=weekRange(), t=r[0], days={}, done=0, total=0;
+    function push(d,h){(days[d]=days[d]||[]).push(h);}
+    formalItems(s).forEach(function(x){
+      if(!x.due)return;var c=x.c;
+      if(x.t.done){if(x.due<t||x.due>r[1])return;done++;}else if(x.due>r[1]||x.due<U.add(t,-30))return;
+      total++;
+      var late=!x.t.done&&x.due<t;
+      push(late?t:x.due,tk('formal','CL.toggleTask('+A(x.m.id)+','+A(x.t.id)+','+A(c.id)+')',x.t.label,(CL.shortCode(c)||c.name)+' · '+(late?'was due '+U.wd(x.due):x.m.title),x.t.done?'':U.dueChip(x.due),x.t.done));
+    });
+    SS.sessionsBetween(t,r[1],s).forEach(function(x){
+      total++;if(x.s.done)done++;
+      push(x.date,tk('self','SS.toggleSession('+A(x.c.id)+','+A(x.s.id)+')',x.s.text||SS.KINDS[x.s.kind]+' session',x.c.title+' · '+x.s.minutes+'-min session',x.s.done?'':(x.date===t?U.due('today','gentle'):''),x.s.done));
+    });
+    var any=[];CO.inSeasonList(s).forEach(function(p){if(p.status!=='active')return;var k=CO.cursor(p);if(!k)return;total++;
+      any.push(tk('online','CO.markNext('+A(p.id)+')',CO.nextLabel(p),p.name,U.due('this week','plain'),false));});
+    var keys=Object.keys(days).sort();
+    var h=keys.map(function(d){return '<div class="day"><div class="d">'+(d===t?'Today':esc(U.wd(d)))+'<b>'+U.dnum(d)+'</b></div><div>'+days[d].join('')+'</div></div>';}).join('');
+    if(any.length)h+='<div class="day"><div class="d">Any<b style="font-size:13px;font-family:var(--b2-sans);font-weight:700;padding-top:2px">time</b></div><div>'+any.slice(0,4).join('')+'</div></div>';
+    return '<section class="card s7"><div class="card-h"><div><div class="card-t">This week</div><div class="card-m" style="margin-top:3px">'+esc(U.range(r[0],r[1]))+' · all tracks</div></div>'+(total?'<span class="chip">'+done+' of '+total+' done</span>':'')+'</div>'+
+      (h||'<div class="soft-empty">A clear week. Enjoy it — or pull something forward.</div>')+'</section>';
+  }
+  function seasonList(s){
+    /* past/future season: what was on, with progress */
+    var rows=[];
+    CL.inSeasonList(s).forEach(function(c){var p=CL.prog(c);rows.push({k:'formal',t:CL.label(c),sub:[c.inst,p.done+' of '+p.total+' tasks'].filter(Boolean).join(' · '),pct:p.pct,go:'CL.setActive('+A(c.id)+');APP.tab(\'formal\')'});});
+    CO.inSeasonList(s).forEach(function(p){var x=CO.stats(p);rows.push({k:'online',t:p.name,sub:[p.platform,x.dn+' of '+x.tt+' '+x.unit].filter(Boolean).join(' · '),pct:x.pct,go:'CO.setActive('+A(p.id)+');APP.tab(\'online\')'});});
+    SS.inSeasonList(s).forEach(function(c){var x=SS.stats(c);rows.push({k:'self',t:c.title,sub:x.done+' of '+x.total+' sessions',pct:x.pct,go:'SS.setActive('+A(c.id)+');APP.tab(\'self\')'});});
+    return '<section class="card s7"><div class="card-h"><div><div class="card-t">'+(SEA.status(s)==='past'?'What was on':'What’s planned')+'</div><div class="card-m" style="margin-top:3px">'+esc(s.name)+' · all tracks</div></div><span class="chip">'+rows.length+'</span></div>'+
+      (rows.length?rows.map(function(r){return '<div class="tk" style="cursor:pointer" onclick="'+r.go+'"><span class="sw" style="background:'+TR[r.k].c+'"></span><span class="t">'+esc(r.t)+'<small>'+esc(r.sub)+'</small></span>'+U.due(r.pct+'%',r.pct>=100?'':'plain')+'</div>';}).join(''):
+        '<div class="soft-empty">Nothing in '+esc(s.name)+' yet. Classes, courses and self-study land here by their dates.</div>')+'</section>';
+  }
+  function comingUp(s){
+    var t=U.today(), cur=SEA.status(s)==='now', from=cur?U.add(t,1):s.start, to=cur?U.add(t,42):s.end, out=[];
+    CL.inSeasonList(s).forEach(function(c){
+      CL.sortedModules(c).forEach(function(m){if(m.due&&m.due>=from&&m.due<=to&&!CL.modProg(m).full)out.push({date:m.due,title:(CL.shortCode(c)?CL.shortCode(c)+' ':'')+m.title,sub:m.short||m.objective||'',track:'formal',chip:U.dueChip(m.due)});});
+      if(c.end&&c.end>=from&&c.end<=to)out.push({date:c.end,title:(CL.shortCode(c)||c.name)+' · last day',sub:'term ends',track:'formal',chip:cur?U.due(U.diff(t,c.end)+'d','plain'):''});
+    });
+    CO.inSeasonList(s).forEach(function(p){if(p.targetDate&&p.targetDate>=from&&p.targetDate<=to)out.push({date:p.targetDate,title:'Finish '+p.name,sub:'your goal date',track:'online',chip:cur?U.due(U.diff(t,p.targetDate)+'d','plain'):''});});
+    SS.milestones(from,to,s).forEach(function(m){out.push(m);});
+    out.sort(function(x,y){return x.date.localeCompare(y.date);});out=out.slice(0,cur?5:7);
+    return '<section class="card s5"><div class="card-h"><div class="card-t">Coming up</div><span class="card-m">'+(cur?'next 6 weeks':esc(s.name))+'</span></div>'+
+      (out.length?out.map(function(m){return '<div class="ms"><div class="dt"'+(m.track==='self'?' style="background:var(--ss-s)"':m.track==='online'?' style="background:var(--on-s)"':'')+'><small>'+esc(U.mon(m.date))+'</small><b>'+U.dnum(m.date)+'</b></div><div class="t">'+esc(m.title)+(m.sub?'<small>'+esc(m.sub)+'</small>':'')+'</div>'+(m.chip||'')+'</div>';}).join(''):
+        '<div class="soft-empty">No milestones '+(cur?'in the next 6 weeks':'this season')+'.</div>')+'</section>';
+  }
+  function pastSeasons(){
+    var cur=SEA.current(), seas=SEA.all().filter(function(s){return s.end<cur.start;}).sort(function(x,y){return y.start.localeCompare(x.start);});
+    var rows=seas.map(function(s){
+      var cls=CL.inSeasonList(s), pr=CO.inSeasonList(s), ss=SS.inSeasonList(s);
+      var n=cls.length+pr.length+ss.length;if(!n)return '';
+      var title=n===1?(cls[0]?CL.label(cls[0]):pr[0]?pr[0].name:ss[0].title):[cls.length?cls.length+' formal class'+(cls.length===1?'':'es'):'',pr.length?pr.length+' online course'+(pr.length===1?'':'s'):'',ss.length?ss.length+' self-study':''].filter(Boolean).join(' · ');
+      var names=[cls.map(function(c){return CL.shortCode(c)||c.name;}).join(', '),pr.map(function(p){return p.name;}).join(', '),ss.map(function(c){return c.title;}).join(', ')].filter(Boolean).join(' · ');
+      var allDone=cls.every(function(c){return CL.prog(c).pct>=100;})&&pr.every(CO.complete)&&ss.every(function(c){var x=SS.stats(c);return x.total&&x.done===x.total;});
+      var dots='';
+      cls.forEach(function(c){c.modules.forEach(function(m){dots+='<i style="background:'+(CL.modProg(m).full?'var(--fm)':'var(--warm-2)')+';opacity:'+(CL.modProg(m).full?.55:1)+'"></i>';});});
+      pr.forEach(function(p){p.courses.forEach(function(c){var d=c.modules.length?c.modules.every(function(m){return m.done;}):c.done;dots+='<i style="background:'+(d?'var(--on)':'var(--warm-2)')+';opacity:'+(d?.55:1)+'"></i>';});});
+      ss.forEach(function(c){c.units.forEach(function(u){var d=u.sessions.length&&u.sessions.every(function(x){return x.done;});dots+='<i style="background:'+(d?'var(--ss)':'var(--warm-2)')+';opacity:'+(d?.55:1)+'"></i>';});});
+      return '<button class="card pterm" onclick="SEA.select('+A(s.id)+');window.scrollTo(0,0)"><span class="chip">'+esc(s.name)+'</span><div class="nm">'+esc(title)+'<small>'+esc((n===1?'':names)+(n===1?'':' · ')+(allDone?'all finished':'see how it went'))+'</small></div><div class="dots">'+dots+'</div></button>';
+    }).filter(Boolean);
+    if(!rows.length)return '';
+    return '<div class="sec-l" style="margin-top:30px"><span class="eyebrow">Past seasons</span>'+(rows.length>2?'<button class="more" onclick="OV.togglePast()">'+(showAllPast?'Show fewer':'See all '+rows.length+' →')+'</button>':'')+'</div>'+(showAllPast?rows:rows.slice(0,2)).join('');
+  }
+  function render(){
+    var s=SEA.selected();
+    document.getElementById('tab-overview').innerHTML=
+      '<div class="seasons">'+SEA.switcherHtml()+'<button class="btn sm" style="margin-left:auto" onclick="SEA.openEdit()">Edit season dates</button></div>'+
+      hero(s)+trackCards(s)+
+      '<div class="grid" style="margin-top:18px">'+(SEA.status(s)==='now'?thisWeek(s):seasonList(s))+comingUp(s)+'</div>'+
+      pastSeasons();
+  }
+  return {render:render,togglePast:function(){showAllPast=!showAllPast;APP.render();}};
+})();
+
+/* ════════════ APP: tabs, modals, init ════════════ */
+var APP=(function(){
+  var TABS=['overview','formal','online','self','resources'], cur='overview';
+  var LEGACY={classes:'formal',courses:'online',library:'resources'};
+  function tab(t){
+    t=LEGACY[t]||t;if(TABS.indexOf(t)<0)t='overview';
+    if(SW.isOpen())SW.close();
+    cur=t;
+    TABS.forEach(function(x){var b=document.getElementById('lt-'+x),p=document.getElementById('tab-'+x);if(b){b.classList.toggle('active',x===t);b.setAttribute('aria-selected',x===t);}if(p)p.classList.toggle('show',x===t);});
+    try{localStorage.setItem('learningTab',t);}catch(e){}
+    if(t==='self')SS.rollAll();
+    render();window.scrollTo(0,0);
+  }
+  function render(){
+    var rc=document.getElementById('res-count');if(rc)rc.textContent=LIB.count()||'';
+    try{
+      if(cur==='overview')OV.render();else if(cur==='formal')CL.render();else if(cur==='online')CO.render();else if(cur==='self')SS.render();else LIB.render();
+    }catch(e){console.error(e);document.getElementById('tab-'+cur).innerHTML='<div class="empty"><h3>Something went wrong showing this tab</h3><p>'+U.esc(e.message)+'</p></div>';}
+  }
+  function openModal(id){document.getElementById(id).classList.add('show');}
+  function closeModal(id){document.getElementById(id).classList.remove('show');}
+  document.querySelectorAll('.modal-bg').forEach(function(bg){bg.addEventListener('mousedown',function(e){if(e.target===bg){if(bg.id==='formModal')FORM.close();else bg.classList.remove('show');}});});
+  document.addEventListener('keydown',function(e){
+    if(e.key!=='Escape')return;
+    var open=[].slice.call(document.querySelectorAll('.modal-bg.show'));
+    if(open.length){var top=open[open.length-1];if(top.id==='formModal')FORM.close();else top.classList.remove('show');return;}
+    if(SS.planOpen()){SS.closePlan();return;}
+    if(SW.isOpen())SW.close();
+  });
+  window.addEventListener('storage',function(e){if(['classTracker1','profDevData2','learnLibrary1','curriculum1','learnSeasons1'].indexOf(e.key)>=0){init(true);}});
+  function init(again){
+    SEA.load();CL.load();CO.load();SS.load();LIB.load();
+    if(!again){
+      var t=null;try{t=localStorage.getItem('learningTab');}catch(e){}
+      CL.seasonChanged();CO.seasonChanged();SS.seasonChanged();
+      tab(t||'overview');
+    }else render();
+  }
+  return {tab:tab,render:render,openModal:openModal,closeModal:closeModal,init:init,cur:function(){return cur;}};
+})();
+(function(){
+  var DS=['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+  var MF=['January','February','March','April','May','June','July','August','September','October','November','December'];
+  var n=new Date(), el=document.getElementById('today-date');
+  if(el)el.textContent=DS[n.getDay()]+', '+MF[n.getMonth()]+' '+n.getDate()+', '+n.getFullYear();
+})();
+APP.init();
+</script>
+</body>
+</html>
