@@ -462,13 +462,13 @@ select.inp{appearance:none;-webkit-appearance:none;background:var(--raised) url(
 .cov-hint b{color:var(--muted);font-weight:650;}
 .sp-frame{display:block;width:100%;height:152px;border:0;border-radius:12px;background:var(--warm-deep);}
 #dr-view{display:contents;}
-.drawer .dr-bar{order:0;}.drawer .dr-body{order:2;}
-.sp-host{order:1;padding:14px 24px 2px;flex:none;}
-.sp-host.off{position:absolute;left:0;top:0;width:1px;height:1px;padding:0;overflow:hidden;opacity:0;pointer-events:none;}
+/* the player sits over the empty slot under "Listen" (positioned from script) — never moved in the page, so it keeps playing */
+.sp-host{position:absolute;z-index:3;height:152px;}
+.sp-host.off{left:0;top:0;width:1px;height:1px;overflow:hidden;opacity:0;pointer-events:none;}
 .sp-host:empty{display:none;}
+.sp-slot{height:152px;border-radius:12px;background:var(--warm-deep);}
 .sp-swap{display:flex;align-items:center;gap:10px;flex-wrap:wrap;font-size:12.5px;color:var(--muted);font-weight:550;margin-bottom:6px;}
 .sp-swap b{color:var(--ink-2);}
-.sp-pinned{font-size:12px;color:var(--muted);font-weight:550;margin-bottom:4px;}
 .np-pill{position:fixed;left:20px;bottom:20px;z-index:1005;display:flex;align-items:center;gap:10px;padding:8px 10px 8px 12px;border-radius:14px;background:var(--raised);border:1px solid var(--line);box-shadow:0 12px 30px -12px rgba(40,30,20,.35);max-width:360px;}
 .np-pill[hidden]{display:none;}
 .np-pill .np-ic{width:28px;height:28px;border-radius:50%;background:#1db954;color:#fff;display:flex;align-items:center;justify-content:center;font-size:14px;flex:none;}
@@ -1808,7 +1808,24 @@ function syncPlayer(it){
   if(it&&it.spotifyId&&!spHostId)loadPlayer(it);
   var here=!!(open&&it&&it.spotifyId&&it.spotifyId===spHostId);
   h.classList.toggle('off',!here);
+  placePlayer();if(here)followPlayer();
   renderPill();
+}
+/* line the player up with its slot; clip it where the panel's scrolling area ends */
+function placePlayer(){
+  var h=document.getElementById('sp-host'),slot=document.getElementById('sp-slot');
+  if(h.classList.contains('off'))return;
+  if(!slot){h.style.clipPath='inset(100%)';h.style.pointerEvents='none';return;}
+  var de=document.getElementById('drawer'),d=de.getBoundingClientRect(),r=slot.getBoundingClientRect(),body=slot.closest('.dr-body'),b=body?body.getBoundingClientRect():d;
+  h.style.left=(r.left-d.left-de.clientLeft)+'px';h.style.top=(r.top-d.top-de.clientTop)+'px';h.style.width=r.width+'px';
+  var t=Math.max(0,b.top-r.top),bt=Math.max(0,r.bottom-b.bottom),hidden=t+bt>=r.height;
+  h.style.clipPath='inset('+t+'px 0 '+bt+'px 0 round 12px)';h.style.pointerEvents=hidden?'none':'';
+}
+/* follow the slot while it's on screen (panel sliding in, images loading, scrolling, text growing) */
+var spLoop=0;
+function followPlayer(){
+  if(spLoop)return;
+  (function tick(){var h=document.getElementById('sp-host');if(h.classList.contains('off')||!drawerRef){spLoop=0;return;}placePlayer();spLoop=requestAnimationFrame(tick);})();
 }
 function renderPill(){
   var pill=document.getElementById('np-pill'),a=spHostAlbum&&findItem('music',spHostAlbum);
@@ -1822,7 +1839,7 @@ function listenHTML(it){
   if(it.spotifyId){
     var id=esc(it.spotifyId),other=spHostId&&spHostId!==it.spotifyId?findItem('music',spHostAlbum):null;
     if(other)h+='<div class="sp-swap"><button class="mini-btn" data-act="spplay">▶ Play this album here</button><span>Now playing: <b>'+esc(other.title)+'</b> — it keeps going until you switch.</span></div>';
-    else h+='<div class="sp-pinned">The player is pinned at the top of this panel, so you can scroll and rate while it plays.</div>';
+    else h+='<div class="sp-slot" id="sp-slot"></div>';
     return h+'<div class="sp-note">'+IC_INFO+'<span>Plays full songs if you’re logged in to Spotify in this browser, otherwise 30-second previews.</span><span class="sp-acts"><a class="bk-link" href="https://open.spotify.com/album/'+id+'" target="_blank" rel="noopener">Open in Spotify ↗</a><button class="lnk" data-act="spdetach" title="Remove the Spotify link">Remove</button></span></div>';
   }
   return h+'<div class="listen-empty"><input class="inp" type="text" data-spin placeholder="Paste the album’s Spotify link to play it here" aria-label="Spotify album link"><button class="mini-btn" data-act="spattach">Add Spotify link</button></div>'+
