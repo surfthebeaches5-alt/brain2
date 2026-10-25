@@ -64,6 +64,7 @@ button,input,select{font-family:inherit;}
 .qadd::before{content:"+";position:absolute;left:14px;top:11px;font-size:17px;font-weight:700;color:var(--accent-deep);}
 .qadd.has-cal input{padding-right:190px;}
 .qcal{position:absolute;right:6px;top:6px;height:32px;max-width:178px;display:flex;align-items:center;gap:7px;padding:0 11px;border-radius:9px;border:1px solid var(--line);background:var(--raised);font:600 12.5px var(--b2-sans);color:var(--ink-2);cursor:pointer;}
+.qcal[hidden]{display:none;}
 .qcal:hover{border-color:var(--accent-line);}
 .qcal .dot{width:9px;height:9px;border-radius:50%;flex-shrink:0;}
 .qcal .nm{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
@@ -207,10 +208,10 @@ button,input,select{font-family:inherit;}
   .cal-tools .seg{display:none;}
 }
 </style>
-<link rel="stylesheet" href="assets/brain.css">
+<link rel="stylesheet" href="assets/brain.css?v=1025b">
 </head>
 <body>
-<script src="assets/shell.js"></script>
+<script src="assets/shell.js?v=1025b"></script>
 
 <main class="page">
   <div class="head">
@@ -298,7 +299,7 @@ button,input,select{font-family:inherit;}
   </div>
 </div>
 
-<script src="assets/gcal.js"></script>
+<script src="assets/gcal.js?v=1025b"></script>
 <script>
 /* ───────── helpers ───────── */
 function lsGet(k){try{var r=localStorage.getItem(k);return r?JSON.parse(r):null;}catch(e){return null;}}
@@ -508,7 +509,7 @@ function parseQuick(text){
 /* which Google calendar a new event goes to: picker chip, "#name" while typing, else the last one used */
 var LAST_CAL='brain2GCalLast',qCal=null;
 function calChoices(){
-  var l=GCal.calList();if(l.length)return l;
+  var l=GCal.calList?GCal.calList():[];if(l.length)return l;
   var seen={},out=[];(gEvents||[]).concat(((GCal.cached()||{}).events)||[]).forEach(function(e){if(e.calId&&!seen[e.calId]){seen[e.calId]=1;out.push({id:e.calId,summary:e.calName||e.calId,backgroundColor:e.color});}});
   return out;
 }
