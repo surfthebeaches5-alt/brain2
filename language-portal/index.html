@@ -443,7 +443,7 @@ details.help a{color:var(--accent-deep);font-weight:650;}
 .auto-tg i{width:7px;height:7px;border-radius:50%;background:var(--faint);}
 .auto-tg[aria-pressed="true"]{color:var(--accent-deep);border-color:var(--accent-line);background:var(--accent-soft);}
 .auto-tg[aria-pressed="true"] i{background:var(--accent-deep);}
-.dv-media{display:flex;align-items:center;gap:8px;flex-wrap:wrap;font-size:12px;color:var(--muted);font-weight:550;margin:-6px 0 18px;line-height:1.5;}
+.dv-media{font-size:12px;color:var(--muted);font-weight:550;margin:-6px 0 18px;line-height:1.5;}
 .dv-media b{color:var(--ink-2);font-weight:700;}
 .dv-media.warn{color:var(--warn);}
 .fc-orph{font-size:11.5px;color:var(--muted);line-height:1.5;padding:4px 4px 0;}
@@ -2388,6 +2388,7 @@ function readApkg(file){
     A.opt={nt:'all',deck:'all',fi:d0.fi,bi:d0.bi,xi:d0.xi,aside:'deck'};
     A.built=apkgBuild(A);
     im.apkg=A;im.loading=false;
+    $('#im-deck').value='__new';   /* a downloaded deck becomes its own deck unless you pick one */
     var nm=apDefaultName(A)||file.name.replace(/\.[^.]+$/,'').replace(/[_]+/g,' ');
     $('#im-name').value=nm.slice(0,60);
     var g=guessLang(A.decks.map(function(d){return d.name;}).join(' ')+' '+A.used.map(function(u){return u.m.name;}).join(' ')+' '+file.name);
