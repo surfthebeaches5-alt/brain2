@@ -414,6 +414,7 @@ select.inp{appearance:none;-webkit-appearance:none;background:var(--raised) url(
   .months{gap:3px;}
   .card{padding:18px;}
 }
+.lab-hint{font-weight:500;letter-spacing:0;text-transform:none;color:var(--faint);margin-left:4px;}
 </style>
 <link rel="stylesheet" href="../assets/brain.css">
 </head>
@@ -1115,7 +1116,7 @@ function renderDrawer(){
   h+=fld(sec==='books'||sec==='screen'?'Quick note':'Note','note',it.note||'','text',{full:true,ph:sec==='screen'?'Where to watch, who recommended it…':'Who recommended it, which edition…'});
   if(sec!=='videos'&&sec!=='articles')h+=fld('Review','review',it.review||'','textarea',{full:true,rows:4,ph:'Your thoughts, favorite lines…'});
   h+='</div><div class="dr-sec">Links</div><div class="fg">';
-  if(sec!=='articles')h+=fld('Cover image URL','cover',it.cover||'','text',{full:true,ph:'https://…',btn:(sec!=='videos'||isPodcast(it))?'<button class="mini-btn" data-act="findone">Find cover</button>':''});
+  if(sec!=='articles')h+=fld('Cover image URL <span class="lab-hint">(right-click any image → Copy Image Address)</span>','cover',it.cover||'','text',{full:true,ph:'https://…',btn:(sec!=='videos'||isPodcast(it))?'<button class="mini-btn" data-act="findone">Find cover</button>':''});
   var lk=safeUrl(it.link);
   h+=fld('Link','link',it.link||'','text',{full:true,ph:sec==='books'?'Goodreads, StoryGraph…':'https://…',btn:lk?'<a class="mini-btn" style="display:flex;align-items:center;text-decoration:none" href="'+esc(lk)+'" target="_blank" rel="noopener">Open ↗</a>':''});
   if(sec==='books')h+=fld('ISBN','isbn',it.isbn||'','text',{full:true,ph:'optional'});
