@@ -890,9 +890,28 @@ function classEvents() {
   })));
   return out;
 }
+/* read-only overlay: self-study unit starts + project due dates, for topics with "Show on Today & Calendar" on (curriculum1) */
+function selfStudyEvents() {
+  let list;
+  try { list = JSON.parse(localStorage.getItem('curriculum1')); } catch(e) { list = null; }
+  if (!Array.isArray(list)) return [];
+  const ok = d => typeof d === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(d);
+  const out = [];
+  list.forEach(c => {
+    if (!c || typeof c !== 'object' || !c.calendarSync) return;
+    const name = String(c.title || 'Self-study');
+    (Array.isArray(c.units) ? c.units : []).forEach((u, i) => {
+      if (u && ok(u.start)) out.push({ id:'self:'+c.id+':'+(u.id||i), title:'Unit '+(i+1)+' begins · '+name, date:u.start, done:false, color:'#5f9568', cls:'Self-study', self:true });
+    });
+    const p = c.project;
+    if (p && typeof p === 'object' && ok(p.due)) out.push({ id:'self:'+c.id+':project', title:'Project due · '+name, date:p.due, done:!!p.done, color:'#5f9568', cls:'Self-study', self:true });
+  });
+  return out;
+}
+function openSelfStudy() { try { localStorage.setItem('learningTab', 'self'); } catch(e) {} window.location.href = '../learning/index.html'; }
 function classForDate(dateStr) {
   if (!showClassEvents) return [];
-  return classEvents().filter(e => e.date === dateStr).sort((a,b) => a.title.localeCompare(b.title));
+  return classEvents().concat(selfStudyEvents()).filter(e => e.date === dateStr).sort((a,b) => (a.self?0:1)-(b.self?0:1) || a.title.localeCompare(b.title));
 }
 /* generated recurring reminders — expanded from the RECURRING config at render (never stored) */
 let showRecurring = true;
@@ -1021,7 +1040,7 @@ function renderLegend() {
   clsChip.style.color = '#7a7468';
   clsChip.style.border = '1.5px dashed #c9b6ee';
   clsChip.innerHTML = CAP_SVG + 'Classes';
-  clsChip.title = 'Show assignment due dates from the Classes page (read-only)';
+  clsChip.title = 'Show assignment due dates and self-study unit dates from the Classes page (read-only)';
   clsChip.addEventListener('click', () => { showClassEvents = !showClassEvents; renderLegend(); render(); });
   el.appendChild(clsChip);
 
@@ -1217,10 +1236,10 @@ function renderMonth() {
       cc.style.background = '#fff';
       cc.style.color = ce.color;
       cc.style.border = '1px dashed ' + ce.color;
-      cc.style.cursor = 'default';
+      cc.style.cursor = ce.self ? 'pointer' : 'default';
       cc.title = ce.cls + ' · ' + ce.title;
       cc.innerHTML = CAP_SVG + `<span class="chip-text">${esc(ce.title)}</span>`;
-      cc.addEventListener('click', e => e.stopPropagation());
+      cc.addEventListener('click', e => { e.stopPropagation(); if (ce.self) openSelfStudy(); });
       evsWrap.appendChild(cc);
       shown++;
     }
@@ -1355,7 +1374,7 @@ function renderWeek() {
       ccEl.style.border = '1px dashed ' + ce.color;
       ccEl.style.cursor = 'pointer';
       ccEl.innerHTML = `<div class="ev-body"><div class="ev-title">${CAP_SVG} ${esc(ce.title)}</div><div class="ev-time">${esc(ce.cls)}</div></div>`;
-      ccEl.addEventListener('click', () => { try { localStorage.setItem('learningTab', 'classes'); } catch(e) {} window.location.href = '../learning/index.html'; });
+      ccEl.addEventListener('click', () => { if (ce.self) { openSelfStudy(); return; } try { localStorage.setItem('learningTab', 'classes'); } catch(e) {} window.location.href = '../learning/index.html'; });
       evsWrap.appendChild(ccEl);
     });
 

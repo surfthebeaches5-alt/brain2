@@ -62,6 +62,21 @@ button,input,select{font-family:inherit;}
 .qadd input::placeholder{color:var(--faint);}
 .qadd input:focus{outline:none;background:var(--raised);border-color:var(--accent-line);box-shadow:0 0 0 3px var(--accent-soft);}
 .qadd::before{content:"+";position:absolute;left:14px;top:11px;font-size:17px;font-weight:700;color:var(--accent-deep);}
+.qadd.has-cal input{padding-right:190px;}
+.qcal{position:absolute;right:6px;top:6px;height:32px;max-width:178px;display:flex;align-items:center;gap:7px;padding:0 11px;border-radius:9px;border:1px solid var(--line);background:var(--raised);font:600 12.5px var(--b2-sans);color:var(--ink-2);cursor:pointer;}
+.qcal:hover{border-color:var(--accent-line);}
+.qcal .dot{width:9px;height:9px;border-radius:50%;flex-shrink:0;}
+.qcal .nm{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.qcal .car{color:var(--faint);font-size:10px;}
+.qcal-menu{display:none;position:absolute;right:0;top:46px;z-index:1100;width:250px;max-height:320px;overflow:auto;background:var(--raised);border:1px solid var(--line);border-radius:12px;box-shadow:0 16px 40px rgba(60,50,30,.18);padding:6px;}
+.qcal-menu.open{display:block;}
+.qcal-menu button{display:flex;align-items:center;gap:9px;width:100%;text-align:left;border:none;background:none;border-radius:8px;padding:8px 10px;font:600 13px var(--b2-sans);color:var(--ink-2);cursor:pointer;}
+.qcal-menu button:hover,.qcal-menu button.on{background:var(--accent-soft);}
+.qcal-menu button .dot{width:9px;height:9px;border-radius:50%;flex-shrink:0;}
+.qcal-menu .tip{font-size:11px;color:var(--muted);padding:7px 10px 4px;border-top:1px solid var(--hair);margin-top:4px;line-height:1.4;}
+.pop-copy{display:flex;flex-direction:column;gap:8px;margin-top:12px;width:100%;}
+.pop-copy .row{display:flex;gap:7px;}
+.pop-copy input,.pop-copy select{flex:1;min-width:0;height:34px;border-radius:9px;border:1px solid var(--line);background:var(--surface);padding:0 9px;font:500 12.5px var(--b2-sans);color:var(--ink);}
 .qprev{display:none;margin-top:7px;font-size:12px;color:var(--muted);font-weight:600;padding-left:4px;}
 .qprev.show{display:block;}
 .qprev b{color:var(--accent-deep);font-weight:700;}
@@ -220,6 +235,8 @@ button,input,select{font-family:inherit;}
         </div>
         <div class="qadd">
           <input id="qadd" type="text" autocomplete="off" placeholder="Add an event — “Coffee with Sam Friday 3pm”">
+          <button class="qcal" id="qcal" type="button" hidden aria-haspopup="true" title="Which Google calendar this goes to"><span class="dot"></span><span class="nm"></span><span class="car">▾</span></button>
+          <div class="qcal-menu" id="qcal-menu" role="menu"></div>
           <div class="qprev" id="qprev"></div>
           <div class="qmsg" id="qmsg"></div>
         </div>
@@ -328,12 +345,19 @@ function localEvents(){var d=lsGet('lifeCalendar1');var a=d?(Array.isArray(d)?d:
 function classDue(){var db=lsGet('classTracker1');if(!db)return [];var out=[];
   (Array.isArray(db)?db:(db.classes||[])).forEach(function(c){(c.modules||[]).forEach(function(m){(m.tasks||[]).forEach(function(t){
     var due=t.due||m.due;if(!due||t.done)return;out.push({id:'class:'+t.id,source:'class',title:t.label,date:due,allDay:true,color:'#8e71d3',calName:c.name||'Class'});});});});return out;}
+/* self-study topics with "Show on Today & Calendar" on (curriculum1 calendarSync): unit starts + project due dates */
+function selfDue(){var l=lsGet('curriculum1');if(!Array.isArray(l))return [];var out=[];
+  function ok(d){return typeof d==='string'&&/^\d{4}-\d{2}-\d{2}$/.test(d);}
+  l.forEach(function(c){if(!c||typeof c!=='object'||!c.calendarSync)return;var name=String(c.title||'Self-study');
+    (Array.isArray(c.units)?c.units:[]).forEach(function(u,i){if(u&&ok(u.start))out.push({id:'self:'+c.id+':'+(u.id||i),source:'self',title:'Unit '+(i+1)+' begins · '+name,date:u.start,allDay:true,color:'#5f9568',calName:'Self-study'});});
+    var p=c.project;if(p&&typeof p==='object'&&ok(p.due)&&!p.done)out.push({id:'self:'+c.id+':project',source:'self',title:'Project due · '+name,date:p.due,allDay:true,color:'#5f9568',calName:'Self-study'});});
+  return out;}
 function billDue(from,to){var s=finLoad();if(!s)return [];var out=[];
   s.cards.forEach(function(c){if(!c.active)return;[['day','paid','statement'],['day2','paid2','mid-cycle']].forEach(function(k){
     if(!c[k[0]]||c[k[1]])return;var d=nextDue(c[k[0]]);if(d<from||d>=to)return;
     out.push({id:'bill:'+c.id+k[0],source:'bill',title:c.name+' due',date:dk(d),allDay:true,color:'#cc5a70',calName:'Bills',url:c.url});});});return out;}
 function eventsIn(from,to){
-  var a=localEvents().concat(classDue()).concat(gEvents).concat(billDue(from,to));
+  var a=localEvents().concat(classDue()).concat(selfDue()).concat(gEvents).concat(billDue(from,to));
   var f=dk(from),t=dk(addDays(to,-1));
   return a.filter(function(e){var end=e.endDate||e.date;return end>=f&&e.date<=t;});
 }
@@ -410,6 +434,7 @@ $('cal').addEventListener('click',function(e){
 /* event popover */
 function openPop(key,node){
   var e=CUR.find(function(x){return evKey(x)===key;});if(!e)return;
+  if(e.source==='self'){try{localStorage.setItem('learningTab','self');}catch(x){}location.href='learning/index.html';return;}
   var d=parseDk(e.date);
   $('pop-t').textContent=e.title;
   $('pop-m').innerHTML=DF[d.getDay()]+', '+MF[d.getMonth()]+' '+d.getDate()+(e.allDay?' · all day':' · '+fmtTime(e.time)+(e.endTime?' – '+fmtTime(e.endTime):''))+
@@ -418,14 +443,32 @@ function openPop(key,node){
   if(e.source==='google'&&e.link)a+='<a class="btn sm" href="'+esc(e.link)+'" target="_blank" rel="noopener">Open in Google ↗</a>';
   if(e.source==='bill')a+=(e.url?'<a class="btn sm" href="'+esc(e.url)+'" target="_blank" rel="noopener">Pay ↗</a>':'')+'<a class="btn sm" href="finances/">Finances</a>';
   if(e.source==='class')a+='<a class="btn sm" href="learning/">Open Classes</a>';
+  if(e.source==='google')a+='<button class="btn sm" type="button" id="pop-copy">Copy to…</button>';
   if(e.source==='local'||e.source==='google')a+='<button class="btn sm" type="button" id="pop-del">Delete</button>';
   $('pop-a').innerHTML=a;
   var del=$('pop-del');if(del)del.onclick=function(){deleteEvent(e);};
+  var cp=$('pop-copy');if(cp)cp.onclick=function(ev2){ev2.stopPropagation();copyForm(e);};
   var p=$('pop'),r=node.getBoundingClientRect();p.classList.add('open');
   var x=Math.min(window.innerWidth-316,Math.max(16,r.left)),y=r.bottom+8;if(y+p.offsetHeight>window.innerHeight-12)y=Math.max(12,r.top-p.offsetHeight-8);
   p.style.left=x+'px';p.style.top=y+'px';
 }
 function closePop(){$('pop').classList.remove('open');}
+/* copy a Google event to another day (and, if you like, another calendar) */
+function copyForm(e){
+  var next=addDays(parseDk(e.date),1),cals=calChoices();
+  if(!cals.some(function(x){return x.id===e.calId;}))cals=[{id:e.calId,summary:e.calName||'Same calendar',backgroundColor:e.color}].concat(cals);
+  $('pop-a').innerHTML='<div class="pop-copy"><div class="row"><input type="date" id="pc-date" value="'+dk(next)+'" aria-label="Copy to date">'+
+    '<select id="pc-cal" aria-label="Calendar">'+cals.map(function(x){return '<option value="'+esc(x.id)+'"'+(x.id===e.calId?' selected':'')+'>'+esc(x.summary)+'</option>';}).join('')+'</select></div>'+
+    '<div class="row"><button class="btn sm" type="button" id="pc-go">Copy</button><button class="btn sm" type="button" id="pc-cancel">Cancel</button></div></div>';
+  $('pc-cancel').onclick=function(x){x.stopPropagation();openPop(evKey(e),document.querySelector('[data-ev="'+CSS.escape(evKey(e))+'"]')||$('cal'));};
+  $('pc-go').onclick=function(x){
+    x.stopPropagation();var d=$('pc-date').value,calId=$('pc-cal').value;if(!d){$('pc-date').focus();return;}
+    var ev={title:e.title,date:d,time:e.allDay?'':e.time,endTime:e.allDay?'':e.endTime,location:e.location||''},c=findCal(calId);
+    this.disabled=true;
+    withGoogle(function(){return GCal.create(ev,calId);}).then(function(){var dd=parseDk(d);closePop();flash('Copied “'+e.title+'” to '+DF[dd.getDay()]+', '+MS[dd.getMonth()]+' '+dd.getDate()+(c?' · '+c.summary:'')+' ✓');loadGoogle(true);})
+      .catch(function(err){closePop();flash(err.message,true);});
+  };
+}
 document.querySelector('.pop-x').onclick=closePop;
 document.addEventListener('click',function(e){if(!$('pop').contains(e.target))closePop();});
 document.addEventListener('keydown',function(e){if(e.key==='Escape'){closePop();closeModal();}});
@@ -462,11 +505,36 @@ function parseQuick(text){
   var title=s.replace(/\s+(at|on|@)\s*$/i,'').replace(/\s+/g,' ').trim();
   return {title:title,date:date||(view==='day'?anchor:T),time:time,endTime:endTime};
 }
+/* which Google calendar a new event goes to: picker chip, "#name" while typing, else the last one used */
+var LAST_CAL='brain2GCalLast',qCal=null;
+function calChoices(){
+  var l=GCal.calList();if(l.length)return l;
+  var seen={},out=[];(gEvents||[]).concat(((GCal.cached()||{}).events)||[]).forEach(function(e){if(e.calId&&!seen[e.calId]){seen[e.calId]=1;out.push({id:e.calId,summary:e.calName||e.calId,backgroundColor:e.color});}});
+  return out;
+}
+function findCal(id){return calChoices().find(function(x){return x.id===id;})||null;}
+function pickedCal(){var c=GCal.config(),l=calChoices();return findCal(qCal)||findCal(lsGet(LAST_CAL))||findCal(c.defaultCal)||l.find(function(x){return x.primary;})||l[0]||null;}
+function tagOf(v){var m=/(?:^|\s)#([\w-]+)/.exec(v);return m?m[1].toLowerCase():'';}
+function tagCal(t){if(!t)return null;var l=calChoices(),n=function(x){return String(x.summary||'').toLowerCase();};
+  return l.find(function(x){return n(x).indexOf(t)===0;})||l.find(function(x){return n(x).replace(/\s+/g,'').indexOf(t)>=0;})||null;}
+function stripTag(v){return v.replace(/(?:^|\s)#[\w-]+/,' ').replace(/\s+/g,' ').trim();}
+function renderQcal(){
+  var b=$('qcal'),on=GCal.configured()&&calChoices().length>0;b.hidden=!on;$('qcal').parentNode.classList.toggle('has-cal',on);
+  if(!on)return;var c=pickedCal();b.querySelector('.dot').style.background=c&&c.backgroundColor||'var(--accent)';b.querySelector('.nm').textContent=c?c.summary:'Calendar';
+}
+$('qcal').addEventListener('click',function(e){
+  e.stopPropagation();var m=$('qcal-menu'),cur=pickedCal();
+  m.innerHTML=calChoices().map(function(x){return '<button type="button" role="menuitem" data-id="'+esc(x.id)+'"'+(cur&&cur.id===x.id?' class="on"':'')+'><span class="dot" style="background:'+esc(x.backgroundColor||'#8e71d3')+'"></span>'+esc(x.summary)+'</button>';}).join('')+
+    '<div class="tip">Tip: type <b>#'+esc(String((calChoices()[1]||calChoices()[0]||{summary:'work'}).summary).split(/\s+/)[0].toLowerCase())+'</b> in the event to pick a calendar as you type.</div>';
+  m.classList.toggle('open');
+});
+$('qcal-menu').addEventListener('click',function(e){var b=e.target.closest('button[data-id]');if(!b)return;qCal=b.getAttribute('data-id');lsSet(LAST_CAL,qCal);$('qcal-menu').classList.remove('open');renderQcal();previewQuick();$('qadd').focus();});
+document.addEventListener('click',function(e){if(!e.target.closest('#qcal-menu'))$('qcal-menu').classList.remove('open');});
 function previewQuick(){
-  var v=$('qadd').value.trim(),p=$('qprev');$('qmsg').textContent='';
-  if(!v){p.classList.remove('show');return;}
-  var q=parseQuick(v),d=q.date;
-  var dest=GCal.configured()?'Google Calendar':'Brain 2.0 (connect Google to sync)';
+  var raw=$('qadd').value.trim(),p=$('qprev');$('qmsg').textContent='';
+  if(!raw){p.classList.remove('show');return;}
+  var tag=tagOf(raw),v=stripTag(raw),q=parseQuick(v),d=q.date,cal=GCal.configured()?(tagCal(tag)||pickedCal()):null;
+  var dest=GCal.configured()?(cal?'Google · '+esc(cal.summary):'Google Calendar')+(tag&&!tagCal(tag)?' <span style="color:var(--warn)">(no calendar matches #'+esc(tag)+')</span>':''):'Brain 2.0 (connect Google to sync)';
   p.innerHTML='→ <b>'+esc(q.title||'Untitled')+'</b> · '+DF[d.getDay()]+', '+MS[d.getMonth()]+' '+d.getDate()+(q.time?' · '+fmtTime(q.time)+(q.endTime?' – '+fmtTime(q.endTime):''):' · all day')+' · '+dest+' · Enter to save';
   p.classList.add('show');
 }
@@ -475,10 +543,11 @@ function showDate(d){var r=range();if(d<r[0]||d>=r[1]){anchor=view==='month'?new
 $('qadd').addEventListener('input',previewQuick);
 $('qadd').addEventListener('keydown',function(e){
   if(e.key!=='Enter')return;e.preventDefault();
-  var q=parseQuick(this.value.trim());if(!q.title){flash('Type what the event is first.',true);return;}
+  var raw=this.value.trim(),tag=tagOf(raw),q=parseQuick(stripTag(raw));if(!q.title){flash('Type what the event is first.',true);return;}
   var ev={title:q.title,date:dk(q.date),time:q.time,endTime:q.endTime},input=this;
   if(GCal.configured()){
-    withGoogle(function(){return GCal.create(ev);}).then(function(){input.value='';previewQuick();flash('Added to Google Calendar ✓');showDate(q.date);loadGoogle(true);})
+    var cal=tagCal(tag)||pickedCal();
+    withGoogle(function(){return GCal.create(ev,cal&&cal.id);}).then(function(){if(cal&&!tag)lsSet(LAST_CAL,cal.id);input.value='';previewQuick();flash('Added to '+(cal?cal.summary:'Google Calendar')+' ✓');showDate(q.date);loadGoogle(true);})
       .catch(function(err){flash(err.message,true);});
   }else{
     var d=lsGet('lifeCalendar1');var obj=Array.isArray(d)?{events:d}:(d||{events:[]});if(!obj.events)obj.events=[];
@@ -495,7 +564,7 @@ function withGoogle(fn){
   return GCal.signIn().then(fn);
 }
 function setSync(state,label){var b=$('sync');b.className='sync '+state;b.querySelector('span').textContent=label;}
-function syncLabel(){
+function syncLabel(){renderQcal();
   if(!GCal.configured())return setSync('off','Connect Google Calendar');
   if(GCal.connected())return setSync('on','Synced with Google'+(gAt?' · '+ago(gAt):''));
   if(GCal.everConnected())return setSync('stale','Refresh from Google'+(gAt?' · '+ago(gAt):''));
@@ -741,7 +810,7 @@ window.addEventListener('storage',function(e){
   else if(e.key==='langChallenge1'){safe(renderLang);safe(renderCount);}
   else if(e.key===TASK_SK){safe(renderTasks);safe(renderCount);}
   else if(e.key&&e.key.indexOf('fitnessTracker1_day_')===0){safe(renderBody);safe(renderCount);}
-  else if(e.key==='lifeCalendar1'||e.key==='classTracker1')safe(renderCal);
+  else if(e.key==='lifeCalendar1'||e.key==='classTracker1'||e.key==='curriculum1')safe(renderCal);
 });
 setInterval(function(){safe(renderHead);if(view!=='month'&&+anchor===+today())safe(renderCal);},60000);
 </script>
