@@ -1634,7 +1634,7 @@ function fmtLen(ms){var t=Math.round((+ms||0)/1000);return Math.floor(t/60)+':'+
 function fmtMin(ms){return Math.max(1,Math.round(ms/60000))+' min';}
 /* shelf line under album covers: "★ 4.1 · 8/12 rated" + bar, or "11 tracks · 63 min" */
 function trackLine(it){
-  var s=songStats(it),total=s.total||+it.tracksTotal||0;
+  var s=songStats(it),total=Math.max(s.total,+it.tracksTotal||0);
   if(s.n)return '<div class="trk"><span class="av"><i>★</i>'+s.avg.toFixed(1)+'</span>·<span>'+s.n+'/'+s.total+' rated</span></div><div class="bar rated"><i style="width:'+Math.round(s.n/s.total*100)+'%"></i></div>';
   if(!total)return '';
   return '<div class="trk"><span class="dim">'+total+' track'+(total===1?'':'s')+(s.ms?' · '+fmtMin(s.ms):'')+'</span></div>';
@@ -1847,7 +1847,7 @@ function renderMusicDrawer(it){
   dr.classList.add('music');
   var cats=allCats(sec);if(it.category&&cats.indexOf(it.category)<0)cats.unshift(it.category);
   var bar='<span class="eyebrow">'+S.label+'</span><button class="x" data-act="close" aria-label="Close">✕</button>';
-  var total=s.total||+it.tracksTotal||0,info=[it.year,it.category].filter(Boolean).map(esc);
+  var total=Math.max(s.total,+it.tracksTotal||0),info=[it.year,it.category].filter(Boolean).map(esc);
   var a=drFlash+'<div class="dr-top">'+coverHTML(it,sec,'',{tiny:true})+'<div class="dr-id"><textarea class="dr-title" rows="1" data-f="title" aria-label="Title">'+esc(it.title)+'</textarea>'+
     '<input class="dr-creator" data-f="creator" value="'+esc(it.creator||'')+'" placeholder="'+S.creatorLabel+'…" aria-label="'+S.creatorLabel+'">'+
     '<div class="m-meta">'+(it.genre?'<span class="gchip">'+esc(it.genre)+'</span>':'')+(info.length?'<span>'+info.join(' · ')+'</span>':'')+'</div>'+
@@ -1855,7 +1855,7 @@ function renderMusicDrawer(it){
     '<div class="dr-stars">'+starsHTML(sec,it)+'<button class="heart'+(it.fav?' on':'')+'" data-act="fav" title="Favorite">♥</button></div></div></div>';
   a+=coverRow(it);
   a+='<div class="seg" role="group" aria-label="Status">'+S.statuses.map(function(x){return '<button class="'+(st===x.val?'on':'')+'" data-act="dst" data-v="'+x.val+'">'+x.label+'</button>';}).join('')+'</div>';
-  a+='<div class="fg">'+fld('Category','category',it.category||cats[0],'select',{options:cats})+(s.total?'':fld('Tracks on album','tracksTotal',it.tracksTotal||'','number',{ph:'e.g. 12'}))+(st==='done'?fld(S.dateLabel,'date',it.date||'','date'):'')+'</div>';
+  a+='<div class="fg">'+fld('Category','category',it.category||cats[0],'select',{options:cats})+(it.itunesId&&s.total?'':fld('Tracks on album','tracksTotal',it.tracksTotal||'','number',{ph:'e.g. 12'}))+(st==='done'?fld(S.dateLabel,'date',it.date||'','date'):'')+'</div>';
   var p=listenHTML(it);
   var b='<div class="dr-sec">Track list</div>'+(s.total?trackListHTML(it,s):fillBoxHTML(it));
   b+='<div class="dr-sec">Notes</div><div class="fg">'+fld('Note','note',it.note||'','text',{full:true,ph:'Who recommended it, which edition…'})+fld('Review','review',it.review||'','textarea',{full:true,rows:4,ph:'Your thoughts, favorite lines…'})+'</div>';
@@ -2023,7 +2023,7 @@ function impAdd(j,st){
 function renderImpFill(){
   var el=document.getElementById('imp-fill');if(!el)return;
   var need=(data.music||[]).filter(wantsTracks).length,left=(data.music||[]).filter(function(m){return !(m.songs&&m.songs.length);}).length;
-  var h='<div class="imp-fill"><div class="imp-fill-txt"><b>Albums without songs ('+(trackJob?trackJob.total:need)+')</b>Looks each one up in Apple’s catalog by title and artist. Anything without a sure match is skipped, so you can pick the edition yourself.</div>';
+  var h='<div class="imp-fill"><div class="imp-fill-txt"><b>Albums without songs ('+left+')</b>Looks each one up in Apple’s catalog by title and artist. Anything without a sure match is skipped, so you can pick the edition yourself.</div>';
   if(trackJob)h+='<button class="btn soft" disabled>'+IC_SPARK+'Filling… '+trackJob.done+'/'+trackJob.total+'</button>';
   else if(need)h+='<button class="btn soft" data-act="filltracks">'+IC_SPARK+'Fill track lists</button>';
   h+='</div>';
