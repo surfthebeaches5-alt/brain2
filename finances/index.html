@@ -110,7 +110,6 @@ html, body { background: var(--bg); font-family: var(--b2-sans); color: var(--in
 .m-del { background: var(--over-bg); border-color: transparent; color: var(--over); margin-right: auto; order: -1; }
 
 /* Reset notice */
-.reset-notice { display: none; align-items: center; gap: 8px; padding: 10px 16px; background: var(--ok-bg); border: 1px solid var(--ok-bg); border-radius: 12px; font-size: 12.5px; color: var(--ok); font-weight: 650; margin-bottom: 18px; }
 
 /* Dots menu */
 .dots-wrap { position: relative; }
@@ -209,7 +208,6 @@ html, body { background: var(--bg); font-family: var(--b2-sans); color: var(--in
 </div>
 
 <div class="hub">
-  <div class="reset-notice" id="reset-notice">✓ New month — all cards reset to unpaid</div>
 
   <div class="main-layout">
 
@@ -296,8 +294,31 @@ function midFromStatement(day) { var m = (parseInt(day, 10) || 1) + 15; if (m > 
 function monthKey() {
   var n = new Date(); return n.getFullYear() + '-' + (n.getMonth() + 1);
 }
+/* "Paid" belongs to one statement, not to the calendar month:
+   card.paidDates / card.paid2Dates hold the due dates (YYYY-MM-DD) you've paid.
+   A card shows Paid while its next due date is in that list, so an early
+   payment stays paid and each card turns Unpaid once its next statement is up.
+   card.paid / card.paid2 are kept in sync for older readers. */
+function pad2(n) { return (n < 10 ? '0' : '') + n; }
+function isoD(d) { return d.getFullYear() + '-' + pad2(d.getMonth() + 1) + '-' + pad2(d.getDate()); }
+function dueIn(y, m, day) { var dim = new Date(y, m + 1, 0).getDate(); return new Date(y, m, Math.min(parseInt(day, 10) || 1, dim)); }
+function nextDueDate(day) {
+  var now = new Date(); now.setHours(0,0,0,0);
+  var due = dueIn(now.getFullYear(), now.getMonth(), day);
+  if (due < now) due = dueIn(now.getFullYear(), now.getMonth() + 1, day);
+  return due;
+}
+function lastDueDate(day) { var n = nextDueDate(day); return dueIn(n.getFullYear(), n.getMonth() - 1, day); }
+function paidList(c, w) { var k = w === 'paid2' ? 'paid2Dates' : 'paidDates'; if (!Array.isArray(c[k])) c[k] = []; return c[k]; }
+function isPaid(c, w) { var day = w === 'paid2' ? c.day2 : c.day; return !!day && paidList(c, w).indexOf(isoD(nextDueDate(day))) >= 0; }
+function togglePaid(c, w) {
+  var l = paidList(c, w), key = isoD(nextDueDate(w === 'paid2' ? c.day2 : c.day)), i = l.indexOf(key);
+  if (i >= 0) l.splice(i, 1); else { l.push(key); l.sort(); while (l.length > 12) l.shift(); }
+}
+function syncPaid() { cards.forEach(function(c) { c.paid = isPaid(c, 'paid'); c.paid2 = isPaid(c, 'paid2'); }); }
 function saveCards() {
-  localStorage.setItem(CARD_SK, JSON.stringify({ cards: cards, lastReset: monthKey(), midCycleSeeded: midCycleSeeded }));
+  syncPaid();
+  localStorage.setItem(CARD_SK, JSON.stringify({ cards: cards, lastReset: monthKey(), midCycleSeeded: midCycleSeeded, paidByStatement: true }));
 }
 function loadCards() {
   var raw = localStorage.getItem(CARD_SK);
@@ -334,14 +355,16 @@ function loadCards() {
       midCycleSeeded = true;
       saveCards();
     }
-    // Monthly reset
-    if (s.lastReset && s.lastReset !== monthKey()) {
-      cards.forEach(function(c) { c.paid = false; c.paid2 = false; });
+    // One-time: old month-based flags → the statement they paid (this month's due date)
+    if (!s.paidByStatement) {
+      var now = new Date(), cur = s.lastReset === monthKey();
+      cards.forEach(function(c) {
+        if (cur && c.paid && c.day) paidList(c, 'paid').push(isoD(dueIn(now.getFullYear(), now.getMonth(), c.day)));
+        if (cur && c.paid2 && c.day2) paidList(c, 'paid2').push(isoD(dueIn(now.getFullYear(), now.getMonth(), c.day2)));
+      });
       saveCards();
-      var n = document.getElementById('reset-notice');
-      n.style.display = 'flex';
-      setTimeout(function() { n.style.display = 'none'; }, 4000);
     }
+    syncPaid();
   } catch(e) {
     cards = JSON.parse(JSON.stringify(DEFAULT_CARDS));
     midCycleSeeded = true;
@@ -351,16 +374,10 @@ function loadCards() {
 /* DATE HELPERS */
 function daysUntil(day) {
   var now = new Date(); now.setHours(0,0,0,0);
-  var due = new Date(now.getFullYear(), now.getMonth(), day);
-  if (due < now) due = new Date(now.getFullYear(), now.getMonth() + 1, day);
-  return Math.ceil((due - now) / 86400000);
+  return Math.round((nextDueDate(day) - now) / 86400000);
 }
-function dueDateStr(day) {
-  var now = new Date(); now.setHours(0,0,0,0);
-  var due = new Date(now.getFullYear(), now.getMonth(), day);
-  if (due < now) due = new Date(now.getFullYear(), now.getMonth() + 1, day);
-  return MS[due.getMonth()] + ' ' + due.getDate();
-}
+function dueDateStr(day) { var due = nextDueDate(day); return MS[due.getMonth()] + ' ' + due.getDate(); }
+function shortD(d) { return MS[d.getMonth()] + ' ' + d.getDate(); }
 function urgency(d) {
   if (d <= 7)  return { cls: 'urgent', label: d === 0 ? 'Today!' : d + 'd' };
   if (d <= 14) return { cls: 'soon',   label: d + 'd' };
@@ -368,7 +385,7 @@ function urgency(d) {
 }
 function sortedCards() {
   return cards.map(function(c) {
-    return { id:c.id, name:c.name, day:c.day, day2:c.day2, url:c.url, color:c.color, active:c.active, paid:c.paid, paid2:c.paid2, d:daysUntil(c.day) };
+    return { id:c.id, name:c.name, day:c.day, day2:c.day2, url:c.url, color:c.color, active:c.active, paid:isPaid(c, 'paid'), paid2:isPaid(c, 'paid2'), lastPaid:paidList(c, 'paid').indexOf(isoD(lastDueDate(c.day))) >= 0, d:daysUntil(c.day) };
   }).sort(function(a, b) {
     if (a.active && !b.active) return -1;
     if (!a.active && b.active) return 1;
@@ -394,7 +411,7 @@ function renderCards() {
     var main = document.createElement('div'); main.className = 'cc-main';
     var dot = document.createElement('div'); dot.className = 'cc-dot'; dot.style.background = c.color;
     var info = document.createElement('div'); info.className = 'cc-info';
-    info.innerHTML = '<div class="cc-name">' + esc(c.name) + '</div><div class="cc-due">Statement due ' + dueDateStr(c.day) + '</div>';
+    info.innerHTML = '<div class="cc-name">' + esc(c.name) + '</div><div class="cc-due">Statement due ' + dueDateStr(c.day) + (!c.paid && c.lastPaid ? ' · ' + shortD(lastDueDate(c.day)) + ' paid ✓' : '') + '</div>';
 
     var actions = document.createElement('div'); actions.className = 'cc-actions';
     if (c.active && !c.paid) {
@@ -404,7 +421,7 @@ function renderCards() {
     var paidBtn = document.createElement('button');
     paidBtn.className = 'paid-btn ' + (c.paid ? 'paid-yes' : 'paid-no');
     paidBtn.textContent = c.paid ? '✓ Paid' : 'Unpaid';
-    paidBtn.onclick = (function(id){ return function(){ var card = cards.find(function(x){return x.id===id;}); if(card){ card.paid = !card.paid; saveCards(); renderCards(); } }; })(c.id);
+    paidBtn.onclick = (function(id){ return function(){ var card = cards.find(function(x){return x.id===id;}); if(card){ togglePaid(card, 'paid'); saveCards(); renderCards(); } }; })(c.id);
     actions.appendChild(paidBtn);
     if (c.url) {
       var portal = document.createElement('a');
@@ -437,7 +454,7 @@ function renderCards() {
       var mBtn = document.createElement('button');
       mBtn.className = 'paid-btn sm ' + (c.paid2 ? 'paid-yes' : 'paid-no');
       mBtn.textContent = c.paid2 ? '✓ Paid' : 'Log payment';
-      mBtn.onclick = (function(id){ return function(){ var card = cards.find(function(x){return x.id===id;}); if(card){ card.paid2 = !card.paid2; saveCards(); renderCards(); } }; })(c.id);
+      mBtn.onclick = (function(id){ return function(){ var card = cards.find(function(x){return x.id===id;}); if(card){ togglePaid(card, 'paid2'); saveCards(); renderCards(); } }; })(c.id);
       mid.appendChild(tag); mid.appendChild(mdate); mid.appendChild(mBtn);
       row.appendChild(mid);
     }
@@ -453,15 +470,15 @@ function renderProgress() {
   var active = cards.filter(function(c){ return c.active; });
   var total = active.length;
   if (!total) { el.innerHTML = ''; return; }
-  var paid = active.filter(function(c){ return c.paid; }).length;
+  var paid = active.filter(function(c){ return isPaid(c, 'paid'); }).length;
   var pct = Math.round(paid / total * 100);
   var withMid = active.filter(function(c){ return c.day2; });
-  var midDone = withMid.filter(function(c){ return c.paid2; }).length;
+  var midDone = withMid.filter(function(c){ return isPaid(c, 'paid2'); }).length;
   var midLine = withMid.length
-    ? '<div class="cp-mid">Mid-cycle payments <b>' + midDone + ' / ' + withMid.length + '</b> this month</div>'
+    ? '<div class="cp-mid">Next mid-cycle payments <b>' + midDone + ' / ' + withMid.length + '</b></div>'
     : '';
   el.innerHTML =
-    '<div class="cp-row"><span class="cp-label">Statements paid this month</span><span class="cp-count">' + paid + ' / ' + total + '</span></div>' +
+    '<div class="cp-row"><span class="cp-label">Next statements paid</span><span class="cp-count">' + paid + ' / ' + total + '</span></div>' +
     '<div class="cp-bar"><div class="cp-fill" style="width:' + pct + '%"></div></div>' +
     midLine;
 }
@@ -668,7 +685,7 @@ function saveCardModal() {
     var c = cards.find(function(x){ return x.id === editCardId; });
     if (c) { c.name = name; c.day = day; c.day2 = day2; c.url = url; c.color = selectedColor; c.active = active; }
   } else {
-    cards.push({ id:'c' + Date.now() + Math.random().toString(36).slice(2,5), name:name, day:day, day2:day2, url:url, color:selectedColor, active:active, paid:false, paid2:false });
+    cards.push({ id:'c' + Date.now() + Math.random().toString(36).slice(2,5), name:name, day:day, day2:day2, url:url, color:selectedColor, active:active, paid:false, paid2:false, paidDates:[], paid2Dates:[] });
   }
   saveCards(); closeCardModal(); renderCards();
 }

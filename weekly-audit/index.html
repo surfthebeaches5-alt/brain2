@@ -867,7 +867,8 @@ function nextWeekEvents(){
         for(var dd=new Date(r[0]);dd<=r[1];dd=addDays(dd,1)){
           var dim=new Date(dd.getFullYear(),dd.getMonth()+1,0).getDate();
           if(dd.getDate()!==Math.min(day,dim))continue;
-          if(c[k[1]]&&dd.getFullYear()*12+dd.getMonth()===curMonth)continue; // already paid this month
+          var pl=c[k[1]==='paid2'?'paid2Dates':'paidDates'];
+          if(Array.isArray(pl)?pl.indexOf(isoLocal(dd))>=0:(c[k[1]]&&dd.getFullYear()*12+dd.getMonth()===curMonth))continue; // that statement is paid
           out.push({title:c.name+' due',date:isoLocal(dd),time:'',color:'var(--over)'});
         }
       });

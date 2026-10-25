@@ -949,11 +949,11 @@ function financeForDate(dateStr) {
   financeCards().forEach(c => {
     // Statement due date (firm) — from card.day / card.paid
     if (Math.min(c.day, lastDom) === dom) {
-      out.push({ fid: 'fin:' + c.id + ':' + dateStr, title: c.name, paid: !!c.paid && thisMonth, mid: false });
+      out.push({ fid: 'fin:' + c.id + ':' + dateStr, title: c.name, paid: Array.isArray(c.paidDates) ? c.paidDates.indexOf(dateStr) >= 0 : !!c.paid && thisMonth, mid: false });
     }
     // Mid-cycle payment (optional) — from card.day2 / card.paid2
     if (c.day2 && Math.min(c.day2, lastDom) === dom) {
-      out.push({ fid: 'finm:' + c.id + ':' + dateStr, title: c.name, paid: !!c.paid2 && thisMonth, mid: true });
+      out.push({ fid: 'finm:' + c.id + ':' + dateStr, title: c.name, paid: Array.isArray(c.paid2Dates) ? c.paid2Dates.indexOf(dateStr) >= 0 : !!c.paid2 && thisMonth, mid: true });
     }
   });
   // same card name: statement before its mid-cycle
