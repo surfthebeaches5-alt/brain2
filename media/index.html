@@ -461,6 +461,22 @@ select.inp{appearance:none;-webkit-appearance:none;background:var(--raised) url(
 .cov-hint{font-size:11.5px;color:var(--faint);font-weight:550;margin:0 0 16px;}
 .cov-hint b{color:var(--muted);font-weight:650;}
 .sp-frame{display:block;width:100%;height:152px;border:0;border-radius:12px;background:var(--warm-deep);}
+#dr-view{display:contents;}
+.drawer .dr-bar{order:0;}.drawer .dr-body{order:2;}
+.sp-host{order:1;padding:14px 24px 2px;flex:none;}
+.sp-host.off{position:absolute;left:0;top:0;width:1px;height:1px;padding:0;overflow:hidden;opacity:0;pointer-events:none;}
+.sp-host:empty{display:none;}
+.sp-swap{display:flex;align-items:center;gap:10px;flex-wrap:wrap;font-size:12.5px;color:var(--muted);font-weight:550;margin-bottom:6px;}
+.sp-swap b{color:var(--ink-2);}
+.sp-pinned{font-size:12px;color:var(--muted);font-weight:550;margin-bottom:4px;}
+.np-pill{position:fixed;left:20px;bottom:20px;z-index:1005;display:flex;align-items:center;gap:10px;padding:8px 10px 8px 12px;border-radius:14px;background:var(--raised);border:1px solid var(--line);box-shadow:0 12px 30px -12px rgba(40,30,20,.35);max-width:360px;}
+.np-pill[hidden]{display:none;}
+.np-pill .np-ic{width:28px;height:28px;border-radius:50%;background:#1db954;color:#fff;display:flex;align-items:center;justify-content:center;font-size:14px;flex:none;}
+.np-pill .np-t{display:flex;flex-direction:column;min-width:0;font-size:13px;font-weight:650;color:var(--ink);}
+.np-pill .np-t small{font-size:10.5px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);}
+.np-pill .np-t{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.np-pill .np-x{border:none;background:none;cursor:pointer;color:var(--faint);font-size:13px;padding:4px;}
+.np-pill .np-x:hover{color:var(--over);}
 .sp-note{display:flex;align-items:flex-start;gap:7px;font-size:11.5px;color:var(--muted);font-weight:550;line-height:1.5;margin-top:9px;}
 .sp-note .ic{font-size:14px;color:var(--faint);margin-top:2px;}
 .sp-acts{display:flex;align-items:center;gap:8px;margin-left:auto;flex-shrink:0;}
@@ -608,7 +624,8 @@ button.rr-on{border:none;cursor:pointer;font-family:var(--sans);}
 </main>
 
 <div class="scrim" id="scrim"></div>
-<aside class="drawer" id="drawer" aria-label="Details"></aside>
+<aside class="drawer" id="drawer" aria-label="Details"><div id="dr-view"></div><div id="sp-host" class="sp-host off"></div></aside>
+<div class="np-pill" id="np-pill" hidden></div>
 <div class="modal-bg" id="import-bg"><div class="modal" id="import"></div></div>
 <input type="file" id="file-in" accept=".csv,text/csv" hidden>
 <div class="toast" id="toast"></div>
@@ -1197,7 +1214,7 @@ function openDrawer(sec,id,focus){
 function closeDrawer(){
   if(!drawerRef)return;
   document.getElementById('drawer').classList.remove('open');document.getElementById('scrim').classList.remove('open');
-  drawerRef=null;renderAll();
+  drawerRef=null;renderAll();syncPlayer(null);
 }
 function fld(label,key,val,type,opts){
   opts=opts||{};
@@ -1252,8 +1269,9 @@ function renderDrawer(){
   h+=fld('Link','link',it.link||'','text',{full:true,ph:sec==='books'?'Goodreads, StoryGraph…':'https://…',btn:lk?'<a class="mini-btn" style="display:flex;align-items:center;text-decoration:none" href="'+esc(lk)+'" target="_blank" rel="noopener">Open ↗</a>':''});
   if(sec==='books')h+=fld('ISBN','isbn',it.isbn||'','text',{full:true,ph:'optional'});
   h+='</div><div class="dr-foot"><button class="del'+(delArm?' arm':'')+'" data-act="del">'+(delArm?'Tap again to delete':'Delete')+'</button><span class="saved" id="saved">Changes save automatically</span></div></div>';
-  var dr=document.getElementById('drawer');
+  var dr=document.getElementById('dr-view');
   dr.innerHTML=h;
+  syncPlayer(null);
   var ta=dr.querySelector('.dr-title');if(ta){ta.style.height='auto';ta.style.height=ta.scrollHeight+'px';}
 }
 var drSaveT=null,shelfT=null;
@@ -1778,12 +1796,34 @@ function coverRow(it){
   if(own||coverOwn)h+='<div class="cov-own"><input class="inp" type="text" data-f="cover" value="'+esc(it.cover||'')+'" placeholder="https://…" aria-label="Cover image URL"></div>';
   return h+'<div class="cov-hint">Found one on Pinterest? Right-click it → <b>Copy Image Address</b>, then paste.</div>';
 }
+/* One Spotify player for the whole page (#sp-host). It is created once per album and never redrawn, so music keeps
+   playing while you rate, close the panel, browse, or open another album. */
+var spHostId='',spHostAlbum='';
+function spFrame(id){return '<iframe class="sp-frame" title="Spotify player" src="https://open.spotify.com/embed/album/'+esc(id)+'" height="152" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"></iframe>';}
+function loadPlayer(it){var h=document.getElementById('sp-host');spHostId=it.spotifyId;spHostAlbum=it.id;h.innerHTML=spFrame(it.spotifyId);}
+function stopPlayer(){spHostId='';spHostAlbum='';document.getElementById('sp-host').innerHTML='';syncPlayer(drawerRef&&drawerRef.sec==='music'?findItem('music',drawerRef.id):null);}
+/* show the player when the open album is the one loaded; otherwise keep it alive out of sight */
+function syncPlayer(it){
+  var h=document.getElementById('sp-host'),open=!!drawerRef;
+  if(it&&it.spotifyId&&!spHostId)loadPlayer(it);
+  var here=!!(open&&it&&it.spotifyId&&it.spotifyId===spHostId);
+  h.classList.toggle('off',!here);
+  renderPill();
+}
+function renderPill(){
+  var pill=document.getElementById('np-pill'),a=spHostAlbum&&findItem('music',spHostAlbum);
+  var showing=drawerRef&&drawerRef.sec==='music'&&drawerRef.id===spHostAlbum;
+  if(!spHostId||!a||showing){pill.hidden=true;return;}
+  pill.hidden=false;
+  pill.innerHTML='<span class="np-ic">♪</span><span class="np-t"><small>Spotify player</small>'+esc(a.title)+'</span><button class="mini-btn" data-act="npopen">Open</button><button class="np-x" data-act="npstop" aria-label="Stop the player" title="Stop">✕</button>';
+}
 function listenHTML(it){
   var h='<div class="dr-sec">Listen</div>';
   if(it.spotifyId){
-    var id=esc(it.spotifyId);
-    return h+'<iframe class="sp-frame" title="Spotify player" src="https://open.spotify.com/embed/album/'+id+'" height="152" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>'+
-      '<div class="sp-note">'+IC_INFO+'<span>Plays full songs if you’re logged in to Spotify in this browser, otherwise 30-second previews.</span><span class="sp-acts"><a class="bk-link" href="https://open.spotify.com/album/'+id+'" target="_blank" rel="noopener">Open in Spotify ↗</a><button class="lnk" data-act="spdetach" title="Remove the Spotify link">Remove</button></span></div>';
+    var id=esc(it.spotifyId),other=spHostId&&spHostId!==it.spotifyId?findItem('music',spHostAlbum):null;
+    if(other)h+='<div class="sp-swap"><button class="mini-btn" data-act="spplay">▶ Play this album here</button><span>Now playing: <b>'+esc(other.title)+'</b> — it keeps going until you switch.</span></div>';
+    else h+='<div class="sp-pinned">The player is pinned at the top of this panel, so you can scroll and rate while it plays.</div>';
+    return h+'<div class="sp-note">'+IC_INFO+'<span>Plays full songs if you’re logged in to Spotify in this browser, otherwise 30-second previews.</span><span class="sp-acts"><a class="bk-link" href="https://open.spotify.com/album/'+id+'" target="_blank" rel="noopener">Open in Spotify ↗</a><button class="lnk" data-act="spdetach" title="Remove the Spotify link">Remove</button></span></div>';
   }
   return h+'<div class="listen-empty"><input class="inp" type="text" data-spin placeholder="Paste the album’s Spotify link to play it here" aria-label="Spotify album link"><button class="mini-btn" data-act="spattach">Add Spotify link</button></div>'+
     '<div class="listen-sub">Optional · in Spotify: ··· → Share → Copy link to album</div>';
@@ -1883,8 +1923,8 @@ function spAttach(){
   },function(){});
 }
 function renderMusicDrawer(it){
-  var sec='music',S=SECTIONS.music,st=normStatus(it.status),s=songStats(it),dr=document.getElementById('drawer');
-  dr.classList.add('music');
+  var sec='music',S=SECTIONS.music,st=normStatus(it.status),s=songStats(it),dr=document.getElementById('dr-view');
+  document.getElementById('drawer').classList.add('music');
   var cats=allCats(sec);if(it.category&&cats.indexOf(it.category)<0)cats.unshift(it.category);
   var bar='<span class="eyebrow">'+S.label+'</span><button class="x" data-act="close" aria-label="Close">✕</button>';
   var total=Math.max(s.total,+it.tracksTotal||0),info=[it.year,it.category].filter(Boolean).map(esc);
@@ -1906,12 +1946,13 @@ function renderMusicDrawer(it){
   if(!drFull&&body&&body.getAttribute('data-k')===key&&document.getElementById('dr-p')){
     dr.querySelector('.dr-bar').innerHTML=bar;
     document.getElementById('dr-a').innerHTML=a;
-    var pe=document.getElementById('dr-p');if(pe.getAttribute('data-sp')!==spk){pe.innerHTML=p;pe.setAttribute('data-sp',spk);}
+    var pe=document.getElementById('dr-p');pe.innerHTML=p;pe.setAttribute('data-sp',spk);
     document.getElementById('dr-b').innerHTML=b;
   }else{
     dr.innerHTML='<div class="dr-bar">'+bar+'</div><div class="dr-body" data-k="'+esc(key)+'"><div id="dr-a">'+a+'</div><div id="dr-p" data-sp="'+esc(spk)+'">'+p+'</div><div id="dr-b">'+b+'</div></div>';
   }
   drFull=false;
+  syncPlayer(it);
   var ta=dr.querySelector('.dr-title');if(ta){ta.style.height='auto';ta.style.height=ta.scrollHeight+'px';}
   if(!s.total&&!fillState[it.id]&&lookable(it))fillFind(it);
 }
@@ -2326,7 +2367,10 @@ document.addEventListener('click',function(e){
       if(cvv==='own'){coverOwn=true;renderDrawer();var ce=document.querySelector('#drawer [data-f="cover"]');if(ce){ce.focus();ce.select();}}
       else{var cu=cvv==='apple'?appleCover(cm):cm.coverSpotify;if(cu){cm.cover=cu;coverOwn=false;delete cm.coverTried;delete cm.coverErr;save();renderDrawer();renderAll();}}}break;
     case 'spattach':spAttach();break;
-    case 'spdetach':if(drawerRef){var sd=findItem('music',drawerRef.id);delete sd.spotifyId;save();renderDrawer();}break;
+    case 'spdetach':if(drawerRef){var sd=findItem('music',drawerRef.id);if(sd.spotifyId&&sd.spotifyId===spHostId)stopPlayer();delete sd.spotifyId;save();renderDrawer();}break;
+    case 'spplay':if(drawerRef){var sp2=findItem('music',drawerRef.id);if(sp2&&sp2.spotifyId){loadPlayer(sp2);renderDrawer();}}break;
+    case 'npopen':if(spHostAlbum)openDrawer('music',spHostAlbum);break;
+    case 'npstop':stopPlayer();break;
     case 'filltracks':fillAllTracks();break;
     case 'imadd':impAdd(+el.getAttribute('data-j'),el.getAttribute('data-st'));break;
     case 'imalt':if(impM&&impM.sp){impM.sp.pick=+el.getAttribute('data-i');renderImpRes();var am=impM.sp.matches[impM.sp.pick];if(am)lookupAlbum(am.itunesId).then(renderImpRes,function(){});}break;
