@@ -2293,6 +2293,9 @@ function apMediaRefs(raw){
 var FRONT_RE=/^(front|word|words|term|expression|vocab|vocabulary|target|target word|question|palavra|palabra|mot|wort|parola|kanji|portuguese|spanish|french|italian|german|japanese|português|español|français|italiano|deutsch)$/i;
 var BACK_RE=/^(back|meaning|meanings|definition|translation|english|answer|gloss|english meaning|english translation|significado|tradução|traducción)$/i;
 var EXTRA_RE=/example|sentence|context|usage|notes?$|extra/i;
+/* looser matches inside longer names, e.g. "SpanishSentence" / "EnglishSentence" */
+var FRONT_HINT=/portug|spanish|español|espanol|french|français|italian|german|deutsch|japanese|target|expression/i;
+var BACK_HINT=/english|meaning|translation|definition|answer|gloss/i;
 function guessLang(s){
   s=String(s||'').toLowerCase();
   var G=[['pt',/portug|brazil|brasil/],['es',/spanish|español|espanol|castellano/],['fr',/french|français|francais/],['it',/italian|italiano/],['de',/german|deutsch/],['ja',/japan|日本語|nihongo|kanji|hiragana|katakana/]];
@@ -2310,15 +2313,23 @@ function apRefModelId(A){return A.opt.nt!=='all'?A.opt.nt:A.used[0].id;}
 function apDefaults(A,mid){
   var m=A.models[mid],F=m.fields,fill=F.map(function(){return 0;}),seen=0;
   for(var i=0;i<A.notes.length&&seen<200;i++){if(A.notes[i].mid!==mid)continue;seen++;for(var j=0;j<F.length;j++)if(apTxt(A,i,j))fill[j]++;}
+  /* skip ID / number-only fields (e.g. "SentenceID", "Difficulty") — they make useless cards */
+  var num=F.map(function(){return 0;});seen=0;
+  for(i=0;i<A.notes.length&&seen<200;i++){if(A.notes[i].mid!==mid)continue;seen++;for(j=0;j<F.length;j++){var t=apTxt(A,i,j);if(t&&/^[\s\d.,:%\/-]+$/.test(t))num[j]++;}}
   var ok=function(j){return seen?fill[j]/seen>=0.5:true;};
+  var good=function(j){var n=F[j].trim();return ok(j)&&!/(^id$|[a-z]ID$|[\s_-]id$)/i.test(n)&&!(fill[j]&&num[j]/fill[j]>=0.8);};
   var fi=-1,bi=-1,xi=-1,j;
-  for(j=0;j<F.length;j++)if(FRONT_RE.test(F[j].trim())&&ok(j)){fi=j;break;}
+  for(j=0;j<F.length;j++)if(FRONT_RE.test(F[j].trim())&&good(j)){fi=j;break;}
+  if(fi<0)for(j=0;j<F.length;j++)if(FRONT_HINT.test(F[j])&&good(j)){fi=j;break;}
+  if(fi<0)for(j=0;j<F.length;j++)if(good(j)){fi=j;break;}
   if(fi<0)for(j=0;j<F.length;j++)if(ok(j)){fi=j;break;}
   if(fi<0)fi=0;
-  for(j=0;j<F.length;j++)if(j!==fi&&BACK_RE.test(F[j].trim())&&ok(j)){bi=j;break;}
+  for(j=0;j<F.length;j++)if(j!==fi&&BACK_RE.test(F[j].trim())&&good(j)){bi=j;break;}
+  if(bi<0)for(j=0;j<F.length;j++)if(j!==fi&&BACK_HINT.test(F[j])&&good(j)){bi=j;break;}
+  if(bi<0)for(j=0;j<F.length;j++)if(j!==fi&&good(j)){bi=j;break;}
   if(bi<0)for(j=0;j<F.length;j++)if(j!==fi&&ok(j)){bi=j;break;}
   if(bi<0)bi=F.length>1?(fi===0?1:0):0;
-  for(j=0;j<F.length;j++)if(j!==fi&&j!==bi&&EXTRA_RE.test(F[j])&&fill[j]){xi=j;break;}
+  for(j=0;j<F.length;j++)if(j!==fi&&j!==bi&&EXTRA_RE.test(F[j])&&fill[j]&&good(j)){xi=j;break;}
   return {fi:fi,bi:bi,xi:xi};
 }
 function apMapIdx(A,mid,refMid,idx){
