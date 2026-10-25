@@ -174,7 +174,7 @@ html, body { background: var(--bg); font-family: var(--b2-sans); color: var(--in
   <div class="modal-box">
     <div class="modal-title" id="card-modal-title">Add Card</div>
     <label class="f-label">Card Name</label>
-    <input class="f-input" id="card-name" type="text" placeholder="e.g. Chase Sapphire">
+    <input class="f-input" id="card-name" type="text" placeholder="e.g. Rewards card">
     <label class="f-label">Statement Due Day</label>
     <input class="f-input" id="card-day" type="number" min="1" max="31" placeholder="1–31">
     <label class="f-label">Mid-Cycle Payment Day <span style="font-weight:500;letter-spacing:0;text-transform:none;font-size:11px;color:var(--faint);">(optional)</span></label>
@@ -287,15 +287,7 @@ var MF = ['January','February','March','April','May','June','July','August','Sep
 var DS = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
 var ARROW_SVG = '<svg class="ar-ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 7h10v10"/><path d="M7 17 17 7"/></svg>';
 
-var DEFAULT_CARDS = [
-  {id:'c0', name:'Chase Sapphire Preferred', day:22, url:'https://secure.chase.com/web/auth/dashboard#/dashboard/overview', color:'#f2c4ce', active:true,  paid:false, paid2:false, day2:7},
-  {id:'c1', name:'Marriott Bonvoy',          day:12, url:'https://secure.chase.com/web/auth/dashboard#/dashboard/overview', color:'#f7d9b0', active:true,  paid:false, paid2:false, day2:27},
-  {id:'c2', name:'Venture X',                day:28, url:'https://myaccounts.capitalone.com/#/accountSummary',              color:'#d4b8e0', active:true,  paid:false, paid2:false, day2:13},
-  {id:'c3', name:'Bilt Blue Card',           day:5,  url:'https://www.bilt.com',                                           color:'#b8d4f0', active:true,  paid:false, paid2:false, day2:20},
-  {id:'c4', name:'Citi AAdvantage Platinum', day:1,  url:'https://www.citi.com/',                                          color:'#b8cfb0', active:true,  paid:false, paid2:false, day2:16},
-  {id:'c5', name:'AAdvantage Aviator',       day:18, url:'https://www.aviatormastercard.com/servicing/home',               color:'#e0cec8', active:false, paid:false, paid2:false, day2:3},
-  {id:'c6', name:'Discover',                 day:24, url:'https://card.discover.com/web/achome/homepage',                  color:'#c8c8d8', active:false, paid:false, paid2:false, day2:9},
-];
+var DEFAULT_CARDS = [];
 
 var cards = [];
 var midCycleSeeded = false;
@@ -476,21 +468,7 @@ function renderProgress() {
 
 /* RESOURCE DATA */
 var RES_SK = 'finResources1';
-var DEFAULT_RES = {
-  banks: [
-    { id:'b0', name:'SchoolsFirst FCU', sub:'', url:'https://online.schoolsfirstfcu.org/gateway/schoolsfirstfcu/login#/', primary:false },
-    { id:'b1', name:'SoFi', sub:'', url:'https://login.sofi.com/', primary:false },
-  ],
-  investments: [
-    { id:'i0', name:'Fidelity', sub:'401k & Roth IRA', url:'https://digital.fidelity.com/ftgw/digital/portfolio/summary?poe=wiUser', primary:false },
-  ],
-  tools: [
-    { id:'t0', name:'Origin', sub:'', url:'https://app.useorigin.com/', primary:true },
-    { id:'t1', name:'2026 Financial Allocations Spreadsheet', sub:'', url:'https://docs.google.com/spreadsheets/d/12XIOUZYGcwYSgt7mX99h6DRS3w5KgfllyZZ8VLRUIN8/edit?usp=sharing', primary:true },
-    { id:'t2', name:'Venmo', sub:'', url:'https://venmo.com/', primary:false },
-    { id:'t3', name:'PayPal', sub:'', url:'https://paypal.com/signin', primary:false },
-  ],
-};
+var DEFAULT_RES = { banks:[], investments:[], tools:[] };
 var res = { banks:[], investments:[], tools:[] };
 
 function saveRes() { localStorage.setItem(RES_SK, JSON.stringify(res)); }

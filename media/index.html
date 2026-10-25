@@ -547,70 +547,7 @@ function kindTag(sec,it){
   return '';
 }
 
-var DEFAULT_DATA={
-  books:[
-    {id:'b1',title:'The Art of Seduction',creator:'Robert Greene',category:'Psychology',status:'want',rating:0,cover:'',link:'',note:'Relationships',date:'',pages:0},
-    {id:'b2',title:'The Courage to Be Disliked',creator:'Ichiro Kishimi & Fumitake Koga',category:'Philosophy',status:'want',rating:0,cover:'',link:'',note:'',date:'',pages:0},
-    {id:'b3',title:'Radical Acceptance',creator:'Tara Brach',category:'Self-Help',status:'want',rating:0,cover:'',link:'',note:'',date:'',pages:0},
-    {id:'b4',title:'The Confidence Code',creator:'Katty Kay & Claire Shipman',category:'Nonfiction',status:'want',rating:0,cover:'',link:'',note:"Women's empowerment",date:'',pages:0},
-    {id:'b5',title:'Breaking the Habit of Being Yourself',creator:'Joe Dispenza',category:'Self-Help',status:'want',rating:0,cover:'',link:'',note:'',date:'',pages:0},
-    {id:'b6',title:'The Art of Gathering',creator:'Priya Parker',category:'Nonfiction',status:'want',rating:0,cover:'',link:'',note:'How we connect',date:'',pages:0},
-    {id:'b7',title:'Smart but Scattered',creator:'Peg Dawson & Richard Guare',category:'Psychology',status:'want',rating:0,cover:'',link:'',note:'',date:'',pages:0},
-    {id:'b8',title:'Chip War',creator:'Chris Miller',category:'Nonfiction',status:'want',rating:0,cover:'',link:'',note:'Technology & geopolitics',date:'',pages:0},
-    {id:'b9',title:'Becoming Abolitionists',creator:'Derecka Purnell',category:'Politics',status:'want',rating:0,cover:'',link:'',note:'',date:'',pages:0},
-    {id:'b10',title:'How to Stand Up to a Dictator',creator:'Maria Ressa',category:'Politics',status:'want',rating:0,cover:'',link:'',note:'',date:'',pages:0},
-    {id:'b11',title:'Medical Apartheid',creator:'Harriet A. Washington',category:'History',status:'want',rating:0,cover:'',link:'',note:'',date:'',pages:0},
-    {id:'b12',title:'The Song of Achilles',creator:'Madeline Miller',category:'Fiction',status:'want',rating:0,cover:'',link:'',note:'',date:'',pages:0},
-    {id:'b13',title:'Circe',creator:'Madeline Miller',category:'Fantasy',status:'want',rating:0,cover:'',link:'',note:'Mythology',date:'',pages:0},
-    {id:'b14',title:'Funny Story',creator:'Emily Henry',category:'Romance',status:'want',rating:0,cover:'',link:'',note:'',date:'',pages:0},
-    {id:'b15',title:'Beloved',creator:'Toni Morrison',category:'Classic',status:'want',rating:0,cover:'',link:'',note:'',date:'',pages:0},
-    {id:'b16',title:'The Count of Monte Cristo',creator:'Alexandre Dumas',category:'Classic',status:'want',rating:0,cover:'',link:'',note:'',date:'',pages:0},
-    {id:'b17',title:'The Age of Innocence',creator:'Edith Wharton',category:'Classic',status:'want',rating:0,cover:'',link:'',note:'',date:'',pages:0},
-    {id:'b18',title:'The House of Mirth',creator:'Edith Wharton',category:'Classic',status:'want',rating:0,cover:'',link:'',note:'',date:'',pages:0},
-    {id:'b19',title:'Death in Her Hands',creator:'Ottessa Moshfegh',category:'Thriller',status:'want',rating:0,cover:'',link:'',note:'',date:'',pages:0},
-    {id:'b20',title:'Carceral Capitalism',creator:'Jackie Wang',category:'Politics',status:'want',rating:0,cover:'',link:'',note:'',date:'',pages:0},
-    {id:'b21',title:'The Lies My Teacher Told Me',creator:'James Loewen',category:'History',status:'want',rating:0,cover:'',link:'',note:'',date:'',pages:0},
-    {id:'b22',title:'Hold Me Tight',creator:'Sue Johnson',category:'Self-Help',status:'want',rating:0,cover:'',link:'',note:'Relationships',date:'',pages:0},
-    {id:'b23',title:'The Last Story of Mina Lee',creator:'Nancy Jooyoun Kim',category:'Fiction',status:'want',rating:0,cover:'',link:'',note:'',date:'',pages:0},
-    {id:'b24',title:'Soju Club',creator:'Jinsung Park',category:'Fiction',status:'want',rating:0,cover:'',link:'',note:'',date:'',pages:0},
-  ],
-  videos:[
-    {id:'p1',title:'The Daily Stoic',creator:'Ryan Holiday',category:'Podcast',status:'want',rating:0,cover:'',link:'',note:'',epCurrent:0,epTotal:0,date:''},
-    {id:'p2',title:'Philosophize This',creator:'Stephen West',category:'Podcast',status:'want',rating:0,cover:'',link:'',note:'',epCurrent:0,epTotal:0,date:''},
-    {id:'p3',title:'Mel Robbins Podcast',creator:'Mel Robbins',category:'Podcast',status:'want',rating:0,cover:'',link:'',note:'',epCurrent:0,epTotal:0,date:''},
-  ],
-  articles:[
-    {id:'a1',title:"Being single isn't sad, it's fucking...",creator:'Pepper Maria W.',category:'Essay',status:'want',rating:0,cover:'',link:'https://peppermariaw.substack.com/p/being-single-isnt-sad-its-fucking',note:'',date:''},
-    {id:'a2',title:"Why I don't use dating apps",creator:'Pepper Maria W.',category:'Article',status:'want',rating:0,cover:'',link:'https://peppermariaw.substack.com/p/why-i-dont-use-datingapps-and-thi',note:'',date:''},
-    {id:'a3',title:'i wish you were as curious as me',creator:'Girl on the Internet',category:'Essay',status:'want',rating:0,cover:'',link:'',note:'',date:''},
-    {id:'a4',title:'The hands that never rest',creator:'Fracture Notes',category:'Essay',status:'want',rating:0,cover:'',link:'',note:'',date:''},
-    {id:'a5',title:'i hope i linger',creator:'To Be Honest',category:'Essay',status:'want',rating:0,cover:'',link:'',note:'',date:''},
-    {id:'a6',title:'The epidemic of constant communication',creator:'Good Riddance',category:'Essay',status:'want',rating:0,cover:'',link:'',note:'',date:''},
-    {id:'a7',title:'to the people who overanalyze everything',creator:'Chemical Hearts',category:'Essay',status:'want',rating:0,cover:'',link:'',note:'',date:''},
-    {id:'a8',title:'Why I Refuse to Live Only for Myself',creator:'Ghufrane Daymi',category:'Essay',status:'want',rating:0,cover:'',link:'',note:'',date:''},
-    {id:'a9',title:'An existential guide to making friends',creator:'The Shadowed Archive',category:'Article',status:'want',rating:0,cover:'',link:'',note:'',date:''},
-    {id:'a10',title:'Gatekept',creator:'',category:'Newsletter',status:'want',rating:0,cover:'',link:'',note:'Fashion analysis and news',date:''},
-  ],
-  music:[
-    {id:'m1',title:'In-between',creator:'Lily Moore',category:'EP',status:'want',rating:0,cover:'',link:'',note:'New discovery',tracksTotal:0,date:'',songs:[]},
-  ],
-  screen:[
-    {id:'s1',title:'Heart of Dixie',creator:'',category:'TV Show',status:'want',rating:0,cover:'',link:'',note:'Amazon Prime',season:1,episode:1,seasonsTotal:4,date:''},
-    {id:'s2',title:'The Buccaneers',creator:'',category:'TV Show',status:'want',rating:0,cover:'',link:'',note:'Apple TV',season:1,episode:1,seasonsTotal:0,date:''},
-    {id:'s3',title:'The Haunting of Hill House',creator:'Mike Flanagan',category:'TV Show',status:'want',rating:0,cover:'',link:'',note:'Netflix',season:1,episode:1,seasonsTotal:2,date:''},
-    {id:'s4',title:'Twin Peaks',creator:'David Lynch',category:'TV Show',status:'want',rating:0,cover:'',link:'',note:'',season:1,episode:1,seasonsTotal:3,date:''},
-    {id:'s5',title:"Dawson's Creek",creator:'',category:'TV Show',status:'want',rating:0,cover:'',link:'',note:'Netflix',season:1,episode:1,seasonsTotal:6,date:''},
-    {id:'s6',title:'Club de Cuervos',creator:'',category:'TV Show',status:'want',rating:0,cover:'',link:'https://netflix.com/title/80030346',note:'Netflix — Mexico',season:1,episode:1,seasonsTotal:4,date:''},
-    {id:'s7',title:'¿Quién mató a Sara?',creator:'',category:'TV Show',status:'want',rating:0,cover:'',link:'https://www.netflix.com/title/81166747',note:'Netflix — Mexico',season:1,episode:1,seasonsTotal:3,date:''},
-    {id:'s8',title:'Control Z',creator:'',category:'TV Show',status:'want',rating:0,cover:'',link:'',note:'Netflix — Mexico',season:1,episode:1,seasonsTotal:3,date:''},
-    {id:'s9',title:'LOVE ME LOVE ME',creator:'',category:'TV Show',status:'want',rating:0,cover:'',link:'',note:'',season:1,episode:1,seasonsTotal:0,date:''},
-    {id:'s10',title:'We Were Liars',creator:'',category:'TV Show',status:'want',rating:0,cover:'',link:'',note:'',season:1,episode:1,seasonsTotal:0,date:''},
-    {id:'s11',title:'Over the Garden Wall',creator:'',category:'TV Show',status:'want',rating:0,cover:'',link:'',note:'Amazon — animated, whimsical',season:1,episode:1,seasonsTotal:1,date:''},
-    {id:'s12',title:'Luis Miguel: La Serie',creator:'',category:'TV Show',status:'want',rating:0,cover:'',link:'https://www.netflix.com/title/80191236',note:'Netflix — Mexico',season:1,episode:1,seasonsTotal:3,date:''},
-    {id:'s13',title:'Motorheads',creator:'',category:'TV Show',status:'want',rating:0,cover:'',link:'',note:'',season:1,episode:1,seasonsTotal:0,date:''},
-    {id:'s14',title:'The Runarounds',creator:'',category:'TV Show',status:'want',rating:0,cover:'',link:'',note:'',season:1,episode:1,seasonsTotal:0,date:''},
-  ]
-};
+var DEFAULT_DATA={books:[],videos:[],articles:[],music:[],screen:[]};
 
 /* ── STORAGE ──
    data = {books,videos,articles,music,screen, meta?}
