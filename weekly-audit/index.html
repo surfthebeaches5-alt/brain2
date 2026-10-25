@@ -272,6 +272,7 @@ button{font-family:inherit;}
 @media print{
   *{-webkit-print-color-adjust:exact;print-color-adjust:exact;}
   html,body{background:#fff !important;}
+  body.b2-shell .topbar{padding:0 0 4px !important;max-width:none !important;}
   .topbar-right,.steps,.nextbar,.lead,#view-hist,.note-btn,.carry,.addrow,.drawer-back,.wk-pop,.li .x{display:none !important;}
   #view-week{display:block !important;}
   .hub{padding:0 !important;max-width:none !important;}
@@ -727,7 +728,7 @@ function flashNote(text){
 }
 function debouncedSave(){
   clearTimeout(saveTimer);
-  saveTimer=setTimeout(function(){saveData();flashNote('Saved ✓');},750);
+  saveTimer=setTimeout(function(){saveTimer=null;saveData();flashNote('Saved ✓');},750);
 }
 function saveData(){
   var data={};
@@ -900,6 +901,8 @@ function preparePrint(){document.body.classList.add('printing');expandIn(documen
 function afterPrint(){document.body.classList.remove('printing');}
 window.addEventListener('beforeprint',preparePrint);
 window.addEventListener('afterprint',afterPrint);
+// don't lose the last few keystrokes when the page is closed mid-debounce
+window.addEventListener('pagehide',function(){if(saveTimer){clearTimeout(saveTimer);saveTimer=null;saveData();}});
 function savePDF(){preparePrint();setTimeout(function(){window.print();},50);}
 
 /* ── FINISH WEEK ── */
@@ -1045,7 +1048,8 @@ function renderTrend(){
   } else series.forEach(function(w){labels.push({x:X(w.d.getTime()),t:MS[w.d.getMonth()]+' '+w.d.getDate()});});
   var lastX=-1e9;
   labels.forEach(function(l){if(l.x-lastX<58)return;lastX=l.x;
-    s+='<text x="'+l.x.toFixed(1)+'" y="'+(H-8)+'" font-size="11" text-anchor="middle" style="fill:var(--faint);font-family:var(--b2-sans)">'+esc(l.t)+'</text>';});
+    var anc=l.x>W-R-24?'end':l.x<L+18?'start':'middle',lx=anc==='end'?W-2:anc==='start'?Math.max(l.x,L-4):l.x;
+    s+='<text x="'+lx.toFixed(1)+'" y="'+(H-8)+'" font-size="11" text-anchor="'+anc+'" style="fill:var(--faint);font-family:var(--b2-sans)">'+esc(l.t)+'</text>';});
   // lines — faint ones first so highlighted ones sit on top
   var order=CATS.map(function(_,k){return k;});
   if(histOn.length)order.sort(function(a,b){return (histOn.indexOf(a)>=0?1:0)-(histOn.indexOf(b)>=0?1:0);});

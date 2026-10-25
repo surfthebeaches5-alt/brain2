@@ -319,7 +319,7 @@ textarea.f-input{resize:vertical;line-height:1.5;}
 .addcard .f-input{height:34px;padding:0 12px;}
 .browse-h{display:flex;align-items:center;gap:10px;margin:24px 0 8px;}
 .browse-h .f-input{max-width:240px;padding:7px 11px;font-size:12.5px;margin-left:auto;}
-.crow{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr) 92px 64px;gap:12px;align-items:center;padding:10px 2px;border-top:1px solid var(--hair);font-size:13.5px;}
+.crow{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr) 92px 88px;gap:12px;align-items:center;padding:10px 2px;border-top:1px solid var(--hair);font-size:13.5px;}
 .crow .cf{font-weight:650;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
 .crow .cb{color:var(--muted);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
 .crow .ca{display:flex;gap:2px;justify-content:flex-end;}
@@ -394,6 +394,60 @@ textarea.f-input{resize:vertical;line-height:1.5;}
 details.help{margin-top:10px;font-size:12.5px;color:var(--muted);}
 details.help summary{cursor:pointer;font-weight:600;}
 details.help ol{margin:8px 0 0 18px;line-height:1.65;}
+details.help a{color:var(--accent-deep);font-weight:650;}
+
+/* anki package (.apkg) import */
+.ap{margin-top:14px;border:1px solid var(--line);border-radius:14px;padding:16px 18px;background:var(--surface);}
+.ap-head{display:flex;align-items:flex-start;gap:12px;margin-bottom:14px;}
+.ap-head .ap-name{font-family:var(--b2-serif);font-size:19px;font-weight:600;letter-spacing:-.2px;display:block;margin-top:3px;word-break:break-word;}
+.ap-meta{font-size:12px;color:var(--muted);margin-top:3px;font-weight:550;}
+.ap .f-field{margin-bottom:10px;}
+.ap select.f-input{padding:8px 10px;}
+.ap-sample{margin-top:6px;border:1px solid var(--hair);border-radius:12px;background:var(--warm);padding:10px 12px 12px;}
+.ap-sh{display:flex;align-items:center;gap:8px;margin-bottom:8px;}
+.ap-sh .sp{flex:1;}
+.ap-nav{width:26px;height:26px;border-radius:8px;border:1px solid var(--line);background:var(--raised);color:var(--ink-2);font-size:14px;line-height:1;display:inline-flex;align-items:center;justify-content:center;padding:0;}
+.ap-nav:hover:not(:disabled){border-color:var(--accent-line);color:var(--accent-deep);}
+.ap-nav:disabled{opacity:.35;cursor:default;}
+.ap-card{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:10px;}
+.ap-side{background:var(--raised);border:1px solid var(--line);border-radius:10px;padding:10px 12px;min-width:0;}
+.ap-lbl{font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);font-weight:750;margin-bottom:4px;}
+.ap-f{font-family:var(--b2-serif);font-size:18px;font-weight:600;white-space:pre-line;word-break:break-word;line-height:1.25;}
+.ap-bk{font-size:13.5px;font-weight:600;white-space:pre-line;word-break:break-word;}
+.ap-x{font-size:12px;color:var(--muted);font-style:italic;margin-top:4px;white-space:pre-line;word-break:break-word;}
+.ap-none{color:var(--faint);font-size:12px;font-style:italic;}
+.ap-side .f-imgs{justify-content:flex-start;margin-top:8px;}
+.ap-side .f-imgs img{max-height:90px;border-radius:8px;}
+.ap-side .btn{margin-top:8px;}
+.ap-check{display:flex;align-items:flex-start;gap:9px;margin-top:12px;font-size:12.5px;font-weight:600;line-height:1.45;cursor:pointer;}
+.ap-check input{width:16px;height:16px;margin-top:1px;accent-color:var(--accent-deep);flex-shrink:0;}
+.ap-check span.muted{font-weight:500;}
+.ap-sum{display:flex;gap:6px;flex-wrap:wrap;align-items:center;margin-top:12px;font-size:12.5px;font-weight:600;}
+.ap-sum b{font-family:var(--b2-serif);font-size:17px;}
+.ap-load{display:flex;align-items:center;gap:10px;margin-top:14px;padding:14px 16px;border-radius:12px;background:var(--warm);font-size:12.5px;color:var(--muted);font-weight:600;}
+.spin{width:16px;height:16px;border-radius:50%;border:2px solid var(--accent-line);border-top-color:var(--accent-deep);animation:spin .8s linear infinite;flex-shrink:0;}
+@keyframes spin{to{transform:rotate(360deg);}}
+.im-prog{margin-top:14px;}
+.im-prog .bar{height:6px;background:var(--warm-deep);border-radius:4px;overflow:hidden;}
+.im-prog .bar i{display:block;height:100%;width:0;background:var(--accent);transition:width .2s;}
+.im-prog span{display:block;font-size:12px;color:var(--muted);font-weight:600;margin-top:6px;}
+
+/* card media */
+.f-imgs{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-top:14px;max-width:100%;}
+.f-imgs img{max-width:100%;max-height:220px;border-radius:12px;object-fit:contain;background:var(--raised);}
+.f-listen{color:var(--accent-deep);font-size:46px;}
+.say.play svg{fill:currentColor;stroke:none;width:16px;height:16px;}
+.say.play{color:var(--accent-deep);border-color:var(--accent-line);background:var(--accent-soft);}
+.say.play.on{box-shadow:0 0 0 3px var(--accent-soft);}
+.auto-tg{display:inline-flex;align-items:center;gap:6px;height:28px;padding:0 11px;border-radius:8px;border:1px solid var(--line);background:var(--raised);color:var(--muted);font:650 11.5px var(--b2-sans);white-space:nowrap;}
+.auto-tg i{width:7px;height:7px;border-radius:50%;background:var(--faint);}
+.auto-tg[aria-pressed="true"]{color:var(--accent-deep);border-color:var(--accent-line);background:var(--accent-soft);}
+.auto-tg[aria-pressed="true"] i{background:var(--accent-deep);}
+.dv-media{display:flex;align-items:center;gap:8px;flex-wrap:wrap;font-size:12px;color:var(--muted);font-weight:550;margin:-6px 0 18px;line-height:1.5;}
+.dv-media b{color:var(--ink-2);font-weight:700;}
+.dv-media.warn{color:var(--warn);}
+.fc-orph{font-size:11.5px;color:var(--muted);line-height:1.5;padding:4px 4px 0;}
+.deck .dm .au{color:var(--accent-deep);}
 
 /* ── library ── */
 .lib-head{display:flex;align-items:center;gap:12px;margin-bottom:14px;flex-wrap:wrap;}
@@ -546,7 +600,8 @@ details.help ol{margin:8px 0 0 18px;line-height:1.65;}
   .su-task .num{display:none;}
   .su-task .u{grid-column:1/2;}
   .addcard,.crow.edit{grid-template-columns:1fr;}
-  .crow{grid-template-columns:minmax(0,1fr) minmax(0,1fr) 60px;}
+  .crow{grid-template-columns:minmax(0,1fr) minmax(0,1fr) 84px;}
+  .ap-card{grid-template-columns:1fr;}
   .crow .cs{display:none;}
   .stats4{grid-template-columns:repeat(2,minmax(0,1fr));}
   .grades{grid-template-columns:repeat(2,minmax(0,1fr));}
@@ -656,20 +711,22 @@ details.help ol{margin:8px 0 0 18px;line-height:1.65;}
 <div class="modal-bg" id="m-import" role="dialog" aria-modal="true" aria-labelledby="im-title">
   <div class="modal wide">
     <div class="m-title" id="im-title">Import words</div>
-    <div class="m-sub">Bring an Anki export, a CSV, or just paste a list. Duplicates (same front) are skipped.</div>
+    <div class="m-sub">Bring an Anki deck (.apkg, audio included), a text export, a CSV, or just paste a list. Duplicates (same front) are skipped.</div>
     <div class="seg imp-tabs" id="im-tabs">
       <button type="button" data-act="imMode" data-m="file">Upload a file</button>
       <button type="button" data-act="imMode" data-m="paste">Paste a list</button>
     </div>
     <div id="im-file-pane">
       <label class="drop" id="im-drop">
-        <input type="file" id="im-file" accept=".txt,.tsv,.csv,text/plain,text/csv,text/tab-separated-values" data-chg="imFile">
+        <input type="file" id="im-file" accept=".apkg,.colpkg,.txt,.tsv,.csv,text/plain,text/csv,text/tab-separated-values" data-chg="imFile">
         <b>Choose a file, or drop it here</b>
-        <small>Anki “Notes in Plain Text” (.txt) · tab-separated (.tsv) · CSV with front,back[,extra]</small>
+        <small>Anki deck package (.apkg) with audio &amp; pictures · Anki “Notes in Plain Text” (.txt) · .tsv · CSV with front,back[,extra]</small>
         <small id="im-fname" style="color:var(--accent-deep);font-weight:700"></small>
       </label>
-      <details class="help"><summary>How to export from Anki</summary>
-        <ol><li>Open Anki → <b>Browse</b>, pick your deck on the left.</li><li>Select the cards (Ctrl/Cmd+A) → <b>Notes → Export Notes…</b></li><li>Format: <b>Notes in Plain Text (.txt)</b>. Untick “Include HTML and media references” if you like.</li><li>Drop the .txt file here.</li></ol></details>
+      <details class="help"><summary>Get a deck from AnkiWeb (no Anki app needed)</summary>
+        <ol><li>Open <a href="https://ankiweb.net/shared/decks" target="_blank" rel="noopener">AnkiWeb Shared Decks</a> and find a deck.</li><li>Click <b>Download</b>. You get an <b>.apkg</b> file with the deck’s audio and pictures inside.</li><li>Drop the .apkg here, pick which fields go on the front and back, and import.</li></ol></details>
+      <details class="help"><summary>Exporting from Anki desktop instead</summary>
+        <ol><li>Open Anki → <b>Browse</b>, pick your deck on the left.</li><li>Either <b>File → Export…</b> as <b>Anki Deck Package (.apkg)</b> with “Include media” ticked (keeps audio),</li><li>or select the cards → <b>Notes → Export Notes…</b> as <b>Notes in Plain Text (.txt)</b> (text only).</li><li>Drop the file here.</li></ol></details>
     </div>
     <div id="im-paste-pane" hidden>
       <textarea class="f-input" id="im-text" rows="7" data-inp="imText" placeholder="One per line, any of these work:&#10;obrigado	thank you&#10;a casa - the house&#10;comer = to eat&#10;amanhã; tomorrow"></textarea>
@@ -680,9 +737,10 @@ details.help ol{margin:8px 0 0 18px;line-height:1.65;}
       <div class="f-field" id="im-newwrap"><label class="f-label" for="im-name">New deck name</label><input class="f-input" id="im-name" maxlength="60" placeholder="e.g. Portuguese 1000"></div>
     </div>
     <div class="f-field" id="im-langwrap"><span class="f-label">Language</span><div class="lang-pick" id="im-lang"></div></div>
+    <div class="im-prog" id="im-prog" hidden><div class="bar"><i id="im-prog-bar"></i></div><span id="im-prog-txt"></span></div>
     <div class="f-err" id="im-err"></div>
     <div class="m-actions">
-      <button type="button" class="btn btn-ghost" data-act="close" data-m="m-import">Cancel</button>
+      <button type="button" class="btn btn-ghost" data-act="close" data-m="m-import" id="im-cancel">Cancel</button>
       <button type="button" class="btn btn-dark" data-act="imGo" id="im-go" disabled>Import</button>
     </div>
   </div>
@@ -758,6 +816,7 @@ details.help ol{margin:8px 0 0 18px;line-height:1.65;}
 
 <div class="tip" id="tip" role="tooltip"></div>
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
+<audio id="fc-audio" preload="auto" hidden></audio>
 
 <script>
 'use strict';
@@ -771,6 +830,13 @@ details.help ol{margin:8px 0 0 18px;line-height:1.65;}
                           (false = explicitly manual, for legacy "cards" ids)
        challenge.days["YYYY-MM-DD"]: {done[], note?, cards?,
                                       minutes?, pages?, resources?:[{name,url}], log?}
+       deck: {id, name, lang, cards[], media?:{n, bytes}}
+         card: {id, front, back, extra?, box, due, reps, lapses,
+                audioFront?[], audioBack?[], imgFront?[], imgBack?[]}   (optional media file names;
+                legacy/alt names audio?[] = front, img?[] = back are read too)
+     Media files (from .apkg imports) live in IndexedDB "brain2Media", store "files",
+     key "<deckId>/<filename>" → Blob. Per browser only; not part of Backup exports.
+     langPortalAutoplay "0"|"1"  flashcard audio auto-play preference (per browser).
      Hours total per language = langPortal5.hours (quick logs) + Σ day minutes.
      The two never overlap: a minute lives in exactly one of them.
    ════════════════════════════════════════════════════════════ */
@@ -1065,7 +1131,10 @@ function creditCard(lang){
 var toastT;
 function toast(msg){var el=$('#toast');el.textContent=msg;el.classList.add('on');clearTimeout(toastT);toastT=setTimeout(function(){el.classList.remove('on');},2800);}
 function openModal(id){$('#'+id).classList.add('open');}
-function closeModal(id){var m=$('#'+id);if(m)m.classList.remove('open');if(id==='m-day'||id==='m-log')renderView();}
+function closeModal(id){
+  if(id==='m-import'){if(im.busy)return;apkgReset();}
+  var m=$('#'+id);if(m)m.classList.remove('open');if(id==='m-day'||id==='m-log')renderView();
+}
 function celebrate(el){
   if(!el)return;
   el.classList.remove('glow');void el.offsetWidth;el.classList.add('glow');
@@ -1616,21 +1685,54 @@ function meterHtml(lang){
 }
 function renderFlash(){
   var root=$('#v-flash');
-  if(sess){root.innerHTML=studyHtml();return;}
-  if(!C.decks.length){root.innerHTML=flashEmptyHtml();return;}
+  if(sess){root.innerHTML=studyHtml();studyMedia();return;}
+  if(playScope==='s')stopAudio();
+  releaseMedia('s');
+  if(!C.decks.length){root.innerHTML=flashEmptyHtml();checkOrphans();return;}
   if(!deckById(selDeck)){var a=activeCh(),m=a?C.decks.filter(function(d){return d.lang===a.lang;})[0]:null;selDeck=(m||C.decks[0]).id;}
   var d=deckById(selDeck);
   var h='<div class="fc-top">'+meterHtml(d.lang)+'<span class="sp"></span><button type="button" class="btn btn-ghost" data-act="newDeck">+ New deck</button><button type="button" class="btn btn-dark" data-act="openImport">Import words</button></div>';
   h+='<div class="fc"><div>';
   C.decks.forEach(function(dk){
     var s=deckStats(dk),tot=s.total||1;
-    h+='<button type="button" class="deck'+(dk.id===selDeck?' on':'')+'" data-act="selDeck" data-id="'+esc(dk.id)+'"><div class="dn">'+L(dk.lang).flag+'<span>'+esc(dk.name)+'</span></div><div class="dm">'+(s.due?'<b>'+s.due+' due</b> · ':'')+s.nw+' new · '+plural(s.total,'card')+'</div>'+
+    h+='<button type="button" class="deck'+(dk.id===selDeck?' on':'')+'" data-act="selDeck" data-id="'+esc(dk.id)+'"><div class="dn">'+L(dk.lang).flag+'<span>'+esc(dk.name)+'</span></div><div class="dm">'+(s.due?'<b>'+s.due+' due</b> · ':'')+s.nw+' new · '+plural(s.total,'card')+(dk.media&&dk.media.n?' · <span class="au" title="Has audio or pictures">♪</span>':'')+'</div>'+
       '<div class="segbar"><i class="s-l" style="width:'+(s.learn/tot*100)+'%"></i><i class="s-m" style="width:'+(s.mast/tot*100)+'%"></i></div></button>';
   });
-  h+='</div>';
+  h+='<div class="fc-orph" id="fc-orph"></div></div>';
   h+='<div>'+deckViewHtml(d)+'</div></div>';
   root.innerHTML=h;
   if(renaming){var ri=$('#dv-rename');if(ri){ri.focus();ri.select();}}
+  checkDeckMedia(d);checkOrphans();
+}
+/* media line under a deck's stats: verifies the files are really in this browser */
+var deckMediaChk={},orphCache=null,orphBusy=false;
+function deckMediaLine(d,st){
+  if(st&&!st.n)return '<div class="dv-media warn" id="dv-media">♪ This deck’s audio isn’t stored in this browser. Import the same .apkg into this deck to restore it.</div>';
+  var m=st||d.media;
+  return '<div class="dv-media" id="dv-media">♪ <b>'+plural(m.n,'media file')+'</b> · '+fmtBytes(m.bytes)+' · stored in this browser on this computer, not included in Backup exports</div>';
+}
+function checkDeckMedia(d){
+  if(!d||!d.media||!d.media.n)return;
+  var show=function(st){var el=$('#dv-media');if(el&&selDeck===d.id)el.outerHTML=deckMediaLine(d,st);};
+  if(deckMediaChk[d.id]){show(deckMediaChk[d.id]);return;}
+  mediaStats(d.id).then(function(st){deckMediaChk[d.id]=st;show(st);}).catch(function(){});
+}
+/* audio left behind by decks that no longer exist (e.g. deleted elsewhere or replaced by a restore) */
+function checkOrphans(){
+  var show=function(){
+    var el=$('#fc-orph');if(!el||!orphCache)return;
+    el.innerHTML=orphCache.n?'Unused audio from deleted decks: '+fmtBytes(orphCache.bytes)+' · <button type="button" class="linkish" data-act="cleanOrph">Clean up</button>':'';
+  };
+  if(orphCache){show();return;}
+  if(orphBusy||!window.indexedDB)return;
+  orphBusy=true;
+  /* don't create the media database just to look into it */
+  mediaDbExists(C.decks.some(function(d){return d.media&&d.media.n;})).then(function(ok){if(!ok){orphCache={ids:[],n:0,bytes:0};return {};}return mediaStats();}).then(function(all){
+    orphBusy=false;
+    var ids=Object.keys(all).filter(function(id){return !deckById(id);}),o={ids:ids,n:0,bytes:0};
+    ids.forEach(function(id){o.n+=all[id].n;o.bytes+=all[id].bytes;});
+    orphCache=o;show();
+  }).catch(function(){orphBusy=false;});
 }
 function deckViewHtml(d){
   var s=deckStats(d);
@@ -1640,6 +1742,7 @@ function deckViewHtml(d){
     '<select data-chg="deckLang" aria-label="Deck language">'+Object.keys(LANGS).map(function(k){return '<option value="'+k+'"'+(d.lang===k?' selected':'')+'>'+L(k).flag+' '+L(k).name+'</option>';}).join('')+'</select>'+
     '<button type="button" class="btn btn-danger btn-sm" data-act="delDeck">Delete deck</button></div></div>';
   h+='<div class="stats4"><div class="st hl"><b>'+s.due+'</b><span>Due now</span></div><div class="st"><b>'+s.nw+'</b><span>New</span></div><div class="st"><b>'+s.learn+'</b><span>Learning</span></div><div class="st"><b>'+s.mast+'</b><span>Mastered</span></div></div>';
+  if(d.media&&d.media.n)h+=deckMediaLine(d,deckMediaChk[d.id]||null);
   h+='<div class="study-cta">';
   if(s.study)h+='<button type="button" class="btn btn-accent btn-lg" data-act="study">Study '+s.study+' card'+(s.study===1?'':'s')+'</button><span class="muted small">'+(s.due?s.due+' review'+(s.due===1?'':'s'):'')+(s.due&&Math.min(s.nw,NEW_PER)?' + ':'')+(Math.min(s.nw,NEW_PER)?Math.min(s.nw,NEW_PER)+' new':'')+' · keys <span class="kbd">Space</span> <span class="kbd">1</span>–<span class="kbd">4</span></span>';
   else if(s.total)h+='<span class="chip chip-ok">All caught up</span><button type="button" class="btn btn-ghost btn-sm" data-act="studyAhead">Practice 10 anyway</button>';
@@ -1655,7 +1758,8 @@ function deckViewHtml(d){
       return;
     }
     var chip=!c.reps?'<span class="chip chip-mut">new</span>':c.due<=t?'<span class="chip chip-warn">due</span>':c.box>=5?'<span class="chip chip-ok">mastered</span>':'<span class="chip chip-acc">in '+diffDays(t,c.due)+'d</span>';
-    h+='<div class="crow"><span class="cf" title="'+esc(c.front)+'">'+esc(c.front)+'</span><span class="cb" title="'+esc(c.back)+'">'+esc(c.back)+'</span><span class="cs">'+chip+'</span><span class="ca"><button type="button" data-act="editCard" data-id="'+esc(c.id)+'" aria-label="Edit card">Edit</button><button type="button" class="del" data-act="delCard" data-id="'+esc(c.id)+'" aria-label="Delete card">×</button></span></div>';
+    var cm=cardMedia(c),fl=c.front||(cm.imf.length?'(picture)':cm.af.length?'(audio)':'');
+    h+='<div class="crow"><span class="cf" title="'+esc(fl)+'">'+esc(fl)+'</span><span class="cb" title="'+esc(c.back)+'">'+esc(c.back)+'</span><span class="cs">'+chip+'</span><span class="ca">'+(cm.af.length||cm.ab.length?'<button type="button" data-act="playCard" data-id="'+esc(c.id)+'" aria-label="Play audio" title="Play audio">▶</button>':'')+'<button type="button" data-act="editCard" data-id="'+esc(c.id)+'" aria-label="Edit card">Edit</button><button type="button" class="del" data-act="delCard" data-id="'+esc(c.id)+'" aria-label="Delete card">×</button></span></div>';
   });
   if(list.length>browseLimit)h+='<div class="more"><button type="button" class="btn btn-ghost btn-sm" data-act="moreCards">Show more ('+(list.length-browseLimit)+')</button></div>';
   return h+'</section>';
@@ -1664,13 +1768,13 @@ function flashEmptyHtml(){
   return '<div class="fc-top">'+meterHtml()+'</div><section class="card" style="padding:30px 32px"><div class="fe"><div>'+
     '<div class="eyebrow">Flashcards</div><h2>Bring your words here, then study them in place.</h2>'+
     '<p>Every card you review on this page counts toward today. Hit your target and the flashcards task ticks itself.</p>'+
-    '<div class="f-label" style="margin-top:20px">Exporting from Anki</div><ol class="steps">'+
-      '<li><span>Open Anki and click <b>Browse</b>. Select your deck on the left.</span></li>'+
-      '<li><span>Select all cards, then <b>Notes → Export Notes…</b></span></li>'+
-      '<li><span>Choose <b>Notes in Plain Text (.txt)</b> and save it.</span></li>'+
-      '<li><span>Click <b>Import a file</b> and pick that .txt.</span></li></ol></div>'+
+    '<div class="f-label" style="margin-top:20px">A deck from AnkiWeb, with its audio</div><ol class="steps">'+
+      '<li><span>Open <a href="https://ankiweb.net/shared/decks" target="_blank" rel="noopener" class="linkish" style="padding:0">AnkiWeb Shared Decks</a> and find a deck.</span></li>'+
+      '<li><span>Click <b>Download</b> to save the <b>.apkg</b> file.</span></li>'+
+      '<li><span>Click <b>Import a file</b> and pick it. Audio and pictures come along; no Anki app needed.</span></li></ol>'+
+      '<p class="small" style="margin-top:8px">Text exports from Anki desktop (Notes in Plain Text, .txt) work too.</p></div>'+
     '<div class="fe-acts">'+
-      '<button type="button" class="fe-opt" data-act="openImport" data-m="file"><span class="ic">⬆</span><span><b>Import a file</b><small>Anki .txt, .tsv or .csv</small></span></button>'+
+      '<button type="button" class="fe-opt" data-act="openImport" data-m="file"><span class="ic">⬆</span><span><b>Import a file</b><small>Anki .apkg (with audio), .txt, .tsv or .csv</small></span></button>'+
       '<button type="button" class="fe-opt" data-act="openImport" data-m="paste"><span class="ic">✎</span><span><b>Paste a list</b><small>word – meaning, one per line</small></span></button>'+
       '<button type="button" class="fe-opt" data-act="newDeck"><span class="ic">+</span><span><b>Start an empty deck</b><small>Add cards one at a time</small></span></button>'+
     '</div></div></section>';
@@ -1687,7 +1791,7 @@ function startSession(deckId,ahead){
     q=rev.concat(d.cards.filter(function(c){return !c.reps;}).slice(0,NEW_PER));
   }
   if(!q.length){toast('Nothing due in this deck right now');return;}
-  selDeck=d.id;sess={deckId:d.id,queue:q.map(function(c){return c.id;}),flipped:false,studied:0,total:q.length,finished:false,again:0};
+  selDeck=d.id;sess={deckId:d.id,queue:q.map(function(c){return c.id;}),flipped:false,studied:0,total:q.length,finished:false,again:0,hasAudio:q.some(cardHasAudio),mc:null,mside:null};
   if(tab!=='flash')setTab('flash');else renderFlash();
   setTimeout(function(){var f=$('.flash');if(f)f.focus({preventScroll:true});},20);
 }
@@ -1708,18 +1812,42 @@ function studyHtml(){
       '<div style="display:flex;gap:10px;justify-content:center;margin-top:22px;flex-wrap:wrap"><button type="button" class="btn btn-ghost" data-act="endSess">Back to deck</button>'+(s.study?'<button type="button" class="btn btn-accent" data-act="study">Keep going ('+s.study+')</button>':'<button type="button" class="btn btn-ghost" data-act="studyAhead">Practice 10 more</button>')+'<button type="button" class="btn btn-dark" data-act="tab" data-tab="challenge">See today’s checklist</button></div></section></div>';
   }
   var left=sess.queue.length,done=sess.total-left,pct=sess.total?Math.max(0,Math.min(100,done/sess.total*100)):0;
-  var h='<div class="study"><div class="study-top"><button type="button" class="btn btn-ghost btn-sm" data-act="endSess">← '+esc(d.name)+'</button><div class="sprog"><div class="bar"><i style="width:'+pct+'%"></i></div><span>'+left+' left</span></div>'+meterHtml(d.lang)+'</div>';
+  var cm=cardMedia(c),playable=sess.flipped?(cm.ab.length||cm.af.length):cm.af.length,auto=autoOn();
+  var h='<div class="study"><div class="study-top"><button type="button" class="btn btn-ghost btn-sm" data-act="endSess">← '+esc(d.name)+'</button><div class="sprog"><div class="bar"><i style="width:'+pct+'%"></i></div><span>'+left+' left</span></div>'+
+    (sess.hasAudio?'<button type="button" class="auto-tg" data-act="toggleAuto" aria-pressed="'+(auto?'true':'false')+'" title="Play each card’s audio automatically"><i></i>Auto-play '+(auto?'on':'off')+'</button>':'')+meterHtml(d.lang)+'</div>';
   h+='<div class="flash" tabindex="0" role="button" aria-label="'+(sess.flipped?'Card':'Reveal answer')+'" data-act="flip"><span class="f-deck">'+L(d.lang).flag+' '+(c.reps?(c.lapses?'relearning':'review'):'new card')+'</span>'+
-    (canSpeak?'<button type="button" class="say" data-act="say" aria-label="Pronounce">'+SPEAK_SVG+'</button>':'')+
-    '<div class="f-front">'+esc(c.front)+'</div>'+
-    (sess.flipped?'<div class="f-back"><div class="b">'+esc(c.back)+'</div>'+(c.extra?'<div class="f-extra">'+esc(c.extra)+'</div>':'')+'</div>':'<div class="f-hint">Click or press <span class="kbd">Space</span> to reveal</div>')+
+    (playable?'<button type="button" class="say play" data-act="playAudio" aria-label="Play audio (R)" title="Play audio (R)"><svg viewBox="0 0 24 24"><path d="M8 5.5v13l10.5-6.5z"/></svg></button>':
+      canSpeak&&c.front?'<button type="button" class="say" data-act="say" aria-label="Pronounce">'+SPEAK_SVG+'</button>':'')+
+    (c.front?'<div class="f-front">'+esc(c.front)+'</div>':(!cm.imf.length?'<div class="f-front f-listen" aria-label="Listen">♪</div>':''))+
+    imgsHtml('s',d.id,cm.imf)+
+    (sess.flipped?'<div class="f-back"><div class="b">'+esc(c.back)+'</div>'+(c.extra?'<div class="f-extra">'+esc(c.extra)+'</div>':'')+imgsHtml('s',d.id,cm.imb)+'</div>':'<div class="f-hint">Click or press <span class="kbd">Space</span> to reveal</div>')+
   '</div>';
   if(!sess.flipped)h+='<button type="button" class="btn btn-dark btn-lg reveal" data-act="flip">Show answer</button>';
   else{
     h+='<div class="grades">'+[[1,'Again','again'],[2,'Hard','hard'],[3,'Good','good'],[4,'Easy','easy']].map(function(g){return '<button type="button" class="g '+g[2]+'" data-act="grade" data-g="'+g[0]+'">'+g[1]+'<small><span class="kbd">'+g[0]+'</span> · '+ivLabel(c,g[0])+'</small></button>';}).join('')+'</div>';
   }
-  h+='<div class="keys">Each card counts toward today’s flashcards task · <span class="kbd">Esc</span> to stop</div></div>';
+  h+='<div class="keys">Each card counts toward today’s flashcards task'+(sess.hasAudio?' · <span class="kbd">R</span> replay audio':'')+' · <span class="kbd">Esc</span> to stop</div></div>';
   return h;
+}
+/* after each study render: load pictures, release the last card's files, auto-play on a new card/side */
+function studyMedia(){
+  var c=sess&&!sess.finished?curCard():null,d=sess?deckById(sess.deckId):null;
+  if(!c||!d){if(playScope==='s')stopAudio();releaseMedia('s');if(sess){sess.mc=null;sess.mside=null;}return;}
+  if(sess.mc!==c.id){if(playScope==='s')stopAudio();releaseMedia('s');sess.mc=c.id;sess.mside=null;}
+  hydrateImgs($('#v-flash'));
+  var side=sess.flipped?'b':'f';
+  if(sess.mside!==side){
+    sess.mside=side;
+    var cm=cardMedia(c),list=side==='f'?cm.af:cm.ab;
+    if(autoOn()&&list.length)playMedia('s',d.id,list,missingAudio);
+  }
+}
+function missingAudio(){if(!sess||sess.warned)return;sess.warned=true;toast('This card’s audio isn’t stored in this browser. Re-import the .apkg into this deck to restore it');}
+function replayAudio(){
+  var c=sess&&!sess.finished?curCard():null,d=sess?deckById(sess.deckId):null;if(!c||!d)return false;
+  var cm=cardMedia(c),list=sess.flipped&&cm.ab.length?cm.ab:cm.af;
+  if(!list.length)return false;
+  playMedia('s',d.id,list,missingAudio);return true;
 }
 function flip(){if(!sess||sess.finished)return;sess.flipped=!sess.flipped;renderFlash();var f=$('.flash');if(f)f.focus({preventScroll:true});}
 function grade(g){
@@ -1732,7 +1860,7 @@ function grade(g){
   renderFlash();renderBadgeOnly();
   var f=$('.flash');if(f)f.focus({preventScroll:true});
 }
-function endSession(){sess=null;renderFlash();}
+function endSession(){sess=null;stopAudio();renderFlash();}
 function renderBadgeOnly(){var n=totalStudyable(),b=$('#due-badge');b.hidden=!n;b.textContent=n>99?'99+':n;}
 
 /* deck/card CRUD */
@@ -1821,7 +1949,9 @@ function parsePaste(text){
   return {rows:out,skipped:skipped};
 }
 function openImport(mode){
-  im={mode:mode||'file',rows:[],skipped:0,fname:'',lang:(activeCh()&&activeCh().lang)||'pt'};
+  if(im.apkg||im.loading)apkgReset();
+  im={mode:mode||'file',rows:[],skipped:0,fname:'',lang:(activeCh()&&activeCh().lang)||'pt',apkg:null,loading:false,busy:false};
+  $('#im-prog').hidden=true;
   $('#im-file').value='';$('#im-text').value='';$('#im-fname').textContent='';$('#im-err').textContent='';$('#im-name').value='';
   var sel=$('#im-deck'),o='';
   C.decks.forEach(function(d){o+='<option value="'+esc(d.id)+'">'+L(d.lang).flag+' '+esc(d.name)+' ('+d.cards.length+')</option>';});
@@ -1836,6 +1966,14 @@ function renderImport(){
   $('#im-newwrap').style.visibility=isNew?'visible':'hidden';$('#im-langwrap').hidden=!isNew;
   $('#im-lang').innerHTML=Object.keys(LANGS).map(function(k){return '<button type="button" class="lp'+(im.lang===k?' on':'')+'" data-act="imLang" data-lang="'+k+'">'+L(k).flag+' '+L(k).name+'</button>';}).join('');
   var d=isNew?null:deckById($('#im-deck').value),seen={},dups=0,fresh=0;
+  if(im.mode==='file'&&(im.apkg||im.loading)){
+    var go2=$('#im-go');
+    if(im.loading){$('#im-prev').innerHTML='<div class="ap-load"><span class="spin"></span>Reading the deck… (the first time loads a small Anki reader)</div>';go2.disabled=true;go2.textContent='Import';return;}
+    $('#im-prev').innerHTML=apkgPreviewHtml(d);hydrateImgs($('#im-prev'));
+    var nf=im.apkg.fresh.length,nr=im.apkg.noMedia?0:im.apkg.need.restore;
+    go2.disabled=im.busy||!(nf||nr);go2.textContent=nf?'Import '+plural(nf,'card'):nr?'Restore '+plural(nr,'media file'):'Import';
+    return;
+  }
   if(d)d.cards.forEach(function(c){seen[normKey(c.front)]=1;});
   var marked=im.rows.map(function(r){var k=normKey(r.front),dup=!!seen[k];seen[k]=1;if(dup)dups++;else fresh++;return {r:r,dup:dup};});
   var p='';
@@ -1849,7 +1987,9 @@ function renderImport(){
   var go=$('#im-go');go.disabled=!fresh;go.textContent=fresh?'Import '+plural(fresh,'card'):'Import';
 }
 function readImportFile(file){
-  if(!file)return;
+  if(!file||im.busy)return;
+  if(/\.(apkg|colpkg)$/i.test(file.name)){readApkg(file);return;}
+  apkgReset();
   var rd=new FileReader();
   rd.onload=function(){
     var txt=String(rd.result||''),r=/\.csv$/i.test(file.name)?parseCSV(txt):parseAnki(txt);
@@ -1862,6 +2002,7 @@ function readImportFile(file){
   rd.readAsText(file);
 }
 function doImport(){
+  if(im.mode==='file'&&im.apkg){doApkgImport();return;}
   var v=$('#im-deck').value,d;
   if(v==='__new'){
     var name=$('#im-name').value.trim()||(L(im.lang).name+' words');
@@ -1871,6 +2012,528 @@ function doImport(){
   var n=addCards(d,im.rows);
   selDeck=d.id;sess=null;saveC();closeModal('m-import');setTab('flash');
   toast('Imported '+plural(n,'card')+' into “'+d.name+'”');
+}
+
+/* ════════════════ MEDIA (IndexedDB) ════════════════
+   Audio and pictures from .apkg imports. One Blob per file, key "<deckId>/<filename>". */
+var MDB_NAME='brain2Media',MDB_STORE='files',mdbP=null;
+function mdb(){
+  if(mdbP)return mdbP;
+  mdbP=new Promise(function(res,rej){
+    if(!window.indexedDB){rej(new Error('noidb'));return;}
+    var r;try{r=indexedDB.open(MDB_NAME,1);}catch(e){rej(e);return;}
+    r.onupgradeneeded=function(){if(!r.result.objectStoreNames.contains(MDB_STORE))r.result.createObjectStore(MDB_STORE);};
+    r.onsuccess=function(){var db=r.result;db.onversionchange=function(){db.close();mdbP=null;};res(db);};
+    r.onerror=function(){rej(r.error||new Error('idb'));};
+    r.onblocked=function(){rej(new Error('blocked'));};
+  });
+  mdbP.catch(function(){mdbP=null;});
+  return mdbP;
+}
+/* true when the media database may hold files (avoids creating it just to look) */
+function mediaDbExists(known){
+  if(!window.indexedDB)return Promise.resolve(false);
+  if(known)return Promise.resolve(true);
+  if(!indexedDB.databases)return Promise.resolve(false);
+  return indexedDB.databases().then(function(l){return (l||[]).some(function(x){return x.name===MDB_NAME;});}).catch(function(){return false;});
+}
+function mStore(mode){return mdb().then(function(db){var tx=db.transaction(MDB_STORE,mode);return {tx:tx,st:tx.objectStore(MDB_STORE)};});}
+function txDone(tx){return new Promise(function(res,rej){tx.oncomplete=function(){res();};tx.onabort=tx.onerror=function(){rej(tx.error||new Error('tx'));};});}
+function reqP(r){return new Promise(function(res,rej){r.onsuccess=function(){res(r.result);};r.onerror=function(){rej(r.error);};});}
+function deckRange(id){return IDBKeyRange.bound(id+'/',id+'/￿');}
+function mediaGet(key){return mStore('readonly').then(function(s){return reqP(s.st.get(key));}).then(function(b){return b||null;});}
+function mediaPutMany(recs){return mStore('readwrite').then(function(s){var p=txDone(s.tx);recs.forEach(function(r){s.st.put(r[1],r[0]);});return p;});}
+function mediaKeys(deckId){return mStore('readonly').then(function(s){return reqP(s.st.getAllKeys(deckRange(deckId)));});}
+function mediaDelKeys(keys){if(!keys.length)return Promise.resolve();return mStore('readwrite').then(function(s){var p=txDone(s.tx);keys.forEach(function(k){s.st.delete(k);});return p;});}
+function mediaDelDeck(deckId){return mStore('readwrite').then(function(s){var p=txDone(s.tx);s.st.delete(deckRange(deckId));return p;});}
+/* {n, bytes} for one deck, or for every deck id when deckId is omitted */
+function mediaStats(deckId){
+  return mStore('readonly').then(function(s){return new Promise(function(res,rej){
+    var out={},one={n:0,bytes:0},r=deckId?s.st.openCursor(deckRange(deckId)):s.st.openCursor();
+    r.onsuccess=function(){
+      var cur=r.result;if(!cur){res(deckId?one:out);return;}
+      var sz=(cur.value&&cur.value.size)||0;
+      if(deckId){one.n++;one.bytes+=sz;}
+      else{var k=String(cur.key),id=k.slice(0,k.indexOf('/'));var o=out[id]||(out[id]={n:0,bytes:0});o.n++;o.bytes+=sz;}
+      cur.continue();
+    };
+    r.onerror=function(){rej(r.error);};
+  });});
+}
+function isQuota(e){return !!e&&(e.name==='QuotaExceededError'||/quota/i.test(String(e.message||'')));}
+function fmtBytes(n){n=+n||0;if(n<1024*1024)return Math.max(1,Math.round(n/1024))+' KB';if(n<1024*1024*1024)return (n/1048576).toFixed(n<10485760?1:0)+' MB';return (n/1073741824).toFixed(1)+' GB';}
+var MIME={mp3:'audio/mpeg',m4a:'audio/mp4',mp4:'audio/mp4',aac:'audio/aac',ogg:'audio/ogg',oga:'audio/ogg',opus:'audio/ogg',spx:'audio/ogg',wav:'audio/wav',flac:'audio/flac',webm:'audio/webm',
+  jpg:'image/jpeg',jpeg:'image/jpeg',png:'image/png',gif:'image/gif',webp:'image/webp',svg:'image/svg+xml',bmp:'image/bmp',avif:'image/avif',ico:'image/x-icon',tif:'image/tiff',tiff:'image/tiff'};
+function mimeOf(n){var m=/\.([a-z0-9]+)$/i.exec(n||'');return (m&&MIME[m[1].toLowerCase()])||'application/octet-stream';}
+
+/* object URLs, cached per scope: 's' study · 'b' browse list · 'pv' import preview (read from the .apkg) */
+var mUrls={},mGen={};
+function mediaUrl(scope,deckId,name){
+  var k=scope+'|'+deckId+'/'+name;
+  if(k in mUrls)return Promise.resolve(mUrls[k]);
+  var gen=mGen[scope]||0;
+  var p=scope==='pv'?apkgBlob(im.apkg,name):mediaGet(deckId+'/'+name);
+  return p.then(function(b){
+    if((mGen[scope]||0)!==gen)return '';
+    if(k in mUrls)return mUrls[k];
+    return (mUrls[k]=b?URL.createObjectURL(b):'');
+  }).catch(function(){return '';});
+}
+function cachedUrl(scope,deckId,name){return mUrls[scope+'|'+deckId+'/'+name]||'';}
+function releaseMedia(scope){
+  mGen[scope]=(mGen[scope]||0)+1;
+  Object.keys(mUrls).forEach(function(k){if(k.indexOf(scope+'|')===0){if(mUrls[k])URL.revokeObjectURL(mUrls[k]);delete mUrls[k];}});
+}
+function mArr(x){return Array.isArray(x)?x.filter(function(s){return typeof s==='string'&&s;}):[];}
+function cardMedia(c){return {af:mArr(c.audioFront).concat(mArr(c.audio)),ab:mArr(c.audioBack),imf:mArr(c.imgFront),imb:mArr(c.imgBack).concat(mArr(c.img))};}
+function cardHasAudio(c){var m=cardMedia(c);return m.af.length+m.ab.length>0;}
+function cardMediaNames(c){var m=cardMedia(c);return m.af.concat(m.ab,m.imf,m.imb);}
+function imgsHtml(scope,deckId,names){
+  if(!names.length)return '';
+  return '<div class="f-imgs">'+names.map(function(n){var u=cachedUrl(scope,deckId,n);return '<img data-ms="'+scope+'" data-md="'+esc(deckId)+'" data-mn="'+esc(n)+'" alt=""'+(u?' src="'+esc(u)+'"':'')+'>';}).join('')+'</div>';
+}
+function hydrateImgs(root){
+  $$('img[data-mn]',root).forEach(function(img){
+    if(img.getAttribute('src'))return;
+    mediaUrl(img.getAttribute('data-ms'),img.getAttribute('data-md'),img.getAttribute('data-mn')).then(function(u){if(u)img.src=u;else img.hidden=true;});
+  });
+}
+
+/* one shared <audio>; plays a list of files in order */
+var playTok=0,playScope=null,autoHinted=false;
+function stopAudio(){playTok++;playScope=null;var a=$('#fc-audio');if(!a)return;a.onended=null;a.onerror=null;try{a.pause();}catch(e){}}
+function playMedia(scope,deckId,names,onMissing){
+  stopAudio();if(!names||!names.length)return;
+  var tok=playTok,a=$('#fc-audio'),i=0,missing=0;playScope=scope;
+  function next(){
+    if(tok!==playTok)return;
+    if(i>=names.length){if(missing&&onMissing)onMissing(missing);return;}
+    var nm=names[i++];
+    mediaUrl(scope,deckId,nm).then(function(u){
+      if(tok!==playTok)return;
+      if(!u){missing++;next();return;}
+      a.onended=next;a.onerror=function(){next();};
+      a.src=u;
+      var pr=a.play();
+      if(pr&&pr.catch)pr.catch(function(e){
+        if(tok!==playTok)return;
+        if(e&&e.name==='NotAllowedError'){if(!autoHinted){autoHinted=true;toast('Your browser blocked auto-play. Press R or ▶ to hear the card');}}
+        else if(!(e&&e.name==='AbortError'))next();
+      });
+    });
+  }
+  next();
+}
+function autoOn(){return lsGet('langPortalAutoplay')!=='0';}
+
+/* ════════════════ ANKI PACKAGE (.apkg / .colpkg) ════════════════
+   A zip holding a SQLite collection plus numbered media files.
+   Legacy:  collection.anki2 / .anki21 (plain SQLite), "media" = JSON {"0":"name.mp3",…}.
+   Modern (Anki ≥ 2.1.50): collection.anki21b (zstd SQLite), "media" = zstd protobuf
+     MediaEntries{repeated MediaEntry entries=1}, MediaEntry{name=1,size=2,sha1=3,legacy_zip_filename=255};
+     the zip member for entry i is "i" (or legacy_zip_filename), each one zstd-compressed.
+   Libraries load only when an .apkg is picked. */
+var APKG_LIB={
+  zip:{src:'https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js',sri:'sha384-+mbV2IY1Zk/X1p/nWllGySJSUN8uMs+gUAN10Or95UBH0fpj6GfKgPmgC5EXieXG'},
+  sql:{src:'https://cdnjs.cloudflare.com/ajax/libs/sql.js/1.12.0/sql-wasm.js',sri:'sha384-1fHJox8K973mCCD3PTAOc0ljrAGXD2VeK8zf+vNIdx55pWPULNlpxKMkU8bF4nUd'},
+  zstd:{src:'https://cdn.jsdelivr.net/npm/fzstd@0.1.1/umd/index.js',sri:'sha384-j11FJIL1HatEZOwEloCeZcNzDESMGs1ncTc2Kt0LgG0QpBU7lZHgyGU0Mif1OHeH'},
+  wasm:'https://cdnjs.cloudflare.com/ajax/libs/sql.js/1.12.0/sql-wasm.wasm'
+};
+var libP={},sqlP=null;
+function loadLib(k){
+  if(libP[k])return libP[k];
+  var p=libP[k]=new Promise(function(res,rej){
+    var s=document.createElement('script');s.src=APKG_LIB[k].src;s.integrity=APKG_LIB[k].sri;s.crossOrigin='anonymous';s.async=true;
+    s.onload=function(){res();};
+    s.onerror=function(){if(libP[k]===p)delete libP[k];s.remove();rej(apErr('lib'));};
+    document.head.appendChild(s);
+  });
+  return p;
+}
+function getSQL(){
+  if(!sqlP){sqlP=loadLib('sql').then(function(){return window.initSqlJs({locateFile:function(){return APKG_LIB.wasm;}});}).catch(function(e){sqlP=null;throw (e&&e.apkg)?e:apErr('lib');});}
+  return sqlP;
+}
+function apErr(code,msg){var e=new Error(msg||code);e.apkg=code;return e;}
+function apErrText(e){
+  var c=e&&e.apkg;
+  if(c==='lib')return 'Couldn’t load the Anki reader. Reading .apkg files needs an internet connection; check it and try again.';
+  if(c==='nocol')return 'This file doesn’t look like an Anki deck package (no collection inside). Pick the .apkg you downloaded from AnkiWeb.';
+  if(c==='dummy')return 'This package only contains Anki’s “please update” placeholder, so its cards can’t be read. Re-export it from Anki with “Support older Anki versions” ticked.';
+  if(c==='empty')return 'No notes found in this deck package.';
+  if(c==='msg')return e.message;
+  return 'Couldn’t read this deck package. It may be damaged, or from a format this page doesn’t know yet. In Anki desktop, re-export it with “Support older Anki versions” ticked.';
+}
+function isZstd(u8){return !!u8&&u8.length>3&&u8[0]===0x28&&u8[1]===0xB5&&u8[2]===0x2F&&u8[3]===0xFD;}
+function unz(u8){return isZstd(u8)?window.fzstd.decompress(u8):u8;}
+var utf8=(typeof TextDecoder!=='undefined')?new TextDecoder('utf-8'):null;
+/* minimal protobuf reader: [{f:field, v:varint} | {f:field, b:bytes}] */
+function pbFields(u8){
+  var i=0,n=u8.length,out=[];
+  function vi(){var r=0,m=1,b;do{if(i>=n)throw new Error('pb');b=u8[i++];r+=(b&127)*m;m*=128;}while(b&128);return r;}
+  while(i<n){
+    var tag=vi(),f=Math.floor(tag/8),w=tag%8;
+    if(w===0)out.push({f:f,v:vi()});
+    else if(w===2){var l=vi();out.push({f:f,b:u8.subarray(i,i+l)});i+=l;}
+    else if(w===1)i+=8;else if(w===5)i+=4;else throw new Error('pb');
+  }
+  return out;
+}
+function pbGet(fs,f){for(var k=0;k<fs.length;k++)if(fs[k].f===f)return fs[k];return null;}
+function pbStr(u8,f){try{var x=pbGet(pbFields(u8),f);return x&&x.b?utf8.decode(x.b):'';}catch(e){return '';}}
+function pbNum(u8,f){try{var x=pbGet(pbFields(u8),f);return x&&x.v!=null?x.v:0;}catch(e){return 0;}}
+function sq(db,sql){try{var r=db.exec(sql);return r.length?r[0].values:[];}catch(e){return null;}}
+/* field names a template shows: {{Field}}, {{text:Field}}, {{cloze:Text}} (not {{#Field}} sections) */
+function tplFields(fmt,into,skipFront){
+  String(fmt||'').replace(/\{\{([^}]+)\}\}/g,function(_,t){
+    t=t.trim();if(/^[#^\/!]/.test(t))return;
+    var parts=t.split(':'),nm=parts[parts.length-1].trim();
+    if(nm&&!(skipFront&&nm==='FrontSide'))into[nm]=1;
+  });
+}
+function addTpl(m,q,a){m.hasTpl=true;tplFields(q,m.qf);tplFields(a,m.af,true);}
+function readCollection(db){
+  var models={},decks={},nts=sq(db,'SELECT id,name,config FROM notetypes');
+  if(nts&&nts.length){                                   /* schema 18 (modern) */
+    nts.forEach(function(r){var cfg=r[2] instanceof Uint8Array?r[2]:new Uint8Array(0);models[String(r[0])]={name:String(r[1]),fields:[],qf:{},af:{},hasTpl:false,cloze:pbNum(cfg,1)===1};});
+    (sq(db,'SELECT ntid,ord,name FROM fields ORDER BY ntid,ord')||[]).forEach(function(r){var m=models[String(r[0])];if(m)m.fields[r[1]]=String(r[2]);});
+    (sq(db,'SELECT ntid,config FROM templates ORDER BY ntid,ord')||[]).forEach(function(r){var m=models[String(r[0])];if(m&&r[1] instanceof Uint8Array)addTpl(m,pbStr(r[1],1),pbStr(r[1],2));});
+    (sq(db,'SELECT id,name FROM decks')||[]).forEach(function(r){decks[String(r[0])]=String(r[1]).split('\x1f').join('::');});
+  }else{                                                 /* schema 11 (legacy JSON in col) */
+    var col=sq(db,'SELECT models,decks FROM col');
+    if(!col||!col.length)throw apErr('nocol');
+    var mj={},dj={};try{mj=JSON.parse(col[0][0]||'{}')||{};}catch(e){}try{dj=JSON.parse(col[0][1]||'{}')||{};}catch(e){}
+    Object.keys(mj).forEach(function(k){
+      var x=mj[k]||{},m=models[String(k)]={name:String(x.name||'Note'),fields:[],qf:{},af:{},hasTpl:false,cloze:x.type===1};
+      (x.flds||[]).forEach(function(f,i){m.fields[f&&f.ord!=null?f.ord:i]=String((f&&f.name)||('Field '+(i+1)));});
+      (x.tmpls||[]).forEach(function(t){if(t)addTpl(m,t.qfmt,t.afmt);});
+    });
+    Object.keys(dj).forEach(function(k){if(dj[k]&&dj[k].name)decks[String(k)]=String(dj[k].name);});
+  }
+  Object.keys(models).forEach(function(k){var f=models[k].fields;for(var i=0;i<f.length;i++)if(f[i]==null)f[i]='Field '+(i+1);});
+  var rows=sq(db,'SELECT id,mid,flds FROM notes');
+  if(rows==null)throw apErr('nocol');
+  /* order like Anki shows new cards (new-card position), else by creation */
+  var first={};
+  (sq(db,'SELECT nid,did,type,due FROM cards ORDER BY nid,ord')||[]).forEach(function(r){var k=String(r[0]);if(!first[k])first[k]={did:String(r[1]),pos:r[2]===0?+r[3]:Infinity};});
+  var notes=rows.map(function(r){var k=String(r[0]),fc=first[k]||{did:'',pos:Infinity};return {id:+r[0],mid:String(r[1]),f:String(r[2]==null?'':r[2]).split('\x1f'),deck:decks[fc.did]||'',pos:fc.pos};});
+  notes.sort(function(a,b){return a.pos!==b.pos?(a.pos<b.pos?-1:1):a.id-b.id;});
+  return {models:models,notes:notes};
+}
+function readMediaMap(raw,zip){
+  var map={};if(!raw||!raw.length)return map;
+  raw=unz(raw);
+  if(raw[0]===0x7b){                                     /* legacy JSON {"0":"name"} */
+    var j={};try{j=JSON.parse(utf8.decode(raw))||{};}catch(e){}
+    Object.keys(j).forEach(function(z){var f=zip.file(z);map[String(j[z])]={z:z,size:(f&&f._data&&f._data.uncompressedSize)||0};});
+  }else{                                                 /* MediaEntries protobuf */
+    var idx=0;
+    pbFields(raw).forEach(function(e){
+      if(e.f!==1||!e.b)return;
+      var fs=pbFields(e.b),nm=pbGet(fs,1),sz=pbGet(fs,2),lz=pbGet(fs,255);
+      if(nm&&nm.b)map[utf8.decode(nm.b)]={z:String(lz&&lz.v!=null?lz.v:idx),size:sz?sz.v:0};
+      idx++;
+    });
+  }
+  return map;
+}
+function parseApkg(file){
+  var JSZipP=loadLib('zip'),sqlLoad=getSQL(),zip,colName,raw;
+  sqlLoad.catch(function(){});
+  return JSZipP.then(function(){return window.JSZip.loadAsync(file);}).catch(function(e){throw (e&&e.apkg)?e:apErr('msg','This file isn’t a valid .apkg (zip) package.');})
+  .then(function(z){
+    zip=z;
+    colName=['collection.anki21b','collection.anki21','collection.anki2'].filter(function(n){return zip.file(n);})[0];
+    if(!colName)throw apErr('nocol');
+    return Promise.all([zip.file(colName).async('uint8array'),zip.file('media')?zip.file('media').async('uint8array'):null]);
+  }).then(function(r){
+    raw=r;
+    return Promise.all([sqlLoad,(isZstd(r[0])||isZstd(r[1]))?loadLib('zstd'):null]);
+  }).then(function(libs){
+    var db=new libs[0].Database(unz(raw[0])),info;
+    try{info=readCollection(db);}finally{db.close();}
+    if(!info.notes.length)throw apErr('empty');
+    if(info.notes.length===1&&/update to the latest Anki/i.test(info.notes[0].f.join(' ')))throw apErr('dummy');
+    info.media=readMediaMap(raw[1],zip);info.zip=zip;info.modern=colName==='collection.anki21b';
+    return info;
+  });
+}
+function apkgBlob(A,name){
+  if(!A||!A.media[name])return Promise.resolve(null);
+  var f=A.zip.file(A.media[name].z);if(!f)return Promise.resolve(null);
+  return f.async('uint8array').then(function(u8){return new Blob([unz(u8)],{type:mimeOf(name)});});
+}
+/* field text: HTML → plain text with line breaks; sounds/images handled separately */
+function apText(html){
+  return stripHtml(String(html||'').replace(/<(script|style)\b[^>]*>[\s\S]*?<\/\1\s*>/gi,'').replace(/<img\b[^>]*>/gi,'').replace(/<hr\b[^>]*>|<\/tr>/gi,'\n').replace(/<\/t[dh]>/gi,' '));
+}
+var CLOZE_RE=/\{\{c\d+::([\s\S]*?)(?:::([\s\S]*?))?\}\}/g;
+function clozeMask(s){return String(s).replace(CLOZE_RE,function(_,a,h){return '[ '+(h?h:'…')+' ]';});}
+function clozeShow(s){return String(s).replace(CLOZE_RE,'$1');}
+function decEnt(s){return String(s).replace(/&amp;/g,'&').replace(/&quot;/g,'"').replace(/&#39;|&apos;/g,"'").replace(/&lt;/g,'<').replace(/&gt;/g,'>');}
+function apResolve(A,n){
+  n=decEnt(String(n||'').trim());if(!n)return null;
+  if(A.media[n])return n;
+  var c=[n.normalize?n.normalize('NFC'):n];try{c.push(decodeURIComponent(n));}catch(e){}
+  for(var i=0;i<c.length;i++)if(A.media[c[i]])return c[i];
+  return null;
+}
+function apMediaRefs(raw){
+  var s=[],im=[],m;raw=String(raw||'');
+  var re=/\[sound:([^\]]+)\]/g;while((m=re.exec(raw)))s.push(m[1]);
+  var ri=/<img\b[^>]*?\bsrc\s*=\s*(?:"([^"]*)"|'([^']*)'|([^\s>]+))/gi;while((m=ri.exec(raw))){var src=m[1]||m[2]||m[3]||'';if(src&&!/^[a-z][a-z0-9+.-]*:/i.test(src))im.push(src);}
+  return {s:s,i:im};
+}
+var FRONT_RE=/^(front|word|words|term|expression|vocab|vocabulary|target|target word|question|palavra|palabra|mot|wort|parola|kanji|portuguese|spanish|french|italian|german|japanese|português|español|français|italiano|deutsch)$/i;
+var BACK_RE=/^(back|meaning|meanings|definition|translation|english|answer|gloss|english meaning|english translation|significado|tradução|traducción)$/i;
+var EXTRA_RE=/example|sentence|context|usage|notes?$|extra/i;
+function guessLang(s){
+  s=String(s||'').toLowerCase();
+  var G=[['pt',/portug|brazil|brasil/],['es',/spanish|español|espanol|castellano/],['fr',/french|français|francais/],['it',/italian|italiano/],['de',/german|deutsch/],['ja',/japan|日本語|nihongo|kanji|hiragana|katakana/]];
+  for(var i=0;i<G.length;i++)if(G[i][1].test(s))return G[i][0];
+  return null;
+}
+/* text of field j of note i (cached) */
+function apTxt(A,i,j){var k=i+':'+j;if(!(k in A.tc))A.tc[k]=apText(A.notes[i].f[j]);return A.tc[k];}
+function apUsedModels(A){
+  var cnt={};A.notes.forEach(function(n){if(A.models[n.mid])cnt[n.mid]=(cnt[n.mid]||0)+1;});
+  return Object.keys(cnt).map(function(id){return {id:id,n:cnt[id],m:A.models[id]};}).sort(function(a,b){return b.n-a.n;});
+}
+function apRefModelId(A){return A.opt.nt!=='all'?A.opt.nt:A.used[0].id;}
+/* pick sensible default fields for a note type */
+function apDefaults(A,mid){
+  var m=A.models[mid],F=m.fields,fill=F.map(function(){return 0;}),seen=0;
+  for(var i=0;i<A.notes.length&&seen<200;i++){if(A.notes[i].mid!==mid)continue;seen++;for(var j=0;j<F.length;j++)if(apTxt(A,i,j))fill[j]++;}
+  var ok=function(j){return seen?fill[j]/seen>=0.5:true;};
+  var fi=-1,bi=-1,xi=-1,j;
+  for(j=0;j<F.length;j++)if(FRONT_RE.test(F[j].trim())&&ok(j)){fi=j;break;}
+  if(fi<0)for(j=0;j<F.length;j++)if(ok(j)){fi=j;break;}
+  if(fi<0)fi=0;
+  for(j=0;j<F.length;j++)if(j!==fi&&BACK_RE.test(F[j].trim())&&ok(j)){bi=j;break;}
+  if(bi<0)for(j=0;j<F.length;j++)if(j!==fi&&ok(j)){bi=j;break;}
+  if(bi<0)bi=F.length>1?(fi===0?1:0):0;
+  for(j=0;j<F.length;j++)if(j!==fi&&j!==bi&&EXTRA_RE.test(F[j])&&fill[j]){xi=j;break;}
+  return {fi:fi,bi:bi,xi:xi};
+}
+function apMapIdx(A,mid,refMid,idx){
+  if(idx<0||mid===refMid)return idx;
+  var nm=String(A.models[refMid].fields[idx]||'').toLowerCase(),F=A.models[mid].fields;
+  for(var j=0;j<F.length;j++)if(String(F[j]).toLowerCase()===nm)return j;
+  return idx<F.length?idx:-1;
+}
+function apInDeck(A,n){var d=A.opt.deck;return d==='all'||n.deck===d||n.deck.indexOf(d+'::')===0;}
+/* turn notes into card rows using the current choices */
+function apkgBuild(A){
+  var o=A.opt,ref=apRefModelId(A),rows=[],skipped=0,missing={},aud={},img={},out=0;
+  A.notes.forEach(function(n,i){
+    if(o.nt!=='all'&&n.mid!==o.nt){out++;return;}
+    if(!apInDeck(A,n)){out++;return;}
+    var m=A.models[n.mid];if(!m){skipped++;return;}
+    var fi=apMapIdx(A,n.mid,ref,o.fi),bi=apMapIdx(A,n.mid,ref,o.bi),xi=apMapIdx(A,n.mid,ref,o.xi);
+    if(fi<0)fi=0;if(bi<0)bi=Math.min(1,n.f.length-1);
+    var fr=n.f[fi]||'',front,back;
+    if(/\{\{c\d+::/.test(fr)){front=apText(clozeMask(fr));back=apText(clozeShow(fr));var b2=bi!==fi?apTxt(A,i,bi):'';if(b2)back+=(back?'\n':'')+b2;}
+    else{front=apTxt(A,i,fi);back=apTxt(A,i,bi);}
+    var extra=(xi>=0&&xi!==fi&&xi!==bi)?apTxt(A,i,xi):'';
+    /* which side each field's media belongs to: chosen fields first, then the deck's own templates */
+    var rev=m.hasTpl&&!m.qf[m.fields[fi]]&&!!m.qf[m.fields[bi]];
+    var r={front:front,back:back,extra:extra,af:[],ab:[],imf:[],imb:[]};
+    n.f.forEach(function(raw,j){
+      if(raw.indexOf('[sound:')<0&&!/<img/i.test(raw))return;
+      var side=j===fi?'f':(j===bi||j===xi)?'b':!m.hasTpl?'b':rev?((m.qf[m.fields[j]]||m.af[m.fields[j]])?'b':null):m.qf[m.fields[j]]?'f':m.af[m.fields[j]]?'b':null;
+      if(!side)return;
+      var refs=apMediaRefs(raw);
+      refs.s.forEach(function(x){var nm=apResolve(A,x);if(!nm){missing[x]=1;return;}var s2=o.aside==='front'?'f':o.aside==='back'?'b':side,l=s2==='f'?r.af:r.ab;if(l.indexOf(nm)<0&&r.af.indexOf(nm)<0)l.push(nm);aud[nm]=1;});
+      refs.i.forEach(function(x){var nm=apResolve(A,x);if(!nm){missing[x]=1;return;}var l=side==='f'?r.imf:r.imb;if(l.indexOf(nm)<0&&r.imf.indexOf(nm)<0)l.push(nm);img[nm]=1;});
+    });
+    if((!r.front&&!r.af.length&&!r.imf.length)||(!r.back&&!r.extra&&!r.ab.length&&!r.imb.length)){skipped++;return;}
+    if(!r.extra)delete r.extra;
+    r.key=normKey(r.front)||('~'+(r.imf[0]||r.af[0]||''));
+    rows.push(r);
+  });
+  var bytes=0;Object.keys(aud).concat(Object.keys(img)).forEach(function(nm){bytes+=(A.media[nm]&&A.media[nm].size)||0;});
+  return {rows:rows,skipped:skipped,out:out,missing:Object.keys(missing).length,nAud:Object.keys(aud).length,nImg:Object.keys(img).length,bytes:bytes};
+}
+function cardKey(c){var m=cardMedia(c);return normKey(c.front)||('~'+(m.imf[0]||m.af[0]||''));}
+function rowMedia(r){return r.af.concat(r.ab,r.imf,r.imb);}
+var apkgTok=0;
+function apkgReset(){
+  apkgTok++;
+  if(playScope==='pv')stopAudio();
+  releaseMedia('pv');
+  im.apkg=null;im.loading=false;
+}
+function apDeckLabel(n){return String(n||'').split('::').join(' › ');}
+function apDefaultName(A){
+  if(A.opt.deck!=='all')return A.opt.deck.split('::').slice(-2).join(' › ');
+  var names=A.decks.map(function(d){return d.name;}).filter(Boolean);if(!names.length)return '';
+  var parts=names[0].split('::'),k=parts.length;
+  names.forEach(function(nm){var p=nm.split('::'),i=0;while(i<k&&i<p.length&&p[i]===parts[i])i++;k=i;});
+  return (k?parts.slice(0,k):parts.slice(0,1)).slice(-2).join(' › ');
+}
+function readApkg(file){
+  apkgReset();
+  im.rows=[];im.skipped=0;im.fname=file.name;im.loading=true;
+  $('#im-fname').textContent=file.name;$('#im-err').textContent='';
+  renderImport();
+  var tok=apkgTok;
+  parseApkg(file).then(function(A){
+    if(tok!==apkgTok)return;
+    A.tc={};A.si=0;A.have={};A.fname=file.name;
+    A.used=apUsedModels(A);
+    if(!A.used.length)throw apErr('empty');
+    var dc={};A.notes.forEach(function(n){if(A.models[n.mid])dc[n.deck]=(dc[n.deck]||0)+1;});
+    A.decks=Object.keys(dc).sort().map(function(nm){return {name:nm,n:dc[nm]};});
+    var d0=apDefaults(A,A.used[0].id);
+    A.opt={nt:'all',deck:'all',fi:d0.fi,bi:d0.bi,xi:d0.xi,aside:'deck'};
+    A.built=apkgBuild(A);
+    im.apkg=A;im.loading=false;
+    var nm=apDefaultName(A)||file.name.replace(/\.[^.]+$/,'').replace(/[_]+/g,' ');
+    $('#im-name').value=nm.slice(0,60);
+    var g=guessLang(A.decks.map(function(d){return d.name;}).join(' ')+' '+A.used.map(function(u){return u.m.name;}).join(' ')+' '+file.name);
+    if(g)im.lang=g;
+    if(navigator.storage&&navigator.storage.estimate)navigator.storage.estimate().then(function(e){if(im.apkg!==A)return;A.free=Math.max(0,(e.quota||0)-(e.usage||0));renderImport();}).catch(function(){});
+    renderImport();
+  }).catch(function(e){
+    if(tok!==apkgTok)return;
+    im.loading=false;im.apkg=null;
+    $('#im-err').textContent=apErrText(e);
+    renderImport();
+  });
+}
+/* media an existing target deck already references but that isn't stored in this browser */
+function apRestorable(A,d){
+  if(!d)return [];
+  var have=A.have[d.id];if(!have)return [];
+  var out={};
+  d.cards.forEach(function(c){cardMediaNames(c).forEach(function(nm){if(A.media[nm]&&!have[nm])out[nm]=1;});});
+  return Object.keys(out);
+}
+function apkgPreviewHtml(target){
+  var A=im.apkg,o=A.opt,b=A.built,refId=apRefModelId(A),ref=A.models[refId],F=ref.fields;
+  if(target&&!A.have[target.id]){
+    A.have[target.id]={};
+    mediaKeys(target.id).then(function(keys){var h={};keys.forEach(function(k){h[String(k).slice(target.id.length+1)]=1;});A.have[target.id]=h;A.haveOk=true;if(im.apkg===A)renderImport();}).catch(function(){});
+  }
+  var seen={},fresh=[],dups=0;
+  if(target)target.cards.forEach(function(c){seen[cardKey(c)]=1;});
+  b.rows.forEach(function(r){if(seen[r.key]){dups++;return;}seen[r.key]=1;fresh.push(r);});
+  A.fresh=fresh;
+  var total=b.rows.length+b.skipped,mediaFiles={};
+  fresh.forEach(function(r){rowMedia(r).forEach(function(nm){mediaFiles[nm]=1;});});
+  var restore=apRestorable(A,target);restore.forEach(function(nm){mediaFiles[nm]=1;});
+  var needBytes=0;Object.keys(mediaFiles).forEach(function(nm){needBytes+=(A.media[nm]&&A.media[nm].size)||0;});
+  A.need={files:Object.keys(mediaFiles),bytes:needBytes,restore:restore.length};
+  var h='<div class="ap"><div class="ap-head"><div style="min-width:0;flex:1"><div class="eyebrow">Anki deck'+(A.modern?'':' · older format')+'</div>'+
+    '<b class="ap-name">'+esc(apDeckLabel(apDefaultName(A))||A.fname)+'</b>'+
+    '<div class="ap-meta">'+plural(total,'note')+(b.nAud?' · '+plural(b.nAud,'audio file')+'':'')+(b.nImg?' · '+plural(b.nImg,'picture')+'':'')+(b.bytes?' · '+fmtBytes(b.bytes):'')+'</div></div></div>';
+  var sel=function(k,lbl,opts,val){return '<div class="f-field"><label class="f-label" for="ap-'+k+'">'+lbl+'</label><select class="f-input" id="ap-'+k+'" data-chg="apOpt" data-k="'+k+'">'+opts.map(function(x){return '<option value="'+esc(x[0])+'"'+(String(x[0])===String(val)?' selected':'')+'>'+esc(x[1])+'</option>';}).join('')+'</select></div>';};
+  if(A.decks.length>1||A.used.length>1){
+    h+='<div class="f-row">';
+    if(A.decks.length>1)h+=sel('deck','Deck in this file',[['all','All decks ('+A.notes.length+')']].concat(A.decks.map(function(d){return [d.name,apDeckLabel(d.name||'(no deck)')+' ('+d.n+')'];})),o.deck);
+    if(A.used.length>1)h+=sel('nt','Note type',[['all','All note types']].concat(A.used.map(function(u){return [u.id,u.m.name+' ('+u.n+')'];})),o.nt);
+    h+='</div>';
+  }
+  var kind=F.map(function(_,j){var a=0,t=0,im2=0,c=0;for(var i=0;i<A.notes.length&&c<80;i++){if(A.notes[i].mid!==refId)continue;c++;var raw=A.notes[i].f[j]||'';if(raw.indexOf('[sound:')>=0)a++;if(/<img/i.test(raw))im2++;if(apTxt(A,i,j))t++;}return a&&!t?' · audio only':im2&&!t?' · picture only':a?' · has audio':'';});
+  var fopts=F.map(function(nm,j){return [j,nm+kind[j]];});
+  h+='<div class="f-row">'+sel('fi','Front',fopts,o.fi)+sel('bi','Back',fopts,o.bi)+'</div>';
+  h+='<div class="f-row">'+sel('xi','Extra line (optional)',[[-1,'None']].concat(fopts),o.xi)+
+    (b.nAud?sel('aside','Audio plays',[['deck','Like in Anki'],['front','On the front'],['back','After revealing the answer']],o.aside):'<div></div>')+'</div>';
+  /* sample */
+  var rs=b.rows,si=Math.max(0,Math.min(A.si,rs.length-1));A.si=si;
+  if(rs.length){
+    var r=rs[si];
+    h+='<div class="ap-sample"><div class="ap-sh"><span class="eyebrow">Preview</span><span class="sp"></span><button type="button" class="ap-nav" data-act="apNav" data-d="-1" aria-label="Previous card"'+(si<=0?' disabled':'')+'>‹</button><span class="small muted">'+(si+1)+' / '+rs.length+'</span><button type="button" class="ap-nav" data-act="apNav" data-d="1" aria-label="Next card"'+(si>=rs.length-1?' disabled':'')+'>›</button></div>'+
+      '<div class="ap-card"><div class="ap-side"><div class="ap-lbl">Front</div>'+(r.front?'<div class="ap-f">'+esc(r.front)+'</div>':'<div class="ap-none">'+(r.imf.length?'picture':'audio')+' only</div>')+imgsHtml('pv','pv',r.imf)+
+        (r.af.length?'<button type="button" class="btn btn-soft btn-sm" data-act="apPlay" data-side="f">▶ Play audio</button>':'')+'</div>'+
+      '<div class="ap-side"><div class="ap-lbl">Back</div>'+(r.back?'<div class="ap-bk">'+esc(r.back)+'</div>':'')+(r.extra?'<div class="ap-x">'+esc(r.extra)+'</div>':'')+(!r.back&&!r.extra&&!r.imb.length?'<div class="ap-none">audio only</div>':'')+imgsHtml('pv','pv',r.imb)+
+        (r.ab.length?'<button type="button" class="btn btn-soft btn-sm" data-act="apPlay" data-side="b">▶ Play audio</button>':'')+'</div></div></div>';
+  }
+  if(b.nAud||b.nImg||restore.length){
+    var warn=A.free!=null&&needBytes>A.free;
+    h+='<label class="ap-check"><input type="checkbox" id="ap-media"'+(A.noMedia?'':' checked')+' data-chg="apMedia"><span>Include audio &amp; pictures'+(needBytes?' ('+fmtBytes(needBytes)+')':'')+'<br><span class="muted">Saved in this browser on this computer, not in Backup exports.'+(warn?' <b style="color:var(--over)">This browser reports only '+fmtBytes(A.free)+' free.</b>':'')+'</span></span></label>';
+  }
+  h+='<div class="ap-sum"><b>'+fresh.length+'</b> new card'+(fresh.length===1?'':'s')+
+    (dups?'<span class="chip chip-mut">'+dups+' duplicate'+(dups===1?'':'s')+' skipped</span>':'')+
+    (b.skipped?'<span class="chip chip-warn">'+b.skipped+' empty note'+(b.skipped===1?'':'s')+' skipped</span>':'')+
+    (b.out?'<span class="chip chip-mut">'+b.out+' not in this selection</span>':'')+
+    (b.missing?'<span class="chip chip-warn">'+plural(b.missing,'media file')+' missing from the package</span>':'')+
+    (restore.length&&!A.noMedia?'<span class="chip chip-acc">'+plural(restore.length,'missing file')+' will be restored</span>':'')+'</div>';
+  return h+'</div>';
+}
+function setImBusy(on){
+  im.busy=on;
+  ['#im-go','#im-cancel','#im-deck','#im-name','#im-file'].forEach(function(s){var el=$(s);if(el)el.disabled=on;});
+  $$('#m-import select, #m-import .lp, #m-import .ap-nav, #m-import [data-act=apPlay], #im-tabs button, #ap-media').forEach(function(el){el.disabled=on;});
+  $('#im-drop').style.pointerEvents=on?'none':'';
+  $('#im-prog').hidden=!on;
+}
+function setImProg(done,total,label){
+  $('#im-prog-bar').style.width=(total?Math.round(done/total*100):100)+'%';
+  $('#im-prog-txt').textContent=label;
+}
+function doApkgImport(){
+  var A=im.apkg;if(!A||im.busy)return;
+  var v=$('#im-deck').value,isNew=v==='__new',d=isNew?null:deckById(v);
+  if(!isNew&&!d)return;
+  if(isNew){var name=$('#im-name').value.trim()||apDefaultName(A)||(L(im.lang).name+' deck');d={id:uid('d'),name:name.slice(0,60),lang:im.lang,cards:[]};}
+  var rows=A.fresh||[],withMedia=!A.noMedia&&!!(A.need&&A.need.files.length);
+  var names=withMedia?A.need.files.slice():[];
+  if(!rows.length&&!names.length)return;
+  $('#im-err').textContent='';
+  setImBusy(true);setImProg(0,names.length||1,names.length?'Saving audio & pictures… 0 / '+names.length.toLocaleString():'Saving cards…');
+  var deckId=d.id,written=[],had={},tok=apkgTok;
+  var step=function(i){
+    if(tok!==apkgTok)return Promise.reject(apErr('msg','Import cancelled.'));
+    if(i>=names.length)return Promise.resolve();
+    var chunk=names.slice(i,i+40);
+    return Promise.all(chunk.map(function(nm){return apkgBlob(A,nm).then(function(b){return b?[deckId+'/'+nm,b]:null;});})).then(function(recs){
+      recs=recs.filter(Boolean);
+      return mediaPutMany(recs).then(function(){recs.forEach(function(r){if(!had[r[0]])written.push(r[0]);});});
+    }).then(function(){
+      var n=Math.min(names.length,i+chunk.length);
+      setImProg(n,names.length,'Saving audio & pictures… '+n.toLocaleString()+' / '+names.length.toLocaleString());
+      return new Promise(function(res){setTimeout(res,0);});
+    }).then(function(){return step(i+chunk.length);});
+  };
+  var rollback=function(){return mediaDelKeys(written).catch(function(){});};
+  (names.length?(isNew?Promise.resolve([]):mediaKeys(deckId)).then(function(keys){keys.forEach(function(k){had[k]=1;});}):Promise.resolve())
+  .then(function(){return step(0);})
+  .then(function(){
+    if(names.length&&navigator.storage&&navigator.storage.persist)navigator.storage.persist().catch(function(){});
+    var before=d.cards.length;
+    var cards=rows.map(function(r){
+      var c=newCard(r.front,r.back,r.extra);
+      if(withMedia){if(r.af.length)c.audioFront=r.af;if(r.ab.length)c.audioBack=r.ab;if(r.imf.length)c.imgFront=r.imf;if(r.imb.length)c.imgBack=r.imb;}
+      return c;
+    });
+    Array.prototype.push.apply(d.cards,cards);
+    if(isNew)C.decks.push(d);
+    return (names.length?mediaStats(deckId):Promise.resolve(null)).then(function(st){
+      var oldMedia=d.media;
+      if(st&&st.n)d.media=st;
+      clearTimeout(saveT);saveT=null;
+      var raw=JSON.stringify(C);
+      if(!lsSet(LC_KEY,raw)){
+        d.cards.length=before;if(oldMedia)d.media=oldMedia;else delete d.media;
+        if(isNew)C.decks=C.decks.filter(function(x){return x!==d;});
+        return rollback().then(function(){throw apErr('msg','Not enough room in this browser’s card storage for '+plural(cards.length,'card')+'. Nothing was imported. Try importing one sub-deck at a time.');});
+      }
+      lastRaw=raw;orphCache=null;delete deckMediaChk[deckId];
+      setImBusy(false);
+      selDeck=d.id;sess=null;closeModal('m-import');setTab('flash');
+      var mm=withMedia&&names.length?' with '+plural(names.length,'media file'):'';
+      toast(cards.length?'Imported '+plural(cards.length,'card')+mm+' into “'+d.name+'”':'Restored '+plural(names.length,'media file')+' for “'+d.name+'”');
+    });
+  }).catch(function(e){
+    rollback().then(function(){
+      if(tok!==apkgTok)return;
+      setImBusy(false);
+      var msg=isQuota(e)?'Your browser ran out of space for this deck’s audio (about '+fmtBytes(A.need.bytes)+'). Nothing was imported. Free up disk space or delete another audio deck, or untick “Include audio & pictures” to import just the text.':
+        (e&&e.apkg)?apErrText(e):(e&&/noidb|blocked|idb/i.test(String(e.message||'')))?'This browser won’t let the page store audio (a private window?). Untick “Include audio & pictures” to import just the text.':'Import failed: '+String((e&&e.message)||e);
+      $('#im-err').textContent=msg;
+    });
+  });
 }
 
 /* mini prompt (new deck / add link) */
@@ -2096,7 +2759,7 @@ var ACT={
     LP.hours[e.lang]=Math.max(0,(LP.hours[e.lang]||0)-(+e.mins||0)/60);LP.log=LP.log.filter(function(x){return x!==e;});saveLP();renderLog();
   },
   studyFor:function(el,e){e.stopPropagation();studyForActive();},
-  selDeck:function(el){selDeck=el.getAttribute('data-id');editCardId=null;renaming=false;browseQ='';browseLimit=60;renderFlash();},
+  selDeck:function(el){selDeck=el.getAttribute('data-id');editCardId=null;renaming=false;browseQ='';browseLimit=60;if(playScope==='b')stopAudio();releaseMedia('b');renderFlash();},
   newDeck:function(){openMini('deck');},
   openImport:function(el){openImport(el.getAttribute('data-m')||'file');},
   imMode:function(el){im.mode=el.getAttribute('data-m');renderImport();if(im.mode==='paste')$('#im-text').focus();},
@@ -2107,12 +2770,42 @@ var ACT={
   study:function(){startSession(selDeck);},
   studyAhead:function(){startSession(selDeck,true);},
   flip:function(el,e){if(e.target.closest('.say'))return;flip();},
+  playAudio:function(el,e){e.stopPropagation();replayAudio();},
+  toggleAuto:function(){var on=!autoOn();lsSet('langPortalAutoplay',on?'1':'0');if(!on&&playScope==='s')stopAudio();renderFlash();},
+  playCard:function(el){
+    var d=deckById(selDeck),id=el.getAttribute('data-id'),c=d&&d.cards.filter(function(x){return x.id===id;})[0];if(!c)return;
+    var cm=cardMedia(c);releaseMedia('b');
+    playMedia('b',d.id,cm.af.concat(cm.ab),function(){toast('This card’s audio isn’t stored in this browser');});
+  },
+  apNav:function(el){
+    var A=im.apkg;if(!A)return;var dir=+el.getAttribute('data-d');
+    A.si=Math.max(0,Math.min(A.built.rows.length-1,A.si+dir));
+    if(playScope==='pv')stopAudio();releaseMedia('pv');renderImport();
+    var b=$('#im-prev .ap-nav[data-d="'+dir+'"]');if(b&&!b.disabled)b.focus();else{b=$('#im-prev .ap-nav:not(:disabled)');if(b)b.focus();}
+  },
+  apPlay:function(el){
+    var A=im.apkg,r=A&&A.built.rows[A.si];if(!r)return;
+    playMedia('pv','pv',el.getAttribute('data-side')==='f'?r.af:r.ab);
+  },
+  cleanOrph:function(){
+    var o=orphCache;if(!o||!o.ids.length||im.busy)return;
+    var ids=o.ids.filter(function(id){return !deckById(id);});
+    Promise.all(ids.map(mediaDelDeck)).then(function(){orphCache=null;toast('Freed '+fmtBytes(o.bytes)+' of unused audio');renderFlash();}).catch(function(){toast('Couldn’t clean up the audio storage');});
+  },
   say:function(el,e){e.stopPropagation();var c=curCard(),d=deckById(sess&&sess.deckId);if(c&&d)speak(c.front,d.lang);},
   grade:function(el){grade(+el.getAttribute('data-g'));},
   endSess:function(){endSession();},
   rename:function(){renaming=true;renderFlash();},
   renameSave:function(){var d=deckById(selDeck),v=$('#dv-rename')?$('#dv-rename').value.trim():'';if(d&&v){d.name=v.slice(0,60);saveC();}renaming=false;renderFlash();},
-  delDeck:function(){var d=deckById(selDeck);if(!d)return;if(!confirm('Delete the deck “'+d.name+'” and its '+plural(d.cards.length,'card')+'? This can’t be undone.'))return;C.decks=C.decks.filter(function(x){return x!==d;});selDeck=null;saveC();renderView();},
+  delDeck:function(){
+    var d=deckById(selDeck);if(!d)return;var hasMedia=!!(d.media&&d.media.n);
+    if(!confirm('Delete the deck “'+d.name+'” and its '+plural(d.cards.length,'card')+(hasMedia?' (and its audio and pictures)':'')+'? This can’t be undone.'))return;
+    C.decks=C.decks.filter(function(x){return x!==d;});selDeck=null;saveC();
+    stopAudio();releaseMedia('b');delete deckMediaChk[d.id];orphCache=null;
+    /* always sweep: a deck can have files even if its media summary is missing */
+    mediaDbExists(hasMedia).then(function(ok){return ok?mediaDelDeck(d.id):null;}).then(function(){orphCache=null;if(tab==='flash'&&!sess)checkOrphans();}).catch(function(){});
+    renderView();
+  },
   addCard:function(){
     var d=deckById(selDeck);if(!d)return;var f=$('#ac-front').value.trim(),b=$('#ac-back').value.trim(),x=$('#ac-extra').value.trim();
     if(!f||!b){toast('A card needs a front and a back');($('#ac-front').value.trim()?$('#ac-back'):$('#ac-front')).focus();return;}
@@ -2124,10 +2817,24 @@ var ACT={
   saveCard:function(){
     var d=deckById(selDeck),c=d&&d.cards.filter(function(x){return x.id===editCardId;})[0];if(!c)return;
     var f=$('#ec-front').value.trim(),b=$('#ec-back').value.trim(),x=$('#ec-extra').value.trim();
-    if(!f||!b){toast('A card needs a front and a back');return;}
+    var cmE=cardMedia(c);
+    if((!f&&!cmE.af.length&&!cmE.imf.length)||(!b&&!cmE.ab.length&&!cmE.imb.length)){toast('A card needs a front and a back');return;}
     c.front=f;c.back=b;if(x)c.extra=x;else delete c.extra;editCardId=null;saveC();renderFlash();
   },
-  delCard:function(el){var d=deckById(selDeck);if(!d)return;var id=el.getAttribute('data-id'),c=d.cards.filter(function(x){return x.id===id;})[0];if(!c||!confirm('Delete “'+c.front+'”?'))return;d.cards=d.cards.filter(function(x){return x!==c;});saveC();renderFlash();renderBadgeOnly();},
+  delCard:function(el){
+    var d=deckById(selDeck);if(!d)return;var id=el.getAttribute('data-id'),c=d.cards.filter(function(x){return x.id===id;})[0];
+    if(!c||!confirm('Delete “'+(c.front||c.back)+'”?'))return;
+    d.cards=d.cards.filter(function(x){return x!==c;});saveC();renderFlash();renderBadgeOnly();
+    /* drop this card's files unless another card in the deck still uses them */
+    var mine=cardMediaNames(c);if(!mine.length)return;
+    var used={};d.cards.forEach(function(x){cardMediaNames(x).forEach(function(n){used[n]=1;});});
+    var gone=mine.filter(function(n){return !used[n];}).map(function(n){return d.id+'/'+n;});
+    if(!gone.length)return;
+    mediaDelKeys(gone).then(function(){return mediaStats(d.id);}).then(function(st){
+      if(!deckById(d.id))return;
+      if(st.n)d.media=st;else delete d.media;deckMediaChk[d.id]=st;saveC();if(tab==='flash'&&!sess&&selDeck===d.id)renderFlash();
+    }).catch(function(){});
+  },
   moreCards:function(){browseLimit+=200;renderFlash();},
   libLang:function(el){libLang=el.getAttribute('data-lang');renderLibrary();},
   libCat:function(el){lib[libLang].cat=el.getAttribute('data-c');renderLibrary();},
@@ -2171,6 +2878,17 @@ var CHG={
     var r=logChange(c.ch,c.date,function(d){d[f]=n;});afterLog(c.ch,c.date,c.ctx,r);
   },
   imFile:function(el){readImportFile(el.files&&el.files[0]);},
+  apOpt:function(el){
+    var A=im.apkg;if(!A)return;var k=el.getAttribute('data-k'),v=el.value;
+    if(k==='fi'||k==='bi'||k==='xi')A.opt[k]=parseInt(v,10);
+    else A.opt[k]=v;
+    if(k==='nt'){var dd=apDefaults(A,apRefModelId(A));A.opt.fi=dd.fi;A.opt.bi=dd.bi;A.opt.xi=dd.xi;}
+    if(k==='deck'||k==='nt'){var nm=apDefaultName(A);if(nm)$('#im-name').value=nm.slice(0,60);}
+    A.built=apkgBuild(A);A.si=0;
+    if(playScope==='pv')stopAudio();releaseMedia('pv');
+    renderImport();var f=$('#ap-'+k);if(f)f.focus();
+  },
+  apMedia:function(el){if(im.apkg){im.apkg.noMedia=!el.checked;renderImport();var f=$('#ap-media');if(f)f.focus();}},
   imDeck:function(){renderImport();},
   deckLang:function(el){var d=deckById(selDeck);if(d){d.lang=el.value;saveC();renderFlash();}}
 };
@@ -2213,6 +2931,7 @@ document.addEventListener('keydown',function(e){
   if(tab==='flash'&&sess&&!sess.finished){
     if(e.key===' '||(e.key==='Enter'&&tg.tagName!=='BUTTON')){e.preventDefault();if(!sess.flipped)flip();else grade(3);return;}
     if(sess.flipped&&/^[1-4]$/.test(e.key)){e.preventDefault();grade(+e.key);return;}
+    if(e.key==='r'||e.key==='R'){if(replayAudio())e.preventDefault();return;}
   }
 });
 document.addEventListener('mouseover',function(e){var sq=e.target.closest&&e.target.closest('#grid .sq');if(sq)showTip(sq);else hideTip();});
@@ -2235,7 +2954,8 @@ function resync(){
   if(raw!==lastRaw){loadC();changed=true;}
   if(TODAY()!==renderedDay){renderedDay=TODAY();changed=true;}
   if(!changed)return;
-  if(sess&&!deckById(sess.deckId))sess=null;
+  orphCache=null;
+  if(sess&&!deckById(sess.deckId)){sess=null;stopAudio();}
   if(!$('.modal-bg.open')&&!(document.activeElement&&/^(INPUT|TEXTAREA)$/.test(document.activeElement.tagName)))renderView();
 }
 window.addEventListener('storage',function(e){if(e.key===LP_KEY){loadLP();renderView();}else if(e.key===LC_KEY||e.key===null)resync();});
