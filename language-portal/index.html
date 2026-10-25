@@ -681,13 +681,6 @@ var BUILTIN_LINKS=[
   {name:'Shared decks',url:'https://ankiweb.net/shared/decks',av:'A',bg:'#a1b0d6'},
   {name:'Duolingo',url:'https://www.duolingo.com/learn',av:'D',bg:'#86ae69'}
 ];
-var SAMPLE_PT=[
-  ['olá','hello','Olá! Tudo bem?'],['obrigado / obrigada','thank you','Muito obrigado!'],['por favor','please',''],
-  ['sim','yes',''],['não','no',''],['bom dia','good morning',''],['boa noite','good evening / good night',''],
-  ['tudo bem?','how are you? / all good?','— Tudo bem? — Tudo ótimo!'],['desculpa','sorry',''],['água','water','Um copo de água, por favor.'],
-  ['casa','house, home','Vou para casa.'],['amigo / amiga','friend',''],['comer','to eat','Vamos comer?'],
-  ['falar','to speak','Você fala português?'],['hoje','today',''],['amanhã','tomorrow','Até amanhã!'],['onde','where','Onde fica o banheiro?']
-];
 
 /* ───────── utils ───────── */
 function $(s,r){return (r||document).querySelector(s);}
@@ -941,7 +934,7 @@ function switcherHtml(run,ch){
   return h+'</div>';
 }
 function welcomeHtml(){
-  var demo='';for(var i=0;i<75;i++)demo+='<i'+(i<23&&i!==9&&i!==16?' class="d"':'')+'></i>';
+  var demo='';for(var i=0;i<75;i++)demo+='<i></i>';
   return '<div class="card" style="padding:32px 34px"><div class="welcome"><div>'+
     '<div class="eyebrow">A 75-day language challenge</div>'+
     '<div class="w-big">Make the work <em>the log.</em></div>'+
@@ -1214,7 +1207,7 @@ function renderFlash(){
     h+='<button type="button" class="deck'+(dk.id===selDeck?' on':'')+'" data-act="selDeck" data-id="'+esc(dk.id)+'"><div class="dn">'+L(dk.lang).flag+'<span>'+esc(dk.name)+'</span></div><div class="dm">'+(s.due?'<b>'+s.due+' due</b> · ':'')+s.nw+' new · '+plural(s.total,'card')+'</div>'+
       '<div class="segbar"><i class="s-l" style="width:'+(s.learn/tot*100)+'%"></i><i class="s-m" style="width:'+(s.mast/tot*100)+'%"></i></div></button>';
   });
-  h+=C.decks.some(function(x){return x.name==='Portuguese starter';})?'</div>':'<div style="text-align:center;padding:6px 0"><button type="button" class="linkish" data-act="sample">Try a sample deck (17 Portuguese words)</button></div></div>';
+  h+='</div>';
   h+='<div>'+deckViewHtml(d)+'</div></div>';
   root.innerHTML=h;
   if(renaming){var ri=$('#dv-rename');if(ri){ri.focus();ri.select();}}
@@ -1231,7 +1224,7 @@ function deckViewHtml(d){
   if(s.study)h+='<button type="button" class="btn btn-accent btn-lg" data-act="study">Study '+s.study+' card'+(s.study===1?'':'s')+'</button><span class="muted small">'+(s.due?s.due+' review'+(s.due===1?'':'s'):'')+(s.due&&Math.min(s.nw,NEW_PER)?' + ':'')+(Math.min(s.nw,NEW_PER)?Math.min(s.nw,NEW_PER)+' new':'')+' · keys <span class="kbd">Space</span> <span class="kbd">1</span>–<span class="kbd">4</span></span>';
   else if(s.total)h+='<span class="chip chip-ok">All caught up</span><button type="button" class="btn btn-ghost btn-sm" data-act="studyAhead">Practice 10 anyway</button>';
   h+='</div>';
-  h+='<span class="f-label">Add a card</span><div class="addcard"><input class="f-input" id="ac-front" data-key="addKey" placeholder="Front (e.g. saudade)" maxlength="300"><input class="f-input" id="ac-back" data-key="addKey" placeholder="Back (meaning)" maxlength="300"><input class="f-input" id="ac-extra" data-key="addKey" placeholder="Example (optional)" maxlength="400"><button type="button" class="btn btn-dark" data-act="addCard">Add</button></div>';
+  h+='<span class="f-label">Add a card</span><div class="addcard"><input class="f-input" id="ac-front" data-key="addKey" placeholder="Front" maxlength="300"><input class="f-input" id="ac-back" data-key="addKey" placeholder="Back (meaning)" maxlength="300"><input class="f-input" id="ac-extra" data-key="addKey" placeholder="Example (optional)" maxlength="400"><button type="button" class="btn btn-dark" data-act="addCard">Add</button></div>';
   var q=browseQ.trim().toLowerCase(),list=d.cards.filter(function(c){return !q||(c.front+' '+c.back+' '+(c.extra||'')).toLowerCase().indexOf(q)>=0;});
   h+='<div class="browse-h"><span class="f-label" style="margin:0">Cards ('+list.length+')</span><input class="f-input" id="browse-q" data-inp="browse" placeholder="Search cards…" value="'+esc(browseQ)+'" aria-label="Search cards"></div>';
   if(!d.cards.length)h+='<div class="muted small" style="padding:10px 2px">No cards yet. Add one above or import a list.</div>';
@@ -1260,7 +1253,6 @@ function flashEmptyHtml(){
       '<button type="button" class="fe-opt" data-act="openImport" data-m="file"><span class="ic">⬆</span><span><b>Import a file</b><small>Anki .txt, .tsv or .csv</small></span></button>'+
       '<button type="button" class="fe-opt" data-act="openImport" data-m="paste"><span class="ic">✎</span><span><b>Paste a list</b><small>word – meaning, one per line</small></span></button>'+
       '<button type="button" class="fe-opt" data-act="newDeck"><span class="ic">+</span><span><b>Start an empty deck</b><small>Add cards one at a time</small></span></button>'+
-      '<button type="button" class="fe-opt" data-act="sample"><span class="ic">🇧🇷</span><span><b>Try a sample deck</b><small>17 everyday Portuguese words</small></span></button>'+
     '</div></div></section>';
 }
 
@@ -1331,12 +1323,6 @@ function addCards(d,rows){
   var added=0;
   rows.forEach(function(r){var k=normKey(r.front);if(!k||seen[k])return;seen[k]=1;d.cards.push(newCard(r.front,r.back,r.extra));added++;});
   return added;
-}
-function addSample(){
-  var d=C.decks.filter(function(x){return x.name==='Portuguese starter';})[0];
-  if(!d){d={id:uid('d'),name:'Portuguese starter',lang:'pt',cards:[]};C.decks.push(d);}
-  var n=addCards(d,SAMPLE_PT.map(function(r){return {front:r[0],back:r[1],extra:r[2]};}));
-  selDeck=d.id;saveC();renderFlash();renderBadgeOnly();toast(n?'Added '+plural(n,'card')+' to “Portuguese starter”':'Sample deck is already here');
 }
 
 /* ───────── import ───────── */
@@ -1643,7 +1629,6 @@ var ACT={
   studyFor:function(el,e){e.stopPropagation();studyForActive();},
   selDeck:function(el){selDeck=el.getAttribute('data-id');editCardId=null;renaming=false;browseQ='';browseLimit=60;renderFlash();},
   newDeck:function(){openMini('deck');},
-  sample:function(){addSample();},
   openImport:function(el){openImport(el.getAttribute('data-m')||'file');},
   imMode:function(el){im.mode=el.getAttribute('data-m');renderImport();if(im.mode==='paste')$('#im-text').focus();},
   imLang:function(el){im.lang=el.getAttribute('data-lang');renderImport();},
