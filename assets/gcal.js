@@ -88,7 +88,7 @@
     var s=allDay?new Date(ev.start.date+'T00:00:00'):new Date(ev.start.dateTime);
     var e=allDay?new Date(ev.end.date+'T00:00:00'):new Date(ev.end.dateTime);
     return {id:ev.id,calId:cal.id,source:'google',title:ev.summary||'(no title)',date:dk(s),endDate:dk(allDay?new Date(e.getTime()-86400000):e),
-      time:allDay?'':hm(s),endTime:allDay?'':hm(e),allDay:allDay,location:ev.location||'',link:ev.htmlLink||'',
+      time:allDay?'':hm(s),endTime:allDay?'':hm(e),allDay:allDay,location:ev.location||'',link:ev.htmlLink||'',recurring:!!ev.recurringEventId,
       color:cal.backgroundColor||'#8e71d3',calName:cal.summary||''};
   }
 
@@ -118,19 +118,37 @@
     });
   }
   /* create: {title, date:'YYYY-MM-DD', time:'HH:MM'|'' , endTime?, location?} */
-  function create(e,calId){
-    var body={summary:e.title,location:e.location||undefined};
+  /* start/end for {date:'YYYY-MM-DD', time:'HH:MM'|'', endTime?, endDate?} — no time means all day */
+  function when(e){
+    var p=e.date.split('-');
     if(e.time){
-      var p=e.date.split('-'),t=e.time.split(':');
-      var s=new Date(+p[0],+p[1]-1,+p[2],+t[0],+t[1]);
+      var t=e.time.split(':'),s=new Date(+p[0],+p[1]-1,+p[2],+t[0],+t[1]);
       var end=e.endTime?(function(){var q=e.endTime.split(':');return new Date(+p[0],+p[1]-1,+p[2],+q[0],+q[1]);})():new Date(s.getTime()+3600000);
+      if(end<=s)end=new Date(s.getTime()+3600000);
       var tz=Intl.DateTimeFormat().resolvedOptions().timeZone;
-      body.start={dateTime:s.toISOString(),timeZone:tz};body.end={dateTime:end.toISOString(),timeZone:tz};
-    }else{
-      var d=new Date(e.date+'T00:00:00');d.setDate(d.getDate()+1);
-      body.start={date:e.date};body.end={date:dk(d)};
+      return {start:{dateTime:s.toISOString(),timeZone:tz},end:{dateTime:end.toISOString(),timeZone:tz}};
     }
+    var last=new Date((e.endDate&&e.endDate>e.date?e.endDate:e.date)+'T00:00:00');last.setDate(last.getDate()+1);
+    return {start:{date:e.date},end:{date:dk(last)}};
+  }
+  /* create: {title, date:'YYYY-MM-DD', time:'HH:MM'|'' , endTime?, location?} */
+  function create(e,calId){
+    var w=when(e),body={summary:e.title,location:e.location||undefined,start:w.start,end:w.end};
     return api('/calendars/'+encodeURIComponent(calId||cfg.defaultCal||'primary')+'/events',{method:'POST',body:body});
+  }
+  /* edit an event: title, date/times and, if toCalId differs, move it to that calendar first.
+     Reads the event and writes it back whole so switching all-day ⇄ timed works cleanly. */
+  function update(calId,id,e,toCalId){
+    var target=toCalId&&toCalId!==calId?toCalId:calId;
+    var moved=target!==calId
+      ?api('/calendars/'+encodeURIComponent(calId)+'/events/'+encodeURIComponent(id)+'/move?destination='+encodeURIComponent(target),{method:'POST'})
+      :Promise.resolve();
+    var path='/calendars/'+encodeURIComponent(target)+'/events/'+encodeURIComponent(id);
+    return moved.then(function(){return api(path);}).then(function(ev){
+      var w=when(e);ev.summary=e.title;ev.start=w.start;ev.end=w.end;
+      if(e.location!==undefined)ev.location=e.location||undefined;
+      return api(path,{method:'PUT',body:ev});
+    });
   }
   function remove(calId,id){
     return api('/calendars/'+encodeURIComponent(calId)+'/events/'+encodeURIComponent(id),{method:'DELETE'}).then(function(r){
@@ -150,7 +168,7 @@
     cached:function(){return lsGet(CACHE_KEY,null);},
     /* writable calendars from the last fetch: [{id,summary,backgroundColor,primary}] */
     calList:function(){return (cfg.calList||[]).slice();},
-    signIn:signIn, calendars:calendars, events:events, create:create, remove:remove,
+    signIn:signIn, calendars:calendars, events:events, create:create, update:update, remove:remove,
     origin:location.origin
   };
   if(cfg.clientId)loadGIS().then(initClient).catch(function(){});
