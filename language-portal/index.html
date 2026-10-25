@@ -189,6 +189,22 @@ a{color:inherit;}
 .trow .fl{font-size:17px;}
 .trow .tn{flex:1;min-width:0;font-weight:650;font-size:14px;}
 .trow .tn small{display:block;color:var(--muted);font-weight:500;font-size:11px;}
+.tm-go{display:inline-flex;align-items:center;gap:4px;color:var(--accent-deep);border-color:var(--accent-line);}
+.tm-go svg{width:9px;height:9px;fill:currentColor;}
+.tm-pill{position:fixed;right:22px;bottom:22px;z-index:1200;display:flex;align-items:center;gap:10px;background:var(--ink);color:#fffdf9;border-radius:16px;padding:9px 10px 9px 14px;box-shadow:0 14px 34px rgba(36,31,23,.3);font-size:13px;max-width:calc(100vw - 32px);}
+.tm-pill[hidden]{display:none;}
+body.tm-on{padding-bottom:84px;}
+.tm-pill .dot{width:8px;height:8px;border-radius:50%;background:#7ed4a0;box-shadow:0 0 0 4px rgba(126,212,160,.2);animation:tmPulse 1.6s ease-in-out infinite;flex-shrink:0;}
+.tm-pill.paused .dot{background:#b9b1a4;box-shadow:none;animation:none;}
+.tm-pill .nm{font-weight:650;white-space:nowrap;}
+.tm-pill .nm small{display:block;font-size:10.5px;font-weight:500;opacity:.65;}
+.tm-pill .clk{font-family:var(--b2-serif);font-size:20px;font-weight:600;font-variant-numeric:tabular-nums;letter-spacing:.2px;min-width:62px;text-align:right;}
+.tm-pill button{height:30px;border-radius:9px;border:1px solid rgba(255,253,249,.22);background:transparent;color:#fffdf9;font-size:12px;font-weight:650;padding:0 10px;cursor:pointer;white-space:nowrap;}
+.tm-pill button:hover{background:rgba(255,253,249,.1);}
+.tm-pill button.pri{background:#fffdf9;color:var(--ink);border-color:#fffdf9;}
+.tm-pill input{width:58px;height:30px;border-radius:9px;border:1px solid rgba(255,253,249,.3);background:rgba(255,253,249,.08);color:#fffdf9;font:600 14px var(--b2-sans,inherit);text-align:center;}
+@keyframes tmPulse{50%{box-shadow:0 0 0 7px rgba(126,212,160,0);}}
+@media (max-width:640px){.tm-pill{left:16px;right:16px;bottom:16px;flex-wrap:wrap;}.tm-pill .nm{flex:1;}.trow{flex-wrap:wrap;}.trow .qbs{order:3;width:100%;padding-left:27px;}}
 .trow .hrs{font-family:var(--b2-serif);font-size:18px;font-weight:600;letter-spacing:-.2px;white-space:nowrap;}
 .qbs{display:flex;gap:4px;}
 .qb{font-size:11px;font-weight:700;height:26px;padding:0 8px;border-radius:8px;border:1px solid var(--line);background:var(--raised);color:var(--muted);transition:all .15s;}
@@ -822,6 +838,7 @@ details.help a{color:var(--accent-deep);font-weight:650;}
 
 <div class="tip" id="tip" role="tooltip"></div>
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
+<div class="tm-pill" id="tm-pill" role="region" aria-label="Study timer" hidden></div>
 <audio id="fc-audio" preload="auto" hidden></audio>
 
 <script>
@@ -833,9 +850,12 @@ details.help a{color:var(--accent-deep);font-weight:650;}
      langChallenge1 {version, active, challenges[], decks[], links[]}
        challenge.tasks[]: {id, label, url?, desc?, auto?}
          auto (optional): {kind:'minutes'|'pages', min} · {kind:'log'} · {kind:'cards', min}
+                          · {kind:'deck'} = today's flashcards finished (day.deckDone)
                           (false = explicitly manual, for legacy "cards" ids)
        challenge.days["YYYY-MM-DD"]: {done[], note?, cards?,
-                                      minutes?, pages?, resources?:[{name,url}], log?}
+                                      minutes?, pages?, resources?:[{name,url}], log?,
+                                      deckDone?, sessions?:[{at:'HH:MM', min}] (study timer)}
+     langTimer1 {lang, start, acc, began}  the running study timer (per browser)
        deck: {id, name, lang, cards[], media?:{n, bytes}}
          card: {id, front, back, extra?, box, due, reps, lapses,
                 audioFront?[], audioBack?[], imgFront?[], imgBack?[]}   (optional media file names;
@@ -868,7 +888,8 @@ var PRESETS=[
   {id:'listen',label:'20 min listening (podcast/YouTube)',url:''},
   {id:'speak',label:'10 min speaking or shadowing',url:''},
   {id:'read',label:'Read 1 page / article',url:''},
-  {id:'cards',label:'Study 20 flashcards here',url:'',auto:{kind:'cards',min:20}}
+  {id:'cards',label:'Study 20 flashcards here',url:'',auto:{kind:'cards',min:20}},
+  {id:'deck',label:'Finish today’s flashcards',url:'',auto:{kind:'deck'}}
 ];
 var DEFAULT_TASKS={pt:['anki','duo','listen','speak','cards'],es:['anki','listen','speak','read','cards']};
 /* 75 Fluent: the rules as the user gave them. Only these five; add more in the editor. */
@@ -877,14 +898,16 @@ var FLUENT=[
   {id:'fl_read',label:'Read 5 Pages',desc:'Read at least 5 pages in a book written in your target language.',auto:{kind:'pages',min:5}},
   {id:'fl_track',label:'Track Your Study',desc:'Log what you studied, resources used, and key notes from your session.',auto:{kind:'log'}},
   {id:'fl_speak',label:'5 Minutes of Speaking',desc:'Practice speaking for at least 5 minutes every day.'},
-  {id:'fl_episode',label:'1 Podcast/Video/Episode',desc:'Watch or listen to one episode of content in your target language.'}
+  {id:'fl_episode',label:'1 Podcast/Video/Episode',desc:'Watch or listen to one episode of content in your target language.'},
+  {id:'fl_anki',label:'Daily Anki Cards',desc:'Finish today’s flashcards: your new cards plus any reviews due.',auto:{kind:'deck'}}
 ];
 var AUTO_KINDS=[
   ['','Tick by hand'],
   ['minutes','Minutes logged ≥'],
   ['pages','Pages logged ≥'],
   ['log','Study log filled in'],
-  ['cards','Flashcards here ≥']
+  ['cards','Flashcards here ≥'],
+  ['deck','Today’s flashcards finished']
 ];
 var AUTO_DEF={minutes:60,pages:5,cards:20};
 var BUILTIN_LINKS=[
@@ -972,7 +995,7 @@ function labelNum(label){var m=/(\d+)/.exec(label||'');var n=m?parseInt(m[1],10)
 function normAuto(a){
   if(!a||typeof a!=='object')return null;
   var k=String(a.kind||'');
-  if(k==='log')return {kind:'log'};
+  if(k==='log'||k==='deck')return {kind:k};
   if(k==='minutes'||k==='pages'||k==='cards'){var n=parseInt(a.min,10);return {kind:k,min:n>0?n:AUTO_DEF[k]};}
   return null;
 }
@@ -1011,6 +1034,26 @@ function normalize(o){
   fixActive(c);
   return c;
 }
+/* one-time: running 75 Fluent challenges get the "Daily Anki Cards" rule.
+   Days already complete stay complete; today ticks if you're already caught up. */
+function addAnkiRule(){
+  var t=TODAY(),changed=false;
+  C.challenges.forEach(function(ch){
+    if(ch.endedAt||ch.ankiRule)return;
+    if(!ch.tasks.some(function(x){return x.id==='fl_study';}))return;
+    ch.ankiRule=1;changed=true;
+    if(ch.tasks.some(function(x){return x.auto&&(x.auto.kind==='deck'||x.auto.kind==='cards');}))return;
+    var ids=ch.tasks.map(function(x){return x.id;});
+    Object.keys(ch.days).forEach(function(k){
+      var d=ch.days[k];
+      if(k<t&&ids.length&&ids.every(function(id){return d.done.indexOf(id)>=0;}))d.done.push('fl_anki');
+    });
+    ch.tasks.push(normTask(FLUENT.filter(function(x){return x.id==='fl_anki';})[0]));
+    var td=ch.days[t];
+    if(td&&+td.cards&&C.decks.length&&!langLeft(ch.lang)){td.deckDone=1;if(td.done.indexOf('fl_anki')<0)td.done.push('fl_anki');}
+  });
+  if(changed)saveC();
+}
 function fixActive(c){
   c=c||C;
   var ok=c.challenges.some(function(x){return x.id===c.active&&!x.endedAt;});
@@ -1043,6 +1086,7 @@ function dayInfo(ch,date){
 }
 function dayRes(d){return (d&&Array.isArray(d.resources)?d.resources:[]).filter(function(r){return r&&(r.name||r.url);});}
 function isCardsTask(t){return !!(t&&t.auto&&t.auto.kind==='cards');}
+function isDeckTask(t){return !!(t&&t.auto&&t.auto.kind==='deck');}
 function cardsTask(ch){for(var i=0;i<ch.tasks.length;i++)if(isCardsTask(ch.tasks[i]))return ch.tasks[i];return null;}
 function cardsTarget(t){return t&&t.auto&&t.auto.min>0?t.auto.min:labelNum(t&&t.label);}
 function inRange(ch,date){return date>=ch.start&&date<=endDate(ch);}
@@ -1053,12 +1097,14 @@ function autoMet(task,d){
   if(a.kind==='pages')return (+d.pages||0)>=a.min;
   if(a.kind==='cards')return (+d.cards||0)>=a.min;
   if(a.kind==='log')return !!((typeof d.log==='string'&&d.log.trim())||dayRes(d).length);
+  if(a.kind==='deck')return !!d.deckDone;
   return false;
 }
 function cleanDay(d){
   ['minutes','pages','cards'].forEach(function(k){if(k in d){var n=Math.max(0,Math.round(+d[k]||0));if(n)d[k]=n;else delete d[k];}});
   if('resources' in d){var r=dayRes(d).map(function(x){var o={name:String(x.name||hostOf(x.url||'')).slice(0,120)};o.url=x.url?String(x.url):'';return o;});if(r.length)d.resources=r;else delete d.resources;}
   if('log' in d&&!(typeof d.log==='string'&&d.log.trim()))delete d.log;
+  if('deckDone' in d&&!d.deckDone)delete d.deckDone;
 }
 /* Change a day's log, then tick/untick auto rules whose condition just flipped.
    Only transitions act, so a manual untick sticks until the log crosses the line again. */
@@ -1112,6 +1158,9 @@ function deckStats(d){
 /* new cards per day, like Anki: a card counts toward today the first time you study it */
 function newLimit(d){var n=d.newPerDay;return n==null||n===''||isNaN(+n)?NEW_PER:Math.max(0,Math.round(+n));}
 function newLeft(d){var t=TODAY(),k=0;d.cards.forEach(function(c){if(c.firstDay===t)k++;});return Math.max(0,newLimit(d)-k);}
+/* cards still to study today in a language's decks (all decks if none are in that language) */
+function langDecks(lang){var l=C.decks.filter(function(d){return d.lang===lang;});return l.length?l:C.decks;}
+function langLeft(lang){return langDecks(lang).reduce(function(s,d){return s+deckStats(d).study;},0);}
 function totalStudyable(){return C.decks.reduce(function(s,d){return s+deckStats(d).study;},0);}
 function nextState(c,g){
   var b=c.box||0,t=TODAY(),due;
@@ -1132,8 +1181,8 @@ function creditFor(lang){
 function creditCard(lang){
   var ch=creditFor(lang);if(!ch)return;
   var t=TODAY();if(!inRange(ch,t))return;
-  var r=logChange(ch,t,function(d){d.cards=(+d.cards||0)+1;});
-  if(r.completed){toast('✓ Flashcards done — and that completes Day '+dayNum(ch)+'! 🎉');setTimeout(function(){celebrate($('.flash')||$('.study'));},60);}
+  var r=logChange(ch,t,function(d){d.cards=(+d.cards||0)+1;if(!langLeft(lang))d.deckDone=1;});
+  if(r.completed){toast('✓ Flashcards done, and that completes Day '+dayNum(ch)+'! 🎉');setTimeout(function(){celebrate($('.flash')||$('.study'));},60);}
   else if(r.ticked.length)toast('✓ “'+r.ticked[0].label+'” ticked on your '+L(ch.lang).name+' challenge');
 }
 
@@ -1291,7 +1340,16 @@ function checklistHtml(ch){
     if(isCardsTask(task)){
       sub='<span class="t-sub">'+meter(ti.cards,cardsTarget(task),'cards today')+'</span>';
       right='<button type="button" class="t-open" data-act="studyFor">Study →</button>';
-    }else if(a&&a.kind==='minutes')sub='<span class="t-sub">'+meter(ti.minutes,a.min,'min logged')+'</span>';
+    }else if(isDeckTask(task)){
+      var left=langLeft(ch.lang);
+      if(!C.decks.length)sub='<span class="t-sub"><span class="u">Import a deck in Flashcards and this ticks itself</span></span>';
+      else if(ti.cards&&!left)sub='<span class="t-sub"><span>'+plural(ti.cards,'card')+' · all caught up</span></span>';
+      else sub='<span class="t-sub">'+meter(ti.cards,ti.cards+left,'cards today')+'</span>';
+      right=left||!C.decks.length?'<button type="button" class="t-open" data-act="studyFor">Study →</button>':'';
+    }else if(a&&a.kind==='minutes'){
+      sub='<span class="t-sub">'+meter(ti.minutes,a.min,'min logged')+'</span>';
+      right=timerBtn(ch.lang);
+    }
     else if(a&&a.kind==='pages')sub='<span class="t-sub">'+meter(ti.pages,a.min,'pages logged')+'</span>';
     else if(a&&a.kind==='log')sub='<span class="t-sub"><span class="u">'+(ti.log.trim()||ti.resources.length?'Logged: '+esc([ti.resources.length?plural(ti.resources.length,'resource'):'',ti.log.trim()?'notes':''].filter(Boolean).join(' + ')):'Ticks itself when you add notes or a resource below')+'</span></span>';
     else if(task.desc)sub='<span class="t-sub"><span class="u">'+esc(task.desc)+'</span></span>';
@@ -1352,7 +1410,7 @@ function timeHtml(ch){
   var h='<section class="card"><div class="card-h"><div class="ttl-sm">Time logged</div><button type="button" class="linkish" data-act="openLog">View log ('+(LP.log.length+minuteDays().length)+')</button></div>';
   timeLangs().forEach(function(lg){
     var tc=todayChFor(lg);
-    h+='<div class="trow"><span class="fl">'+L(lg).flag+'</span><span class="tn">'+esc(L(lg).name)+'<small>'+(tc?'adds to today’s log':'quick add')+'</small></span><span class="qbs"><button type="button" class="qb" data-act="qlog" data-lang="'+lg+'" data-min="15">+15m</button><button type="button" class="qb" data-act="qlog" data-lang="'+lg+'" data-min="30">+30m</button><button type="button" class="qb" data-act="qlog" data-lang="'+lg+'" data-min="60">+1h</button></span><span class="hrs">'+fmtHM(totalHours(lg))+'</span></div>';
+    h+='<div class="trow"><span class="fl">'+L(lg).flag+'</span><span class="tn">'+esc(L(lg).name)+'<small>'+(tc?'adds to today’s log':'quick add')+'</small></span><span class="qbs">'+timerBtn(lg,true)+'<button type="button" class="qb" data-act="qlog" data-lang="'+lg+'" data-min="15">+15m</button><button type="button" class="qb" data-act="qlog" data-lang="'+lg+'" data-min="30">+30m</button><button type="button" class="qb" data-act="qlog" data-lang="'+lg+'" data-min="60">+1h</button></span><span class="hrs">'+fmtHM(totalHours(lg))+'</span></div>';
   });
   return h+'</section>';
 }
@@ -1437,7 +1495,8 @@ function logRowHtml(ch,date){
   h+='<div class="sl-stats"><span class="chip '+(inf.complete?'chip-ok':inf.n?'chip-acc':'chip-mut')+'">'+(inf.complete?'✓ ':'')+inf.n+'/'+inf.total+' rules</span>'+
     (inf.minutes?'<span class="chip chip-mut">'+fmtHM(inf.minutes/60)+'</span>':'')+
     (inf.pages?'<span class="chip chip-mut">'+plural(inf.pages,'page')+'</span>':'')+
-    (inf.cards?'<span class="chip chip-mut">'+plural(inf.cards,'card')+'</span>':'')+'</div>';
+    (inf.cards?'<span class="chip chip-mut">'+plural(inf.cards,'card')+'</span>':'')+
+    (ch.days[date]&&Array.isArray(ch.days[date].sessions)?ch.days[date].sessions.map(function(x){return '<span class="chip chip-acc" title="Study timer">⏱ '+esc(fmtAt(x.at))+' · '+fmtHM((+x.min||0)/60)+'</span>';}).join(''):'')+'</div>';
   if(ch.tasks.length)h+='<div class="sl-rules">'+ch.tasks.map(function(t){var ok=inf.done.indexOf(t.id)>=0;return '<span'+(ok?' class="ok"':'')+'>'+(ok?'✓ ':'· ')+esc(t.label)+'</span>';}).join(' ')+'</div>';
   if(inf.resources.length){
     h+='<div class="sl-res">'+inf.resources.map(function(r){var u=safeUrl(r.url),nm=r.name||hostOf(u);
@@ -1639,13 +1698,13 @@ function renderSetup(){
     var a='data-i="'+i+'"',n=i+1;
     th+='<div class="su-rule"><div class="su-top"><span class="num">'+n+'</span>'+
       '<input class="f-input" data-inp="suTask" '+a+' data-f="label" value="'+esc(t.label)+'" placeholder="Rule" maxlength="80" aria-label="Rule '+n+' name">'+
-      (t.kind==='cards'?'<span class="muted small u" style="padding:0 4px">Study button opens your flashcards</span>':'<input class="f-input u" data-inp="suTask" '+a+' data-f="url" value="'+esc(t.url)+'" placeholder="Link (optional)" aria-label="Rule '+n+' link">')+
+      (t.kind==='cards'||t.kind==='deck'?'<span class="muted small u" style="padding:0 4px">Study button opens your flashcards</span>':'<input class="f-input u" data-inp="suTask" '+a+' data-f="url" value="'+esc(t.url)+'" placeholder="Link (optional)" aria-label="Rule '+n+' link">')+
       '<button type="button" class="mv" data-act="suMove" '+a+' data-d="-1" aria-label="Move rule '+n+' up"'+(i?'':' disabled')+'>↑</button>'+
       '<button type="button" class="mv" data-act="suMove" '+a+' data-d="1" aria-label="Move rule '+n+' down"'+(i<last?'':' disabled')+'>↓</button>'+
       '<button type="button" class="rm" data-act="suRm" '+a+' aria-label="Remove rule '+n+'">×</button></div>'+
       '<div class="su-bot"><span class="num"></span><input class="f-input" data-inp="suTask" '+a+' data-f="desc" value="'+esc(t.desc)+'" placeholder="One-line description (optional)" maxlength="160" aria-label="Rule '+n+' description">'+
       '<span class="su-auto"><select class="f-input" data-chg="suKind" '+a+' aria-label="Rule '+n+' ticks">'+AUTO_KINDS.map(function(k){return '<option value="'+k[0]+'"'+(t.kind===k[0]?' selected':'')+'>'+k[1]+'</option>';}).join('')+'</select>'+
-      (t.kind&&t.kind!=='log'?'<input class="f-input" type="number" min="1" max="1440" data-inp="suTask" '+a+' data-f="min" value="'+esc(t.min)+'" aria-label="Rule '+n+' threshold">':'')+'</span></div></div>';
+      (t.kind&&t.kind!=='log'&&t.kind!=='deck'?'<input class="f-input" type="number" min="1" max="1440" data-inp="suTask" '+a+' data-f="min" value="'+esc(t.min)+'" aria-label="Rule '+n+' threshold">':'')+'</span></div></div>';
   });
   $('#su-tasks').innerHTML=th;
   var ids=draft.tasks.map(function(t){return t.id;}),ph='';
@@ -1662,7 +1721,7 @@ function saveSetup(){
   var tasks=draft.tasks.map(function(t){
     var o={id:t.id,label:t.label.trim()},u=safeUrl(t.url),ds=t.desc.trim();
     if(ds)o.desc=ds;
-    if(u&&t.kind!=='cards')o.url=u;
+    if(u&&t.kind!=='cards'&&t.kind!=='deck')o.url=u;
     if(t.kind){var a=normAuto({kind:t.kind,min:t.min});if(a)o.auto=a;}
     else if(t.legacyCards)o.auto=false;
     return o;
@@ -2691,17 +2750,17 @@ function deleteRes(){
 }
 
 /* time log */
-function quickLog(lang,mins,btn){
+function quickLog(lang,mins,btn,at){
   /* a challenge covers today in this language: the minutes go into today's study log (one place, no double count) */
   var ch=todayChFor(lang);
   if(ch){
-    var r=logChange(ch,TODAY(),function(d){d.minutes=(+d.minutes||0)+mins;});
+    var r=logChange(ch,TODAY(),function(d){d.minutes=(+d.minutes||0)+mins;if(at){if(!Array.isArray(d.sessions))d.sessions=[];d.sessions.push({at:at,min:mins});}});
     renderView();
     if(r.completed){celebrate($('#check-card'));toast('Day '+dayNum(ch)+' complete. That’s the work, logged. 🎉');}
     else toast('+'+(mins>=60?mins/60+'h':mins+'m')+' added to today’s '+L(lang).name+' log'+(r.ticked.length?' · “'+r.ticked[0].label+'” ticked':''));
     return;
   }
-  LP.log.unshift({id:'l_'+Date.now(),lang:lang,skill:'general',skillLabel:'General',resource:'--',note:'',mins:mins,date:new Date().toISOString()});
+  LP.log.unshift({id:'l_'+Date.now(),lang:lang,skill:at?'timer':'general',skillLabel:at?'Study timer':'General',resource:'--',note:at?'started '+fmtAt(at):'',mins:mins,date:new Date().toISOString()});
   LP.hours[lang]=(LP.hours[lang]||0)+mins/60;saveLP();
   renderView();toast('+'+(mins>=60?mins/60+'h':mins+'m')+' '+L(lang).name+' logged');
 }
@@ -2718,7 +2777,7 @@ function renderLog(){
   rows.forEach(function(r){
     if(r.q){
       var e=r.q,d=r.d,ds=isNaN(d)?'':MS[d.getMonth()]+' '+d.getDate()+', '+d.getFullYear(),m=+e.mins||0;
-      h+='<div class="log-e"><span style="font-size:17px">'+L(e.lang).flag+'</span><div class="le-m"><b>'+esc(e.skillLabel||e.skill||'Session')+'</b>'+(e.note?' <span class="muted">· '+esc(e.note)+'</span>':'')+'<div>'+ds+' · quick log</div></div><span class="le-d">'+fmtHM(m/60)+'</span><button type="button" class="rm" style="width:28px;height:28px" data-act="delLog" data-id="'+esc(e.id)+'" aria-label="Delete entry">×</button></div>';
+      h+='<div class="log-e"><span style="font-size:17px">'+L(e.lang).flag+'</span><div class="le-m"><b>'+esc(e.skillLabel||e.skill||'Session')+'</b>'+(e.note?' <span class="muted">· '+esc(e.note)+'</span>':'')+'<div>'+ds+' · '+(e.skill==='timer'?'timer':'quick log')+'</div></div><span class="le-d">'+fmtHM(m/60)+'</span><button type="button" class="rm" style="width:28px;height:28px" data-act="delLog" data-id="'+esc(e.id)+'" aria-label="Delete entry">×</button></div>';
     }else{
       var x=r.m,dd=pd(x.date),dn=diffDays(x.ch.start,x.date)+1;
       h+='<div class="log-e"><span style="font-size:17px">'+L(x.ch.lang).flag+'</span><div class="le-m"><b>'+(dn>=1&&dn<=x.ch.length?'Day '+dn:'Study log')+'</b> <span class="muted">· '+esc(x.ch.title)+'</span><div>'+MS[dd.getMonth()]+' '+dd.getDate()+', '+dd.getFullYear()+' · study log</div></div><span class="le-d">'+fmtHM(x.mins/60)+'</span><button type="button" class="btn btn-ghost btn-sm" data-act="logDay" data-date="'+x.date+'" data-ch="'+esc(x.ch.id)+'">Edit</button></div>';
@@ -2726,6 +2785,64 @@ function renderLog(){
   });
   $('#lg-body').innerHTML=h+'</div>';
 }
+
+/* ───────── study timer ─────────
+   One stopwatch per browser (langTimer1). It runs on timestamps, so it keeps
+   counting while you're on another tab or page; Stop saves the minutes
+   through quickLog (today's study log, or a quick log with no challenge). */
+var TM_KEY='langTimer1',tmAsk=false;
+function timerGet(){try{var o=JSON.parse(lsGet(TM_KEY)||'null');return o&&o.lang?o:null;}catch(e){return null;}}
+function timerPut(o){if(o)lsSet(TM_KEY,JSON.stringify(o));else{try{localStorage.removeItem(TM_KEY);}catch(e){}}}
+function timerMs(o){return o?Math.max(0,(+o.acc||0)+(o.start?Date.now()-o.start:0)):0;}
+function timerOn(lang){var o=timerGet();return !!(o&&o.lang===lang);}
+function fmtClock(ms){var s=Math.floor(ms/1000),h=Math.floor(s/3600),m=Math.floor(s%3600/60),x=s%60;return (h?h+':'+(m<10?'0':''):'')+m+':'+(x<10?'0':'')+x;}
+function fmtAt(at){var m=/^(\d+):(\d+)$/.exec(at||'');if(!m)return at||'';var h=+m[1];return (h%12||12)+':'+m[2]+(h<12?' am':' pm');}
+function timerBtn(lang,small){
+  var on=timerOn(lang),cls=small?'qb':'t-open';
+  if(on)return '<button type="button" class="'+cls+' tm-go" data-act="tmStop" title="Stop and save">■ <span data-tm-live>'+fmtClock(timerMs(timerGet()))+'</span></button>';
+  return '<button type="button" class="'+cls+' tm-go" data-act="tmStart" data-lang="'+esc(lang)+'" title="Time a study session"><svg viewBox="0 0 10 10"><path d="M2 1v8l7-4z"/></svg>Timer</button>';
+}
+function timerStart(lang){
+  var o=timerGet();
+  if(o&&o.lang!==lang){toast('Your '+L(o.lang).name+' timer is still running. Stop it first');return;}
+  if(!o){var n=new Date();timerPut({lang:lang,start:Date.now(),acc:0,began:pad2(n.getHours())+':'+pad2(n.getMinutes())});}
+  tmAsk=false;renderTimer();renderView();
+}
+function pad2(n){return (n<10?'0':'')+n;}
+function timerPause(){var o=timerGet();if(!o||!o.start)return;o.acc=timerMs(o);o.start=null;timerPut(o);renderTimer();}
+function timerResume(){var o=timerGet();if(!o||o.start)return;o.start=Date.now();timerPut(o);tmAsk=false;renderTimer();}
+function timerSave(){
+  var o=timerGet();if(!o)return;
+  var inp=$('#tm-min'),mins=Math.round(+(inp?inp.value:0));
+  if(!(mins>=1)){toast('Enter the minutes to save, or discard');return;}
+  mins=Math.min(1440,mins);timerPut(null);tmAsk=false;renderTimer();
+  quickLog(o.lang,mins,null,o.began||'');
+}
+function timerDiscard(){if(!confirm('Discard this session? Nothing will be logged.'))return;timerPut(null);tmAsk=false;renderTimer();renderView();}
+function renderTimer(){
+  var el=$('#tm-pill'),o=timerGet(),base=document.title.replace(/^⏱ \S+ · /,'');
+  document.body.classList.toggle('tm-on',!!o);
+  if(!o){el.hidden=true;el.innerHTML='';document.title=base;return;}
+  var ms=timerMs(o),lg=L(o.lang);
+  el.hidden=false;el.classList.toggle('paused',!o.start||tmAsk);
+  if(tmAsk){
+    var m=Math.max(1,Math.round(ms/60000));
+    el.innerHTML='<span class="nm">Save '+lg.flag+' '+esc(lg.name)+'<small>'+(ms<60000?'under a minute so far':'minutes studied')+'</small></span>'+
+      '<input id="tm-min" type="number" min="1" max="1440" inputmode="numeric" value="'+m+'" aria-label="Minutes to save"><span>min</span>'+
+      '<button type="button" class="pri" data-act="tmSave">Save</button><button type="button" data-act="tmBack">Keep going</button><button type="button" data-act="tmDiscard" aria-label="Discard session">Discard</button>';
+    document.title=base;return;
+  }
+  el.innerHTML='<span class="dot"></span><span class="nm">'+lg.flag+' '+esc(lg.name)+'<small>'+(o.start?'studying':'paused')+'</small></span><span class="clk" data-tm-live>'+fmtClock(ms)+'</span>'+
+    (o.start?'<button type="button" data-act="tmPause">Pause</button>':'<button type="button" data-act="tmResume">Resume</button>')+
+    '<button type="button" class="pri" data-act="tmStop">Stop</button>';
+  document.title=(o.start?'⏱ '+fmtClock(ms)+' · ':'')+base;
+}
+setInterval(function(){
+  var o=timerGet();if(!o||!o.start||tmAsk)return;
+  var t=fmtClock(timerMs(o));
+  $$('[data-tm-live]').forEach(function(x){x.textContent=t;});
+  document.title='⏱ '+t+' · '+document.title.replace(/^⏱ \S+ · /,'');
+},1000);
 
 /* ════════════════ EVENTS ════════════════ */
 var ACT={
@@ -2787,6 +2904,13 @@ var ACT={
   addLink:function(){openMini('link');},
   rmLink:function(el,e){e.preventDefault();e.stopPropagation();C.links=C.links.filter(function(l){return l.id!==el.getAttribute('data-id');});saveC();renderView();},
   qlog:function(el){quickLog(el.getAttribute('data-lang'),+el.getAttribute('data-min'),el);},
+  tmStart:function(el,e){e.stopPropagation();timerStart(el.getAttribute('data-lang'));},
+  tmPause:function(){timerPause();},
+  tmResume:function(){timerResume();},
+  tmStop:function(el,e){e.stopPropagation();var o=timerGet();if(!o)return;if(o.start)timerPause();tmAsk=true;renderTimer();var i=$('#tm-min');if(i){i.focus();i.select();}},
+  tmBack:function(){tmAsk=false;timerResume();},
+  tmSave:function(){timerSave();},
+  tmDiscard:function(){timerDiscard();},
   openLog:function(){renderLog();openModal('m-log');},
   delLog:function(el){
     var id=el.getAttribute('data-id'),e=LP.log.filter(function(x){return String(x.id)===id;})[0];if(!e)return;
@@ -2905,7 +3029,7 @@ var INP={
 };
 var CHG={
   suStrict:function(el){draft.strict=el.checked;},
-  suKind:function(el){var t=draft.tasks[+el.getAttribute('data-i')];if(!t)return;t.kind=el.value;if(t.kind&&t.kind!=='log'&&!(+t.min>0))t.min=AUTO_DEF[t.kind];renderSetup();},
+  suKind:function(el){var t=draft.tasks[+el.getAttribute('data-i')];if(!t)return;t.kind=el.value;if(t.kind&&AUTO_DEF[t.kind]&&!(+t.min>0))t.min=AUTO_DEF[t.kind];renderSetup();},
   dlNum:function(el){
     var c=ctxOf(el);if(!c.ch)return;var f=el.getAttribute('data-f'),n=Math.max(0,Math.min(f==='minutes'?1440:2000,Math.round(+el.value||0)));
     var cur=Math.max(0,+((c.ch.days[c.date]||{})[f])||0);if(n===cur){el.value=n||'';return;}
@@ -2937,6 +3061,7 @@ document.addEventListener('click',function(e){
 document.addEventListener('input',function(e){var el=e.target.closest&&e.target.closest('[data-inp]');if(el&&INP[el.getAttribute('data-inp')])INP[el.getAttribute('data-inp')](el,e);});
 document.addEventListener('change',function(e){var el=e.target.closest&&e.target.closest('[data-chg]');if(el&&CHG[el.getAttribute('data-chg')])CHG[el.getAttribute('data-chg')](el,e);});
 document.addEventListener('keydown',function(e){
+  if(e.target&&e.target.id==='tm-min'){if(e.key==='Enter'){e.preventDefault();timerSave();}else if(e.key==='Escape'){tmAsk=false;timerResume();}return;}
   var tg=e.target||{},typing=tg.isContentEditable||/^(INPUT|TEXTAREA|SELECT)$/.test(tg.tagName||'');
   var openM=$$('.modal-bg.open');
   if(e.key==='Escape'){
@@ -2993,7 +3118,7 @@ function resync(){
   if(sess&&!deckById(sess.deckId)){sess=null;stopAudio();}
   if(!$('.modal-bg.open')&&!(document.activeElement&&/^(INPUT|TEXTAREA)$/.test(document.activeElement.tagName)))renderView();
 }
-window.addEventListener('storage',function(e){if(e.key===LP_KEY){loadLP();renderView();}else if(e.key===LC_KEY||e.key===null)resync();});
+window.addEventListener('storage',function(e){if(e.key===TM_KEY){tmAsk=false;renderTimer();renderView();return;}if(e.key===LP_KEY){loadLP();renderView();}else if(e.key===LC_KEY||e.key===null)resync();});
 window.addEventListener('focus',resync);
 document.addEventListener('visibilitychange',function(){if(document.hidden)flushSave();else resync();});
 window.addEventListener('pagehide',flushSave);
@@ -3005,9 +3130,9 @@ window.addEventListener('hashchange',function(){var t=tabFromHash();if(t!==tab)s
 (function(){
   tipEl=$('#tip');
   var n=new Date();$('#tb-date').textContent=DF[n.getDay()]+', '+MF[n.getMonth()]+' '+n.getDate();
-  loadLP();loadC();
+  loadLP();loadC();addAnkiRule();
   if(canSpeak){try{speechSynthesis.getVoices();}catch(e){}}
-  setTab(tabFromHash());
+  setTab(tabFromHash());renderTimer();
 })();
 </script>
 </body>
