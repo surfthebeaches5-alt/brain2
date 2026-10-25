@@ -432,6 +432,88 @@ details.help ol{margin:8px 0 0 18px;line-height:1.65;}
 .log-e .le-d{font-family:var(--b2-serif);font-weight:600;font-size:15px;}
 .log-list{max-height:52vh;overflow-y:auto;margin-top:6px;}
 
+/* ── setup: templates + editable rules ── */
+.modal.setup{max-width:720px;}
+.tpl-pick{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:18px;}
+.tpl{display:flex;flex-direction:column;gap:3px;text-align:left;padding:13px 16px;border-radius:14px;border:1px solid var(--line);background:var(--raised);transition:all .15s;}
+.tpl:hover{border-color:var(--accent-line);}
+.tpl b{font-family:var(--b2-serif);font-size:17px;font-weight:600;letter-spacing:-.15px;}
+.tpl small{font-size:12px;color:var(--muted);line-height:1.45;}
+.tpl.on{border-color:var(--accent-line);background:var(--accent-soft);box-shadow:0 0 0 3px var(--accent-soft);}
+.tpl.on b{color:var(--accent-deep);}
+.su-rule{border:1px solid var(--hair);background:var(--warm);border-radius:12px;padding:10px 10px 10px 8px;margin-bottom:8px;}
+.su-top,.su-bot{display:grid;gap:8px;align-items:center;}
+.su-top{grid-template-columns:22px minmax(0,1.35fr) minmax(0,1fr) 28px 28px 32px;}
+.su-bot{grid-template-columns:22px minmax(0,1fr) auto;margin-top:7px;}
+.su-rule .num{font-size:11px;font-weight:800;color:var(--muted);text-align:center;}
+.su-rule .f-input{padding:7px 10px;font-size:12.5px;}
+.su-auto{display:flex;gap:6px;align-items:center;}
+.su-auto select.f-input{width:auto;padding:7px 8px;}
+.su-auto input.f-input{width:62px;}
+.mv{width:28px;height:28px;border-radius:8px;border:1px solid var(--line);background:var(--raised);color:var(--muted);font-size:12px;display:flex;align-items:center;justify-content:center;padding:0;}
+.mv:hover:not(:disabled){color:var(--accent-deep);border-color:var(--accent-line);}
+.mv:disabled{opacity:.35;cursor:default;}
+.su-hint{font-size:12px;color:var(--muted);margin:-4px 0 12px;line-height:1.5;}
+
+/* ── log today (inside today card + day modal) ── */
+.dl{margin-top:12px;padding-top:16px;border-top:1px solid var(--hair);}
+.dl-h{display:flex;align-items:center;gap:10px;margin-bottom:12px;}
+.dl-h .sp{flex:1;}
+.dl-grid{display:grid;grid-template-columns:minmax(0,1.35fr) minmax(0,1fr);gap:14px;margin-bottom:14px;}
+.dl-row{display:flex;align-items:center;gap:5px;flex-wrap:wrap;}
+.dl-num{width:72px;height:34px;padding:0 10px;border:1px solid var(--line);border-radius:10px;background:var(--raised);font:600 13px var(--b2-sans);outline:none;transition:border-color .15s,box-shadow .15s;}
+.dl-num:focus{border-color:var(--accent-line);box-shadow:0 0 0 3px var(--accent-soft);}
+.dl-unit{font-size:12px;color:var(--muted);font-weight:600;margin-right:4px;}
+.dl .qb{height:30px;}
+.dl-res{display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin-bottom:14px;min-height:28px;}
+.rchip{display:inline-flex;align-items:center;gap:2px;max-width:100%;font-size:12px;font-weight:650;padding:0 4px 0 10px;height:28px;border-radius:20px;background:var(--accent-soft);color:var(--accent-deep);border:1px solid var(--accent-line);}
+.rchip a,.rchip span.rn{text-decoration:none;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:260px;}
+.rchip a:hover{text-decoration:underline;text-underline-offset:2px;}
+.rchip button{border:0;background:transparent;color:var(--accent-deep);width:20px;height:20px;border-radius:50%;font-size:13px;line-height:1;display:flex;align-items:center;justify-content:center;padding:0;opacity:.7;}
+.rchip button:hover{opacity:1;background:var(--surface);}
+.rchip.ro{padding-right:10px;}
+.dl textarea.f-input{min-height:64px;}
+
+/* ── resource picker ── */
+#m-pick{z-index:1010;}
+.pk-list{max-height:44vh;overflow-y:auto;margin:12px -4px 0;padding:0 4px;}
+.pk-sec{font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--muted);font-weight:750;margin:12px 0 6px;}
+.pk-item{display:flex;align-items:center;gap:10px;width:100%;text-align:left;padding:8px 10px;border-radius:10px;border:1px solid transparent;background:transparent;font-size:13px;}
+.pk-item:hover{background:var(--warm);}
+.pk-item .pk-n{flex:1;min-width:0;font-weight:650;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.pk-item .pk-m{font-size:11.5px;color:var(--muted);white-space:nowrap;max-width:150px;overflow:hidden;text-overflow:ellipsis;}
+.pk-item .tick{width:20px;height:20px;border-radius:6px;}
+.pk-item.on{background:var(--accent-soft);}
+.pk-item.on .pk-n{color:var(--accent-deep);}
+.pk-item.on .tick{background:var(--accent-deep);border-color:var(--accent-deep);}
+.pk-item.on .tick svg{opacity:1;transform:scale(1);}
+.pk-custom{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr) auto;gap:8px;margin-top:6px;}
+
+/* ── study log view ── */
+.sl-head{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:16px;}
+.sl-head .ttl{margin-right:6px;}
+.sl-tot{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:18px;margin-bottom:18px;}
+.sl-tile{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:18px 22px;box-shadow:var(--shadow);}
+.sl-tile b{display:block;font-family:var(--b2-serif);font-size:30px;font-weight:600;letter-spacing:-.5px;line-height:1.05;}
+.sl-tile small{display:block;font-size:11.5px;color:var(--muted);margin-top:3px;font-weight:550;}
+.sl-tile .eyebrow{display:block;margin-top:6px;}
+.sl-list{padding:6px 24px;}
+.sl-row{display:grid;grid-template-columns:76px minmax(0,1fr) auto;gap:18px;padding:18px 0;align-items:start;}
+.sl-row + .sl-row{border-top:1px solid var(--hair);}
+.sl-date b{display:block;font-family:var(--b2-serif);font-size:20px;font-weight:600;letter-spacing:-.3px;line-height:1.1;}
+.sl-date small{font-size:11.5px;color:var(--muted);font-weight:600;}
+.sl-top{display:flex;align-items:center;gap:8px;flex-wrap:wrap;font-size:14px;font-weight:650;}
+.sl-top .muted{font-weight:550;font-size:12.5px;}
+.sl-stats{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px;}
+.sl-res{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px;}
+.sl-notes{margin-top:9px;font-size:13px;line-height:1.55;color:var(--ink-2);white-space:pre-line;word-break:break-word;}
+.sl-note{margin-top:6px;font-size:12.5px;color:var(--muted);font-style:italic;word-break:break-word;}
+.sl-rules{margin-top:7px;font-size:11.5px;color:var(--muted);line-height:1.6;}
+.sl-rules span{white-space:nowrap;margin-right:10px;}
+.sl-rules span.ok{color:var(--accent-deep);font-weight:650;}
+.sl-empty{padding:34px 10px;text-align:center;color:var(--muted);line-height:1.6;}
+.sl-empty b{display:block;font-family:var(--b2-serif);font-size:20px;color:var(--ink);font-weight:600;margin-bottom:4px;}
+
 /* ── responsive ── */
 @media (max-width:1100px){
   .hero{grid-template-columns:minmax(0,1fr) minmax(0,380px);gap:26px;}
@@ -443,6 +525,7 @@ details.help ol{margin:8px 0 0 18px;line-height:1.65;}
   .hero{grid-template-columns:1fr;}
   .cols,.fc,.welcome,.fe{grid-template-columns:1fr;}
   .hero .grid{max-width:520px;}
+  .sl-tot{grid-template-columns:repeat(2,minmax(0,1fr));}
 }
 @media (max-width:760px){
   .wrap{padding:16px 16px 80px;}
@@ -480,6 +563,16 @@ details.help ol{margin:8px 0 0 18px;line-height:1.65;}
   .study-top .today-meter .mtr{flex:1;width:auto;}
   .t-sub .hint{display:none;}
   .t-open{padding:7px 10px;}
+  .tpl-pick,.dl-grid,.pk-custom{grid-template-columns:1fr;}
+  .su-top{grid-template-columns:minmax(0,1fr) 28px 28px 32px;}
+  .su-top .num{display:none;}
+  .su-top .u{grid-column:1/-1;grid-row:2;}
+  .su-bot{grid-template-columns:1fr;}
+  .su-bot .num{display:none;}
+  .sl-list{padding:4px 16px;}
+  .sl-row{grid-template-columns:minmax(0,1fr) auto;}
+  .sl-date{grid-column:1/-1;}
+  .sl-date b{display:inline;margin-right:6px;}
 }
 @media (prefers-reduced-motion:reduce){
   *{animation:none !important;transition:none !important;}
@@ -498,6 +591,7 @@ details.help ol{margin:8px 0 0 18px;line-height:1.65;}
     <span class="topbar-date" id="tb-date"></span>
     <nav class="seg" id="tabs" role="tablist" aria-label="Sections">
       <button type="button" role="tab" data-act="tab" data-tab="challenge">Challenge</button>
+      <button type="button" role="tab" data-act="tab" data-tab="log">Log</button>
       <button type="button" role="tab" data-act="tab" data-tab="flash">Flashcards <span class="badge" id="due-badge" hidden></span></button>
       <button type="button" role="tab" data-act="tab" data-tab="library">Library</button>
     </nav>
@@ -506,6 +600,7 @@ details.help ol{margin:8px 0 0 18px;line-height:1.65;}
 
 <main class="wrap">
   <section class="view" id="v-challenge" aria-label="Challenge"></section>
+  <section class="view" id="v-log" aria-label="Study log"></section>
   <section class="view" id="v-flash" aria-label="Flashcards"></section>
   <section class="view" id="v-library" aria-label="Library">
     <div class="lib-head">
@@ -520,9 +615,10 @@ details.help ol{margin:8px 0 0 18px;line-height:1.65;}
 
 <!-- CHALLENGE SETUP -->
 <div class="modal-bg" id="m-setup" role="dialog" aria-modal="true" aria-labelledby="su-title">
-  <div class="modal wide">
+  <div class="modal wide setup">
     <div class="m-title" id="su-title">Start a challenge</div>
     <div class="m-sub" id="su-sub">Pick a language and a handful of daily tasks. Each day, one click per task. That's the whole log.</div>
+    <div id="su-tpl"></div>
     <div class="f-field"><span class="f-label">Language</span><div class="lang-pick" id="su-lang"></div></div>
     <div class="f-field"><label class="f-label" for="su-name">Title</label><input class="f-input" id="su-name" data-inp="suName" maxlength="80"></div>
     <div class="f-row">
@@ -532,9 +628,9 @@ details.help ol{margin:8px 0 0 18px;line-height:1.65;}
     </div>
     <div class="strict-box">
       <label class="switch"><input type="checkbox" id="su-strict" data-chg="suStrict"><span></span></label>
-      <div><b>75 Hard rules</b><p>Strict mode: miss a single day and the challenge restarts at Day 1 (your history is kept as an archived round). Off = gentle mode, where a missed day just shows as a gap in the grid.</p></div>
+      <div><b>Strict mode (75 Hard rules)</b><p>Miss a single day and the challenge restarts at Day 1 (your history is kept as an archived round). Off = gentle mode, where a missed day just shows as a gap in the grid.</p></div>
     </div>
-    <span class="f-label">Daily tasks <span class="muted" style="text-transform:none;letter-spacing:0;font-weight:600">· label + optional link (Anki, Duolingo, a podcast…)</span></span>
+    <span class="f-label">Daily rules <span class="muted" style="text-transform:none;letter-spacing:0;font-weight:600">· name, optional description and link, and whether it ticks itself from your log</span></span>
     <div id="su-tasks"></div>
     <div class="presets" id="su-presets"></div>
     <div class="f-err" id="su-err"></div>
@@ -548,7 +644,7 @@ details.help ol{margin:8px 0 0 18px;line-height:1.65;}
 
 <!-- DAY EDITOR -->
 <div class="modal-bg" id="m-day" role="dialog" aria-modal="true" aria-labelledby="dm-title">
-  <div class="modal">
+  <div class="modal wide">
     <div class="m-title" id="dm-title">Day</div>
     <div class="m-sub" id="dm-sub"></div>
     <div id="dm-body"></div>
@@ -610,7 +706,7 @@ details.help ol{margin:8px 0 0 18px;line-height:1.65;}
 <div class="modal-bg" id="m-log" role="dialog" aria-modal="true" aria-labelledby="lg-title">
   <div class="modal">
     <div class="m-title" id="lg-title">Time logged</div>
-    <div class="m-sub">Your session log from before the challenge era, plus any quick logs. Totals feed the hours stat.</div>
+    <div class="m-sub">Quick logs plus the minutes in your daily study log. Each minute is counted once; together they make the hours total.</div>
     <div id="lg-body"></div>
     <div class="m-actions"><button type="button" class="btn btn-dark" data-act="close" data-m="m-log">Done</button></div>
   </div>
@@ -640,6 +736,26 @@ details.help ol{margin:8px 0 0 18px;line-height:1.65;}
   </div>
 </div>
 
+<!-- RESOURCE PICKER (for a day's log) -->
+<div class="modal-bg" id="m-pick" role="dialog" aria-modal="true" aria-labelledby="pk-title">
+  <div class="modal">
+    <div class="m-title" id="pk-title">Resources used</div>
+    <div class="m-sub" id="pk-sub"></div>
+    <input class="f-input" id="pk-q" data-inp="pkSearch" placeholder="Search your tools and Library…" aria-label="Search resources">
+    <div class="pk-list" id="pk-list"></div>
+    <div class="pk-sec" style="margin-top:16px">Not in the list?</div>
+    <div class="pk-custom">
+      <input class="f-input" id="pk-name" data-key="pkKey" maxlength="120" placeholder="Name" aria-label="Resource name">
+      <input class="f-input" id="pk-url" data-key="pkKey" type="url" placeholder="Link (optional)" aria-label="Resource link">
+      <button type="button" class="btn btn-ghost" data-act="pkCustom">Add</button>
+    </div>
+    <div class="m-actions">
+      <div class="left"><button type="button" class="linkish" data-act="pkSave">Save something new to your Library →</button></div>
+      <button type="button" class="btn btn-dark" data-act="close" data-m="m-pick">Done</button>
+    </div>
+  </div>
+</div>
+
 <div class="tip" id="tip" role="tooltip"></div>
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
 
@@ -650,6 +766,13 @@ details.help ol{margin:8px 0 0 18px;line-height:1.65;}
    Storage:
      langPortal5    {hours:{es,pt}, log:[...], resources:{es,pt}}  (legacy, kept)
      langChallenge1 {version, active, challenges[], decks[], links[]}
+       challenge.tasks[]: {id, label, url?, desc?, auto?}
+         auto (optional): {kind:'minutes'|'pages', min} · {kind:'log'} · {kind:'cards', min}
+                          (false = explicitly manual, for legacy "cards" ids)
+       challenge.days["YYYY-MM-DD"]: {done[], note?, cards?,
+                                      minutes?, pages?, resources?:[{name,url}], log?}
+     Hours total per language = langPortal5.hours (quick logs) + Σ day minutes.
+     The two never overlap: a minute lives in exactly one of them.
    ════════════════════════════════════════════════════════════ */
 var LP_KEY='langPortal5', LC_KEY='langChallenge1';
 var NEW_PER=20;                       // new cards introduced per study session
@@ -673,13 +796,30 @@ var PRESETS=[
   {id:'listen',label:'20 min listening (podcast/YouTube)',url:''},
   {id:'speak',label:'10 min speaking or shadowing',url:''},
   {id:'read',label:'Read 1 page / article',url:''},
-  {id:'cards',label:'Study 20 flashcards here',url:''}
+  {id:'cards',label:'Study 20 flashcards here',url:'',auto:{kind:'cards',min:20}}
 ];
 var DEFAULT_TASKS={pt:['anki','duo','listen','speak','cards'],es:['anki','listen','speak','read','cards']};
+/* 75 Fluent: the rules as the user gave them. Only these five; add more in the editor. */
+var FLUENT=[
+  {id:'fl_study',label:'60 Minutes Language Study',desc:'Dedicate at least 60 minutes daily to structured language learning.',auto:{kind:'minutes',min:60}},
+  {id:'fl_read',label:'Read 5 Pages',desc:'Read at least 5 pages in a book written in your target language.',auto:{kind:'pages',min:5}},
+  {id:'fl_track',label:'Track Your Study',desc:'Log what you studied, resources used, and key notes from your session.',auto:{kind:'log'}},
+  {id:'fl_speak',label:'5 Minutes of Speaking',desc:'Practice speaking for at least 5 minutes every day.'},
+  {id:'fl_episode',label:'1 Podcast/Video/Episode',desc:'Watch or listen to one episode of content in your target language.'}
+];
+var AUTO_KINDS=[
+  ['','Tick by hand'],
+  ['minutes','Minutes logged ≥'],
+  ['pages','Pages logged ≥'],
+  ['log','Study log filled in'],
+  ['cards','Flashcards here ≥']
+];
+var AUTO_DEF={minutes:60,pages:5,cards:20};
 var BUILTIN_LINKS=[
   {name:'AnkiWeb',url:'https://ankiweb.net/decks',av:'A',bg:'#7d93c9'},
   {name:'Shared decks',url:'https://ankiweb.net/shared/decks',av:'A',bg:'#a1b0d6'},
-  {name:'Duolingo',url:'https://www.duolingo.com/learn',av:'D',bg:'#86ae69'}
+  {name:'Duolingo',url:'https://www.duolingo.com/learn',av:'D',bg:'#86ae69'},
+  {name:'Preply',url:'https://preply.com',av:'P',bg:'#d58ba3'}
 ];
 
 /* ───────── utils ───────── */
@@ -755,11 +895,33 @@ function normCard(c){
   o.due=pd(o.due)?o.due:TODAY();o.reps=Math.max(0,parseInt(o.reps,10)||0);o.lapses=Math.max(0,parseInt(o.lapses,10)||0);
   return o;
 }
+function legacyCardsId(id){return id==='cards'||/^cards/.test(id);}
+function labelNum(label){var m=/(\d+)/.exec(label||'');var n=m?parseInt(m[1],10):20;return n>0?n:20;}
+function normAuto(a){
+  if(!a||typeof a!=='object')return null;
+  var k=String(a.kind||'');
+  if(k==='log')return {kind:'log'};
+  if(k==='minutes'||k==='pages'||k==='cards'){var n=parseInt(a.min,10);return {kind:k,min:n>0?n:AUTO_DEF[k]};}
+  return null;
+}
+function normTask(t){
+  var x=Object.assign({},t);x.id=String(x.id);x.label=String(x.label||'Task');
+  if(!x.url)delete x.url;
+  if(x.desc==null||x.desc==='')delete x.desc;else x.desc=String(x.desc);
+  if(x.auto===false){/* explicitly manual */}
+  else{
+    var a=normAuto(x.auto);
+    /* migrate: the old flashcard rule was keyed off the id and the number in its label */
+    if(!a&&!('auto' in t)&&legacyCardsId(x.id))a={kind:'cards',min:labelNum(x.label)};
+    if(a)x.auto=a;else delete x.auto;
+  }
+  return x;
+}
 function normCh(ch){
   var o=Object.assign({},ch);
   o.id=String(o.id);o.lang=String(o.lang||'es');o.title=String(o.title||(L(o.lang).name+' challenge'));
   o.start=pd(o.start)?o.start:TODAY();o.length=Math.max(1,Math.min(365,parseInt(o.length,10)||75));o.strict=!!o.strict;
-  o.tasks=(Array.isArray(o.tasks)?o.tasks:[]).filter(function(t){return t&&t.id;}).map(function(t){var x=Object.assign({},t);x.id=String(x.id);x.label=String(x.label||'Task');if(!x.url)delete x.url;return x;});
+  o.tasks=(Array.isArray(o.tasks)?o.tasks:[]).filter(function(t){return t&&t.id;}).map(normTask);
   o.days=(o.days&&typeof o.days==='object'&&!Array.isArray(o.days))?o.days:{};
   Object.keys(o.days).forEach(function(k){var d=o.days[k];if(!d||typeof d!=='object'){delete o.days[k];return;}if(!Array.isArray(d.done))d.done=[];});
   if(!o.endedAt)delete o.endedAt;
