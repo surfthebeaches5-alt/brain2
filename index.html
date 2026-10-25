@@ -76,6 +76,11 @@ button,input,select{font-family:inherit;}
 .qcal-menu button .dot{width:9px;height:9px;border-radius:50%;flex-shrink:0;}
 .qcal-menu .tip{font-size:11px;color:var(--muted);padding:7px 10px 4px;border-top:1px solid var(--hair);margin-top:4px;line-height:1.4;}
 .pop-copy{display:flex;flex-direction:column;gap:8px;margin-top:12px;width:100%;}
+.pop .pop-copy>input,.pop .pop-copy>select{flex:none;}
+.pop-copy .lbl{font-size:11px;font-weight:700;color:var(--muted);letter-spacing:.04em;}
+.pop-copy .chk{display:flex;align-items:center;gap:7px;font-size:12.5px;font-weight:600;color:var(--ink-2);}
+.pop-copy .chk input{flex:none;width:15px;height:15px;}
+.pop-copy .note{font-size:11.5px;color:var(--muted);line-height:1.4;}
 .pop-copy .row{display:flex;gap:7px;}
 .pop-copy input,.pop-copy select{flex:1;min-width:0;height:34px;border-radius:9px;border:1px solid var(--line);background:var(--surface);padding:0 9px;font:500 12.5px var(--b2-sans);color:var(--ink);}
 .qprev{display:none;margin-top:7px;font-size:12px;color:var(--muted);font-weight:600;padding-left:4px;}
@@ -247,7 +252,7 @@ button,input,select{font-family:inherit;}
 
       <!-- RIGHT NOW -->
       <section class="card">
-        <div class="card-h"><div class="card-t">Right now</div><a class="more" href="media/">Library →</a></div>
+        <div class="card-h"><div class="card-t">Reading, watching &amp; listening</div><a class="more" href="media/">Library →</a></div>
         <div id="now"></div>
       </section>
     </div>
@@ -299,7 +304,7 @@ button,input,select{font-family:inherit;}
   </div>
 </div>
 
-<script src="assets/gcal.js?v=1025b"></script>
+<script src="assets/gcal.js?v=1025c"></script>
 <script>
 /* ───────── helpers ───────── */
 function lsGet(k){try{var r=localStorage.getItem(k);return r?JSON.parse(r):null;}catch(e){return null;}}
@@ -444,16 +449,49 @@ function openPop(key,node){
   if(e.source==='google'&&e.link)a+='<a class="btn sm" href="'+esc(e.link)+'" target="_blank" rel="noopener">Open in Google ↗</a>';
   if(e.source==='bill')a+=(e.url?'<a class="btn sm" href="'+esc(e.url)+'" target="_blank" rel="noopener">Pay ↗</a>':'')+'<a class="btn sm" href="finances/">Finances</a>';
   if(e.source==='class')a+='<a class="btn sm" href="learning/">Open Classes</a>';
+  if(e.source==='google'||e.source==='local')a+='<button class="btn sm" type="button" id="pop-edit">Edit</button>';
   if(e.source==='google')a+='<button class="btn sm" type="button" id="pop-copy">Copy to…</button>';
   if(e.source==='local'||e.source==='google')a+='<button class="btn sm" type="button" id="pop-del">Delete</button>';
   $('pop-a').innerHTML=a;
   var del=$('pop-del');if(del)del.onclick=function(){deleteEvent(e);};
   var cp=$('pop-copy');if(cp)cp.onclick=function(ev2){ev2.stopPropagation();copyForm(e);};
+  var ed=$('pop-edit');if(ed)ed.onclick=function(ev2){ev2.stopPropagation();editForm(e);};
   var p=$('pop'),r=node.getBoundingClientRect();p.classList.add('open');
   var x=Math.min(window.innerWidth-316,Math.max(16,r.left)),y=r.bottom+8;if(y+p.offsetHeight>window.innerHeight-12)y=Math.max(12,r.top-p.offsetHeight-8);
   p.style.left=x+'px';p.style.top=y+'px';
 }
 function closePop(){$('pop').classList.remove('open');}
+/* edit an event: title, day, all-day or times and (Google) which calendar it's on */
+function editForm(e){
+  var isG=e.source==='google',cals=isG?calChoices():[];
+  if(isG&&!cals.some(function(x){return x.id===e.calId;}))cals=[{id:e.calId,summary:e.calName||'This calendar',backgroundColor:e.color}].concat(cals);
+  var span=0;if(e.allDay&&e.endDate&&e.endDate>e.date)span=Math.round((parseDk(e.endDate)-parseDk(e.date))/864e5);
+  $('pop-a').innerHTML='<div class="pop-copy">'+
+    '<input type="text" id="pe-title" aria-label="Title" value="'+esc(e.title)+'">'+
+    '<div class="row"><input type="date" id="pe-date" aria-label="Date" value="'+esc(e.date)+'"><label class="chk"><input type="checkbox" id="pe-all"'+(e.allDay||!e.time?' checked':'')+'>All day</label></div>'+
+    '<div class="row" id="pe-times"><input type="time" id="pe-start" aria-label="Starts" value="'+esc(e.time||'09:00')+'"><input type="time" id="pe-end" aria-label="Ends" value="'+esc(e.endTime||'')+'"></div>'+
+    (isG?(e.recurring?'<div class="note">Repeating event — this changes just this day. Change its calendar in Google.</div>':
+      '<select id="pe-cal" aria-label="Calendar">'+cals.map(function(x){return '<option value="'+esc(x.id)+'"'+(x.id===e.calId?' selected':'')+'>'+esc(x.summary)+'</option>';}).join('')+'</select>'):'')+
+    '<div class="row"><button class="btn sm" type="button" id="pe-save">Save</button><button class="btn sm" type="button" id="pe-cancel">Cancel</button></div></div>';
+  var times=function(){$('pe-times').style.display=$('pe-all').checked?'none':'';};times();$('pe-all').onchange=times;
+  $('pe-cancel').onclick=function(x){x.stopPropagation();openPop(evKey(e),document.querySelector('[data-ev="'+CSS.escape(evKey(e))+'"]')||$('cal'));};
+  $('pe-title').addEventListener('keydown',function(x){if(x.key==='Enter')$('pe-save').click();});
+  $('pe-save').onclick=function(x){
+    x.stopPropagation();
+    var title=$('pe-title').value.trim(),d=$('pe-date').value,all=$('pe-all').checked,st=$('pe-start').value,en=$('pe-end').value;
+    if(!title){$('pe-title').focus();return;}if(!d){$('pe-date').focus();return;}
+    var upd={title:title,date:d,time:all?'':st,endTime:all?'':en,endDate:all&&span?dk(addDays(parseDk(d),span)):''};
+    if(!isG){
+      var raw=lsGet('lifeCalendar1'),obj=Array.isArray(raw)?{events:raw}:(raw||{events:[]}),it=(obj.events||[]).filter(function(y){return y.id===e.id;})[0];
+      if(it){it.title=upd.title;it.date=upd.date;it.time=upd.time;it.endTime=upd.endTime;lsSet('lifeCalendar1',Array.isArray(raw)?obj.events:obj);}
+      closePop();flash('Saved ✓');renderCal();return;
+    }
+    var to=$('pe-cal')?$('pe-cal').value:e.calId,c=findCal(to);this.disabled=true;
+    withGoogle(function(){return GCal.update(e.calId,e.id,upd,to);}).then(function(){closePop();flash('Updated “'+title+'”'+(to!==e.calId&&c?' · moved to '+c.summary:'')+' ✓');loadGoogle(true);})
+      .catch(function(err){closePop();flash(err.message,true);});
+  };
+  setTimeout(function(){$('pe-title').focus();},0);
+}
 /* copy a Google event to another day (and, if you like, another calendar) */
 function copyForm(e){
   var next=addDays(parseDk(e.date),1),cals=calChoices();
