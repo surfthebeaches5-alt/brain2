@@ -595,12 +595,16 @@ function renderNow(){
 var coverBusy=false;
 function fetchMissingCovers(picks){
   if(coverBusy)return;
-  var need=picks.filter(function(p){return !p.it.cover&&!(p.it.coverTried&&Date.now()-p.it.coverTried<7*864e5);});
+  // movies, and anything the Library's (more thorough) cover finder has given up on, are left to the Library page
+  var tried={};try{tried=JSON.parse(sessionStorage.getItem('b2CoverTried')||'{}');}catch(e){}
+  var need=picks.filter(function(p){var movie=p.sec==='screen'&&!(SERIES.indexOf(p.it.category)>=0||p.it.kind==='tv');
+    return !p.it.cover&&!p.it.coverTried&&!movie&&!tried[p.sec+p.it.id];});
   if(!need.length)return;coverBusy=true;
-  Promise.all(need.map(function(p){return findCover(p).then(function(u){return {p:p,u:u};},function(){return {p:p,err:true};});})).then(function(res){
+  need.forEach(function(p){tried[p.sec+p.it.id]=1;});try{sessionStorage.setItem('b2CoverTried',JSON.stringify(tried));}catch(e){}
+  Promise.all(need.map(function(p){return findCover(p).then(function(u){return {p:p,u:u};},function(){return {p:p,u:''};});})).then(function(res){
     var d=lsGet('mediaTracker3');coverBusy=false;if(!d)return;
-    // a network hiccup is retried next visit; only "the catalog has nothing" is remembered for a week
-    res.forEach(function(r){if(r.err)return;var it=(d[r.p.sec]||[]).find(function(x){return x.id===r.p.it.id;});if(!it)return;if(r.u)it.cover=r.u;else it.coverTried=Date.now();});
+    // only found covers are saved; misses are retried by the Library page's finder
+    res.forEach(function(r){if(!r.u)return;var it=(d[r.p.sec]||[]).find(function(x){return x.id===r.p.it.id;});if(it&&!it.cover)it.cover=r.u;});
     lsSet('mediaTracker3',d);renderNow();
   });
 }

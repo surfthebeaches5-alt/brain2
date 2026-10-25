@@ -59,8 +59,8 @@ a{color:inherit;text-decoration:none;}
 .rr-txt{flex:1;min-width:0;}
 .rr-t{font-size:13.5px;font-weight:650;line-height:1.25;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
 .rr-m{font-size:11.5px;color:var(--muted);font-weight:550;margin-top:2px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
-.rr-acts{display:flex;gap:4px;margin-top:5px;opacity:0;pointer-events:none;transition:opacity .12s;flex-wrap:wrap;}
-.rr:hover .rr-acts,.rr.hl .rr-acts{opacity:1;pointer-events:auto;}
+.rr-acts{display:none;gap:4px;margin-top:5px;flex-wrap:wrap;}
+.rr:hover .rr-acts,.rr.hl .rr-acts{display:flex;}
 .rr-b{height:24px;padding:0 9px;border-radius:7px;border:1px solid var(--line);background:var(--raised);font:650 11px var(--sans);color:var(--ink-2);cursor:pointer;white-space:nowrap;}
 .rr-b:hover{border-color:var(--accent-line);color:var(--accent-deep);}
 .rr-b.main{background:var(--ink);color:#fff;border-color:var(--ink);}
@@ -105,6 +105,10 @@ a{color:inherit;text-decoration:none;}
 
 /* ───────── "All": right now + goal ───────── */
 .feature-row{display:grid;grid-template-columns:minmax(0,1fr) 290px;gap:18px;align-items:stretch;}
+.feature-row.many{align-items:start;}
+.prog-row .step{height:22px;border-radius:6px;}
+.prog-row .step button{width:20px;font-size:12px;}
+.prog-row .step span{min-width:28px;font-size:11px;padding:0 5px;}
 .now-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(380px,1fr));gap:18px;}
 .nc{display:grid;grid-template-columns:112px minmax(0,1fr);gap:22px;align-items:start;}
 .nc.poster{grid-template-columns:104px minmax(0,1fr);}
@@ -154,7 +158,7 @@ a{color:inherit;text-decoration:none;}
 
 /* ───────── shelves ───────── */
 .sec{display:flex;align-items:baseline;gap:10px;margin:34px 0 16px;}
-.sec.first{margin-top:8px;}
+.sec.first{margin-top:20px;}
 .sec h2{font-family:var(--serif);font-size:24px;font-weight:600;letter-spacing:-.4px;white-space:nowrap;}
 .sec .cnt{font-size:13px;color:var(--muted);font-weight:600;}
 .more{margin-left:auto;border:none;background:none;cursor:pointer;font:650 12.5px var(--sans);color:var(--accent-deep);white-space:nowrap;}
@@ -785,7 +789,7 @@ function renderGoal(){
   if(n>=goal)pace='Goal reached · all bonus now';
   else if(diff>=1)pace='On pace · '+diff+' ahead';
   else if(diff===0)pace='Right on pace';
-  else pace=(goal-n)+' to go · '+(-diff)+' behind pace';
+  else pace=(-diff)+' behind pace';
   var pages=books.reduce(function(s,i){return s+(+i.pages||0);},0);
   (data.books||[]).forEach(function(i){if(i.status==='progress')pages+=(+i.progress||0);});
   var scr=yearDone('screen',yr);
@@ -813,12 +817,14 @@ function renderNow(){
     if(it.status==='progress'||justFinished[sec+':'+it.id])items.push({sec:sec,it:it,k:it.startedAt||'',a:addedKey(it,idx)});});});
   items.sort(function(x,y){if(x.sec!==y.sec)return NOW_SECS.indexOf(x.sec)-NOW_SECS.indexOf(y.sec);return (y.k||'').localeCompare(x.k||'')||y.a-x.a;});
   if(!items.length){
+    el.parentNode.classList.remove('many');
     var sug=[];
     ['books','screen'].forEach(function(sec){var w=(data[sec]||[]).map(function(it,i){return{it:it,a:addedKey(it,i)};}).filter(function(x){return x.it.status==='want';}).sort(function(a,b){return b.a-a.a;}).slice(0,3);w.forEach(function(x){sug.push({sec:sec,it:x.it});});});
     el.innerHTML='<div class="card now-empty"><div class="now-empty-txt"><div class="eyebrow">Right now</div><div class="card-t" style="margin-top:8px">Nothing on the nightstand.</div><div class="now-empty-s">Start something from your want list — it’ll live up here with a progress bar and a one-tap “finished”.</div></div><div class="sugg">'+
       sug.map(function(s){return '<div class="sg" data-act="open" data-sec="'+s.sec+'" data-id="'+esc(s.it.id)+'">'+coverHTML(s.it,s.sec)+'<button class="pill" data-act="start" data-sec="'+s.sec+'" data-id="'+esc(s.it.id)+'">Start</button></div>';}).join('')+'</div></div>';
     return;
   }
+  el.parentNode.classList.toggle('many',items.length>2);
   el.innerHTML='<div class="now-grid">'+items.map(function(x){return nowCard(x.sec,x.it);}).join('')+'</div>';
 }
 function nowCard(sec,it){
@@ -839,10 +845,9 @@ function nowCard(sec,it){
     if(!fin&&ser){
       var st=it.seasonsTotal||0,s=it.season||1;
       sub=it.creator||(st?st+' season'+(st===1?'':'s'):'')||it.category;
-      body='<div class="bar"><i style="width:'+(st?Math.round(Math.min(1,(s-1)/st)*100):0)+'%"></i></div><div class="prog-row"><span>S'+s+' · E'+(it.episode||1)+'</span><span class="mut">'+(st?'season '+s+' of '+st:'')+'</span></div>'+
-        '<div class="nc-acts"><button class="pill" data-act="ep" data-f="next"'+dat+'>Next episode +1</button>'+
-        '<div class="step"><button data-act="ep" data-f="season" data-d="-1"'+dat+' aria-label="Previous season">−</button><span>S'+s+'</span><button data-act="ep" data-f="season" data-d="1"'+dat+' aria-label="Next season">+</button></div>'+
-        '<button class="pill pri" data-act="finish"'+dat+'>Finished ✓</button></div>';
+      body='<div class="bar"><i style="width:'+(st?Math.round(Math.min(1,(s-1)/st)*100):0)+'%"></i></div><div class="prog-row"><span>S'+s+' · E'+(it.episode||1)+(st?' <span class="mut">· of '+st+' seasons</span>':'')+'</span>'+
+        '<div class="step" title="Season"><button data-act="ep" data-f="season" data-d="-1"'+dat+' aria-label="Previous season">−</button><span>S'+s+'</span><button data-act="ep" data-f="season" data-d="1"'+dat+' aria-label="Next season">+</button></div></div>'+
+        '<div class="nc-acts"><button class="pill" data-act="ep" data-f="next"'+dat+'>Next episode +1</button><button class="pill pri" data-act="finish"'+dat+'>Finished ✓</button></div>';
     }else if(!fin){
       body='<div class="nc-acts"><button class="pill pri" style="margin-left:0" data-act="finish"'+dat+'>Watched it ✓</button></div>';
     }
@@ -1183,7 +1188,35 @@ function searchTV(q,sig){
         cover:s.image?(s.image.original||s.image.medium):'',thumb:s.image?s.image.medium:'',tvmazeId:s.id,link:s.officialSite||s.url||'',note:net,
         meta:['TV',yr,net,g.slice(0,2).join(', ')].filter(Boolean).join(' · ')};});});
 }
+/* Films: iTunes' movie search currently returns nothing, so IMDb's public suggestion feed (JSONP with a fixed
+   callback name imdb$<query>) is the main source; iTunes stays as a fallback. */
+var imdbPending={};
+function imdbSuggest(q,sig){
+  var key=String(q||'').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^a-z0-9]+/g,'_').replace(/^_+|_+$/g,'').slice(0,40).replace(/_+$/,'');
+  if(!key)return Promise.resolve([]);
+  if(!imdbPending[key])imdbPending[key]=new Promise(function(resolve,reject){
+    var cb='imdb$'+key,sc=document.createElement('script'),settled=false,t;
+    function fin(){settled=true;clearTimeout(t);window[cb]=function(){};sc.remove();delete imdbPending[key];}
+    window[cb]=function(j){if(settled)return;fin();resolve((j&&j.d)||[]);};
+    sc.onerror=function(){if(settled)return;fin();reject(new Error('imdb'));};
+    t=setTimeout(function(){if(settled)return;fin();reject(new Error('timeout'));},12000);
+    sc.src='https://sg.media-imdb.com/suggests/'+key[0]+'/'+key+'.json';sc.async=true;document.head.appendChild(sc);
+  });
+  var pr=imdbPending[key];
+  if(!sig)return pr;
+  return new Promise(function(res,rej){
+    function ab(){var e=new Error('aborted');e.name='AbortError';rej(e);}
+    if(sig.aborted)return ab();sig.addEventListener('abort',ab);pr.then(res,rej);
+  });
+}
 function searchMovies(q,sig){
+  return imdbSuggest(q,sig).then(function(d){
+    return d.filter(function(x){return /^tt/.test(x.id||'')&&/^(movie|tvMovie|short|video)$/.test(x.qid||'');}).slice(0,8).map(function(x){
+      var yr=x.y?String(x.y):'',art=x.i&&x.i[0]?String(x.i[0]).replace(/\._V1_.*(\.\w+)$/,'._V1_SX600$1'):'';
+      return {sec:'screen',kind:'movie',title:x.l||'',creator:'',year:yr,category:'Movie',cover:art,thumb:art?art.replace('_SX600','_SX120'):'',link:'https://www.imdb.com/title/'+x.id+'/',meta:['Film',yr,x.s].filter(Boolean).join(' · ')};});
+  }).then(function(r){return r.length?r:itunesMovies(q,sig).catch(function(){return [];});},function(e){if(e&&e.name==='AbortError')throw e;return itunesMovies(q,sig);});
+}
+function itunesMovies(q,sig){
   return itunesJSONP('https://itunes.apple.com/search?term='+encodeURIComponent(q)+'&media=movie&entity=movie&limit=8&country=US',sig)
     .then(function(j){return (j.results||[]).map(function(m){var yr=(m.releaseDate||'').slice(0,4);var art=m.artworkUrl100||'';
       return {sec:'screen',kind:'movie',title:m.trackName||'',creator:m.artistName||'',year:yr,category:/documentary/i.test(m.primaryGenreName||'')?'Documentary':'Movie',
@@ -1279,7 +1312,7 @@ function renderResults(){
   }
   if(res.mode==='music')h+=col('Albums','· iTunes',res.music,'full');
   else if(res.mode==='podcast')h+=col('Podcasts','· iTunes',res.pods,'full');
-  else h+=col('Books','· Open Library',res.books)+col('Movies & TV','· TVMaze + iTunes',res.screen)+col('Music & podcasts','· iTunes',res.audio,'audio');
+  else h+=col('Books','· Open Library',res.books)+col('Movies & TV','· TVMaze + IMDb',res.screen)+col('Music & podcasts','· iTunes',res.audio,'audio');
   h+='</div>';
   var man=res.mode==='music'?[['music','Album']]:res.mode==='podcast'?[['videos','Podcast']]:[['books','Book'],['screen','Movie'],['screen','TV show'],['music','Album'],['videos','Podcast']];
   if(ui.tab==='articles')man.unshift(['articles','Article']);
@@ -1397,9 +1430,9 @@ function findOne(){
 /* Background cover finder: anything without art gets looked up quietly, a few at a time per service,
    and the result is cached on the item. Misses are remembered (coverTried) so we don't re-ask every load. */
 var AUTO_RETRY=30*864e5,AUTO_RETRY_ERR=864e5;
-var AUTO={ol:{q:[],busy:0,conc:2,gap:300,pause:0},tv:{q:[],busy:0,conc:1,gap:600,pause:0},it:{q:[],busy:0,conc:1,gap:1300,pause:0}};
+var AUTO={ol:{q:[],busy:0,conc:2,gap:300,pause:0},tv:{q:[],busy:0,conc:1,gap:600,pause:0},it:{q:[],busy:0,conc:1,gap:1300,pause:0},im:{q:[],busy:0,conc:1,gap:500,pause:0}};
 var autoQueued={},autoT=null;
-function coverLane(sec,it){if(sec==='books')return 'ol';if(sec==='screen')return isSeries(it)?'tv':'it';if(sec==='music')return 'it';if(sec==='videos'&&isPodcast(it))return 'it';return null;}
+function coverLane(sec,it){if(sec==='books')return 'ol';if(sec==='screen')return isSeries(it)?'tv':'im';if(sec==='music')return 'it';if(sec==='videos'&&isPodcast(it))return 'it';return null;}
 function wantsCover(sec,it){
   if(!it||it.cover||!String(it.title||'').trim()||/^Untitled /.test(it.title))return false;
   if(!coverLane(sec,it))return false;
@@ -1424,15 +1457,16 @@ function pumpAuto(lane){
 }
 function runAuto(lane,j){
   var L=AUTO[lane],it=findItem(j.sec,j.id);
-  function done(){var wait=Math.max(L.gap,L.pause-Date.now());setTimeout(function(){L.busy--;delete autoQueued[j.k];pumpAuto(lane);},wait);}
+  function done(requeue){var wait=Math.max(L.gap,L.pause-Date.now());setTimeout(function(){L.busy--;if(requeue)L.q.push(j);else delete autoQueued[j.k];pumpAuto(lane);},wait);}
   if(!wantsCover(j.sec,it)||coverJob){L.busy--;delete autoQueued[j.k];pumpAuto(lane);return;}
   lookupCover(j.sec,it).then(function(f){
     var cur=findItem(j.sec,j.id);if(!cur||cur.cover)return;
     if(applyFound(cur,f))patchCover(j.sec,cur);
     save();
   },function(e){
+    L.pause=Date.now()+(lane==='ol'?4000:20000);   // likely a hiccup or rate limit: back off this service
+    if(!j.retried){j.retried=1;return true;}       // one more try later this session
     var cur=findItem(j.sec,j.id);if(cur&&!cur.cover){cur.coverTried=Date.now();cur.coverErr=true;save();}
-    if(lane==='it'||/^(403|429|503)$/.test(String(e&&e.message)))L.pause=Date.now()+30000;   // likely rate-limited: back off
   }).then(done);
 }
 
