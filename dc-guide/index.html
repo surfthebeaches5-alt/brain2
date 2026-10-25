@@ -237,6 +237,8 @@ textarea.f-inp{height:auto;}
   .ev{grid-template-columns:48px minmax(0,1fr);}
   .ev .acts{grid-column:2;justify-content:flex-start;}
   .links-ed,.pop{width:calc(100vw - 32px);max-width:380px;}
+  .card-h{flex-wrap:wrap;}
+  .card:not(.mapcard){padding:18px;}
 }
 </style>
 <link rel="stylesheet" href="../assets/brain.css">
@@ -786,6 +788,7 @@ function seenPenalty(seen,key,wkKey){
   return p;
 }
 var RANK={markets:0,outdoors:1,arts:2,events:3,other:3,food:4,drinks:5,night:6};
+function rk(g){return RANK[g]!=null?RANK[g]:3;}
 function isEat(g){return g==='food'||g==='drinks';}
 function findPartner(a,cands,seen,wk){
   if(a.t.lat==null)return null;
@@ -803,14 +806,17 @@ function findPartner(a,cands,seen,wk){
     s-=d*12;s+=(PRICE_SCORE[t.price]!=null?PRICE_SCORE[t.price]:10)/3;
     s+=Math.max(-60,seenPenalty(seen,t.key,wk.key))/2;
     if(c.happening&&a.happening&&dk(c.day)!==dk(a.day))s-=50;
+    var PO={brunch:0,morning:0,afternoon:1,evening:2,night:3};                   // keep the pair to one stretch of the day
+    if(Math.abs(PO[partOfDay(a.t)]-PO[partOfDay(t)])>=2)s-=45;
     if(s>bs){bs=s;best=c;}
   });
-  return best;
+  return bs>-25?best:null;   // a poor match is worse than a single good idea
 }
-function partOfDay(t,when){
-  var tm=when&&when.time;if(tm){var h=+tm.split(':')[0];return h<12?'morning':h<17?'afternoon':h<21?'evening':'night';}
-  var brunch=/brunch/i.test(t.note)||(t.tags||[]).indexOf('brunch')>=0;
-  return {markets:'morning',outdoors:'morning',arts:'afternoon',events:'afternoon',other:'afternoon',food:brunch?'brunch':'evening',drinks:'evening',night:'night'}[t.group]||'afternoon';
+function isBrunch(t){return t.group==='food'&&(/brunch/i.test(t.note)||(t.tags||[]).indexOf('brunch')>=0);}
+// same clock as the Plan it default time, so the headline and the calendar entry agree
+function partOfDay(t){
+  if(isBrunch(t)&&!(t.when&&t.when.time))return 'brunch';
+  var h=+defaultTime(t).split(':')[0];return h<12?'morning':h<17?'afternoon':h<21?'evening':'night';
 }
 function suggestion(){
   var wk=weekendOf(new Date()),seen=seenLoad();
@@ -818,10 +824,11 @@ function suggestion(){
   if(!cands.length)return {wk:wk,none:true};
   var a=cands[0],b=findPartner(a,cands,seen,wk);
   var pair=[a].concat(b?[b]:[]);
-  pair.sort(function(x,y){return (RANK[x.t.group]||3)-(RANK[y.t.group]||3);});
+  pair.sort(function(x,y){return rk(x.t.group)-rk(y.t.group);});
+  if(pair.length>1&&isBrunch(pair[1].t)&&partOfDay(pair[0].t)!=='morning')pair.reverse();   // brunch goes first
   var first=pair[0],second=pair[1]||null;
   var day=a.happening?a.day:(b&&b.happening?b.day:a.day);
-  var part=partOfDay(first.t,first.t.when);
+  var part=partOfDay(first.t);
   // record what we showed for this weekend (once), so next weekend leans to something else
   var changed=false;
   pair.forEach(function(c){if(!seen.list.some(function(e){return e.k===c.t.key&&e.wk===wk.key;})){seen.list.push({k:c.t.key,wk:wk.key,at:Date.now()});changed=true;}});
@@ -834,7 +841,7 @@ function headline(s){
   h+='<em data-act="show" data-k="'+esc(s.first.t.key)+'">'+esc(s.first.t.name)+'</em>';
   if(s.second){
     var t=s.second.t,link='<em data-act="show" data-k="'+esc(t.key)+'">'+esc(t.name)+'</em>';
-    if(t.group==='food'){var meal=/brunch/i.test(t.note)||(t.tags||[]).indexOf('brunch')>=0||s.part==='morning'?'brunch':s.part==='afternoon'?'an early dinner':'dinner';h+=', then '+meal+' at '+link;}
+    if(t.group==='food'){var meal=s.part==='morning'||s.part==='brunch'?(isBrunch(t)?'brunch':'lunch'):s.part==='afternoon'?'an early dinner':'dinner';h+=', then '+meal+' at '+link;}
     else if(t.group==='drinks')h+=', then drinks at '+link;
     else h+=', then '+link;
   }
@@ -886,7 +893,7 @@ function anotherIdea(){
 /* ═════════════════ MAP ═════════════════ */
 var map=null,layer=null,markers={},mapGroup='all',mapMode='all',pickCb=null,selKey=null;
 function initMap(){
-  map=L.map('map',{zoomControl:false,scrollWheelZoom:false,zoomSnap:0.1}).setView([38.9035,-77.031],13.4);
+  map=L.map('map',{zoomControl:false,scrollWheelZoom:false,zoomSnap:0.1}).setView([38.9035,-77.031],13.8);
   L.control.zoom({position:'bottomright'}).addTo(map);
   L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png',{attribution:'© OpenStreetMap contributors',maxZoom:19}).addTo(map);
   layer=L.layerGroup().addTo(map);
@@ -993,6 +1000,7 @@ function badge(t){
     var len=(w.e-w.s)/864e5;
     if(len<1)return {span:DS[w.s.getDay()].toUpperCase(),b:w.s.getDate()};
     if(len<=6)return {span:DS[w.s.getDay()].toUpperCase()+'–'+DS[w.e.getDay()].toUpperCase(),b:w.s.getDate()};
+    if(len>31&&t.evergreen)return {span:'',b:MS[w.s.getMonth()]+'–'+MS[w.e.getMonth()],any:true};   // a season ("Best May–Sept")
     if(w.s<n&&w.e>=n)return {span:'UNTIL',b:MS[w.e.getMonth()]+' '+w.e.getDate(),any:true};
     return {span:MS[w.s.getMonth()].toUpperCase(),b:w.s.getDate()};
   }
@@ -1103,7 +1111,8 @@ $('toast-b').addEventListener('click',function(){var f=toastFn;$('toast').classL
 /* ═════════════════ PLAN IT ═════════════════ */
 var plan=null;   // {keys, date, title, note, group}
 function defaultTime(t){
-  var tm=(t.when&&t.when.time)||parseTime(t.note);if(tm)return tm;
+  // a time written in "when", else in the note (but not a weekday-only happy hour)
+  var tm=(t.when&&t.when.time)||(/weekday|mon\s*[-–]\s*fri/i.test(t.note)?'':parseTime(t.note));if(tm)return tm;
   var brunch=/brunch/i.test(t.note)||(t.tags||[]).indexOf('brunch')>=0;
   if((t.tags||[]).indexOf('happyhour')>=0&&t.group==='drinks')return '17:30';
   return {markets:'10:00',outdoors:'10:30',arts:'13:00',events:'18:00',other:'14:00',food:brunch?'11:00':'19:00',drinks:'19:00',night:'21:30'}[t.group]||'18:00';

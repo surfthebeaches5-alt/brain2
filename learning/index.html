@@ -225,7 +225,7 @@
   .addt{display:flex;align-items:center;gap:8px;margin:6px 0 0 26px;height:36px;padding:0 6px 0 12px;border-radius:10px;border:1.5px dashed var(--line);color:var(--faint);font-size:12.5px;font-weight:550}
   .addt b{color:var(--accent-deep)}
   .addt input{border:0;background:transparent;outline:none;font:550 12.5px var(--b2-sans);flex:1;min-width:0;color:var(--ink)}
-  .addt input[type=date]{flex:0 0 auto;width:128px;color:var(--muted);font-size:11.5px}
+  .addt .dpk{margin-right:2px}
   .addt .btn{height:26px}
   .addt span{margin-left:auto;font-size:11px;font-weight:700;color:var(--muted)}
   button.addt{width:calc(100% - 26px);background:transparent;text-align:left}
@@ -304,7 +304,7 @@
   .gl-row+.gl-row{border-top:1px solid var(--hair)}
   .gl-row b{color:var(--ink);font-weight:700;font-size:13px;text-align:right}
   .gl-row b.okc{color:var(--ok)}
-  .tl{position:relative;margin:22px 0 18px}
+  .tl{position:relative;margin:28px 0 18px}
   .tl .lane{display:grid;gap:4px}
   .tl .seg{height:38px;border-radius:10px;padding:0 12px;display:flex;flex-direction:column;justify-content:center;font-size:12px;font-weight:750;color:var(--ink-2);background:var(--warm-2);min-width:0;white-space:nowrap;overflow:hidden;cursor:pointer;border:0;text-align:left}
   .tl .seg small{font-size:10.5px;font-weight:650;color:var(--muted);overflow:hidden;text-overflow:ellipsis}
@@ -526,8 +526,10 @@
     @page{margin:14mm}
     html,body{background:#fff !important}
     body{-webkit-print-color-adjust:exact;print-color-adjust:exact}
-    .topbar,.swrow,.seasons,.dim,.btn,.more,.tx,.addt,.dpk .due.add,.racts,.chev,.scrim,.drawer,.modal-bg,.toast,.banner{display:none !important}
+    .topbar,.swrow,.seasons,.dim,.btn,.more,.tx,.addt,.dpk .due.add,.racts,.scrim,.drawer,.modal-bg,.toast,.banner{display:none !important}
     .wrap{max-width:none;padding:0}
+    .chev{visibility:hidden}
+    .mrow,.crow{grid-template-columns:18px minmax(0,1fr) 120px 48px 74px}
     .card{box-shadow:none !important;break-inside:avoid}
     .grid{display:block}
     .grid > *{margin-bottom:12px}
@@ -829,7 +831,7 @@ var U=(function(){
     var n=diff(today(),d);return due(md(d),n<0?'over':n<=3?'soon':'');}
   function ring(p,col,sz){sz=sz||56;var r=sz/2-6,C=2*Math.PI*r;p=Math.max(0,Math.min(100,Math.round(p||0)));
     return '<svg width="'+sz+'" height="'+sz+'" viewBox="0 0 '+sz+' '+sz+'" aria-label="'+p+'%" style="flex-shrink:0"><circle cx="'+sz/2+'" cy="'+sz/2+'" r="'+r+'" fill="none" stroke="var(--warm-2)" stroke-width="7"/>'+
-      '<circle cx="'+sz/2+'" cy="'+sz/2+'" r="'+r+'" fill="none" stroke="'+col+'" stroke-width="7" stroke-linecap="round" stroke-dasharray="'+C+'" stroke-dashoffset="'+C*(1-p/100)+'" transform="rotate(-90 '+sz/2+' '+sz/2+')"/>'+
+      '<circle cx="'+sz/2+'" cy="'+sz/2+'" r="'+r+'" fill="none" stroke="'+esc(col)+'" stroke-width="7" stroke-linecap="round" stroke-dasharray="'+C+'" stroke-dashoffset="'+C*(1-p/100)+'" transform="rotate(-90 '+sz/2+' '+sz/2+')"/>'+
       '<text x="'+sz/2+'" y="'+(sz/2+5)+'" text-anchor="middle" font-family="Fraunces, Georgia, serif" font-size="'+(sz>70?19:14)+'" font-weight="600" fill="var(--ink)">'+p+'%</text></svg>';}
   function words(t){t=String(t||'').trim();return t?t.split(/\s+/).length:0;}
   function hm(min){min=Math.round(min||0);var h=Math.floor(min/60),m=min%60;return h?(h+'h'+(m?' '+m+'m':'')):(m+'m');}
@@ -981,7 +983,7 @@ var SW=(function(){
   function render(track,o){
     var isOpen=openTrack===track;
     var h='<div class="swrow"><button class="switch'+(isOpen?' open':'')+'" id="sw-btn-'+track+'" aria-haspopup="listbox" aria-expanded="'+isOpen+'" onclick="SW.toggle('+U.a(track)+')">'+
-      (o.current?'<i style="background:'+o.current.color+'"></i><span class="lbl">'+U.esc(o.current.label)+'</span><small>'+U.esc(o.current.tag||'')+'</small>':'<span class="lbl" style="color:var(--muted)">'+U.esc(o.emptyLabel)+'</span>')+
+      (o.current?'<i style="background:'+U.esc(o.current.color)+'"></i><span class="lbl">'+U.esc(o.current.label)+'</span><small>'+U.esc(o.current.tag||'')+'</small>':'<span class="lbl" style="color:var(--muted)">'+U.esc(o.emptyLabel)+'</span>')+
       '<span class="cv">⌄</span></button><span class="hint">'+U.esc(o.hint||'')+'</span>';
     if(isOpen){
       h+='<div class="swmenu" role="listbox"><div class="srch"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>'+
@@ -993,7 +995,7 @@ var SW=(function(){
   }
   function itemHtml(it,o,showSeason){
     var on=o.current&&it.id===o.current.id;
-    return '<button class="mi2'+(on?' on':'')+'" role="option" aria-selected="'+on+'" onclick="SW.pick('+U.a(it.id)+')"><i style="background:'+it.color+'"></i><div><span class="nm">'+U.esc(it.label)+'</span><small>'+U.esc((showSeason&&it.seasonName?it.seasonName+' · ':'')+(it.sub||''))+'</small></div><span class="r">'+(on?'✓':U.esc(it.right||''))+'</span></button>';
+    return '<button class="mi2'+(on?' on':'')+'" role="option" aria-selected="'+on+'" onclick="SW.pick('+U.a(it.id)+')"><i style="background:'+U.esc(it.color)+'"></i><div><span class="nm">'+U.esc(it.label)+'</span><small>'+U.esc((showSeason&&it.seasonName?it.seasonName+' · ':'')+(it.sub||''))+'</small></div><span class="r">'+(on?'✓':U.esc(it.right||''))+'</span></button>';
   }
   function listHtml(track,o){
     var items=o.items, sel=SEA.selected();
@@ -1108,7 +1110,7 @@ function load(){
     if(!Array.isArray(c.modules))c.modules=[];
     if(!Array.isArray(c.grading))c.grading=[];
     if(!Array.isArray(c.links))c.links=[];
-    if(!c.color)c.color=PALETTE[0];
+    if(!c.color||!/^#[0-9a-f]{3,8}$/i.test(String(c.color)))c.color=PALETTE[0];
     c.modules.forEach(function(m){if(!m.id)m.id=uid();if(!Array.isArray(m.tasks))m.tasks=[];m.tasks.forEach(function(t){if(!t.id)t.id=uid();});});
     var d=c.start||firstDue(c)||c.end;if(d)SEA.ensure(d);
   });
@@ -1171,8 +1173,12 @@ function modRow(m,open,chev){
 }
 function modulesHtml(c){
   var mods=sortedModules(c), done=mods.filter(function(m){return modProg(m).full;}), rest=mods.filter(function(m){return !modProg(m).full;});
-  var firstOpen=rest[0]?rest[0].id:null;
+  var t=U.today(), curM=rest.filter(function(m){return !m.due||m.due>=t;})[0]||rest[0], firstOpen=curM?curM.id:null;
   if(openMods.__cls!==c.id){openMods={__cls:c.id};if(firstOpen)openMods[firstOpen]=true;}
+  if(APP.printing){var keep=showDone;showDone=true;var h0=modulesHtml2(c,mods,done,rest,true);showDone=keep;return h0;}
+  return modulesHtml2(c,mods,done,rest,false);
+}
+function modulesHtml2(c,mods,done,rest,all){
   var h='';
   if(done.length>1&&!showDone){
     var tt=done.reduce(function(s,m){return s+m.tasks.length;},0);
@@ -1180,12 +1186,12 @@ function modulesHtml(c){
   }
   var list=(done.length>1&&!showDone)?rest:mods;
   list.forEach(function(m){
-    var open=!!openMods[m.id];
+    var open=all||!!openMods[m.id];
     if(!open){h+=modRow(m,false);return;}
     h+='<div class="mopen">'+modRow(m,true)+
       '<div class="obj"><span>'+(m.objective?esc(m.objective):'')+'</span><button class="btn sm" onclick="CL.openModule('+A(m.id)+')">Edit module</button></div>'+
       m.tasks.slice().sort(function(x,y){return (x.due||'9').localeCompare(y.due||'9');}).map(function(t){return subTask(m,t);}).join('')+
-      '<div class="addt"><b>+</b><input id="nt-'+esc(m.id)+'" placeholder="Add a task…" onkeydown="if(event.key===\'Enter\')CL.addTask('+A(m.id)+')" aria-label="New task"><input type="date" id="ntd-'+esc(m.id)+'" title="Optional due date" aria-label="Due date"><button class="btn sm" onclick="CL.addTask('+A(m.id)+')">Add</button></div>'+
+      '<div class="addt"><b>+</b><input id="nt-'+esc(m.id)+'" placeholder="Add a task…" onkeydown="if(event.key===\'Enter\')CL.addTask('+A(m.id)+')" aria-label="New task"><span class="dpk" onclick="U.pickDate(this)" title="Optional due date"><span class="due plain" id="ntdl-'+esc(m.id)+'">＋ date</span><input type="date" id="ntd-'+esc(m.id)+'" aria-label="Due date" onchange="document.getElementById(\'ntdl-'+esc(m.id)+'\').textContent=this.value?U.md(this.value):\'＋ date\'"></span><button class="btn sm" onclick="CL.addTask('+A(m.id)+')">Add</button></div>'+
     '</div>';
   });
   if(done.length>1&&showDone)h+='<div style="padding-top:8px"><button class="more" onclick="CL.toggleShowDone()">Fold completed modules</button></div>';
@@ -1491,7 +1497,7 @@ function coursesHtml(p){
   }
   if(openCourse.__p!==p.id){openCourse={__p:p.id};if(k)openCourse[p.courses[k.ci].cid]=true;}
   return p.courses.map(function(c,ci){
-    var done=courseComplete(c), open=!!openCourse[c.cid], dn=c.modules.filter(function(m){return m.done;}).length;
+    var done=courseComplete(c), open=APP.printing||!!openCourse[c.cid], dn=c.modules.filter(function(m){return m.done;}).length;
     var pct=c.modules.length?dn/c.modules.length*100:(done?100:(c.pct||0));
     var isNow=k&&k.ci===ci;
     var row='<div class="crow'+(done?' done':'')+'" onclick="CO.toggleExpand('+A(c.cid)+')" role="button" aria-expanded="'+open+'"><button class="n" title="Mark complete" onclick="event.stopPropagation();CO.toggleCourse('+ci+')">'+(done?'✓':(ci+1))+'</button>'+
@@ -1992,7 +1998,7 @@ function openPlan(id,seasonOverride){
   var start=useOld?c.season.start:(t>s.start&&t<=s.end?t:s.start), end=useOld?c.season.end:s.end;
   var r=c.rhythm||{shortMin:20,days:[2,4,6],longDay:0,longMin:90};
   var units=(c.units.length?c.units:[null,null,null]).map(function(u){return {id:u?u.id:null,label:u?(u.question||u.title):'',weeks:u&&U.valid(u.start)&&U.valid(u.end)&&useOld?Math.max(1,Math.round((U.diff(u.start,u.end)+1)/7)):0,locked:u?u.sessions.some(function(x){return x.done;}):false};});
-  P={cid:c.id,seasonId:s.id,start:start,end:end,shortMin:r.shortMin||20,days:(r.days||[]).slice(),longDay:r.longDay==null?'':String(r.longDay),longMin:r.longMin||90,units:units,proof:c.proofWeek?true:!c.units.length,calendarSync:c.calendarSync||!c.rhythm,rollForward:c.rollForward!==false};
+  P={cid:c.id,seasonId:s.id,start:start,end:end,shortMin:r.shortMin||20,days:(r.days||[]).slice(),longDay:r.longDay==null?'':String(r.longDay),longMin:r.longMin||90,units:units,proof:c.proofWeek?true:!c.units.some(function(u){return U.valid(u.start);}),calendarSync:c.calendarSync||!c.rhythm,rollForward:c.rollForward!==false};
   if(P.units.some(function(u){return !u.weeks;}))evenWeeks();
   drawPlan();document.getElementById('planScrim').classList.add('show');document.getElementById('planDrawer').classList.add('show');
 }
@@ -2021,8 +2027,8 @@ function drawPlan(){
   document.getElementById('planDrawer').innerHTML=
     '<div class="dr-h"><span class="eyebrow" style="color:var(--ss)">'+esc(c.title)+'</span><div class="card-t" style="margin-top:4px">Plan my season</div><div class="card-m" style="margin-top:4px">Pick the dates and a realistic rhythm — the units and sessions spread themselves out. Finished sessions stay as they are.</div></div>'+
     '<div class="dr-b">'+
-      '<div class="stp"><span class="n">1</span><div><div class="l">Season &amp; dates</div><div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap"><select class="in2" id="pl-season" onchange="SS.planSet(\'season\',this.value)" aria-label="Season">'+sOpts+'</select>'+
-        '<input class="in2" type="date" id="pl-start" value="'+esc(P.start)+'" onchange="SS.planSet(\'start\',this.value)" aria-label="Start"><span class="card-m">→</span><input class="in2" type="date" id="pl-end" value="'+esc(P.end)+'" onchange="SS.planSet(\'end\',this.value)" aria-label="End"></div></div></div>'+
+      '<div class="stp"><span class="n">1</span><div><div class="l">Season &amp; dates</div><div style="margin-bottom:8px"><select class="in2" id="pl-season" onchange="SS.planSet(\'season\',this.value)" aria-label="Season">'+sOpts+'</select></div><div style="display:flex;gap:8px;align-items:center">'+
+        '<input class="in2" type="date" id="pl-start" value="'+esc(P.start)+'" onchange="SS.planSet(\'start\',this.value)" aria-label="Start" style="width:160px"><span class="card-m">→</span><input class="in2" type="date" id="pl-end" value="'+esc(P.end)+'" onchange="SS.planSet(\'end\',this.value)" aria-label="End" style="width:160px"></div></div></div>'+
       '<div class="stp"><span class="n">2</span><div><div class="l">Rhythm</div>'+
         '<div style="display:flex;align-items:center;gap:10px;margin-bottom:8px;flex-wrap:wrap"><select class="in2" id="pl-short" onchange="SS.planSet(\'shortMin\',this.value)" aria-label="Short session length">'+mins+'</select><div class="dpick">'+DPICK.map(function(d){return '<button class="'+(P.days.indexOf(d[0])>=0?'on':'')+'" onclick="SS.planDay('+d[0]+')" aria-pressed="'+(P.days.indexOf(d[0])>=0)+'" title="'+U.DS[d[0]]+'">'+d[1]+'</button>';}).join('')+'</div></div>'+
         '<div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap"><span class="card-m">plus one long session</span><select class="in2" id="pl-lday" onchange="SS.planSet(\'longDay\',this.value)" aria-label="Long session day">'+lday+'</select>'+(ld!==null?'<select class="in2" id="pl-lmin" onchange="SS.planSet(\'longMin\',this.value)" aria-label="Long session length">'+lmins+'</select>':'')+'</div></div></div>'+
@@ -2527,7 +2533,10 @@ var APP=(function(){
       tab(t||'overview');
     }else render();
   }
-  return {tab:tab,render:render,openModal:openModal,closeModal:closeModal,init:init,cur:function(){return cur;}};
+  var api={tab:tab,render:render,openModal:openModal,closeModal:closeModal,init:init,cur:function(){return cur;},printing:false};
+  window.addEventListener('beforeprint',function(){api.printing=true;render();});
+  window.addEventListener('afterprint',function(){api.printing=false;render();});
+  return api;
 })();
 (function(){
   var DS=['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
