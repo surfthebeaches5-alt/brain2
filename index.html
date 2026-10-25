@@ -368,7 +368,7 @@ function selfDue(){var l=lsGet('curriculum1');if(!Array.isArray(l))return [];var
   return out;}
 function billDue(from,to){var s=finLoad();if(!s)return [];var out=[];
   s.cards.forEach(function(c){if(!c.active)return;[['day','paid','statement'],['day2','paid2','mid-cycle']].forEach(function(k){
-    if(!c[k[0]]||c[k[1]])return;var d=nextDue(c[k[0]]);if(d<from||d>=to)return;
+    if(!c[k[0]]||finPaid(c,k[1]))return;var d=nextDue(c[k[0]]);if(d<from||d>=to)return;
     out.push({id:'bill:'+c.id+k[0],source:'bill',title:c.name+' due',date:dk(d),allDay:true,color:'#cc5a70',calName:'Bills',url:c.url});});});return out;}
 function eventsIn(from,to){
   var a=localEvents().concat(classDue()).concat(selfDue()).concat(gEvents).concat(billDue(from,to));
@@ -760,20 +760,31 @@ function jsonp(u){
 /* ═════════════════ BILLS (finTrackerState2) ═════════════════ */
 var FIN_SK='finTrackerState2';
 function finMonthKey(){var n=new Date();return n.getFullYear()+'-'+(n.getMonth()+1);}
-/* same rule as the Finances page: a new month clears every paid flag */
+/* same rule as the Finances page: "paid" belongs to one statement (card.paidDates / paid2Dates
+   hold the due dates paid), so a card is due again once its next statement comes up */
+function dueIn(y,m,day){var dim=new Date(y,m+1,0).getDate();return new Date(y,m,Math.min(parseInt(day,10)||1,dim));}
+function nextDue(day){var t=today(),d=dueIn(t.getFullYear(),t.getMonth(),day);if(d<t)d=dueIn(t.getFullYear(),t.getMonth()+1,day);return d;}
+function finList(c,w){var k=w==='paid2'?'paid2Dates':'paidDates';if(!Array.isArray(c[k]))c[k]=[];return c[k];}
+function finPaid(c,w){var day=w==='paid2'?c.day2:c.day;return !!day&&finList(c,w).indexOf(dk(nextDue(day)))>=0;}
 function finLoad(){
   var s=lsGet(FIN_SK);if(!s||!Array.isArray(s.cards))return null;
-  if(s.lastReset&&s.lastReset!==finMonthKey()){s.cards.forEach(function(c){c.paid=false;c.paid2=false;});s.lastReset=finMonthKey();lsSet(FIN_SK,s);}
+  if(!s.paidByStatement){   /* one-time: old month flags → this month's statement */
+    var t=today(),cur=s.lastReset===finMonthKey();
+    s.cards.forEach(function(c){
+      if(cur&&c.paid&&c.day)finList(c,'paid').push(dk(dueIn(t.getFullYear(),t.getMonth(),c.day)));
+      if(cur&&c.paid2&&c.day2)finList(c,'paid2').push(dk(dueIn(t.getFullYear(),t.getMonth(),c.day2)));
+      c.paid=finPaid(c,'paid');c.paid2=finPaid(c,'paid2');});
+    s.paidByStatement=true;lsSet(FIN_SK,s);
+  }
   return s;
 }
-function nextDue(day){var t=today(),d=new Date(t.getFullYear(),t.getMonth(),day);if(d<t)d=new Date(t.getFullYear(),t.getMonth()+1,day);return d;}
 function renderBills(){
   var s=finLoad(),el=$('bills');
   if(!s){el.innerHTML='<div class="empty">Open Money → Finances once to load your cards.</div>';return;}
   var rows=[];
   s.cards.forEach(function(c){if(!c.active)return;
-    if(c.day&&!c.paid)rows.push({c:c,w:'paid',kind:'Statement',d:nextDue(c.day)});
-    if(c.day2&&!c.paid2)rows.push({c:c,w:'paid2',kind:'Mid-cycle',d:nextDue(c.day2)});});
+    if(c.day&&!finPaid(c,'paid'))rows.push({c:c,w:'paid',kind:'Statement',d:nextDue(c.day)});
+    if(c.day2&&!finPaid(c,'paid2'))rows.push({c:c,w:'paid2',kind:'Mid-cycle',d:nextDue(c.day2)});});
   rows.sort(function(a,b){return a.d-b.d;});
   if(!rows.length){el.innerHTML='<div class="empty">Everything’s paid this month.</div>';return;}
   var T=today();
@@ -787,7 +798,8 @@ function renderBills(){
 }
 $('bills').addEventListener('click',function(e){var b=e.target.closest('.ck');if(!b)return;
   var s=finLoad();if(!s)return;var c=s.cards.find(function(x){return x.id===b.getAttribute('data-id');});if(!c)return;
-  c[b.getAttribute('data-w')]=true;s.lastReset=finMonthKey();lsSet(FIN_SK,s);renderBills();renderCal();});
+  var w=b.getAttribute('data-w'),l=finList(c,w),key=dk(nextDue(w==='paid2'?c.day2:c.day));if(l.indexOf(key)<0){l.push(key);l.sort();while(l.length>12)l.shift();}
+  c[w]=true;s.lastReset=finMonthKey();lsSet(FIN_SK,s);renderBills();renderCal();});
 
 /* ═════════════════ CHECKLIST ═════════════════ */
 /* Tasks — quick notes-to-self, separate from the calendar (brain2Tasks1) */
