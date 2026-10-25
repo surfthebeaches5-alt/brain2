@@ -118,7 +118,9 @@ body.b2-shell .topbar.wl-top{align-items:center;}
 
 /* ── bought list ── */
 .bcard{grid-column:1/-1;background:var(--surface);border:1px solid var(--line);border-radius:18px;padding:8px 22px;box-shadow:0 1px 2px rgba(60,50,30,.04),0 8px 24px rgba(60,50,30,.05);display:grid;grid-template-columns:repeat(2,minmax(0,1fr));column-gap:36px;}
-.brow{display:flex;align-items:center;gap:12px;padding:9px 0;border-bottom:1px solid var(--hair);min-width:0;cursor:pointer;}
+.brow{display:flex;align-items:center;gap:12px;padding:9px 0;border-top:1px solid var(--hair);min-width:0;cursor:pointer;}
+.brow:nth-child(-n+2){border-top:none;}
+.bhead{grid-column:1/-1;margin-bottom:-7px;}
 .brow .th{width:38px;height:38px;border-radius:9px;}
 .brow .th svg{width:17px;height:17px;}
 .brow .bi{flex:1;min-width:0;}
@@ -162,6 +164,7 @@ body.dr-open .drawer{transform:none;visibility:visible;}
 .in{width:100%;height:38px;border-radius:10px;border:1px solid var(--line);background:var(--raised);padding:0 12px;font:600 13.5px var(--b2-sans);color:var(--ink);outline:none;transition:border-color .15s,box-shadow .15s;}
 .in::placeholder{color:var(--faint);font-weight:550;}
 .in:focus{border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-soft);}
+.in.empty{color:var(--faint);}
 .in.bad{border-color:var(--over);box-shadow:0 0 0 3px var(--over-soft);}
 .in-pre{position:relative;}
 .in-pre span{position:absolute;left:12px;top:50%;transform:translateY(-50%);font:600 13.5px var(--b2-sans);color:var(--muted);pointer-events:none;}
@@ -482,7 +485,7 @@ function card(i,showPri){
   var due=fmtDue(i.date);
   if(due)tags+='<span class="tg'+(isSoon(i.date)?' soon':'')+'" title="Needed by '+esc(due)+'">by '+esc(due)+'</span>';
   if(ct!=='one')tags+='<span class="tg mo">subscription</span>';
-  if(priOf(i)==='someday'){var d=daysSince(i.addedOn);if(d!==null)tags+='<span class="tg age">'+d+'d on list</span>';}
+  if(priOf(i)==='someday'){var d=daysSince(i.addedOn);if(d!==null)tags+='<span class="tg age">'+(d?d+'d on list':'new')+'</span>';}
   var lk=safeLink(i.link);
   return '<div class="it" tabindex="0" data-id="'+esc(i.id)+'" title="'+esc(i.note||'')+'">'+thumb(i)+
     '<div style="min-width:0"><div class="nm">'+esc(i.name)+'</div><div class="meta">'+pr+tags+
@@ -527,7 +530,9 @@ function boughtSort(a,b){var x=a.boughtOn||'',y=b.boughtOn||'';return x<y?1:x>y?
 function renderBought(el){
   var list=bought().filter(matches).sort(boughtSort);
   if(!list.length){el.innerHTML=emptyHtml();return;}
-  el.innerHTML='<div class="bcard">'+list.map(function(i){
+  var spent=list.reduce(function(s,i){return s+num(i.price);},0);
+  el.innerHTML='<div class="sec-h bhead"><i class="pd" style="background:var(--ok)"></i><b>Bought</b><span class="n">'+list.length+'</span><span class="line"></span><span class="tot">'+(spent?money(spent)+' <small>spent</small>':'')+'</span></div>'+
+    '<div class="bcard">'+list.map(function(i){
     var c=getCat(i.category),ct=costType(i),price=num(i.price);
     var meta=[esc(shortCat(c))];
     if(i.boughtOn&&parseDay(i.boughtOn))meta.push('bought '+esc(fmtDay(i.boughtOn)));
@@ -549,7 +554,7 @@ function renderFoot(){
   var recent=b.slice().sort(boughtSort).slice(0,7);
   var other=b.length-yr.length;
   el.innerHTML='<div class="mini">'+recent.map(thumb).join('')+'</div>'+
-    '<span><b>'+yr.length+' bought</b> this year'+(spent?' · '+money(spent)+' spent':'')+(other?' · '+other+' earlier':'')+'</span>'+
+    '<span><b>'+yr.length+' bought</b> this year'+(spent?' · '+money(spent)+' spent':'')+(other?' · '+other+' more all-time':'')+'</span>'+
     '<button type="button" class="linkbtn more" data-state="bought">See bought →</button>';
 }
 
@@ -618,6 +623,7 @@ function openDrawer(id){
   $('d-name').classList.remove('bad');
   $('d-price').value=it&&num(it.price)?it.price:'';
   $('d-date').value=it&&validMonth(it.date)?it.date:'';
+  $('d-date').classList.toggle('empty',!$('d-date').value);
   $('d-link').value=it?(it.link||''):'';
   $('d-note').value=it?(it.note||''):'';
   $('d-image').value=draft.image;
@@ -694,6 +700,7 @@ $('d-image').addEventListener('input',function(){
 });
 $('d-img-clear').addEventListener('click',function(){$('d-image').value='';$('d-img-err').classList.remove('show');if(draft){draft.image='';paintDraft();}});
 $('d-name').addEventListener('input',function(){this.classList.remove('bad');});
+$('d-date').addEventListener('input',function(){this.classList.toggle('empty',!this.value);});
 $('d-save').addEventListener('click',function(){saveDrawer(false);});
 $('d-bought').addEventListener('click',function(){saveDrawer(true);});
 $('d-del').addEventListener('click',function(){
