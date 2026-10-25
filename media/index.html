@@ -152,6 +152,27 @@ a{color:inherit;text-decoration:none;}
 .goal-in::-webkit-inner-spin-button,.goal-in::-webkit-outer-spin-button{-webkit-appearance:none;margin:0;}
 .goal-p{font-size:12px;color:var(--muted);font-weight:600;margin-top:6px;}
 .stats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin-top:18px;}
+.goal-h,.fav-h{display:flex;align-items:center;justify-content:space-between;gap:8px;}
+.goal-ed{font-size:12px;font-weight:700;color:var(--accent-deep);background:none;border:none;cursor:pointer;padding:0;}
+.goal-of{font-size:15px;color:var(--muted);font-weight:500;}
+.goal-u{font:600 12px var(--sans);color:var(--muted);margin-left:5px;letter-spacing:0;}
+.goal-n .goal-in{width:44px;border:1px solid var(--accent-line);border-radius:7px;padding:2px 5px;background:var(--surface);color:var(--ink);}
+.pages-t{margin-top:16px;}
+.fav-h{margin-top:20px;padding-top:16px;border-top:1px solid var(--hair);}
+.fav-t{display:flex;gap:11px;align-items:center;width:100%;margin-top:10px;padding:9px;border-radius:12px;background:var(--warm);border:1px solid transparent;text-align:left;cursor:pointer;font:inherit;color:inherit;}
+.fav-t:hover{border-color:var(--accent-line);}
+.fav-t.empty{display:block;cursor:default;padding:11px 12px;}
+.fav-cv{width:44px;height:44px;border-radius:7px;background:var(--warm-deep);overflow:hidden;flex-shrink:0;}
+.fav-cv.tall{height:62px;}
+.fav-cv img{width:100%;height:100%;object-fit:cover;display:block;}
+.fav-b{display:flex;flex-direction:column;min-width:0;}
+.fav-l{font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);font-weight:750;}
+.fav-n{font-family:var(--serif);font-size:15px;font-weight:600;line-height:1.2;margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.fav-s{font-size:11px;letter-spacing:1px;margin-top:2px;}
+.fav-s i{font-style:normal;color:var(--faint);}
+.fav-s i.on{color:#d4a64a;}
+.fav-c{font-size:11px;color:var(--muted);font-weight:600;margin-top:2px;}
+.fav-e{font-size:12px;color:var(--muted);line-height:1.45;margin-top:4px;}
 .stat{background:var(--warm);border-radius:12px;padding:12px;min-width:0;}
 .stat b{display:block;font-family:var(--serif);font-size:22px;font-weight:600;line-height:1.15;}
 .stat span{font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);font-weight:750;}
@@ -903,7 +924,7 @@ function starsHTML(sec,it,ro){
 
 /* ── GOAL + STATS STRIP ── */
 function yearDone(sec,yr){return(data[sec]||[]).filter(function(i){return i.status==='done'&&i.date&&String(i.date).slice(0,4)===String(yr);});}
-function getGoal(yr){var g=data.meta&&data.meta.goals&&data.meta.goals.books;return g&&g[yr]?+g[yr]:0;}
+function getGoal(yr){var g=data.meta&&data.meta.goals&&data.meta.goals.books;if(!g)return 0;if(g[yr])return +g[yr];var ys=Object.keys(g).filter(function(y){return +y<yr&&+g[y]>0;}).sort();return ys.length?+g[ys[ys.length-1]]:0;}
 function setGoal(yr,v){if(!data.meta)data.meta={};if(!data.meta.goals)data.meta.goals={};if(!data.meta.goals.books)data.meta.goals.books={};data.meta.goals.books[yr]=Math.max(0,num(v));save();renderGoal();}
 function renderGoal(){
   var now=new Date(),yr=now.getFullYear();
@@ -918,19 +939,31 @@ function renderGoal(){
   else pace=(-diff)+' behind pace';
   var pages=books.reduce(function(s,i){return s+(+i.pages||0);},0);
   (data.books||[]).forEach(function(i){if(i.status==='progress')pages+=(+i.progress||0);});
-  var scr=yearDone('screen',yr);
-  var films=scr.filter(function(i){return !isSeries(i);}).length,shows=scr.length-films;
-  var albums=yearDone('music',yr).length;
+  var scr=yearDone('screen',yr),albums=yearDone('music',yr);
   var pg=pages>=10000?Math.round(pages/1000)+'k':pages>=1000?(pages/1000).toFixed(1).replace(/\.0$/,'')+'k':String(pages);
   var C=2*Math.PI*36;
+  var goalTxt=goalEditing?'<input class="goal-in" type="number" min="1" value="'+goal+'" data-chg="goal" aria-label="Yearly reading goal">':'<span class="goal-of">'+goal+'</span>';
   document.getElementById('goal').innerHTML=
-    '<div class="eyebrow">'+yr+' reading goal</div>'+
+    '<div class="goal-h"><div class="eyebrow">'+yr+' reading goal</div><button class="lnk goal-ed" data-act="goaledit">'+(goalEditing?'Done':'✎ Edit goal')+'</button></div>'+
     '<div class="goal"><svg class="ring" viewBox="0 0 84 84" aria-hidden="true"><circle cx="42" cy="42" r="36" stroke="var(--warm-deep)"/>'+
     '<circle cx="42" cy="42" r="36" stroke="var(--accent)" stroke-linecap="round" stroke-dasharray="'+C.toFixed(1)+'" stroke-dashoffset="'+(C*(1-pct)).toFixed(1)+'"'+(n?'':' style="display:none"')+'/></svg>'+
-    '<div><div class="goal-n">'+n+'<span class="of">/</span><input class="goal-in" type="number" min="1" value="'+goal+'" data-chg="goal" aria-label="Yearly reading goal" title="Edit your goal"></div><div class="goal-p">'+pace+'</div></div></div>'+
-    '<div class="stats"><div class="stat" title="'+pages.toLocaleString()+' pages read this year"><b>'+pg+'</b><span>Pages</span></div>'+
-    '<div class="stat" title="'+shows+' show'+(shows===1?'':'s')+' finished too"><b>'+films+'</b><span>Films</span></div>'+
-    '<div class="stat"><b>'+albums+'</b><span>Albums</span></div></div>';
+    '<div><div class="goal-n">'+n+'<span class="of">/</span>'+goalTxt+'<span class="goal-u">books</span></div><div class="goal-p">'+pace+'</div></div></div>'+
+    '<div class="stat pages-t" title="'+pages.toLocaleString()+' pages read this year"><b>'+pg+'</b><span>Pages read</span></div>'+
+    '<div class="fav-h"><div class="eyebrow">'+yr+' favorites</div></div>'+
+    favTile('music',albums,'Top album','album','albums','Rate an album you’ve finished to see it here')+
+    favTile('screen',scr,'Top TV / film','TV show or film','TV / films','Rate a show or film you’ve finished to see it here');
+  if(goalEditing){var gi=document.querySelector('#goal .goal-in');if(gi){gi.focus();gi.select();}}
+}
+/* the highest-rated thing finished this year (ties: song average for albums, then the most recent) */
+var goalEditing=false;
+function favTile(sec,list,label,one,many,empty){
+  var rated=list.filter(function(i){return +i.rating>0;});
+  rated.sort(function(a,b){return (+b.rating)-(+a.rating)||(sec==='music'?songStats(b).avg-songStats(a).avg:0)||String(b.date||'').localeCompare(String(a.date||''));});
+  var top=rated[0],cnt=list.length+' '+(list.length===1?one:many)+' finished';
+  if(!top)return '<div class="fav-t empty"><div class="fav-l">'+label+'</div><div class="fav-e">'+(list.length?empty:'Nothing finished yet this year')+'</div><div class="fav-c">'+cnt+'</div></div>';
+  var cv=top.cover?'<img src="'+esc(coverSrc(top.cover))+'" alt="" referrerpolicy="no-referrer" onerror="this.remove()">':'';
+  var st='';for(var k=1;k<=5;k++)st+='<i class="'+(k<=+top.rating?'on':'')+'">★</i>';
+  return '<button class="fav-t" data-act="favopen" data-sec="'+sec+'" data-id="'+esc(top.id)+'"><span class="fav-cv'+(sec==='screen'?' tall':'')+'">'+cv+'</span><span class="fav-b"><span class="fav-l">'+label+'</span><span class="fav-n">'+esc(top.title)+'</span><span class="fav-s">'+st+'</span><span class="fav-c">of '+cnt+'</span></span></button>';
 }
 
 /* ── NOW ── (everything in progress: books, screen, albums, podcasts, articles) */
@@ -2388,6 +2421,8 @@ document.addEventListener('click',function(e){
     case 'spplay':if(drawerRef){var sp2=findItem('music',drawerRef.id);if(sp2&&sp2.spotifyId){loadPlayer(sp2);renderDrawer();}}break;
     case 'npopen':if(spHostAlbum)openDrawer('music',spHostAlbum);break;
     case 'npstop':stopPlayer();break;
+    case 'goaledit':goalEditing=!goalEditing;renderGoal();break;
+    case 'favopen':openDrawer(sec,id);break;
     case 'filltracks':fillAllTracks();break;
     case 'imadd':impAdd(+el.getAttribute('data-j'),el.getAttribute('data-st'));break;
     case 'imalt':if(impM&&impM.sp){impM.sp.pick=+el.getAttribute('data-i');renderImpRes();var am=impM.sp.matches[impM.sp.pick];if(am)lookupAlbum(am.itunesId).then(renderImpRes,function(){});}break;
@@ -2411,7 +2446,7 @@ document.addEventListener('change',function(e){
   if(t.closest&&t.closest('#drawer')){drawerInput(e);return;}
   if(!k)return;
   var sec=t.getAttribute('data-sec'),id=t.getAttribute('data-id');
-  if(k==='goal')setGoal(new Date().getFullYear(),t.value);
+  if(k==='goal'){goalEditing=false;setGoal(new Date().getFullYear(),t.value);}
   else if(k==='pg')setPages(sec,id,t.value);
   else if(k==='pgtot')setPageTotal(sec,id,t.value);
   else if(k==='cat'){ui.cat=t.value;renderShelf();}
