@@ -22,7 +22,10 @@
   function lsGet(k,fb){try{var r=localStorage.getItem(k);return r?JSON.parse(r):fb;}catch(e){return fb;}}
   function lsSet(k,v){try{localStorage.setItem(k,JSON.stringify(v));}catch(e){}}
 
+  // the Google Cloud "Brain 2.0 website" client — not a secret: Google only accepts it from the site's own address
+  var DEFAULT_CLIENT_ID='659511814841-r8ml0h6l60661u3kv6bhlts5mplmq23f.apps.googleusercontent.com';
   var cfg=lsGet(CFG_KEY,{}), tokenClient=null, gisReady=null, pending=null;
+  if(cfg.clientId===undefined)cfg.clientId=DEFAULT_CLIENT_ID;   // '' means the user disconnected on purpose
 
   function tok(){try{var t=JSON.parse(sessionStorage.getItem(TOK_KEY)||'null');return t&&t.exp>Date.now()+60000?t.token:null;}catch(e){return null;}}
   function setTok(t,secs){try{sessionStorage.setItem(TOK_KEY,JSON.stringify({token:t,exp:Date.now()+(secs||3500)*1000}));}catch(e){}}

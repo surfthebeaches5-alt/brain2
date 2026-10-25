@@ -55,11 +55,12 @@
       {sep:true},
       {p:'backup/',label:'Backup',sub:'Export & restore your data',icon:'backup'}]}
   ];
-  // the links the original Home page had; first visit only — after that it's whatever you keep
+  // first visit only — after that it's whatever you keep (edit with the + button)
   var DEFAULT_LINKS=[
     {id:'q1',name:'SoFi',url:'https://login.sofi.com/'},
     {id:'q2',name:'Origin',url:'https://app.useorigin.com/'},
-    {id:'q3',name:'Instacart',url:'https://www.instacart.com/store'}
+    {id:'q3',name:'Instacart',url:'https://www.instacart.com/store'},
+    {id:'q4',name:'Duolingo',url:'https://www.duolingo.com/learn'}
   ];
 
   function esc(s){return String(s==null?'':s).replace(/[&<>"']/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];});}

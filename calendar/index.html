@@ -989,7 +989,7 @@ function googleChip() {
   } else if (gBusy) {
     ch.innerHTML = G + 'Syncing…';
   } else if (!GCal.connected()) {
-    ch.innerHTML = G + 'Refresh from Google'; ch.title = 'Google sign-ins last an hour — click to refresh';
+    ch.innerHTML = G + (GCal.everConnected() ? 'Refresh from Google' : 'Sign in to Google'); ch.title = GCal.everConnected() ? 'Google sign-ins last an hour — click to refresh' : 'Show your Google Calendar here';
     ch.addEventListener('click', () => { GCal.signIn().then(() => loadGoogle(true)).catch(err => showToast(err.message)); });
   } else {
     if (showGoogle) ch.classList.add('active');

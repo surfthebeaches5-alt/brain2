@@ -443,7 +443,9 @@ var MO={jan:0,feb:1,mar:2,apr:3,may:4,jun:5,jul:6,aug:7,sep:8,oct:9,nov:10,dec:1
 function parseQuick(text){
   var s=' '+text+' ',date=null,time='',endTime='',T=today();
   function cut(re,fn){var m=re.exec(s);if(m){fn(m);s=s.slice(0,m.index)+' '+s.slice(m.index+m[0].length);}return !!m;}
-  function to24(h,m,ap){h=+h;m=+(m||0);if(ap){ap=ap.toLowerCase();if(ap[0]==='p'&&h<12)h+=12;if(ap[0]==='a'&&h===12)h=0;}else if(h>=1&&h<=7)h+=12;return pad(h)+':'+pad(m);}
+  // no am/pm: 1–7 means afternoon, 8–11 morning — unless it's an evening kind of plan ("dinner at 8")
+  var evening=/\b(dinner|drinks|party|tonight|happy hour|concert|bar|club|date night|movie|show)\b/i.test(text);
+  function to24(h,m,ap){h=+h;m=+(m||0);if(ap){ap=ap.toLowerCase();if(ap[0]==='p'&&h<12)h+=12;if(ap[0]==='a'&&h===12)h=0;}else if((h>=1&&h<=7)||(evening&&h>=8&&h<=11))h+=12;return pad(h)+':'+pad(m);}
   cut(/\s(?:from\s|at\s|@)?(\d{1,2})(?::(\d{2}))?\s*(am|pm|a|p)?\s*(?:-|–|to)\s*(\d{1,2})(?::(\d{2}))?\s*(am|pm|a|p)?(?=\s)/i,function(m){var ap2=m[6]||m[3];time=to24(m[1],m[2],m[3]||ap2);endTime=to24(m[4],m[5],ap2);})||
   cut(/\s(?:at\s|@)?(\d{1,2})(?::(\d{2}))?\s*(am|pm|a\.m\.|p\.m\.)(?=\s)/i,function(m){time=to24(m[1],m[2],m[3]);})||
   cut(/\s(?:at\s|@)(\d{1,2})(?::(\d{2}))?(?=\s)/i,function(m){time=to24(m[1],m[2],'');})||
@@ -521,7 +523,7 @@ setInterval(function(){if(GCal.connected())loadGoogle(true);else syncLabel();},1
 /* setup modal */
 function openModal(){
   var c=GCal.config();$('gclient').value=c.clientId||'';$('g-origin').textContent=GCal.origin;
-  $('gsetup').style.display=GCal.everConnected()?'none':'';$('gdisc').style.display=c.clientId?'':'none';
+  $('gsetup').style.display=(GCal.everConnected()||c.clientId)?'none':'';   // the guide is only needed when there's no client ID$('gdisc').style.display=c.clientId?'':'none';
   $('gmsg').textContent='';$('gmsg').style.color='';
   $('gconnect').textContent=GCal.connected()?'Save':'Connect';
   if(GCal.connected())fillCals();else $('gcals').style.display='none';
