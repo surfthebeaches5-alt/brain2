@@ -1374,7 +1374,7 @@
     var blob=new Blob([JSON.stringify(collect(),null,2)],{type:"application/json"});
     var a=document.createElement("a");
     var d=new Date().toISOString().slice(0,10);
-    a.href=URL.createObjectURL(blob); a.download="stoic-starter-module1-"+d+".json";
+    a.href=URL.createObjectURL(blob); a.download="stoic-starter-module3-"+d+".json";
     document.body.appendChild(a); a.click(); a.remove();
     showToast("Answers exported ✓");
   });
@@ -1394,5 +1394,7 @@
   load();
 })();
 </script>
+<script src="../assets/stoic-resume.js"></script>
+<script src="../assets/stoic-print.js"></script>
 </body>
 </html>
