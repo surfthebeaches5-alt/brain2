@@ -3,144 +3,229 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Meals & Groceries</title>
+<title>Meals</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
 *{box-sizing:border-box;margin:0;padding:0;}
-html,body{background:var(--bg);font-family:var(--b2-sans,'Plus Jakarta Sans',system-ui,sans-serif);color:var(--ink);min-height:100vh;-webkit-font-smoothing:antialiased;}
+html,body{background:var(--bg);font-family:var(--b2-sans,'Plus Jakarta Sans',system-ui,sans-serif);color:var(--ink);min-height:100vh;-webkit-font-smoothing:antialiased;font-size:14px;}
 button,input,select{font-family:inherit;}
+button{cursor:pointer;}
+a{color:inherit;}
 
-/* ── TITLE ROW (brain.css turns .topbar into the title row) ── */
-.topbar{display:flex;align-items:center;justify-content:space-between;gap:12px;}
-.topbar-left{display:flex;align-items:center;gap:14px;}
+/* ── TITLE ROW ── */
+.topbar{display:flex;align-items:flex-end;justify-content:space-between;gap:16px;}
+.topbar-left{display:flex;align-items:center;gap:14px;min-width:0;}
+.title-wrap{min-width:0;}
 .topbar-title{font-family:var(--b2-serif);font-size:34px;font-weight:600;}
+.page-sub{color:var(--muted);font-size:13.5px;font-weight:500;margin-top:6px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.page-sub b{color:var(--ink-2);font-weight:650;}
 .topbar-right{display:flex;align-items:center;gap:10px;}
-.back-btn{display:inline-flex;align-items:center;gap:6px;height:34px;padding:0 14px;border:1px solid var(--line);border-radius:10px;font:650 12.5px var(--b2-sans);color:var(--ink-2);background:var(--raised);text-decoration:none;cursor:pointer;transition:border-color .15s,color .15s;white-space:nowrap;}
-.back-btn:hover{border-color:var(--accent-line);color:var(--accent-deep);}
-.back-btn svg{width:14px;height:14px;flex-shrink:0;}
+.back-btn{display:inline-flex;align-items:center;gap:6px;height:34px;padding:0 14px;border:1px solid var(--line);border-radius:10px;font:650 12.5px var(--b2-sans);color:var(--ink-2);background:var(--raised);text-decoration:none;}
+.back-btn svg{width:14px;height:14px;}
 
-/* ── PAGE TABS: segmented control in the title row ── */
+/* page tabs: shared segmented control */
 .tab-bar-inner{display:inline-flex;gap:2px;padding:4px;background:var(--warm-deep);border-radius:13px;}
-.tab-btn{padding:8px 16px;border:none;border-radius:10px;background:transparent;font:650 13px var(--b2-sans);color:var(--muted);cursor:pointer;white-space:nowrap;transition:color .15s,background .15s;}
+.tab-btn{padding:8px 16px;border:none;border-radius:10px;background:transparent;font:650 13px var(--b2-sans);color:var(--muted);white-space:nowrap;transition:color .15s,background .15s;}
 .tab-btn:hover{color:var(--ink);}
 .tab-btn.active{background:var(--raised);color:var(--ink);box-shadow:0 1px 3px rgba(60,50,30,.1);}
+.tab-btn small{font-size:11px;color:var(--faint);margin-left:5px;font-weight:700;}
+
+/* Instacart icon button */
+.ic-btn{width:38px;height:38px;border-radius:11px;background:var(--raised);border:1px solid var(--line);display:flex;align-items:center;justify-content:center;box-shadow:0 1px 2px rgba(60,50,30,.05);text-decoration:none;flex-shrink:0;transition:border-color .15s;}
+.ic-btn:hover{border-color:var(--accent-line);}
+.ic-btn img{width:22px;height:22px;display:block;}
+.ic-btn b{display:none;width:22px;height:22px;border-radius:6px;background:var(--ok);color:#fff;font:800 12px var(--b2-sans);align-items:center;justify-content:center;}
+.ic-btn.fb img{display:none;}
+.ic-btn.fb b{display:flex;}
 
 /* ── FRAME ── */
 .view{display:none;max-width:1280px;margin:0 auto;padding:20px 40px 80px;}
 .view.active{display:block;}
+.grid{display:grid;grid-template-columns:repeat(12,minmax(0,1fr));gap:18px;align-items:start;}
+.s4{grid-column:span 4}.s5{grid-column:span 5}.s7{grid-column:span 7}.s8{grid-column:span 8}.s12{grid-column:span 12}
+.stretch{align-self:stretch;}
 
 /* ── CARD ── */
-.stat-card,.store-group,.shop-store-card,.meal-card{background:var(--surface);border:1px solid var(--line);border-radius:18px;box-shadow:0 1px 2px rgba(60,50,30,.04),0 8px 24px rgba(60,50,30,.05);}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:18px;padding:22px 24px;box-shadow:0 1px 2px rgba(60,50,30,.04),0 8px 24px rgba(60,50,30,.05);min-width:0;}
+.card-h{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:16px;flex-wrap:wrap;}
+.card-t{font-family:var(--b2-serif);font-size:19px;font-weight:600;letter-spacing:-.2px;}
+.card-m{font-size:12px;color:var(--muted);font-weight:600;}
+.eyebrow{font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--muted);font-weight:750;}
 
-/* ── STATS ── */
-.stats-row{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:18px;margin-bottom:26px;}
-.stat-card{padding:20px 24px;}
-.stat-num{font-family:var(--b2-serif);font-size:32px;font-weight:600;line-height:1;letter-spacing:-.6px;}
-.stat-num.warn{color:var(--over);}
-.stat-num.good{color:var(--ok);}
-.stat-label{font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--muted);margin-top:10px;font-weight:750;}
+/* ── BUTTONS + CHIPS ── */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;height:34px;padding:0 15px;border-radius:10px;font:650 12.5px var(--b2-sans);border:1px solid var(--line);background:var(--raised);color:var(--ink-2);white-space:nowrap;transition:opacity .15s,border-color .15s,color .15s;text-decoration:none;}
+.btn:hover{border-color:var(--accent-line);color:var(--accent-deep);}
+.btn.primary{background:var(--ink);border-color:var(--ink);color:#fff;}
+.btn.primary:hover{opacity:.88;color:#fff;}
+.btn.soft{background:var(--accent-soft);border-color:var(--accent-line);color:var(--accent-deep);}
+.btn.sm{height:28px;padding:0 11px;font-size:11.5px;border-radius:8px;}
+.btn.wide{width:100%;height:40px;}
+.btn.ghost{border-color:transparent;background:none;color:var(--muted);}
+.btn.ghost:hover{border-color:var(--line);background:var(--raised);color:var(--ink-2);}
+.chip{display:inline-flex;align-items:center;gap:5px;font-size:11px;font-weight:700;padding:3px 9px;border-radius:20px;background:var(--warm);color:var(--muted);white-space:nowrap;}
+.chip.ok{background:var(--ok-bg);color:var(--ok);}
+.chip.warn{background:var(--warn-bg);color:var(--warn);}
+.chip.over{background:var(--over-bg);color:var(--over);}
+.chip.lav{background:var(--accent-soft);color:var(--accent-deep);}
+.fpill{display:inline-flex;align-items:center;gap:7px;font:600 12.5px var(--b2-sans);padding:6px 12px;border-radius:20px;background:var(--raised);border:1px solid var(--line);color:var(--ink-2);white-space:nowrap;max-width:200px;overflow:hidden;text-overflow:ellipsis;transition:border-color .15s;}
+.fpill:hover{border-color:var(--accent-line);}
+.fpill.on{background:var(--ink);border-color:var(--ink);color:#fff;}
+.fpill small{font-size:11px;color:var(--faint);font-weight:700;}
+.fpill.on small{color:rgba(255,255,255,.6);}
+.filters{display:flex;gap:6px;align-items:center;flex-wrap:wrap;}
+.inp{border:1px solid var(--line);border-radius:10px;padding:0 12px;height:34px;font:500 13px var(--b2-sans);color:var(--ink);background:var(--raised);outline:none;transition:border-color .15s,box-shadow .15s;}
+.inp:focus,.f-inp:focus{border-color:var(--accent-line);box-shadow:0 0 0 3px var(--accent-soft);}
 
-/* ── SECTION HEADER ── */
-.sec-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;gap:12px;flex-wrap:wrap;}
-.sec-title{font-family:var(--b2-serif);font-size:24px;font-weight:600;letter-spacing:-.4px;}
-.sec-sub{font-size:12.5px;color:var(--muted);margin-top:3px;max-width:520px;line-height:1.45;}
-.hdr-actions{display:flex;gap:8px;flex-wrap:wrap;}
-.pill-btn{display:inline-flex;align-items:center;gap:6px;height:34px;padding:0 15px;border:1px solid var(--line);border-radius:10px;font:650 12.5px var(--b2-sans);cursor:pointer;white-space:nowrap;transition:opacity .15s,border-color .15s,color .15s;}
-.pill-dark{background:var(--ink);border-color:var(--ink);color:#fff;}
-.pill-dark:hover{opacity:.88;}
-.pill-ghost{background:var(--raised);color:var(--ink-2);}
-.pill-ghost:hover{border-color:var(--accent-line);color:var(--accent-deep);}
+/* store favicon / letter tile */
+.fav{display:inline-flex;align-items:center;justify-content:center;flex-shrink:0;width:18px;height:18px;border-radius:4px;overflow:hidden;}
+.fav img{width:100%;height:100%;display:block;}
+.fav b{display:none;width:100%;height:100%;align-items:center;justify-content:center;color:#fff;font:800 10px var(--b2-sans);}
+.fav.fb img{display:none;}
+.fav.fb b{display:flex;}
+.fav.xs{width:14px;height:14px;border-radius:3px;}
+.fav.xs b{font-size:8.5px;}
+.fav.sm{width:16px;height:16px;}
 
-/* ── FILTERS ── */
-.filter-row{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:18px;align-items:center;}
-.search-box{border:1px solid var(--line);border-radius:10px;padding:9px 12px;font:500 13px var(--b2-sans);color:var(--ink);background:var(--raised);outline:none;transition:border-color .15s,box-shadow .15s;width:280px;max-width:100%;margin-right:6px;}
-.search-box:focus,.f-inp:focus{border-color:var(--accent-line);box-shadow:0 0 0 3px var(--accent-soft);}
-.f-chip{padding:6px 12px;border:none;border-radius:20px;font:600 12.5px var(--b2-sans);cursor:pointer;background:var(--warm-deep);color:var(--ink-2);transition:background .15s,color .15s;}
-.f-chip:hover{color:var(--ink);}
-.f-chip.active{background:var(--ink);color:#fff;}
+/* meal photo / placeholder */
+.ph{position:relative;overflow:hidden;background:var(--warm-2);display:flex;align-items:center;justify-content:center;color:var(--faint);flex-shrink:0;}
+.ph svg{width:34%;max-width:34px;height:auto;fill:none;stroke:currentColor;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round;}
+.ph img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block;}
 
-/* ── STORE GROUPS (one card per store) ── */
-#staples-list,.shop-by-store{columns:2;column-gap:18px;}
-.store-group,.shop-store-card{break-inside:avoid;margin-bottom:18px;display:inline-block;width:100%;vertical-align:top;}
-.store-group{padding:20px 24px 10px;min-width:0;}
-.store-group-hdr{display:flex;align-items:center;gap:9px;margin-bottom:6px;}
-.store-dot{display:inline-block;width:10px;height:10px;border-radius:50%;flex-shrink:0;}
-.sg-name{font-family:var(--b2-serif);font-size:19px;font-weight:600;letter-spacing:-.2px;}
-.sg-count{font-size:11px;font-weight:700;padding:3px 9px;border-radius:20px;background:var(--warm);color:var(--muted);margin-left:auto;}
-.staple-row{display:flex;align-items:center;gap:12px;padding:11px 0;}
-.staple-row+.staple-row{border-top:1px solid var(--hair);}
-.sr-main{flex:1;min-width:0;}
-.sr-name{font-size:14px;font-weight:650;line-height:1.3;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
-.sr-cat{font-size:12px;color:var(--muted);font-weight:550;margin-top:2px;}
-.sr-tools{display:flex;align-items:center;gap:6px;flex-shrink:0;}
-.icon-btn{display:inline-flex;align-items:center;justify-content:center;height:28px;min-width:28px;padding:0 9px;border:1px solid transparent;border-radius:8px;background:none;color:var(--faint);cursor:pointer;font:650 11.5px var(--b2-sans);transition:all .15s;line-height:1;}
-.icon-btn:hover{border-color:var(--line);background:var(--raised);color:var(--ink-2);}
-.icon-btn.danger{padding:0;}
-.icon-btn.danger:hover{border-color:var(--over-bg);background:var(--over-bg);color:var(--over);}
+/* ── THIS WEEK: dinners ── */
+.sumline{display:flex;gap:26px;margin:-2px 0 8px;flex-wrap:wrap;}
+.sumline b{display:block;font-family:var(--b2-serif);font-size:24px;font-weight:600;line-height:1.2;}
+.sumline span{font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);font-weight:750;}
+.din{display:grid;grid-template-columns:52px 84px minmax(0,1fr) auto;gap:16px;align-items:center;padding:14px 0;}
+.din+.din{border-top:1px solid var(--hair);}
+.din.past{opacity:.6;}
+.din .dy{text-align:center;}
+.din .dy span{display:block;font-size:10.5px;letter-spacing:.14em;font-weight:800;color:var(--muted);}
+.din .dy b{font-family:var(--b2-serif);font-size:22px;font-weight:600;}
+.din .ph{width:84px;height:84px;border-radius:14px;box-shadow:0 1px 2px rgba(40,30,20,.12),0 8px 18px rgba(40,30,20,.12);}
+.din .t{font-size:15.5px;font-weight:700;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.din .m{font-size:12px;color:var(--muted);font-weight:600;margin-top:3px;}
+.ings{display:flex;flex-wrap:wrap;gap:5px;margin-top:8px;}
+.ing{font-size:11.5px;font-weight:650;padding:3px 8px;border-radius:7px;background:var(--warm);color:var(--ink-2);max-width:190px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.ing.need{background:var(--warn-bg);color:var(--warn);}
+.ing.need::before{content:"+ ";font-weight:800;}
+.din .st{text-align:right;display:flex;flex-direction:column;align-items:flex-end;gap:5px;}
+.din .st small{font-size:11.5px;color:var(--muted);font-weight:650;}
+.slot{display:flex;align-items:center;gap:14px;margin-top:6px;padding:12px 14px;border:1.5px dashed var(--line);border-radius:14px;color:var(--muted);font-size:13px;font-weight:600;}
+.slot b{color:var(--accent-deep);}
+.empty{padding:26px 10px;text-align:center;color:var(--muted);font-size:13px;font-weight:600;line-height:1.5;}
+.empty .e-t{font-family:var(--b2-serif);font-size:18px;font-weight:600;color:var(--ink-2);margin-bottom:4px;}
+.empty .btn{margin-top:14px;}
 
-/* stock toggle — the shared segmented control, small; colour = stock status */
-.seg{display:inline-flex;gap:2px;padding:3px;background:var(--warm-deep);border-radius:10px;flex-shrink:0;}
-.seg-btn{padding:4px 10px;border:none;border-radius:7px;background:transparent;font:650 11.5px var(--b2-sans);cursor:pointer;color:var(--muted);white-space:nowrap;transition:background .12s,color .12s;}
-.seg-btn:hover{color:var(--ink);}
-.seg-btn.active{background:var(--raised);box-shadow:0 1px 3px rgba(60,50,30,.1);}
-.seg-btn.active.stocked{color:var(--ok);}
-.seg-btn.active.low{color:var(--warn);}
-.seg-btn.active.out{color:var(--over);}
+/* ── THIS WEEK: shopping list ── */
+.store+.store{margin-top:16px;}
+.sh{display:flex;align-items:center;gap:9px;padding-bottom:6px;}
+.sh b{font-size:13.5px;font-weight:750;}
+.sh span{margin-left:auto;font-size:12px;color:var(--muted);font-weight:700;}
+.it{display:flex;align-items:center;gap:10px;padding:8px 0;border-top:1px solid var(--hair);font-size:13.5px;font-weight:600;}
+.it .grow{flex:1;min-width:0;}
+.it .grow>span{display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.it small{display:block;font-size:11.5px;color:var(--muted);font-weight:600;margin-top:1px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.it .p{font-size:12.5px;font-weight:700;color:var(--ink-2);flex-shrink:0;}
+.it.done .grow>span{text-decoration:line-through;color:var(--faint);}
+.it.skip{opacity:.55;}
+.it.skip .grow>span{text-decoration:line-through;}
+.it .x{width:22px;height:22px;border:none;border-radius:7px;background:none;color:var(--faint);font-size:11px;flex-shrink:0;}
+.it .x:hover{background:var(--over-bg);color:var(--over);}
+.check{width:20px;height:20px;border-radius:6px;border:1.6px solid var(--line);background:var(--raised);flex-shrink:0;display:flex;align-items:center;justify-content:center;color:#fff;font-size:11px;font-weight:800;padding:0;transition:all .15s;}
+.check:hover{border-color:var(--accent);}
+.check.on{background:var(--accent-deep);border-color:var(--accent-deep);}
+.check:disabled{cursor:default;opacity:.5;}
+.addrow{display:flex;align-items:center;gap:8px;width:100%;margin-top:12px;padding:0 12px;height:36px;border-radius:10px;border:1.5px dashed var(--line);background:none;color:var(--faint);font:550 13px var(--b2-sans);text-align:left;}
+.addrow b{color:var(--accent-deep);}
+.addrow:hover{border-color:var(--accent-line);color:var(--muted);}
+.total{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-top:16px;padding:14px 16px;border-radius:12px;background:var(--warm);}
+.total b{font-family:var(--b2-serif);font-size:24px;font-weight:600;}
+.total span{font-size:12px;color:var(--muted);font-weight:650;}
 
-.empty-note{grid-column:1/-1;column-span:all;text-align:center;padding:48px 20px;color:var(--muted);font-family:var(--b2-serif);font-style:italic;font-size:17px;background:var(--surface);border:1px dashed var(--line);border-radius:18px;}
+/* ── THIS WEEK: use it up ── */
+.use{display:flex;gap:12px;align-items:flex-start;padding:11px 0;}
+.use+.use{border-top:1px solid var(--hair);}
+.use .bar2{width:44px;flex-shrink:0;margin-top:6px;}
+.use .bar2 i{display:block;height:6px;border-radius:4px;background:var(--warm-2);overflow:hidden;}
+.use .bar2 i b{display:block;height:100%;border-radius:4px;}
+.use .bar2 em{display:block;font-style:normal;font-size:10.5px;font-weight:800;color:var(--muted);margin-top:4px;white-space:nowrap;}
+.use .grow{flex:1;min-width:0;}
+.use .grow b{font-size:13.5px;font-weight:700;display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.use .grow span{display:block;font-size:12px;color:var(--muted);font-weight:600;}
+.use .grow span.ok{color:var(--ok);}
+.use .grow span.lav{color:var(--accent-deep);}
 
-/* ── SHOPPING ── */
-.shop-total-bar{display:flex;align-items:center;justify-content:space-between;background:var(--accent-soft);border:1px solid var(--accent-line);border-radius:14px;padding:14px 20px;margin-bottom:18px;gap:12px;flex-wrap:wrap;}
-.shop-total-left{font-size:13px;font-weight:600;color:var(--ink-2);}
-.shop-total-left b{font-weight:750;color:var(--ink);}
-.shop-total-right{display:flex;align-items:baseline;gap:6px;}
-.shop-total-num{font-family:var(--b2-serif);font-size:24px;font-weight:600;color:var(--accent-deep);}
-.shop-total-lbl{font-size:12px;color:var(--muted);font-weight:600;}
-.shop-store-card{padding:20px 24px 10px;min-width:0;}
-.shop-store-hdr{display:flex;align-items:center;gap:9px;margin-bottom:6px;}
-.shop-store-name{font-family:var(--b2-serif);font-size:19px;font-weight:600;letter-spacing:-.2px;flex:1;}
-.shop-store-total{font-size:12.5px;font-weight:650;color:var(--accent-deep);}
-.shop-item{display:flex;align-items:center;gap:12px;padding:11px 0;}
-.shop-item+.shop-item{border-top:1px solid var(--hair);}
-.shop-chk{width:22px;height:22px;border-radius:7px;border:1.6px solid var(--line);background:var(--raised);flex-shrink:0;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .15s;}
-.shop-chk:hover{border-color:var(--accent);}
-.shop-chk.done{background:var(--accent-deep);border-color:var(--accent-deep);}
-.shop-chk.done::after{content:'\2713';color:#fff;font-size:12px;font-weight:800;}
-.shop-name{font-size:14px;font-weight:650;flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
-.shop-name.done{text-decoration:line-through;color:var(--faint);}
-.badge{display:inline-flex;align-items:center;font-size:11px;font-weight:700;padding:3px 9px;border-radius:20px;flex-shrink:0;white-space:nowrap;}
-.badge-low{background:var(--warn-bg);color:var(--warn);}
-.badge-out{background:var(--over-bg);color:var(--over);}
-.badge-manual{background:var(--warm);color:var(--muted);}
-.shop-cost{font-size:12.5px;font-weight:650;color:var(--ink-2);flex-shrink:0;min-width:48px;text-align:right;}
-.shop-del{width:24px;height:24px;border:none;border-radius:7px;background:none;color:var(--faint);cursor:pointer;font-size:11px;flex-shrink:0;}
-.shop-del:hover{background:var(--over-bg);color:var(--over);}
+/* ── STAPLES (compact) ── */
+.sgrid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));column-gap:28px;}
+.sr{display:flex;align-items:center;gap:9px;padding:8px 0;border-bottom:1px solid var(--hair);font-size:13px;font-weight:600;min-width:0;}
+.sr .nm{flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;border:none;background:none;text-align:left;font:600 13px var(--b2-sans);color:var(--ink);padding:0;}
+.sr .nm:hover{color:var(--accent-deep);}
+.sr .nm small{color:var(--faint);font-weight:600;font-size:11.5px;margin-left:5px;}
+.seg3{display:inline-flex;gap:2px;background:var(--warm-2);border-radius:8px;padding:2px;flex-shrink:0;}
+.seg3 button{border:none;background:none;font:800 10.5px var(--b2-sans);width:20px;height:18px;border-radius:6px;display:flex;align-items:center;justify-content:center;color:var(--faint);padding:0;}
+.seg3 button:hover{color:var(--ink-2);}
+.seg3 button.on{background:#fff;box-shadow:0 1px 2px rgba(60,50,30,.1);}
+.seg3 button.on.s{color:var(--ok);}
+.seg3 button.on.l{color:var(--warn);}
+.seg3 button.on.o{color:var(--over);}
+.foot{margin-top:12px;}
+.sgrid .none{grid-column:1/-1;}
 
-/* ── GO-TO MEALS ── */
-.meal-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:18px;}
-.meal-card{padding:22px 24px 18px;display:flex;flex-direction:column;}
-.mc-top{display:flex;align-items:flex-start;justify-content:space-between;gap:10px;}
-.mc-name{font-family:var(--b2-serif);font-size:19px;font-weight:600;letter-spacing:-.2px;line-height:1.25;}
-.mc-type{font-size:10.5px;font-weight:750;letter-spacing:.16em;text-transform:uppercase;color:var(--muted);margin-top:5px;}
-.mc-status{display:inline-flex;align-items:center;font-size:11px;font-weight:700;padding:3px 9px;border-radius:20px;flex-shrink:0;white-space:nowrap;}
-.mc-status.ready{background:var(--ok-bg);color:var(--ok);}
-.mc-status.need{background:var(--warn-bg);color:var(--warn);}
-.ing-tags{display:flex;flex-wrap:wrap;gap:5px;margin:14px 0 16px;flex:1;align-content:flex-start;}
-.ing-tag{display:inline-flex;align-items:center;font-size:11px;font-weight:700;padding:3px 9px;border-radius:20px;background:var(--warm);color:var(--muted);}
-.ing-tag.miss-low{background:var(--warn-bg);color:var(--warn);}
-.ing-tag.miss-out{background:var(--over-bg);color:var(--over);}
-.mc-actions{display:flex;gap:6px;padding-top:14px;border-top:1px solid var(--hair);}
-.mc-btn{display:inline-flex;align-items:center;height:28px;padding:0 11px;border:1px solid var(--line);border-radius:8px;font:650 11.5px var(--b2-sans);cursor:pointer;background:var(--raised);color:var(--ink-2);transition:all .15s;}
-.mc-btn:hover{border-color:var(--accent-line);color:var(--accent-deep);}
-.mc-btn.danger:hover{border-color:var(--over-bg);background:var(--over-bg);color:var(--over);}
+/* ── PICK SCREEN ── */
+.steps{display:flex;gap:10px;align-items:center;margin-bottom:18px;font-size:13px;font-weight:650;color:var(--muted);flex-wrap:wrap;}
+.steps .n{width:24px;height:24px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;font-size:11.5px;font-weight:800;background:var(--warm-2);color:var(--muted);margin-right:7px;}
+.steps .on{color:var(--ink);}
+.steps .on .n{background:var(--accent-deep);color:#fff;}
+.steps .sep{width:28px;height:1px;background:var(--line);}
+.steps .btn{margin-left:auto;}
+.mgrid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px;}
+.mgrid.four{grid-template-columns:repeat(4,minmax(0,1fr));}
+.mc{border-radius:16px;background:var(--raised);border:1px solid var(--line);overflow:hidden;position:relative;text-align:left;padding:0;font:inherit;color:inherit;display:flex;flex-direction:column;transition:border-color .15s,box-shadow .15s;}
+.mc:hover{border-color:var(--accent-line);}
+.mc .ph{width:100%;aspect-ratio:16/10;}
+.mc .b{padding:12px 14px 14px;display:flex;flex-direction:column;flex:1;}
+.mc .t{font-size:14.5px;font-weight:700;line-height:1.3;}
+.mc .m{font-size:12px;color:var(--muted);font-weight:600;margin-top:3px;}
+.have{display:flex;align-items:center;gap:8px;margin-top:10px;font-size:12px;font-weight:700;}
+.have .bar{flex:1;height:5px;border-radius:4px;background:var(--warm-2);overflow:hidden;}
+.have .bar i{display:block;height:100%;border-radius:4px;background:var(--ok);}
+.have.part .bar i{background:var(--warn);}
+.have span{color:var(--muted);white-space:nowrap;}
+.mc .hint{margin-top:8px;font-size:11.5px;font-weight:650;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.hint.ok{color:var(--ok);}.hint.warn{color:var(--warn);}.hint.lav{color:var(--accent-deep);}
+.mc .sel{position:absolute;right:10px;top:10px;width:28px;height:28px;border-radius:9px;background:rgba(255,253,248,.95);border:1.5px solid var(--line);display:flex;align-items:center;justify-content:center;font-weight:800;font-size:13px;color:#fff;}
+.mc.on{border-color:var(--accent-deep);box-shadow:0 0 0 3px var(--accent-soft);}
+.mc.on .sel{background:var(--accent-deep);border-color:var(--accent-deep);}
+.mc .day{position:absolute;left:10px;top:10px;background:rgba(255,253,248,.95);color:var(--ink);}
+.mc .type{position:absolute;left:10px;bottom:10px;background:rgba(255,253,248,.95);color:var(--muted);}
+.mc .ings{margin-top:10px;}
+.mc .ing{font-size:11px;padding:2px 7px;max-width:150px;}
+.mc.new{border:1.5px dashed var(--line);background:transparent;align-items:center;justify-content:center;gap:6px;color:var(--muted);font-weight:650;font-size:13px;min-height:200px;}
+.mc.new b{font-size:22px;color:var(--accent-deep);font-weight:500;}
+.pk{display:flex;align-items:center;gap:10px;padding:9px 0;}
+.pk+.pk{border-top:1px solid var(--hair);}
+.pk .ph{width:40px;height:40px;border-radius:10px;}
+.pk .ph svg{width:18px;}
+.pk select{border:none;background:none;font:800 10.5px var(--b2-sans);letter-spacing:.12em;color:var(--muted);width:46px;padding:0;cursor:pointer;outline:none;}
+.pk select:focus{color:var(--accent-deep);}
+.pk .grow{flex:1;min-width:0;}
+.pk b{font-size:13.5px;font-weight:650;display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.pk small{font-size:11.5px;color:var(--muted);font-weight:600;}
+.mini{display:flex;align-items:center;gap:8px;padding:6px 0;font-size:13px;font-weight:600;}
+.mini span{margin-left:auto;color:var(--ink-2);font-weight:700;font-size:12.5px;}
+.tot{display:flex;justify-content:space-between;align-items:baseline;margin:14px 0 16px;padding-top:12px;border-top:1px solid var(--hair);}
+.tot b{font-family:var(--b2-serif);font-size:26px;font-weight:600;}
+.tip{margin-top:14px;padding:11px 12px;border-radius:12px;background:var(--accent-soft);border:1px solid var(--accent-line);font-size:12.5px;font-weight:600;color:var(--ink-2);line-height:1.45;}
+.tip b{color:var(--accent-deep);}
+.sticky{position:sticky;top:84px;}
 
 /* ── MODALS ── */
 .modal-overlay{display:none;position:fixed;inset:0;background:rgba(36,31,23,.28);backdrop-filter:blur(3px);z-index:1000;align-items:center;justify-content:center;padding:20px;}
 .modal-overlay.open{display:flex;animation:fadeIn .2s;}
 @keyframes fadeIn{from{opacity:0}to{opacity:1}}
-.modal{background:var(--surface);border-radius:18px;border:1px solid var(--line);padding:24px 26px;width:100%;max-width:480px;max-height:90vh;overflow-y:auto;box-shadow:0 30px 70px rgba(36,31,23,.22);animation:popIn .2s;}
+.modal{background:var(--surface);border-radius:18px;border:1px solid var(--line);padding:24px 26px;width:100%;max-width:500px;max-height:90vh;overflow-y:auto;box-shadow:0 30px 70px rgba(36,31,23,.22);animation:popIn .2s;}
 @keyframes popIn{from{transform:scale(.97);opacity:0}to{transform:scale(1);opacity:1}}
 .modal-sm{max-width:420px;}
 .modal-title{font-family:var(--b2-serif);font-size:22px;font-weight:600;letter-spacing:-.3px;margin-bottom:18px;}
@@ -149,38 +234,60 @@ button,input,select{font-family:inherit;}
 .f-hint{font-size:11.5px;color:var(--faint);font-weight:500;text-transform:none;letter-spacing:0;}
 .f-inp{width:100%;border:1px solid var(--line);border-radius:10px;padding:9px 12px;font:500 13px var(--b2-sans);color:var(--ink);background:var(--raised);outline:none;transition:border-color .15s,box-shadow .15s;}
 .f-row{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+.f-row3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;}
+.f-check{display:flex;align-items:center;gap:9px;font-size:13px;font-weight:600;color:var(--ink-2);cursor:pointer;height:38px;}
+.f-check input{width:16px;height:16px;accent-color:var(--accent-deep);}
 .m-actions{display:flex;gap:8px;justify-content:flex-end;margin-top:20px;padding-top:16px;border-top:1px solid var(--hair);}
-.m-btn{display:inline-flex;align-items:center;height:34px;padding:0 16px;border-radius:10px;font:650 12.5px var(--b2-sans);cursor:pointer;border:1px solid;transition:opacity .15s,border-color .15s;}
+.m-btn{display:inline-flex;align-items:center;height:34px;padding:0 16px;border-radius:10px;font:650 12.5px var(--b2-sans);border:1px solid;transition:opacity .15s,border-color .15s;}
 .m-cancel{background:var(--raised);border-color:var(--line);color:var(--ink-2);}
 .m-cancel:hover{border-color:var(--accent-line);color:var(--accent-deep);}
 .m-save{background:var(--ink);border-color:var(--ink);color:#fff;}
 .m-save:hover{opacity:.88;}
 .m-delete{background:var(--over-bg);border-color:var(--over-bg);color:var(--over);margin-right:auto;order:-1;}
-
-/* status picker in staple modal */
 .status-pick{display:flex;gap:2px;padding:4px;background:var(--warm-deep);border-radius:13px;}
-.sp-btn{flex:1;padding:8px;border:none;border-radius:10px;font:650 13px var(--b2-sans);cursor:pointer;background:transparent;color:var(--muted);transition:all .12s;}
+.sp-btn{flex:1;padding:8px;border:none;border-radius:10px;font:650 13px var(--b2-sans);background:transparent;color:var(--muted);transition:all .12s;}
 .sp-btn.on{background:var(--raised);box-shadow:0 1px 3px rgba(60,50,30,.1);}
 .sp-btn.on.stocked{color:var(--ok);}
 .sp-btn.on.low{color:var(--warn);}
 .sp-btn.on.out{color:var(--over);}
-
-/* ingredient chip picker in meal modal */
-.chip-picker{display:flex;flex-wrap:wrap;gap:6px;max-height:210px;overflow-y:auto;padding:10px;border:1px solid var(--line);border-radius:12px;background:var(--warm);}
-.pick-chip{padding:6px 12px;border-radius:20px;border:none;background:var(--raised);font:600 12.5px var(--b2-sans);cursor:pointer;color:var(--ink-2);box-shadow:0 0 0 1px var(--line) inset;transition:all .12s;}
+.chip-picker{display:flex;flex-wrap:wrap;gap:6px;max-height:180px;overflow-y:auto;padding:10px;border:1px solid var(--line);border-radius:12px;background:var(--warm);}
+.pick-chip{padding:6px 12px;border-radius:20px;border:none;background:var(--raised);font:600 12.5px var(--b2-sans);color:var(--ink-2);box-shadow:0 0 0 1px var(--line) inset;transition:all .12s;}
 .pick-chip:hover{box-shadow:0 0 0 1px var(--accent-line) inset;}
 .pick-chip.on{background:var(--ink);color:#fff;box-shadow:none;}
 .pick-empty{font-size:12.5px;color:var(--muted);padding:6px;}
+.img-row{display:flex;gap:10px;align-items:center;}
+.img-row .ph{width:44px;height:44px;border-radius:10px;}
+.img-row .ph svg{width:18px;}
+.ex-row{display:grid;grid-template-columns:minmax(0,1fr) 130px 84px 28px;gap:6px;margin-bottom:6px;align-items:center;}
+.ex-row .f-inp{padding:7px 10px;}
+.ex-del{width:28px;height:28px;border:none;border-radius:8px;background:none;color:var(--faint);font-size:11px;}
+.ex-del:hover{background:var(--over-bg);color:var(--over);}
+.ex-add{border:none;background:none;color:var(--accent-deep);font:650 12.5px var(--b2-sans);padding:4px 0;}
 
+/* toast */
+.toast{position:fixed;left:50%;bottom:28px;transform:translateX(-50%) translateY(20px);background:var(--ink);color:#fff;font:650 13px var(--b2-sans);padding:11px 18px;border-radius:12px;box-shadow:0 12px 30px rgba(36,31,23,.25);opacity:0;pointer-events:none;transition:opacity .2s,transform .2s;z-index:1100;max-width:calc(100% - 32px);}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
+
+@media(max-width:1180px){
+  .mgrid.four{grid-template-columns:repeat(3,minmax(0,1fr));}
+}
 @media(max-width:1100px){
-  #staples-list,.shop-by-store{columns:1;}
+  .s4,.s5,.s7,.s8{grid-column:span 12;}
+  .sticky{position:static;}
+  .topbar{flex-wrap:wrap;}
 }
 @media(max-width:760px){
-  body.b2-shell .topbar{flex-wrap:wrap;align-items:center;}
-  .stats-row{gap:8px;}
-  .staple-row{flex-wrap:wrap;}
-  .sr-tools{width:100%;justify-content:flex-end;}
   .view{padding:16px 16px 60px;}
+  .sgrid,.mgrid,.mgrid.four{grid-template-columns:repeat(2,minmax(0,1fr));}
+  .din{grid-template-columns:40px 60px minmax(0,1fr);}
+  .din .ph{width:60px;height:60px;}
+  .din .st{grid-column:3;align-items:flex-start;flex-direction:row;}
+  .card{padding:18px 16px;}
+  .page-sub{white-space:normal;}
+}
+@media(max-width:520px){
+  .sgrid,.mgrid,.mgrid.four{grid-template-columns:1fr;}
+  .ex-row{grid-template-columns:minmax(0,1fr) 90px 64px 28px;}
 }
 </style>
 <link rel="stylesheet" href="../assets/brain.css">
@@ -191,15 +298,11 @@ button,input,select{font-family:inherit;}
 <!-- STAPLE MODAL -->
 <div class="modal-overlay" id="staple-modal">
   <div class="modal">
-    <div class="modal-title" id="sm-title">Add Staple</div>
-    <div class="f-field"><label class="f-lbl">Item name</label><input class="f-inp" id="st-name" placeholder="e.g. Eggs"></div>
+    <div class="modal-title" id="sm-title">Add staple</div>
+    <div class="f-field"><label class="f-lbl" for="st-name">Item name</label><input class="f-inp" id="st-name" maxlength="80"></div>
     <div class="f-row">
-      <div class="f-field"><label class="f-lbl">Store</label>
-        <select class="f-inp" id="st-store"></select>
-      </div>
-      <div class="f-field"><label class="f-lbl">Category</label>
-        <select class="f-inp" id="st-cat"></select>
-      </div>
+      <div class="f-field"><label class="f-lbl" for="st-store">Store</label><select class="f-inp" id="st-store"></select></div>
+      <div class="f-field"><label class="f-lbl" for="st-cat">Category</label><select class="f-inp" id="st-cat"></select></div>
     </div>
     <div class="f-field"><label class="f-lbl">Status</label>
       <div class="status-pick">
@@ -208,7 +311,11 @@ button,input,select{font-family:inherit;}
         <button type="button" class="sp-btn out" id="st-status-out" onclick="pickStapleStatus('out')">Out</button>
       </div>
     </div>
-    <div class="f-field"><label class="f-lbl">Typical price <span class="f-hint">— optional, for a rough list total</span></label><input class="f-inp" id="st-price" type="number" min="0" step="0.01" placeholder="e.g. 5.84"></div>
+    <div class="f-row">
+      <div class="f-field"><label class="f-lbl" for="st-price">Typical price <span class="f-hint">optional</span></label><input class="f-inp" id="st-price" type="number" min="0" step="0.01"></div>
+      <div class="f-field"><label class="f-lbl" for="st-shelf">Keeps about <span class="f-hint">days</span></label><input class="f-inp" id="st-shelf" type="number" min="1" step="1"></div>
+    </div>
+    <label class="f-check"><input type="checkbox" id="st-perish"> Goes bad fast <span class="f-hint">— show it in “Use it up”</span></label>
     <div class="m-actions">
       <button class="m-btn m-cancel" onclick="closeStapleModal()">Cancel</button>
       <button class="m-btn m-delete" id="st-del-btn" style="display:none;" onclick="deleteStapleFromModal()">Delete</button>
@@ -220,15 +327,21 @@ button,input,select{font-family:inherit;}
 <!-- MEAL MODAL -->
 <div class="modal-overlay" id="meal-modal">
   <div class="modal">
-    <div class="modal-title" id="mm-title">Add Go-To Meal</div>
+    <div class="modal-title" id="mm-title">New go-to meal</div>
+    <div class="f-field"><label class="f-lbl" for="ml-name">Meal name</label><input class="f-inp" id="ml-name" maxlength="80"></div>
     <div class="f-row">
-      <div class="f-field"><label class="f-lbl">Meal name</label><input class="f-inp" id="ml-name" placeholder="e.g. Bacon & Eggs"></div>
-      <div class="f-field"><label class="f-lbl">When</label>
-        <select class="f-inp" id="ml-type"></select>
-      </div>
+      <div class="f-field"><label class="f-lbl" for="ml-type">When</label><select class="f-inp" id="ml-type"></select></div>
+      <div class="f-field"><label class="f-lbl" for="ml-min">Minutes <span class="f-hint">optional</span></label><input class="f-inp" id="ml-min" type="number" min="1" step="1"></div>
     </div>
-    <div class="f-field"><label class="f-lbl">Ingredients <span class="f-hint">— tap the staples this meal uses</span></label>
+    <div class="f-field"><label class="f-lbl" for="ml-img">Photo <span class="f-hint">— paste an image URL, optional</span></label>
+      <div class="img-row"><div class="ph" id="ml-img-prev"></div><input class="f-inp" id="ml-img" placeholder="https://…" oninput="previewMealImg()"></div>
+    </div>
+    <div class="f-field"><label class="f-lbl">Staples it uses <span class="f-hint">— tap to select</span></label>
       <div class="chip-picker" id="ml-chips"></div>
+    </div>
+    <div class="f-field"><label class="f-lbl">Other ingredients <span class="f-hint">— bought fresh for this meal, not kept as staples</span></label>
+      <div id="ml-extras"></div>
+      <button type="button" class="ex-add" onclick="addExtraRow()">+ Add ingredient</button>
     </div>
     <div class="m-actions">
       <button class="m-btn m-cancel" onclick="closeMealModal()">Cancel</button>
@@ -238,16 +351,14 @@ button,input,select{font-family:inherit;}
   </div>
 </div>
 
-<!-- SHOPPING ADD MODAL -->
+<!-- ONE-OFF MODAL -->
 <div class="modal-overlay" id="shop-modal">
   <div class="modal modal-sm">
-    <div class="modal-title">Add One-Off Item</div>
-    <div class="f-field"><label class="f-lbl">Item <span class="f-hint">— something you don't keep as a staple</span></label><input class="f-inp" id="so-name" placeholder="e.g. Birthday candles"></div>
+    <div class="modal-title">Add one-off item</div>
+    <div class="f-field"><label class="f-lbl" for="so-name">Item <span class="f-hint">— something you don't keep as a staple</span></label><input class="f-inp" id="so-name" maxlength="80"></div>
     <div class="f-row">
-      <div class="f-field"><label class="f-lbl">Store</label>
-        <select class="f-inp" id="so-store"></select>
-      </div>
-      <div class="f-field"><label class="f-lbl">Est. price <span class="f-hint">— optional</span></label><input class="f-inp" id="so-cost" type="number" min="0" step="0.01" placeholder="0.00"></div>
+      <div class="f-field"><label class="f-lbl" for="so-store">Store</label><select class="f-inp" id="so-store"></select></div>
+      <div class="f-field"><label class="f-lbl" for="so-cost">Est. price <span class="f-hint">optional</span></label><input class="f-inp" id="so-cost" type="number" min="0" step="0.01"></div>
     </div>
     <div class="m-actions">
       <button class="m-btn m-cancel" onclick="closeShopModal()">Cancel</button>
@@ -256,81 +367,82 @@ button,input,select{font-family:inherit;}
   </div>
 </div>
 
-<!-- TOPBAR -->
+<!-- TITLE ROW -->
 <div class="topbar">
   <div class="topbar-left">
-    <a href="../" class="back-btn">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"/></svg>
-      Brain 2.0
-    </a>
-    <div class="topbar-title">Meals &amp; Groceries</div>
+    <a href="../" class="back-btn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"/></svg>Brain 2.0</a>
+    <div class="title-wrap">
+      <div class="topbar-title">Meals</div>
+      <div class="page-sub" id="page-sub"></div>
+    </div>
   </div>
   <div class="topbar-right">
     <div class="tab-bar-inner" role="tablist">
-      <button class="tab-btn active" id="tab-staples"  onclick="setTab('staples')">Staples</button>
-      <button class="tab-btn"        id="tab-shopping" onclick="setTab('shopping')">Shopping</button>
-      <button class="tab-btn"        id="tab-meals"    onclick="setTab('meals')">Go-To Meals</button>
+      <button class="tab-btn active" id="tab-week" data-act="tab" data-tab="week">This week</button>
+      <button class="tab-btn" id="tab-staples" data-act="tab" data-tab="staples">Staples <small id="cnt-staples"></small></button>
+      <button class="tab-btn" id="tab-meals" data-act="tab" data-tab="meals">Go-to meals <small id="cnt-meals"></small></button>
     </div>
-    <a href="https://www.instacart.com/store" target="_blank" class="back-btn">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="8" cy="21" r="1"/><circle cx="19" cy="21" r="1"/><path d="M2.05 2.05h2l2.66 12.42a2 2 0 0 0 2 1.58h9.78a2 2 0 0 0 1.95-1.57l1.65-7.43H5.12"/></svg>
-      Instacart <span aria-hidden="true">&#8599;</span>
-    </a>
+    <a class="ic-btn" href="https://www.instacart.com/store" target="_blank" rel="noopener" title="Open Instacart" aria-label="Open Instacart"><img src="https://icons.duckduckgo.com/ip3/instacart.com.ico" alt="" onerror="this.parentNode.classList.add('fb')"><b>I</b></a>
     <span class="topbar-date" id="today-date"></span>
   </div>
 </div>
 
-<!-- STAPLES VIEW -->
-<div class="view active" id="view-staples">
-  <div class="stats-row" id="staples-stats"></div>
-  <div class="sec-hdr">
-    <div>
-      <div class="sec-title">Staples</div>
-    </div>
-    <div class="hdr-actions"><button class="pill-btn pill-dark" onclick="openStapleModal()">+ Add Staple</button></div>
+<!-- THIS WEEK -->
+<div class="view active" id="view-week">
+  <div class="grid">
+    <section class="card s7 stretch" id="dinners-card"></section>
+    <section class="card s5 stretch" id="shop-card"></section>
+    <section class="card s4 stretch" id="use-card"></section>
+    <section class="card s8 stretch" id="wk-staples-card"></section>
   </div>
-  <div class="filter-row">
-    <input class="search-box" id="staple-search" placeholder="Search staples..." oninput="renderStaples()">
-    <button class="f-chip active" id="sf-all"   onclick="setStapleFilter('all')">All</button>
-    <button class="f-chip"        id="sf-buy"   onclick="setStapleFilter('buy')">Need to buy</button>
-    <button class="f-chip"        id="sf-stocked" onclick="setStapleFilter('stocked')">Stocked</button>
-  </div>
-  <div id="staples-list"></div>
 </div>
 
-<!-- SHOPPING VIEW -->
-<div class="view" id="view-shopping">
-  <div class="sec-hdr">
-    <div>
-      <div class="sec-title">Shopping List</div>
-    </div>
-    <div class="hdr-actions">
-      <button class="pill-btn pill-ghost pill-sm" onclick="openShopModal()">+ One-off</button>
-      <button class="pill-btn pill-dark pill-sm" onclick="doneShopping()">Done shopping</button>
-    </div>
+<!-- PICK DINNERS -->
+<div class="view" id="view-pick">
+  <div class="steps">
+    <span class="on"><span class="n">1</span>Pick dinners</span><span class="sep"></span>
+    <span><span class="n">2</span>Check the list</span><span class="sep"></span>
+    <span><span class="n">3</span>Shop</span>
+    <button class="btn sm ghost" data-act="pick-cancel">Cancel</button>
   </div>
-  <div id="shop-total-bar"></div>
-  <div class="shop-by-store" id="shop-by-store"></div>
+  <div class="grid">
+    <section class="card s8">
+      <div class="card-h"><div class="card-t">Your go-to dinners</div><div class="filters" id="pick-filters"></div></div>
+      <div class="mgrid" id="pick-grid"></div>
+    </section>
+    <div class="s4 sticky"><section class="card" id="pick-side"></section></div>
+  </div>
 </div>
 
-<!-- MEALS VIEW -->
+<!-- STAPLES -->
+<div class="view" id="view-staples">
+  <section class="card" id="st-staples-card"></section>
+</div>
+
+<!-- GO-TO MEALS -->
 <div class="view" id="view-meals">
-  <div class="sec-hdr">
-    <div>
-      <div class="sec-title">Go-To Meals</div>
-    </div>
-    <div class="hdr-actions"><button class="pill-btn pill-dark" onclick="openMealModal()">+ Add Meal</button></div>
-  </div>
-  <div class="meal-grid" id="meal-grid"></div>
+  <section class="card">
+    <div class="card-h"><div class="card-t">Go-to meals</div><button class="btn sm" data-act="meal-new">+ New meal</button></div>
+    <div class="mgrid four" id="meal-grid"></div>
+  </section>
 </div>
+
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
 
 <script>
 var SK='mealPlanner1';
 var DAYS_FULL=['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+var DAYS_SHORT=['SUN','MON','TUE','WED','THU','FRI','SAT'];
 var MONTHS_FULL=['January','February','March','April','May','June','July','August','September','October','November','December'];
+var MONTHS_SHORT=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
 var STORES=['Walmart','Costco','Safeway','Whole Foods',"Trader Joe's",'Target','Amazon','Aldi','Other'];
 var STORE_COLORS={Walmart:'#0071ce',Costco:'#e3261c',Safeway:'#cc0000','Whole Foods':'#2b6e2b',"Trader Joe's":'#c0392b',Target:'#cc0000',Amazon:'#ff9900',Aldi:'#00a0e0',Other:'#7a7468'};
+var STORE_DOMAINS={Walmart:'walmart.com',Costco:'costco.com',Safeway:'safeway.com','Whole Foods':'wholefoodsmarket.com',"Trader Joe's":'traderjoes.com',Target:'target.com',Amazon:'amazon.com',Aldi:'aldi.us'};
 var CATEGORIES=['Protein','Dairy','Produce','Bread','Pantry','Sauce','Snack','Dessert','Drink','Frozen','Household','Other'];
 var MEAL_TYPES=['Breakfast','Lunch','Dinner','Snack','Any'];
+/* when a staple has no explicit perishable flag, these categories count as "goes bad fast" */
+var PERISH_DEFAULT={Produce:5,Dairy:7};
+var SHELF_GUESS={Produce:5,Dairy:7,Protein:5,Bread:7};
 
 var data={staples:[],goto:[],shopping:[],picked:[]};
 
@@ -356,25 +468,15 @@ var DEFAULT_GOTO=[
 ];
 
 /* ── STORAGE + MIGRATION ── */
-function save(){localStorage.setItem(SK,JSON.stringify(data));}
+function save(){try{localStorage.setItem(SK,JSON.stringify(data));}catch(e){}}
+function freshDefaults(){return {staples:JSON.parse(JSON.stringify(DEFAULT_STAPLES)),goto:JSON.parse(JSON.stringify(DEFAULT_GOTO)),shopping:[],picked:[]};}
 function load(){
-  var raw=localStorage.getItem(SK);
-  if(!raw){
-    data={staples:JSON.parse(JSON.stringify(DEFAULT_STAPLES)),goto:JSON.parse(JSON.stringify(DEFAULT_GOTO)),shopping:[],picked:[]};
-    save();
-    return;
-  }
-  var parsed;
-  try{parsed=JSON.parse(raw);}catch(e){parsed=null;}
-  if(!parsed){data={staples:JSON.parse(JSON.stringify(DEFAULT_STAPLES)),goto:JSON.parse(JSON.stringify(DEFAULT_GOTO)),shopping:[],picked:[]};save();return;}
-
+  var raw=null;try{raw=localStorage.getItem(SK);}catch(e){}
+  if(!raw){data=freshDefaults();save();return normalize();}
+  var parsed;try{parsed=JSON.parse(raw);}catch(e){parsed=null;}
+  if(!parsed){data=freshDefaults();save();return normalize();}
   if(parsed.staples){
-    // already new format
     data=parsed;
-    data.staples=data.staples||[];
-    data.goto=data.goto||[];
-    data.shopping=data.shopping||[];
-    data.picked=data.picked||[];
   } else if(parsed.pantry){
     // migrate from the old pantry/recipe/planner format
     data={staples:[],goto:[],shopping:[],picked:[]};
@@ -394,9 +496,18 @@ function load(){
     });
     save();
   } else {
-    data={staples:JSON.parse(JSON.stringify(DEFAULT_STAPLES)),goto:JSON.parse(JSON.stringify(DEFAULT_GOTO)),shopping:[],picked:[]};
-    save();
+    data=freshDefaults();save();
   }
+  normalize();
+}
+function normalize(){
+  data.staples=Array.isArray(data.staples)?data.staples.filter(Boolean):[];
+  data.goto=Array.isArray(data.goto)?data.goto.filter(Boolean):[];
+  data.shopping=Array.isArray(data.shopping)?data.shopping.filter(Boolean):[];
+  data.picked=Array.isArray(data.picked)?data.picked:[];
+  if(data.skipped!==undefined&&!Array.isArray(data.skipped))data.skipped=[];
+  data.goto.forEach(function(m){if(!Array.isArray(m.staples))m.staples=[];});
+  data.staples.forEach(function(s){if(['stocked','low','out'].indexOf(s.status)<0)s.status='stocked';});
 }
 function mapCat(c){
   if(!c)return 'Other';
@@ -406,320 +517,672 @@ function mapCat(c){
 }
 
 /* ── HELPERS ── */
+function esc(v){return String(v==null?'':v).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];});}
+function num(v){var n=parseFloat(v);return isFinite(n)&&n>0?n:0;}
+function money(n){return '$'+n.toFixed(2);}
+function pad(n){return (n<10?'0':'')+n;}
+function iso(d){return d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate());}
+function fromISO(s){var p=String(s||'').split('-');if(p.length!==3)return null;var d=new Date(+p[0],+p[1]-1,+p[2]);return isNaN(d.getTime())?null:d;}
+function addDaysISO(s,n){var d=fromISO(s);d.setDate(d.getDate()+n);return iso(d);}
+function diffDays(a,b){var x=fromISO(a),y=fromISO(b);if(!x||!y)return 0;return Math.round((y-x)/864e5);}
+function today(){return iso(new Date());}
+function dowShort(s){var d=fromISO(s);return d?DAYS_SHORT[d.getDay()]:'';}
+function dowName(s){var d=fromISO(s);return d?DAYS_FULL[d.getDay()].slice(0,3):'';}
+function shortDate(s){var d=fromISO(s);return d?MONTHS_SHORT[d.getMonth()]+' '+d.getDate():'';}
+function nextPlanStart(){var d=new Date();d.setHours(0,0,0,0);var w=d.getDay();d.setDate(d.getDate()+(w===0?1:w===6?2:1-w));return iso(d);}
 function getStaple(id){return data.staples.find(function(s){return s.id===id;});}
-function needBuy(s){return s&&(s.status==='low'||s.status==='out');}
+function getGoto(id){return data.goto.find(function(m){return m.id===id;});}
+function needBuy(s){return !!s&&(s.status==='low'||s.status==='out');}
 function storeIdx(store){var i=STORES.indexOf(store);return i<0?98:i;}
 function storeSort(a,b){return storeIdx(a)-storeIdx(b)||String(a).localeCompare(String(b));}
-function esc(v){return String(v==null?'':v).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];});}
+function skippedList(){return Array.isArray(data.skipped)?data.skipped:[];}
+function isDinnerType(m){return m.type==='Dinner'||m.type==='Any'||!m.type;}
+function isPerishable(s){if(s.perishable===true)return true;if(s.perishable===false)return false;return !!PERISH_DEFAULT[s.category];}
+function shelfDays(s){var n=parseInt(s.shelfDays,10);return n>0?n:(SHELF_GUESS[s.category]||7);}
+function extraKey(e){return 'x:'+String(e.name||'').trim().toLowerCase()+'@'+(e.store||'Other');}
+function extrasOf(m){return Array.isArray(m.extras)?m.extras.filter(function(e){return e&&String(e.name||'').trim();}):[];}
+function safeImg(u){u=String(u||'').trim();return /^(https?:\/\/|data:image\/)/i.test(u)?u:'';}
 
-/* ── TABS ── */
+var PLATE='<svg viewBox="0 0 24 24"><circle cx="12" cy="13" r="7"/><circle cx="12" cy="13" r="3.6"/><path d="M3 4v5a2 2 0 0 0 2 2M5 4v16M21 4c-1.6 0-2.5 2-2.5 5s.9 3 2.5 3v8"/></svg>';
+function photo(m,cls){
+  var u=safeImg(m&&m.img);
+  return '<div class="ph '+(cls||'')+'">'+PLATE+(u?'<img src="'+esc(u)+'" alt="" loading="lazy" onerror="this.remove()">':'')+'</div>';
+}
+function fav(store,size){
+  store=store||'Other';
+  var d=STORE_DOMAINS[store],col=STORE_COLORS[store]||STORE_COLORS.Other;
+  var letter=esc(String(store).charAt(0).toUpperCase());
+  return '<span class="fav '+(size||'')+(d?'':' fb')+'" title="'+esc(store)+'">'+(d?'<img src="https://icons.duckduckgo.com/ip3/'+d+'.ico" alt="" loading="lazy" onerror="this.parentNode.classList.add(\'fb\')">':'')+'<b style="background:'+col+'">'+letter+'</b></span>';
+}
+var toastT=null;
+function toast(msg){var t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');clearTimeout(toastT);toastT=setTimeout(function(){t.classList.remove('show');},2600);}
+
+/* ── WEEK PLAN ── */
+function livePlan(){
+  var wp=data.weekPlan;
+  if(!wp||!wp.weekStart||!Array.isArray(wp.dinners)||!fromISO(wp.weekStart))return null;
+  if(addDaysISO(wp.weekStart,6)<today())return null;
+  return wp;
+}
+function planDinners(wp){
+  if(!wp)return [];
+  return wp.dinners.map(function(d){return {d:d,meal:getGoto(d.gotoId)};})
+    .filter(function(x){return x.meal&&fromISO(x.d.day);})
+    .sort(function(a,b){return a.d.day<b.d.day?-1:a.d.day>b.d.day?1:0;});
+}
+function boughtKeys(wp){return wp&&Array.isArray(wp.bought)?wp.bought:[];}
+
+/* what a meal has / needs right now */
+function analyze(m,bought){
+  bought=bought||[];
+  var items=[];
+  (m.staples||[]).forEach(function(id){var s=getStaple(id);if(!s)return;items.push({kind:'staple',name:s.name,store:s.store||'Other',price:num(s.price),have:!needBuy(s),s:s});});
+  extrasOf(m).forEach(function(e){var k=extraKey(e);items.push({kind:'extra',name:String(e.name).trim(),store:e.store||'Other',price:num(e.price),have:bought.indexOf(k)>=0,key:k});});
+  var missing=items.filter(function(i){return !i.have;});
+  return {items:items,missing:missing,have:items.length-missing.length,total:items.length,cost:missing.reduce(function(t,i){return t+i.price;},0)};
+}
+
+/* lines a set of dinners adds to the list (unique items) */
+function dinnerLines(meals,bought){
+  var lines={},order=[];
+  meals.forEach(function(m){
+    analyze(m,bought).missing.forEach(function(i){
+      var k=i.kind==='staple'?'s:'+i.s.id:i.key;
+      if(!lines[k]){lines[k]={key:k,kind:i.kind,id:i.s?i.s.id:null,name:i.name,store:i.store,price:0,count:0,status:i.s?i.s.status:null,dinners:[]};order.push(k);}
+      var L=lines[k];
+      if(i.kind==='extra'){L.count++;L.price+=i.price;}else if(!L.count){L.count=1;L.price=i.price;}
+      if(L.dinners.indexOf(m.name)<0)L.dinners.push(m.name);
+    });
+  });
+  return order.map(function(k){return lines[k];});
+}
+
+/* the full shopping list: dinners first, then low/out staples, then one-offs */
+function buildList(){
+  var wp=livePlan(),T=today();
+  var upcoming=planDinners(wp).filter(function(x){return x.d.day>=T;}).map(function(x){return x.meal;});
+  var checked=wp&&Array.isArray(wp.checked)?wp.checked:[];
+  var lines=dinnerLines(upcoming,boughtKeys(wp));
+  var seen={};lines.forEach(function(L){seen[L.key]=1;L.forDinner=true;L.checked=L.kind==='staple'?data.picked.indexOf(L.id)>=0:checked.indexOf(L.key)>=0;});
+  var skipped=skippedList();
+  data.staples.forEach(function(s){
+    if(!needBuy(s)||seen['s:'+s.id])return;
+    lines.push({key:'s:'+s.id,kind:'staple',id:s.id,name:s.name,store:s.store||'Other',price:num(s.price),status:s.status,dinners:[],canSkip:true,skipped:skipped.indexOf(s.id)>=0,checked:data.picked.indexOf(s.id)>=0});
+  });
+  data.shopping.forEach(function(m){lines.push({key:'m:'+m.id,kind:'manual',id:m.id,name:m.name,store:m.store||'Other',price:num(m.cost),dinners:[],checked:!!m.checked});});
+  var by={};
+  lines.forEach(function(L){(by[L.store]=by[L.store]||[]).push(L);});
+  var stores=Object.keys(by).sort(storeSort);
+  var total=0,dinnerTotal=0,count=0,done=0;
+  lines.forEach(function(L){if(L.skipped)return;count++;total+=L.price;if(L.forDinner)dinnerTotal+=L.price;if(L.checked)done++;});
+  return {by:by,stores:stores,total:total,dinnerTotal:dinnerTotal,count:count,done:done,lines:lines};
+}
+
+/* ── TABS / VIEWS ── */
+var curTab='week',picking=false;
 function setTab(tab){
-  document.querySelectorAll('.tab-btn').forEach(function(b){b.classList.remove('active');});
-  document.querySelectorAll('.view').forEach(function(v){v.classList.remove('active');});
-  document.getElementById('tab-'+tab).classList.add('active');
-  document.getElementById('view-'+tab).classList.add('active');
-  ({staples:renderStaples,shopping:renderShopping,meals:renderMeals}[tab])();
+  curTab=tab;picking=false;
+  document.querySelectorAll('.tab-btn').forEach(function(b){b.classList.toggle('active',b.getAttribute('data-tab')===tab);});
+  showView(tab);
+  render();
+}
+function showView(v){document.querySelectorAll('.view').forEach(function(x){x.classList.toggle('active',x.id==='view-'+v);});}
+
+function render(){
+  document.getElementById('cnt-staples').textContent=data.staples.length||'';
+  document.getElementById('cnt-meals').textContent=data.goto.length||'';
+  if(curTab==='week'){if(picking)renderPick();else renderWeek();}
+  else if(curTab==='staples')renderStaplesTab();
+  else renderMeals();
+  renderSub();
+}
+function renderSub(){
+  var el=document.getElementById('page-sub'),h='';
+  if(curTab==='week'&&picking){
+    h='Pick 3–4 easy dinners for '+esc(shortDate(pickWeek))+' – '+esc(shortDate(addDaysISO(pickWeek,6)))+' · the list builds itself';
+  } else if(curTab==='week'){
+    var wp=livePlan(),n=wp?planDinners(wp).length:0;
+    if(n){var L=buildList();h='Week of '+esc(shortDate(wp.weekStart))+' · <b>'+n+' dinner'+(n!==1?'s':'')+'</b> picked · '+(L.count?L.count+' thing'+(L.count!==1?'s':'')+' to buy':'nothing to buy');}
+    else h='Pick a few easy dinners and the shopping list builds itself';
+  } else if(curTab==='staples'){
+    var b=data.staples.filter(needBuy).length;
+    h=data.staples.length+' staple'+(data.staples.length!==1?'s':'')+' · <b>'+b+' to buy</b>';
+  } else {
+    var r=data.goto.filter(function(m){return analyze(m).missing.length===0&&(m.staples.length||extrasOf(m).length);}).length;
+    h=data.goto.length+' go-to meal'+(data.goto.length!==1?'s':'')+' · <b>'+r+' ready now</b>';
+  }
+  el.innerHTML=h;
 }
 
-/* ══════════════ STAPLES ══════════════ */
-var stapleFilter='all';
-function setStapleFilter(f){
-  stapleFilter=f;
-  ['all','buy','stocked'].forEach(function(x){document.getElementById('sf-'+x).classList.toggle('active',x===f);});
-  renderStaples();
-}
-function renderStaples(){
-  var q=(document.getElementById('staple-search').value||'').toLowerCase();
-  var total=data.staples.length;
-  var buy=data.staples.filter(needBuy).length;
-  var estCost=data.staples.filter(function(s){return needBuy(s)&&s.price;}).reduce(function(t,s){return t+(s.price||0);},0);
-  document.getElementById('staples-stats').innerHTML=
-    '<div class="stat-card"><div class="stat-num">'+total+'</div><div class="stat-label">Staples Tracked</div></div>'+
-    '<div class="stat-card"><div class="stat-num'+(buy?' warn':' good')+'">'+buy+'</div><div class="stat-label">Need To Buy</div></div>'+
-    '<div class="stat-card"><div class="stat-num">'+(estCost>0?'$'+estCost.toFixed(0):'—')+'</div><div class="stat-label">Est. To Restock</div></div>';
+/* ══════════════ THIS WEEK ══════════════ */
+function renderWeek(){renderDinners();renderShop();renderUse();renderStaplesCard('wk-staples-card',false);}
 
-  var items=data.staples.filter(function(s){
-    if(q&&s.name.toLowerCase().indexOf(q)<0&&String(s.category||'').toLowerCase().indexOf(q)<0)return false;
+function renderDinners(){
+  var el=document.getElementById('dinners-card'),wp=livePlan(),T=today();
+  var list=planDinners(wp);
+  var head='<div class="card-h"><div class="card-t">Dinners this week</div><div class="filters">';
+  if(wp&&list.length&&T>=addDaysISO(wp.weekStart,5))head+='<button class="btn sm soft" data-act="pick-open" data-next="1">Plan next week</button>';
+  head+='<button class="btn sm" data-act="pick-open">'+(list.length?'Change picks':'Pick dinners')+'</button></div></div>';
+  if(!list.length){
+    el.innerHTML=head+'<div class="empty"><div class="e-t">No dinners picked yet</div>Choose 3–4 easy go-to dinners for the week.<br>Whatever you’re missing goes straight onto the shopping list.<br><button class="btn primary" data-act="pick-open">Pick this week’s dinners</button></div>';
+    return;
+  }
+  var bought=boughtKeys(wp),ready=0,toBuy=0;
+  var L=buildList();toBuy=L.dinnerTotal;
+  var rows=list.map(function(x){
+    var m=x.meal,a=analyze(m,bought),past=x.d.day<T,made=m.lastMade&&m.lastMade>=x.d.day;
+    if(!a.missing.length)ready++;
+    var meta=[];if(m.minutes)meta.push(esc(m.minutes)+' min');if(!isDinnerType(m))meta.push(esc(m.type));
+    if(m.lastMade&&!made)meta.push('last made '+esc(shortDate(m.lastMade)));
+    var chips=a.items.map(function(i){return '<span class="ing'+(i.have?'':' need')+'" title="'+esc(i.name)+'">'+esc(i.name)+'</span>';}).join('')||'<span class="ing">No ingredients set</span>';
+    var st;
+    if(made)st='<span class="chip ok">✓ Made</span>';
+    else{
+      st=a.missing.length?'<span class="chip warn">Need '+a.missing.length+'</span>'+(a.cost>0?'<small>~'+money(a.cost)+'</small>':''):'<span class="chip ok">✓ Ready</span>';
+      if(x.d.day<=T)st+='<button class="btn sm ghost" data-act="made" data-id="'+esc(m.id)+'" data-day="'+esc(x.d.day)+'">Made it</button>';
+    }
+    var dd=fromISO(x.d.day);
+    return '<div class="din'+(past&&!made?' past':'')+'"><div class="dy"><span>'+dowShort(x.d.day)+'</span><b>'+dd.getDate()+'</b></div>'+photo(m)+
+      '<div style="min-width:0"><div class="t">'+esc(m.name)+'</div>'+(meta.length?'<div class="m">'+meta.join(' · ')+'</div>':'')+'<div class="ings">'+chips+'</div></div>'+
+      '<div class="st">'+st+'</div></div>';
+  }).join('');
+  var n=list.length;
+  var picked={};list.forEach(function(x){picked[x.meal.id]=1;});
+  var others=data.goto.filter(function(m){var a=analyze(m);return !picked[m.id]&&a.total>0&&!a.missing.length;}).slice(0,2);
+  var slot='Other nights: leftovers'+(others.length?' or '+others.map(function(m){return esc(m.name);}).join(' or ')+' — '+(others.length>1?'both are':'it’s')+' in stock right now.':'.');
+  el.innerHTML=head+
+    '<div class="sumline"><div><b>'+n+'</b><span>dinners</span></div><div><b>'+ready+'</b><span>ready now</span></div>'+
+    '<div><b>'+(toBuy>0?'~'+money(toBuy):'$0')+'</b><span>to buy for them</span></div>'+
+    '<div><b>'+(toBuy>0?'~$'+Math.round(toBuy/n):'$0')+'</b><span>per dinner</span></div></div>'+
+    rows+'<div class="slot"><b>+</b>'+slot+'</div>';
+}
+
+function renderShop(){
+  var el=document.getElementById('shop-card'),L=buildList();
+  var h='<div class="card-h"><div class="card-t">Shopping list</div><span class="chip">built from your dinners + low staples</span></div>';
+  if(!L.lines.length){
+    el.innerHTML=h+'<div class="empty"><div class="e-t">Nothing to buy</div>Every staple is stocked'+(livePlan()?' and this week’s dinners are covered':'')+'.</div><button class="addrow" data-act="oneoff-add"><b>+</b> Add a one-off item</button>';
+    return;
+  }
+  h+=L.stores.map(function(st){
+    var rows=L.by[st].slice().sort(function(a,b){return (b.forDinner?2:b.kind==='staple'?1:0)-(a.forDinner?2:a.kind==='staple'?1:0);});
+    var sub=rows.reduce(function(t,r){return t+(r.skipped?0:r.price);},0);
+    return '<div class="store"><div class="sh">'+fav(st)+'<b>'+esc(st)+'</b><span>'+(sub>0?money(sub):'')+'</span></div>'+rows.map(lineHtml).join('')+'</div>';
+  }).join('');
+  h+='<button class="addrow" data-act="oneoff-add"><b>+</b> Add a one-off item</button>';
+  h+='<div class="total"><div><span>Estimated total'+(L.done?' · '+L.done+' of '+L.count+' in the cart':'')+'</span><br><b>'+(L.total>0?'~'+money(L.total):'—')+'</b></div><button class="btn primary" data-act="done-shop">Done shopping</button></div>';
+  el.innerHTML=h;
+}
+function lineHtml(r){
+  var sub;
+  if(r.forDinner)sub='for '+r.dinners.join(' & ')+(r.kind==='staple'?' · '+r.status:'');
+  else if(r.kind==='manual')sub='one-off';
+  else if(r.skipped)sub='skipped this week';
+  else sub=r.status==='out'?'out · no dinner needs it this week':'staple · low';
+  var name=esc(r.name)+(r.count>1?' ×'+r.count:'');
+  var right;
+  if(r.canSkip&&r.skipped)right='<button class="btn sm" data-act="skip" data-id="'+esc(r.id)+'" title="Put it back on the list">Skipped ✓</button>';
+  else{
+    right=r.price>0?'<span class="p">'+money(r.price)+'</span>':'';
+    if(r.canSkip)right='<button class="btn sm ghost" data-act="skip" data-id="'+esc(r.id)+'" title="Not this week">Skip</button>'+right;
+    if(r.kind==='manual')right+='<button class="x" data-act="oneoff-del" data-id="'+esc(r.id)+'" title="Remove" aria-label="Remove">✕</button>';
+  }
+  return '<div class="it'+(r.skipped?' skip':'')+(r.checked?' done':'')+'"><button class="check'+(r.checked?' on':'')+'" data-act="chk" data-key="'+esc(r.key)+'"'+(r.skipped?' disabled':'')+' aria-label="Got it">'+(r.checked?'✓':'')+'</button>'+
+    '<div class="grow"><span>'+name+'</span><small>'+esc(sub)+'</small></div>'+right+'</div>';
+}
+
+function useRows(){
+  var T=today(),wp=livePlan();
+  var up=planDinners(wp).filter(function(x){return x.d.day>=T;});
+  var rows=[];
+  data.staples.forEach(function(s){
+    if(!isPerishable(s))return;
+    var users=up.filter(function(x){return x.meal.staples.indexOf(s.id)>=0;});
+    if(needBuy(s)&&users.length){
+      rows.push({order:900+diffDays(T,users[0].d.day),name:s.name,em:'buying',pct:6,col:'var(--ok)',text:'Buy close to '+dowName(users[0].d.day)+' — for '+users[0].meal.name});
+      return;
+    }
+    if(s.status==='out'||!fromISO(s.boughtOn))return;
+    var shelf=shelfDays(s),age=Math.max(0,diffDays(s.boughtOn,T)),left=shelf-age;
+    var txt,cls='';
+    if(users.length){txt='✓ '+dowName(users[0].d.day)+' · '+users[0].meal.name;cls='ok';}
+    else{
+      var cand=data.goto.find(function(m){return m.staples.indexOf(s.id)>=0;});
+      txt=cand?'No dinner uses it this week — '+cand.name+' does':'No dinner uses it this week';
+    }
+    rows.push({order:left,name:s.name,em:left<0?'past date':left===0?'today':left===1?'1 day':left+' days',pct:Math.min(100,Math.max(6,Math.round(age/shelf*100))),col:left<=2?'var(--over)':left<=4?'var(--warn)':'var(--ok)',text:txt,cls:cls});
+  });
+  var bought=boughtKeys(wp);
+  if(bought.length){
+    var seen={};
+    up.forEach(function(x){extrasOf(x.meal).forEach(function(e){var k=extraKey(e);if(bought.indexOf(k)<0||seen[k])return;seen[k]=1;
+      var dleft=diffDays(T,x.d.day);
+      rows.push({order:dleft,name:String(e.name).trim(),em:dleft===0?'tonight':'cook '+dowName(x.d.day),pct:Math.max(6,100-dleft*14),col:dleft<=1?'var(--warn)':'var(--ok)',text:'✓ '+dowName(x.d.day)+' · '+x.meal.name,cls:'ok'});
+    });});
+  }
+  return rows.sort(function(a,b){return a.order-b.order;});
+}
+function renderUse(){
+  var el=document.getElementById('use-card'),rows=useRows();
+  var h='<div class="card-h"><div class="card-t">Use it up</div><span class="card-m">fresh things, oldest first</span></div>';
+  if(!rows.length){
+    el.innerHTML=h+'<div class="empty">Fresh things you buy show up here with the days they have left, and which dinner uses them.<br><span class="card-m">Edit a staple and tick “Goes bad fast” to track it.</span></div>';
+    return;
+  }
+  var more=rows.length>6?rows.length-6:0;
+  el.innerHTML=h+rows.slice(0,6).map(function(r){
+    return '<div class="use"><div class="bar2"><i><b style="width:'+r.pct+'%;background:'+r.col+'"></b></i><em>'+esc(r.em)+'</em></div><div class="grow"><b title="'+esc(r.name)+'">'+esc(r.name)+'</b><span class="'+(r.cls||'')+'">'+esc(r.text)+'</span></div></div>';
+  }).join('')+(more?'<div class="card-m foot">+ '+more+' more</div>':'');
+}
+
+/* ══════════════ STAPLES (compact card, used on This week + Staples tab) ══════════════ */
+var stapleFilter='all',stapleQuery='';
+function renderStaplesCard(elId,full){
+  var el=document.getElementById(elId);
+  var all=data.staples.length,buy=data.staples.filter(needBuy).length,stocked=all-buy;
+  var q=full?stapleQuery.toLowerCase():'';
+  var items=data.staples.map(function(s,i){return {s:s,i:i};}).filter(function(x){
+    var s=x.s;
+    if(q&&String(s.name).toLowerCase().indexOf(q)<0&&String(s.category||'').toLowerCase().indexOf(q)<0&&String(s.store||'').toLowerCase().indexOf(q)<0)return false;
     if(stapleFilter==='buy'&&!needBuy(s))return false;
     if(stapleFilter==='stocked'&&s.status!=='stocked')return false;
     return true;
-  });
-
-  var wrap=document.getElementById('staples-list');wrap.innerHTML='';
-  if(!items.length){
-    wrap.innerHTML='<div class="empty-note">'+(total===0?'No staples yet — add the groceries you normally keep.':'Nothing matches this filter.')+'</div>';
-    return;
-  }
-  var byStore={};
-  items.forEach(function(s){(byStore[s.store]=byStore[s.store]||[]).push(s);});
-  Object.keys(byStore).sort(storeSort).forEach(function(store){
-    var group=document.createElement('div');group.className='store-group';
-    group.innerHTML='<div class="store-group-hdr"><span class="store-dot" style="background:'+(STORE_COLORS[store]||'#aaa')+'"></span><span class="sg-name">'+esc(store)+'</span><span class="sg-count">'+byStore[store].length+'</span></div>';
-    byStore[store].forEach(function(s){
-      var row=document.createElement('div');row.className='staple-row status-'+s.status;
-      row.innerHTML=
-        '<div class="sr-main"><div class="sr-name">'+esc(s.name)+'</div><div class="sr-cat">'+esc(s.category||'')+'</div></div>'+
-        '<div class="sr-tools">'+
-          '<div class="seg">'+
-            '<button class="seg-btn stocked'+(s.status==='stocked'?' active':'')+'" onclick="setStatus(\''+s.id+'\',\'stocked\')">Stocked</button>'+
-            '<button class="seg-btn low'+(s.status==='low'?' active':'')+'" onclick="setStatus(\''+s.id+'\',\'low\')">Low</button>'+
-            '<button class="seg-btn out'+(s.status==='out'?' active':'')+'" onclick="setStatus(\''+s.id+'\',\'out\')">Out</button>'+
-          '</div>'+
-          '<button class="icon-btn" title="Edit" onclick="editStaple(\''+s.id+'\')">Edit</button>'+
-          '<button class="icon-btn danger" title="Remove" onclick="deleteStapleDirect(\''+s.id+'\')">\u2715</button>'+
-        '</div>';
-      group.appendChild(row);
-    });
-    wrap.appendChild(group);
-  });
+  }).sort(function(a,b){return storeSort(a.s.store||'Other',b.s.store||'Other')||a.i-b.i;});
+  function fp(k,label,n){return '<button class="fpill'+(stapleFilter===k?' on':'')+'" data-act="st-filter" data-f="'+k+'">'+label+' <small>'+n+'</small></button>';}
+  var h='<div class="card-h"><div class="card-t">Staples</div><div class="filters">'+
+    (full?'<input class="inp" id="staple-search" placeholder="Search staples…" value="'+esc(stapleQuery)+'" style="width:200px">':'')+
+    fp('all','All',all)+fp('buy','Need to buy',buy)+fp('stocked','Stocked',stocked)+
+    '<button class="btn sm" data-act="st-add">+ Add</button></div></div>';
+  var g;
+  if(!items.length)g='<div class="none empty">'+(all?'Nothing matches this filter.':'No staples yet — add the groceries you always keep around.')+'</div>';
+  else g=items.map(function(x){var s=x.s,st=s.status;
+    return '<div class="sr">'+fav(s.store,'xs')+'<button class="nm" data-act="st-edit" data-id="'+esc(s.id)+'" title="'+esc(s.name)+(s.category?' · '+esc(s.category):'')+' — edit">'+esc(s.name)+(full&&s.category?'<small>'+esc(s.category)+'</small>':'')+'</button>'+
+      '<span class="seg3">'+
+      '<button class="s'+(st==='stocked'?' on':'')+'" data-act="st-status" data-id="'+esc(s.id)+'" data-v="stocked" title="Stocked" aria-label="Stocked">S</button>'+
+      '<button class="l'+(st==='low'?' on':'')+'" data-act="st-status" data-id="'+esc(s.id)+'" data-v="low" title="Low" aria-label="Low">L</button>'+
+      '<button class="o'+(st==='out'?' on':'')+'" data-act="st-status" data-id="'+esc(s.id)+'" data-v="out" title="Out" aria-label="Out">O</button>'+
+      '</span></div>';}).join('');
+  el.innerHTML=h+'<div class="sgrid">'+g+'</div><div class="card-m foot">S · L · O = stocked, low, out. Anything low or out joins the list automatically.</div>';
+  if(full){var inp=document.getElementById('staple-search');inp.addEventListener('input',function(){stapleQuery=inp.value;var pos=inp.selectionStart;renderStaplesTab();var n=document.getElementById('staple-search');n.focus();try{n.setSelectionRange(pos,pos);}catch(e){}});}
 }
+function renderStaplesTab(){renderStaplesCard('st-staples-card',true);}
 function setStatus(id,status){
   var s=getStaple(id);if(!s)return;
+  if(status==='stocked'&&needBuy(s))s.boughtOn=today();
   s.status=status;
-  if(status==='stocked'){var pi=data.picked.indexOf(id);if(pi>=0)data.picked.splice(pi,1);}
-  save();renderStaples();
+  if(status==='stocked'){var pi=data.picked.indexOf(id);if(pi>=0)data.picked.splice(pi,1);unskip(id);}
+  save();render();
 }
+function unskip(id){if(Array.isArray(data.skipped)){var i=data.skipped.indexOf(id);if(i>=0)data.skipped.splice(i,1);}}
 
 /* ── STAPLE MODAL ── */
-var editingStapleId=null;
-var pendingStatus='stocked';
+var editingStapleId=null,pendingStatus='stocked';
 function fillSelect(el,opts,val){el.innerHTML='';opts.forEach(function(o){var op=document.createElement('option');op.value=o;op.textContent=o;if(o===val)op.selected=true;el.appendChild(op);});}
-function pickStapleStatus(st){
-  pendingStatus=st;
-  ['stocked','low','out'].forEach(function(x){document.getElementById('st-status-'+x).classList.toggle('on',x===st);});
-}
+function pickStapleStatus(st){pendingStatus=st;['stocked','low','out'].forEach(function(x){document.getElementById('st-status-'+x).classList.toggle('on',x===st);});}
 function openStapleModal(){
-  editingStapleId=null;pendingStatus='stocked';
-  document.getElementById('sm-title').textContent='Add Staple';
+  editingStapleId=null;
+  document.getElementById('sm-title').textContent='Add staple';
   document.getElementById('st-name').value='';
   document.getElementById('st-price').value='';
+  document.getElementById('st-shelf').value='';
+  document.getElementById('st-perish').checked=false;
   fillSelect(document.getElementById('st-store'),STORES,'Walmart');
   fillSelect(document.getElementById('st-cat'),CATEGORIES,'Protein');
   pickStapleStatus('stocked');
   document.getElementById('st-del-btn').style.display='none';
-  document.getElementById('staple-modal').classList.add('open');
-  setTimeout(function(){document.getElementById('st-name').focus();},100);
+  openModal('staple-modal','st-name');
 }
 function editStaple(id){
   var s=getStaple(id);if(!s)return;
-  editingStapleId=id;pendingStatus=s.status;
-  document.getElementById('sm-title').textContent='Edit Staple';
+  editingStapleId=id;
+  document.getElementById('sm-title').textContent='Edit staple';
   document.getElementById('st-name').value=s.name;
   document.getElementById('st-price').value=(s.price!=null?s.price:'');
-  fillSelect(document.getElementById('st-store'),STORES,s.store);
+  document.getElementById('st-shelf').value=(s.shelfDays!=null?s.shelfDays:'');
+  document.getElementById('st-perish').checked=isPerishable(s);
+  fillSelect(document.getElementById('st-store'),STORES.indexOf(s.store)>=0?STORES:STORES.concat([s.store]),s.store);
   fillSelect(document.getElementById('st-cat'),CATEGORIES,CATEGORIES.indexOf(s.category)>=0?s.category:'Other');
   pickStapleStatus(s.status);
   document.getElementById('st-del-btn').style.display='inline-flex';
-  document.getElementById('staple-modal').classList.add('open');
+  openModal('staple-modal');
 }
-function closeStapleModal(){document.getElementById('staple-modal').classList.remove('open');editingStapleId=null;}
+function closeStapleModal(){closeModal('staple-modal');editingStapleId=null;}
 function saveStaple(){
   var name=document.getElementById('st-name').value.trim();if(!name){document.getElementById('st-name').focus();return;}
-  var priceRaw=document.getElementById('st-price').value;
-  var rec={
-    id:editingStapleId||('s_'+Date.now()),
-    name:name,
-    store:document.getElementById('st-store').value,
-    category:document.getElementById('st-cat').value,
-    status:pendingStatus,
-    price:priceRaw!==''?(parseFloat(priceRaw)||0):null
-  };
-  if(editingStapleId){var i=data.staples.findIndex(function(s){return s.id===editingStapleId;});if(i>=0)data.staples[i]=rec;}
-  else data.staples.push(rec);
-  if(rec.status==='stocked'){var pi=data.picked.indexOf(rec.id);if(pi>=0)data.picked.splice(pi,1);}
-  save();closeStapleModal();renderStaples();
+  var priceRaw=document.getElementById('st-price').value,shelfRaw=parseInt(document.getElementById('st-shelf').value,10);
+  var cat=document.getElementById('st-cat').value,perish=document.getElementById('st-perish').checked;
+  var rec={name:name,store:document.getElementById('st-store').value,category:cat,status:pendingStatus,price:priceRaw!==''?(parseFloat(priceRaw)||0):null};
+  var s=editingStapleId?getStaple(editingStapleId):null;
+  if(s){
+    if(rec.status==='stocked'&&needBuy(s))s.boughtOn=today();
+    Object.keys(rec).forEach(function(k){s[k]=rec[k];});
+  } else {
+    s=rec;s.id='s_'+Date.now();
+    if(rec.status==='stocked'&&perish)s.boughtOn=today();
+    data.staples.push(s);
+  }
+  if(perish!==!!PERISH_DEFAULT[cat]||s.perishable!==undefined)s.perishable=perish;
+  if(shelfRaw>0)s.shelfDays=shelfRaw;else delete s.shelfDays;
+  if(s.status==='stocked'){var pi=data.picked.indexOf(s.id);if(pi>=0)data.picked.splice(pi,1);unskip(s.id);}
+  save();closeStapleModal();render();
 }
 function deleteStapleFromModal(){
   if(!editingStapleId)return;
   if(!confirm('Remove this staple?'))return;
-  removeStaple(editingStapleId);
-  closeStapleModal();renderStaples();
-}
-function deleteStapleDirect(id){
-  if(!confirm('Remove this staple?'))return;
-  removeStaple(id);renderStaples();
+  removeStaple(editingStapleId);closeStapleModal();render();
 }
 function removeStaple(id){
   data.staples=data.staples.filter(function(s){return s.id!==id;});
   var pi=data.picked.indexOf(id);if(pi>=0)data.picked.splice(pi,1);
+  unskip(id);
   data.goto.forEach(function(m){m.staples=m.staples.filter(function(x){return x!==id;});});
   save();
 }
-document.getElementById('staple-modal').addEventListener('click',function(e){if(e.target===this)closeStapleModal();});
 
-/* ══════════════ SHOPPING ══════════════ */
-function cleanPicked(){data.picked=data.picked.filter(function(id){var s=getStaple(id);return s&&needBuy(s);});}
-function shopRows(){
-  cleanPicked();
-  var byStore={};
-  data.staples.forEach(function(s){
-    if(needBuy(s)){(byStore[s.store]=byStore[s.store]||[]).push({kind:'staple',id:s.id,name:s.name,status:s.status,cost:s.price||0,checked:data.picked.indexOf(s.id)>=0});}
-  });
-  data.shopping.forEach(function(m){
-    (byStore[m.store]=byStore[m.store]||[]).push({kind:'manual',id:m.id,name:m.name,status:null,cost:m.cost||0,checked:!!m.checked});
-  });
-  return byStore;
+/* ── SHOPPING ACTIONS ── */
+function cleanPicked(){data.picked=data.picked.filter(function(id){return needBuy(getStaple(id));});}
+function toggleCheck(key){
+  var kind=key.charAt(0),id=key.slice(2);
+  if(kind==='s'){var i=data.picked.indexOf(id);if(i>=0)data.picked.splice(i,1);else data.picked.push(id);}
+  else if(kind==='m'){var m=data.shopping.find(function(x){return x.id===id;});if(m)m.checked=!m.checked;}
+  else if(kind==='x'){var wp=livePlan();if(!wp)return;wp.checked=Array.isArray(wp.checked)?wp.checked:[];var j=wp.checked.indexOf(key);if(j>=0)wp.checked.splice(j,1);else wp.checked.push(key);}
+  save();render();
 }
-function renderShopping(){
-  var byStore=shopRows();
-  var stores=Object.keys(byStore).sort(storeSort);
-  var totalItems=0,totalCost=0;
-  stores.forEach(function(st){byStore[st].forEach(function(r){totalItems++;totalCost+=r.cost||0;});});
-
-  var bar=document.getElementById('shop-total-bar');
-  if(totalItems){
-    bar.innerHTML='<div class="shop-total-bar"><div class="shop-total-left"><b>'+totalItems+'</b> item'+(totalItems!==1?'s':'')+' to pick up across <b>'+stores.length+'</b> store'+(stores.length!==1?'s':'')+'</div><div class="shop-total-right"><span class="shop-total-num">'+(totalCost>0?'~$'+totalCost.toFixed(2):'—')+'</span><span class="shop-total-lbl">est. total</span></div></div>';
-  } else { bar.innerHTML=''; }
-
-  var wrap=document.getElementById('shop-by-store');wrap.innerHTML='';
-  if(!totalItems){
-    wrap.innerHTML='<div class="empty-note" style="grid-column:1/-1;">You\u2019re all stocked up \u2014 nothing to buy right now.</div>';
-    return;
-  }
-  stores.forEach(function(store){
-    var rows=byStore[store];
-    var subtotal=rows.reduce(function(t,r){return t+(r.cost||0);},0);
-    var card=document.createElement('div');card.className='shop-store-card';
-    card.innerHTML='<div class="shop-store-hdr"><span class="store-dot" style="background:'+(STORE_COLORS[store]||'#aaa')+'"></span><span class="shop-store-name">'+esc(store)+'</span><span class="shop-store-total">'+(subtotal>0?'~$'+subtotal.toFixed(2):'')+'</span></div>';
-    rows.forEach(function(r){
-      var row=document.createElement('div');row.className='shop-item';
-      var badge=r.kind==='staple'?('<span class="badge badge-'+r.status+'">'+(r.status==='out'?'Out':'Low')+'</span>'):'<span class="badge badge-manual">One-off</span>';
-      var cost=r.cost>0?'<span class="shop-cost">$'+r.cost.toFixed(2)+'</span>':'';
-      var del=r.kind==='manual'?('<button class="shop-del" title="Remove" onclick="deleteShopItem(\''+r.id+'\')">\u2715</button>'):'';
-      row.innerHTML=
-        '<div class="shop-chk'+(r.checked?' done':'')+'" onclick="toggleShopCheck(\''+r.kind+'\',\''+r.id+'\')"></div>'+
-        '<span class="shop-name'+(r.checked?' done':'')+'">'+esc(r.name)+'</span>'+
-        badge+cost+del;
-      card.appendChild(row);
-    });
-    wrap.appendChild(card);
-  });
-}
-function toggleShopCheck(kind,id){
-  if(kind==='staple'){
-    var i=data.picked.indexOf(id);
-    if(i>=0)data.picked.splice(i,1);else data.picked.push(id);
-  } else {
-    var m=data.shopping.find(function(x){return x.id===id;});
-    if(m)m.checked=!m.checked;
-  }
-  save();renderShopping();
+function toggleSkip(id){
+  if(!Array.isArray(data.skipped))data.skipped=[];
+  var i=data.skipped.indexOf(id);
+  if(i>=0)data.skipped.splice(i,1);
+  else{data.skipped.push(id);var p=data.picked.indexOf(id);if(p>=0)data.picked.splice(p,1);}
+  save();render();
 }
 function doneShopping(){
   cleanPicked();
-  var pickedCount=data.picked.length;
-  var checkedManual=data.shopping.filter(function(m){return m.checked;}).length;
-  if(pickedCount+checkedManual===0){alert('Check off what you bought first, then tap Done shopping.');return;}
-  // picked staples become stocked
-  data.picked.forEach(function(id){var s=getStaple(id);if(s)s.status='stocked';});
+  var wp=livePlan(),T=today();
+  var xs=wp&&Array.isArray(wp.checked)?wp.checked:[];
+  var n=data.picked.length+data.shopping.filter(function(m){return m.checked;}).length+xs.length;
+  if(!n){toast('Tick off what you bought first, then tap Done shopping.');return;}
+  data.picked.forEach(function(id){var s=getStaple(id);if(s){s.status='stocked';s.boughtOn=T;unskip(id);}});
   data.picked=[];
-  // checked one-offs get removed
   data.shopping=data.shopping.filter(function(m){return !m.checked;});
-  save();renderShopping();
+  if(wp&&xs.length){wp.bought=boughtKeys(wp).concat(xs.filter(function(k){return boughtKeys(wp).indexOf(k)<0;}));wp.checked=[];}
+  save();render();
+  toast(n+' item'+(n!==1?'s':'')+' put away — stock updated.');
 }
-/* ── ONE-OFF MODAL ── */
 function openShopModal(){
   document.getElementById('so-name').value='';
   document.getElementById('so-cost').value='';
   fillSelect(document.getElementById('so-store'),STORES,'Walmart');
-  document.getElementById('shop-modal').classList.add('open');
-  setTimeout(function(){document.getElementById('so-name').focus();},100);
+  openModal('shop-modal','so-name');
 }
-function closeShopModal(){document.getElementById('shop-modal').classList.remove('open');}
+function closeShopModal(){closeModal('shop-modal');}
 function saveShopItem(){
   var name=document.getElementById('so-name').value.trim();if(!name){document.getElementById('so-name').focus();return;}
   var costRaw=document.getElementById('so-cost').value;
   data.shopping.push({id:'m_'+Date.now(),name:name,store:document.getElementById('so-store').value,cost:costRaw!==''?(parseFloat(costRaw)||0):null,checked:false});
-  save();closeShopModal();renderShopping();
+  save();closeShopModal();render();
 }
-function deleteShopItem(id){data.shopping=data.shopping.filter(function(x){return x.id!==id;});save();renderShopping();}
-document.getElementById('shop-modal').addEventListener('click',function(e){if(e.target===this)closeShopModal();});
+function deleteShopItem(id){data.shopping=data.shopping.filter(function(x){return x.id!==id;});save();render();}
+function markMade(id,day){var m=getGoto(id);if(!m)return;var T=today();m.lastMade=day&&day<T?day:T;save();render();}
+
+/* ══════════════ PICK DINNERS ══════════════ */
+var pickWeek=null,pickSel=[],pickManual=false,pickFilter='all';
+function openPick(next){
+  var wp=livePlan();
+  if(next||!wp){pickWeek=next?addDaysISO(wp?wp.weekStart:nextPlanStart(),wp?7:0):nextPlanStart();pickSel=[];}
+  else{pickWeek=wp.weekStart;pickSel=planDinners(wp).map(function(x){return {gotoId:x.meal.id,day:x.d.day};});}
+  if(next&&wp&&pickWeek<=wp.weekStart)pickWeek=addDaysISO(wp.weekStart,7);
+  pickManual=!!(pickSel.length&&!next&&wp);pickFilter='all';
+  picking=true;curTab='week';
+  document.querySelectorAll('.tab-btn').forEach(function(b){b.classList.toggle('active',b.getAttribute('data-tab')==='week');});
+  showView('pick');render();window.scrollTo(0,0);
+}
+function pickBought(){var wp=livePlan();return wp&&wp.weekStart===pickWeek?boughtKeys(wp):[];}
+function availableDays(){var T=today(),out=[];for(var i=0;i<7;i++){var d=addDaysISO(pickWeek,i);if(d>=T)out.push(d);}return out.length?out:[addDaysISO(pickWeek,6)];}
+function autoDays(){
+  var days=availableDays(),n=pickSel.length;if(!n)return;
+  var bought=pickBought();
+  // dinners that need fresh things go earlier in the week
+  var fresh=function(sel){var m=getGoto(sel.gotoId);if(!m)return 0;return extrasOf(m).length+m.staples.map(getStaple).filter(function(s){return s&&isPerishable(s);}).length;};
+  var order=pickSel.slice().sort(function(a,b){return fresh(b)-fresh(a);});
+  order.forEach(function(sel,i){var idx=n===1?0:Math.round(i*(days.length-1)/(n-1));sel.day=days[Math.min(idx,days.length-1)];});
+}
+function togglePick(id){
+  var i=pickSel.findIndex(function(p){return p.gotoId===id;});
+  if(i>=0)pickSel.splice(i,1);
+  else{
+    pickSel.push({gotoId:id,day:null});
+    if(pickManual){var used={};pickSel.forEach(function(p){if(p.day)used[p.day]=1;});var free=availableDays().filter(function(d){return !used[d];});pickSel[pickSel.length-1].day=free[0]||availableDays()[0];}
+  }
+  if(!pickManual)autoDays();
+  renderPick();renderSub();
+}
+function urgentStaple(){
+  var T=today(),best=null;
+  data.staples.forEach(function(s){
+    if(!isPerishable(s)||s.status==='out'||!fromISO(s.boughtOn))return;
+    var left=shelfDays(s)-Math.max(0,diffDays(s.boughtOn,T));
+    if(left>4)return;
+    if(!data.goto.some(function(m){return m.staples.indexOf(s.id)>=0;}))return;
+    if(!best||left<best.left)best={s:s,left:left};
+  });
+  return best;
+}
+function pickHint(m,a,urg){
+  if(!a.total)return {cls:'warn',t:'No ingredients set yet'};
+  if(urg&&m.staples.indexOf(urg.s.id)>=0)return {cls:'lav',t:'Uses '+urg.s.name+' ('+(urg.left<=0?'use today':urg.left+' day'+(urg.left!==1?'s':'')+' left')+')'};
+  if(!a.missing.length)return {cls:'ok',t:'Ready'};
+  if(a.cost<=0)return {cls:'warn',t:'Need '+a.missing.length};
+  if(a.missing.length===1)return {cls:'warn',t:'+'+money(a.cost)+' '+a.missing[0].name};
+  return {cls:'warn',t:'+'+money(a.cost)};
+}
+function renderPick(){
+  var bought=pickBought(),urg=urgentStaple();
+  var meals=data.goto.slice().sort(function(a,b){return (isDinnerType(b)?1:0)-(isDinnerType(a)?1:0);});
+  var info=meals.map(function(m){return {m:m,a:analyze(m,bought)};});
+  var readyN=info.filter(function(x){return x.a.total&&!x.a.missing.length;}).length;
+  var quickN=info.filter(function(x){return num(x.m.minutes)&&num(x.m.minutes)<=20;}).length;
+  function fp(k,label,n){return '<button class="fpill'+(pickFilter===k?' on':'')+'" data-act="pick-filter" data-f="'+esc(k)+'">'+label+(n!=null?' <small>'+n+'</small>':'')+'</button>';}
+  var f=fp('all','All')+fp('ready','Ready now',readyN);
+  if(quickN)f+=fp('quick','≤ 20 min');
+  if(urg)f+='<button class="fpill'+(pickFilter==='uses'?' on':'')+'" data-act="pick-filter" data-f="uses" title="'+esc(urg.s.name)+'">Uses '+esc(urg.s.name)+'</button>';
+  document.getElementById('pick-filters').innerHTML=f;
+  var shown=info.filter(function(x){
+    if(pickFilter==='ready')return x.a.total&&!x.a.missing.length;
+    if(pickFilter==='quick')return num(x.m.minutes)&&num(x.m.minutes)<=20;
+    if(pickFilter==='uses')return urg&&x.m.staples.indexOf(urg.s.id)>=0;
+    return true;
+  });
+  var selBy={};pickSel.forEach(function(p){selBy[p.gotoId]=p;});
+  var g=shown.map(function(x){
+    var m=x.m,a=x.a,sel=selBy[m.id],full=a.total&&!a.missing.length,hint=pickHint(m,a,urg);
+    var meta=[];if(m.minutes)meta.push(esc(m.minutes)+' min');if(m.lastMade)meta.push('made '+esc(shortDate(m.lastMade)));
+    return '<button class="mc'+(sel?' on':'')+'" data-act="pick-toggle" data-id="'+esc(m.id)+'" aria-pressed="'+(sel?'true':'false')+'">'+photo(m)+
+      (sel&&sel.day?'<span class="day chip">'+dowShort(sel.day)+'</span>':'')+(!isDinnerType(m)?'<span class="type chip">'+esc(m.type)+'</span>':'')+
+      '<span class="sel">'+(sel?'✓':'')+'</span><div class="b"><div class="t">'+esc(m.name)+'</div>'+(meta.length?'<div class="m">'+meta.join(' · ')+'</div>':'')+
+      '<div class="have'+(full?'':' part')+'"><div class="bar"><i style="width:'+(a.total?Math.round(a.have/a.total*100):0)+'%"></i></div><span>have '+a.have+' of '+a.total+'</span></div>'+
+      '<div class="hint '+hint.cls+'">'+esc(hint.t)+'</div></div></button>';
+  }).join('');
+  if(!shown.length&&pickFilter!=='all')g='<div class="empty" style="grid-column:1/-1">Nothing matches this filter.</div>';
+  g+='<button class="mc new" data-act="meal-new"><b>+</b>New go-to meal<span class="card-m">tap the staples it uses</span></button>';
+  document.getElementById('pick-grid').innerHTML=g;
+  renderPickSide(bought);
+}
+function renderPickSide(bought){
+  var el=document.getElementById('pick-side');
+  var sel=pickSel.map(function(p){return {p:p,m:getGoto(p.gotoId)};}).filter(function(x){return x.m;})
+    .sort(function(a,b){return (a.p.day||'')<(b.p.day||'')?-1:(a.p.day||'')>(b.p.day||'')?1:0;});
+  var h='<div class="card-h"><div class="card-t">This week</div><span class="chip lav">'+sel.length+' picked</span></div>';
+  if(!sel.length)h+='<div class="empty" style="padding:14px 4px">Tap 3–4 dinners on the left.<br>Ready ones cost nothing extra.</div>';
+  var days=[];for(var i=0;i<7;i++)days.push(addDaysISO(pickWeek,i));
+  h+=sel.map(function(x){
+    var a=analyze(x.m,bought);
+    var opts=days.map(function(d){return '<option value="'+d+'"'+(d===x.p.day?' selected':'')+'>'+dowShort(d)+'</option>';}).join('');
+    return '<div class="pk"><select data-act="pick-day" data-id="'+esc(x.m.id)+'" aria-label="Day for '+esc(x.m.name)+'">'+opts+'</select>'+photo(x.m)+
+      '<div class="grow"><b>'+esc(x.m.name)+'</b><small>'+(a.missing.length?'need '+a.missing.length:'ready')+'</small></div></div>';
+  }).join('');
+  var lines=dinnerLines(sel.map(function(x){return x.m;}),bought);
+  var by={};lines.forEach(function(L){(by[L.store]=by[L.store]||{n:0,c:0});by[L.store].n++;by[L.store].c+=L.price;});
+  var stores=Object.keys(by).sort(storeSort),tot=lines.reduce(function(t,L){return t+L.price;},0);
+  if(sel.length){
+    h+='<div class="eyebrow" style="margin:16px 0 6px">'+(stores.length?'This adds to your list':'Nothing to buy for these')+'</div>';
+    h+=stores.map(function(st){return '<div class="mini">'+fav(st,'sm')+esc(st)+' · '+by[st].n+' item'+(by[st].n!==1?'s':'')+'<span>'+(by[st].c>0?money(by[st].c):'')+'</span></div>';}).join('');
+  }
+  h+='<div class="tot"><span class="card-m">For these dinners</span><b>'+(tot>0?'~'+money(tot):'$0')+'</b></div>';
+  h+='<button class="btn primary wide" data-act="pick-build">Build my list →</button>';
+  // a cheaper swap, if there is an obvious one
+  var priced=sel.map(function(x){return {x:x,a:analyze(x.m,bought)};}).filter(function(y){return y.a.cost>0;}).sort(function(a,b){return b.a.cost-a.a.cost;});
+  if(priced.length){
+    var top=priced[0],picked={};sel.forEach(function(x){picked[x.m.id]=1;});
+    var alt=data.goto.filter(function(m){return !picked[m.id]&&isDinnerType(m);}).map(function(m){return {m:m,a:analyze(m,bought)};})
+      .filter(function(y){return y.a.total&&top.a.cost-y.a.cost>=3;}).sort(function(a,b){return a.a.cost-b.a.cost;})[0];
+    if(alt){
+      var what=!alt.a.missing.length?'is ready now':alt.a.missing.length===1?'needs only '+alt.a.missing[0].name+' ('+money(alt.a.cost)+')':'needs '+money(alt.a.cost)+' of groceries';
+      h+='<div class="tip"><b>Cheaper '+esc(top.x.p.day?DAYS_FULL[fromISO(top.x.p.day).getDay()]:'night')+'?</b> '+esc(alt.m.name)+' '+esc(what)+' instead of '+money(top.a.cost)+' for '+esc(top.x.m.name)+'.</div>';
+    }
+  }
+  el.innerHTML=h;
+}
+function buildPlan(){
+  var wp=livePlan(),same=wp&&wp.weekStart===pickWeek;
+  var dinners=pickSel.filter(function(p){return getGoto(p.gotoId);}).map(function(p){return {gotoId:p.gotoId,day:p.day||availableDays()[0]};});
+  var next={weekStart:pickWeek,dinners:dinners};
+  if(same){if(Array.isArray(wp.checked))next.checked=wp.checked;if(Array.isArray(wp.bought))next.bought=wp.bought;}
+  data.weekPlan=next;
+  save();picking=false;showView('week');render();window.scrollTo(0,0);
+  toast(dinners.length?'Shopping list updated for '+dinners.length+' dinner'+(dinners.length!==1?'s':'')+'.':'Dinner picks cleared.');
+}
 
 /* ══════════════ GO-TO MEALS ══════════════ */
 function renderMeals(){
-  var grid=document.getElementById('meal-grid');grid.innerHTML='';
-  if(!data.goto.length){
-    grid.innerHTML='<div class="empty-note" style="grid-column:1/-1;">No go-to meals yet \u2014 add the ones you make on repeat.</div>';
-    return;
-  }
-  data.goto.forEach(function(m){
-    var ings=m.staples.map(getStaple).filter(Boolean);
-    var missing=ings.filter(needBuy);
-    var card=document.createElement('div');card.className='meal-card';
-    var statusHtml=missing.length
-      ? '<span class="mc-status need">Need '+missing.length+'</span>'
-      : '<span class="mc-status ready">Ready</span>';
-    var tags=ings.length
-      ? ings.map(function(s){var cls=s.status==='out'?' miss-out':s.status==='low'?' miss-low':'';return '<span class="ing-tag'+cls+'">'+esc(s.name)+'</span>';}).join('')
-      : '<span class="ing-tag">No ingredients set</span>';
-    card.innerHTML=
-      '<div class="mc-top"><div><div class="mc-name">'+esc(m.name)+'</div><div class="mc-type">'+esc(m.type)+'</div></div>'+statusHtml+'</div>'+
-      '<div class="ing-tags">'+tags+'</div>'+
-      '<div class="mc-actions">'+
-        '<button class="mc-btn" onclick="editMeal(\''+m.id+'\')">Edit</button>'+
-        '<button class="mc-btn danger" onclick="deleteMealDirect(\''+m.id+'\')">Delete</button>'+
-      '</div>';
-    grid.appendChild(card);
-  });
+  var grid=document.getElementById('meal-grid');
+  grid.innerHTML=data.goto.map(function(m){
+    var a=analyze(m),full=a.total&&!a.missing.length;
+    var meta=[esc(m.type||'Any')];if(m.minutes)meta.unshift(esc(m.minutes)+' min');if(m.lastMade)meta.push('made '+esc(shortDate(m.lastMade)));
+    var chips=a.items.map(function(i){return '<span class="ing'+(i.have?'':' need')+'" title="'+esc(i.name)+'">'+esc(i.name)+'</span>';}).join('')||'<span class="ing">No ingredients set</span>';
+    return '<button class="mc" data-act="meal-edit" data-id="'+esc(m.id)+'">'+photo(m)+'<div class="b"><div class="t">'+esc(m.name)+'</div><div class="m">'+meta.join(' · ')+'</div>'+
+      '<div class="have'+(full?'':' part')+'"><div class="bar"><i style="width:'+(a.total?Math.round(a.have/a.total*100):0)+'%"></i></div><span>have '+a.have+' of '+a.total+'</span></div>'+
+      '<div class="ings">'+chips+'</div></div></button>';
+  }).join('')+'<button class="mc new" data-act="meal-new"><b>+</b>New go-to meal<span class="card-m">tap the staples it uses</span></button>';
 }
-/* ── MEAL MODAL ── */
-var editingMealId=null;
-var mealStaples=[];
+var editingMealId=null,mealStaples=[];
 function renderMealChips(){
   var c=document.getElementById('ml-chips');c.innerHTML='';
   if(!data.staples.length){c.innerHTML='<div class="pick-empty">Add some staples first, then you can attach them to meals.</div>';return;}
-  data.staples.slice().sort(function(a,b){return a.name.localeCompare(b.name);}).forEach(function(s){
-    var on=mealStaples.indexOf(s.id)>=0;
-    var chip=document.createElement('button');chip.type='button';chip.className='pick-chip'+(on?' on':'');chip.textContent=s.name;
-    chip.onclick=(function(id){return function(){var i=mealStaples.indexOf(id);if(i>=0)mealStaples.splice(i,1);else mealStaples.push(id);renderMealChips();};})(s.id);
+  data.staples.slice().sort(function(a,b){return String(a.name).localeCompare(String(b.name));}).forEach(function(s){
+    var chip=document.createElement('button');chip.type='button';chip.className='pick-chip'+(mealStaples.indexOf(s.id)>=0?' on':'');chip.textContent=s.name;
+    chip.onclick=function(){var i=mealStaples.indexOf(s.id);if(i>=0)mealStaples.splice(i,1);else mealStaples.push(s.id);renderMealChips();};
     c.appendChild(chip);
   });
 }
-function openMealModal(){
-  editingMealId=null;mealStaples=[];
-  document.getElementById('mm-title').textContent='Add Go-To Meal';
-  document.getElementById('ml-name').value='';
-  fillSelect(document.getElementById('ml-type'),MEAL_TYPES,'Breakfast');
-  document.getElementById('ml-del-btn').style.display='none';
-  renderMealChips();
-  document.getElementById('meal-modal').classList.add('open');
-  setTimeout(function(){document.getElementById('ml-name').focus();},100);
+function addExtraRow(e){
+  e=e||{};
+  var row=document.createElement('div');row.className='ex-row';
+  row.innerHTML='<input class="f-inp ex-name" placeholder="Ingredient" maxlength="60"><select class="f-inp ex-store"></select><input class="f-inp ex-price" type="number" min="0" step="0.01" placeholder="$"><button type="button" class="ex-del" title="Remove" aria-label="Remove">✕</button>';
+  row.querySelector('.ex-name').value=e.name||'';
+  var st=e.store||'Walmart';
+  fillSelect(row.querySelector('.ex-store'),STORES.indexOf(st)>=0?STORES:STORES.concat([st]),st);
+  row.querySelector('.ex-price').value=e.price!=null?e.price:'';
+  row.querySelector('.ex-del').onclick=function(){row.remove();};
+  document.getElementById('ml-extras').appendChild(row);
+  if(!e.name)row.querySelector('.ex-name').focus();
 }
-function editMeal(id){
-  var m=data.goto.find(function(x){return x.id===id;});if(!m)return;
-  editingMealId=id;mealStaples=m.staples.slice();
-  document.getElementById('mm-title').textContent='Edit Go-To Meal';
-  document.getElementById('ml-name').value=m.name;
-  fillSelect(document.getElementById('ml-type'),MEAL_TYPES,m.type);
-  document.getElementById('ml-del-btn').style.display='inline-flex';
-  renderMealChips();
-  document.getElementById('meal-modal').classList.add('open');
+function previewMealImg(){
+  var u=safeImg(document.getElementById('ml-img').value);
+  var p=document.getElementById('ml-img-prev');
+  p.innerHTML=PLATE+(u?'<img src="'+esc(u)+'" alt="" onerror="this.remove()">':'');
 }
-function closeMealModal(){document.getElementById('meal-modal').classList.remove('open');editingMealId=null;}
+function openMealModal(m){
+  editingMealId=m?m.id:null;mealStaples=m?m.staples.slice():[];
+  document.getElementById('mm-title').textContent=m?'Edit go-to meal':'New go-to meal';
+  document.getElementById('ml-name').value=m?m.name:'';
+  document.getElementById('ml-min').value=m&&m.minutes?m.minutes:'';
+  document.getElementById('ml-img').value=m&&m.img?m.img:'';
+  fillSelect(document.getElementById('ml-type'),MEAL_TYPES,m?(MEAL_TYPES.indexOf(m.type)>=0?m.type:'Any'):'Dinner');
+  document.getElementById('ml-extras').innerHTML='';
+  if(m)extrasOf(m).forEach(addExtraRow);
+  document.getElementById('ml-del-btn').style.display=m?'inline-flex':'none';
+  renderMealChips();previewMealImg();
+  openModal('meal-modal',m?null:'ml-name');
+}
+function editMeal(id){var m=getGoto(id);if(m)openMealModal(m);}
+function closeMealModal(){closeModal('meal-modal');editingMealId=null;}
 function saveMeal(){
   var name=document.getElementById('ml-name').value.trim();if(!name){document.getElementById('ml-name').focus();return;}
-  var rec={id:editingMealId||('g_'+Date.now()),name:name,type:document.getElementById('ml-type').value,staples:mealStaples.slice()};
-  if(editingMealId){var i=data.goto.findIndex(function(x){return x.id===editingMealId;});if(i>=0)data.goto[i]=rec;}
-  else data.goto.push(rec);
-  save();closeMealModal();renderMeals();
+  var extras=[];
+  document.querySelectorAll('#ml-extras .ex-row').forEach(function(r){
+    var n=r.querySelector('.ex-name').value.trim();if(!n)return;
+    var pr=r.querySelector('.ex-price').value;
+    extras.push({name:n,store:r.querySelector('.ex-store').value,price:pr!==''?(parseFloat(pr)||0):null});
+  });
+  var mins=parseInt(document.getElementById('ml-min').value,10),img=document.getElementById('ml-img').value.trim();
+  var m=editingMealId?getGoto(editingMealId):null;
+  if(!m){m={id:'g_'+Date.now()};data.goto.push(m);}
+  m.name=name;m.type=document.getElementById('ml-type').value;m.staples=mealStaples.slice();
+  if(mins>0)m.minutes=mins;else delete m.minutes;
+  if(safeImg(img))m.img=img;else delete m.img;
+  if(extras.length)m.extras=extras;else delete m.extras;
+  save();closeMealModal();
+  if(picking&&!editingMealId){}
+  render();
 }
 function deleteMealFromModal(){
   if(!editingMealId)return;if(!confirm('Delete this meal?'))return;
-  data.goto=data.goto.filter(function(x){return x.id!==editingMealId;});
-  save();closeMealModal();renderMeals();
-}
-function deleteMealDirect(id){
-  if(!confirm('Delete this meal?'))return;
+  var id=editingMealId;
   data.goto=data.goto.filter(function(x){return x.id!==id;});
-  save();renderMeals();
+  if(data.weekPlan&&Array.isArray(data.weekPlan.dinners))data.weekPlan.dinners=data.weekPlan.dinners.filter(function(d){return d.gotoId!==id;});
+  pickSel=pickSel.filter(function(p){return p.gotoId!==id;});
+  save();closeMealModal();render();
 }
-document.getElementById('meal-modal').addEventListener('click',function(e){if(e.target===this)closeMealModal();});
 
-/* ── INITA ── */
+/* ── MODAL PLUMBING ── */
+function openModal(id,focusId){document.getElementById(id).classList.add('open');if(focusId)setTimeout(function(){document.getElementById(focusId).focus();},80);}
+function closeModal(id){document.getElementById(id).classList.remove('open');}
+['staple-modal','meal-modal','shop-modal'].forEach(function(id){
+  document.getElementById(id).addEventListener('click',function(e){if(e.target===this){if(id==='staple-modal')closeStapleModal();else if(id==='meal-modal')closeMealModal();else closeShopModal();}});
+});
+document.addEventListener('keydown',function(e){
+  if(e.key!=='Escape')return;
+  if(document.getElementById('meal-modal').classList.contains('open'))closeMealModal();
+  else if(document.getElementById('staple-modal').classList.contains('open'))closeStapleModal();
+  else if(document.getElementById('shop-modal').classList.contains('open'))closeShopModal();
+});
+
+/* ── EVENTS (one delegated handler) ── */
+document.addEventListener('click',function(e){
+  var t=e.target.closest('[data-act]');if(!t||t.tagName==='SELECT')return;
+  var act=t.getAttribute('data-act'),id=t.getAttribute('data-id');
+  switch(act){
+    case 'tab':setTab(t.getAttribute('data-tab'));break;
+    case 'pick-open':openPick(t.getAttribute('data-next')==='1');break;
+    case 'pick-cancel':picking=false;showView('week');render();break;
+    case 'pick-toggle':togglePick(id);break;
+    case 'pick-filter':pickFilter=t.getAttribute('data-f');renderPick();break;
+    case 'pick-build':buildPlan();break;
+    case 'chk':toggleCheck(t.getAttribute('data-key'));break;
+    case 'skip':toggleSkip(id);break;
+    case 'done-shop':doneShopping();break;
+    case 'oneoff-add':openShopModal();break;
+    case 'oneoff-del':deleteShopItem(id);break;
+    case 'made':markMade(id,t.getAttribute('data-day'));break;
+    case 'st-status':setStatus(id,t.getAttribute('data-v'));break;
+    case 'st-edit':editStaple(id);break;
+    case 'st-add':openStapleModal();break;
+    case 'st-filter':stapleFilter=t.getAttribute('data-f');render();break;
+    case 'meal-new':openMealModal(null);break;
+    case 'meal-edit':editMeal(id);break;
+  }
+});
+document.addEventListener('change',function(e){
+  var t=e.target;if(t.getAttribute('data-act')!=='pick-day')return;
+  var p=pickSel.find(function(x){return x.gotoId===t.getAttribute('data-id');});
+  if(p){p.day=t.value;pickManual=true;renderPick();}
+});
+
+/* ── INIT ── */
 var now=new Date();
 document.getElementById('today-date').textContent=DAYS_FULL[now.getDay()]+', '+MONTHS_FULL[now.getMonth()]+' '+now.getDate()+', '+now.getFullYear();
 load();
-renderStaples();
+render();
 </script>
 </body>
 </html>
