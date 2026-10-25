@@ -53,6 +53,14 @@ button,input,select{font-family:inherit;}
 .sync.stale{color:var(--warn);background:var(--warn-bg);}
 .sync.off{color:var(--accent-deep);background:var(--accent-soft);}
 .sync.busy i{animation:pulse 1s infinite;}
+/* once connected: just a round refresh icon — green when current, amber when it could use a refresh */
+.sync.ic{width:32px;height:32px;padding:0;justify-content:center;border-radius:50%;position:relative;}
+.sync.ic i{display:none;}
+.sync.ic span{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;}
+.sync .rf{display:none;width:16px;height:16px;fill:none;stroke:currentColor;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round;}
+.sync.ic .rf{display:block;}
+.sync.ic.busy .rf{animation:spin .9s linear infinite;}
+@keyframes spin{to{transform:rotate(-360deg)}}
 @keyframes pulse{50%{opacity:.25}}
 .seg{display:inline-flex;padding:3px;background:var(--warm-deep);border-radius:10px;}
 .seg button{border:none;background:transparent;padding:5px 11px;border-radius:8px;font:650 12px var(--b2-sans);color:var(--muted);cursor:pointer;}
@@ -231,7 +239,7 @@ button,input,select{font-family:inherit;}
         <div class="card-h">
           <div class="card-t" id="cal-title">This week</div>
           <div class="cal-tools">
-            <button class="sync off" id="sync" type="button"><i></i><span>Connect Google Calendar</span></button>
+            <button class="sync off" id="sync" type="button"><i></i><svg class="rf" viewBox="0 0 24 24" aria-hidden="true"><path d="M4.5 9.5A8 8 0 1 1 6.3 18"/><path d="M4 4.5v5h5"/></svg><span>Connect Google Calendar</span></button>
             <div class="seg" id="views"><button data-v="day" type="button">Day</button><button data-v="week" type="button" class="on">Week</button><button data-v="month" type="button">Month</button></div>
             <button class="btn sm icon" id="prev" type="button" aria-label="Previous">‹</button>
             <button class="btn sm" id="todayBtn" type="button">Today</button>
@@ -602,7 +610,8 @@ function withGoogle(fn){
   if(GCal.connected())return fn().catch(function(err){if(err.code==='auth')return GCal.signIn().then(fn);throw err;});
   return GCal.signIn().then(fn);
 }
-function setSync(state,label){var b=$('sync');b.className='sync '+state;b.querySelector('span').textContent=label;}
+function setSync(state,label){var b=$('sync'),ic=/\b(on|stale)\b/.test(state);b.className='sync '+state+(ic?' ic':'');b.querySelector('span').textContent=label;
+  b.title=ic?label+(/busy/.test(state)?'':' — click to refresh'):'';b.setAttribute('aria-label',b.title||label);}
 function syncLabel(){renderQcal();
   if(!GCal.configured())return setSync('off','Connect Google Calendar');
   if(GCal.connected())return setSync('on','Synced with Google'+(gAt?' · '+ago(gAt):''));
@@ -626,6 +635,9 @@ $('sync').onclick=function(){
   GCal.signIn().then(function(){return loadGoogle(true);}).catch(function(err){syncLabel();flash(err.message,true);});
 };
 function refresh(){closePop();renderCal();if(GCal.configured())loadGoogle(false);}
+/* while Google's sign-in is still valid, pull fresh events when you come back to the tab (no pop-up needed) */
+function autoSync(){if(document.visibilityState==='visible'&&GCal.configured()&&GCal.connected()&&(!gAt||Date.now()-gAt>5*60000))loadGoogle(true);}
+document.addEventListener('visibilitychange',autoSync);window.addEventListener('focus',autoSync);setInterval(autoSync,10*60000);
 setInterval(function(){if(GCal.connected())loadGoogle(true);else syncLabel();},10*60*1000);
 
 /* setup modal */
