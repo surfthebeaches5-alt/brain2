@@ -328,12 +328,19 @@ function localEvents(){var d=lsGet('lifeCalendar1');var a=d?(Array.isArray(d)?d:
 function classDue(){var db=lsGet('classTracker1');if(!db)return [];var out=[];
   (Array.isArray(db)?db:(db.classes||[])).forEach(function(c){(c.modules||[]).forEach(function(m){(m.tasks||[]).forEach(function(t){
     var due=t.due||m.due;if(!due||t.done)return;out.push({id:'class:'+t.id,source:'class',title:t.label,date:due,allDay:true,color:'#8e71d3',calName:c.name||'Class'});});});});return out;}
+/* self-study topics with "Show on Today & Calendar" on (curriculum1 calendarSync): unit starts + project due dates */
+function selfDue(){var l=lsGet('curriculum1');if(!Array.isArray(l))return [];var out=[];
+  function ok(d){return typeof d==='string'&&/^\d{4}-\d{2}-\d{2}$/.test(d);}
+  l.forEach(function(c){if(!c||typeof c!=='object'||!c.calendarSync)return;var name=String(c.title||'Self-study');
+    (Array.isArray(c.units)?c.units:[]).forEach(function(u,i){if(u&&ok(u.start))out.push({id:'self:'+c.id+':'+(u.id||i),source:'self',title:'Unit '+(i+1)+' begins · '+name,date:u.start,allDay:true,color:'#5f9568',calName:'Self-study'});});
+    var p=c.project;if(p&&typeof p==='object'&&ok(p.due)&&!p.done)out.push({id:'self:'+c.id+':project',source:'self',title:'Project due · '+name,date:p.due,allDay:true,color:'#5f9568',calName:'Self-study'});});
+  return out;}
 function billDue(from,to){var s=finLoad();if(!s)return [];var out=[];
   s.cards.forEach(function(c){if(!c.active)return;[['day','paid','statement'],['day2','paid2','mid-cycle']].forEach(function(k){
     if(!c[k[0]]||c[k[1]])return;var d=nextDue(c[k[0]]);if(d<from||d>=to)return;
     out.push({id:'bill:'+c.id+k[0],source:'bill',title:c.name+' due',date:dk(d),allDay:true,color:'#cc5a70',calName:'Bills',url:c.url});});});return out;}
 function eventsIn(from,to){
-  var a=localEvents().concat(classDue()).concat(gEvents).concat(billDue(from,to));
+  var a=localEvents().concat(classDue()).concat(selfDue()).concat(gEvents).concat(billDue(from,to));
   var f=dk(from),t=dk(addDays(to,-1));
   return a.filter(function(e){var end=e.endDate||e.date;return end>=f&&e.date<=t;});
 }
@@ -410,6 +417,7 @@ $('cal').addEventListener('click',function(e){
 /* event popover */
 function openPop(key,node){
   var e=CUR.find(function(x){return evKey(x)===key;});if(!e)return;
+  if(e.source==='self'){try{localStorage.setItem('learningTab','self');}catch(x){}location.href='learning/index.html';return;}
   var d=parseDk(e.date);
   $('pop-t').textContent=e.title;
   $('pop-m').innerHTML=DF[d.getDay()]+', '+MF[d.getMonth()]+' '+d.getDate()+(e.allDay?' · all day':' · '+fmtTime(e.time)+(e.endTime?' – '+fmtTime(e.endTime):''))+
@@ -741,7 +749,7 @@ window.addEventListener('storage',function(e){
   else if(e.key==='langChallenge1'){safe(renderLang);safe(renderCount);}
   else if(e.key===TASK_SK){safe(renderTasks);safe(renderCount);}
   else if(e.key&&e.key.indexOf('fitnessTracker1_day_')===0){safe(renderBody);safe(renderCount);}
-  else if(e.key==='lifeCalendar1'||e.key==='classTracker1')safe(renderCal);
+  else if(e.key==='lifeCalendar1'||e.key==='classTracker1'||e.key==='curriculum1')safe(renderCal);
 });
 setInterval(function(){safe(renderHead);if(view!=='month'&&+anchor===+today())safe(renderCal);},60000);
 </script>
