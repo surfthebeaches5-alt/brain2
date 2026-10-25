@@ -48,7 +48,6 @@
     {label:'Life',pages:[
       {p:'fitness/',label:'Fitness',sub:'Weekly plan & habits',icon:'fitness'},
       {p:'meals/',label:'Meals & Groceries',sub:'Staples & shopping',icon:'meals'},
-      {p:'travel/',label:'Travel',sub:'Trips & bucket list',icon:'travel'},
       {p:'passport/',label:'DC Passport',sub:'Your map of spots',icon:'passport'},
       {p:'dc-guide/',label:'DC Guide',sub:"What's on each month",icon:'guide'},
       {p:'stoic/',label:'Stoic Workbook',sub:'8 modules',icon:'stoic'},
@@ -60,7 +59,8 @@
     {id:'q1',name:'SoFi',url:'https://login.sofi.com/'},
     {id:'q2',name:'Origin',url:'https://app.useorigin.com/'},
     {id:'q3',name:'Instacart',url:'https://www.instacart.com/store'},
-    {id:'q4',name:'Duolingo',url:'https://www.duolingo.com/learn'}
+    {id:'q4',name:'Duolingo',url:'https://www.duolingo.com/learn'},
+    {id:'q5',name:'Wanderlog',url:'https://wanderlog.com/home'}
   ];
 
   function esc(s){return String(s==null?'':s).replace(/[&<>"']/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];});}
