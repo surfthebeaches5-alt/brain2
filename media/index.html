@@ -1011,7 +1011,7 @@ function renderHome(){
   var ar=pool('articles','want').sort(function(a,b){return b.a-a.a;});
   if(ar.length){
     h+='<div class="sec"><h2>Articles to read</h2><span class="cnt">'+ar.length+' saved</span><button class="more" data-act="goto" data-tab="articles" data-v="want">See all →</button></div>';
-    h+='<div class="grid">'+ar.slice(0,cols).map(function(x){return gridCard('articles',x.it,{tag:true});}).join('')+'</div>';
+    h+='<div class="grid">'+ar.slice(0,cols).map(function(x){return gridCard('articles',x.it);}).join('')+'</div>';
   }
   // Finished this year
   var fin=[];['books','screen','music','videos','articles'].forEach(function(sec){yearDone(sec,yr).forEach(function(it){if(sec==='videos'&&!isPodcast(it))return;fin.push({sec:sec,it:it});});});
@@ -1144,7 +1144,7 @@ function renderDrawer(){
       '</div><button class="pill" style="margin-top:10px" data-act="songadd">+ Add song</button>';
   }
   h+='<div class="dr-sec">Notes</div><div class="fg">';
-  h+=fld(sec==='books'||sec==='screen'?'Quick note':'Note','note',it.note||'','text',{full:true,ph:sec==='screen'?'Where to watch, who recommended it…':'Who recommended it, which edition…'});
+  h+=fld(sec==='books'||sec==='screen'?'Quick note':'Note','note',it.note||'','text',{full:true,ph:sec==='screen'?'Where to watch, who recommended it…':sec==='articles'?'Who recommended it, why you saved it…':'Who recommended it, which edition…'});
   if(sec!=='videos'&&sec!=='articles')h+=fld('Review','review',it.review||'','textarea',{full:true,rows:4,ph:'Your thoughts, favorite lines…'});
   h+='</div><div class="dr-sec">Links</div><div class="fg">';
   h+=fld('Cover image URL <span class="lab-hint">(right-click any image → Copy Image Address)</span>','cover',it.cover||'','text',{full:true,ph:'https://…',btn:coverLane(sec,it)?'<button class="mini-btn" data-act="findone">Find cover</button>':''});
