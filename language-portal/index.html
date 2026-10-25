@@ -309,6 +309,8 @@ textarea.f-input{resize:vertical;line-height:1.5;}
 .dv-tools{display:flex;gap:6px;align-items:center;flex-wrap:wrap;}
 .dv-tools select{border:1px solid var(--line);border-radius:8px;height:28px;padding:0 8px;background:var(--raised);font-size:11.5px;font-weight:650;color:var(--ink-2);}
 .stats4{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin:18px 0;}
+.stats5{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:10px;margin:18px 0;}
+.st small{display:block;font-size:11px;color:var(--muted);font-weight:600;margin-top:3px;}
 .st{background:var(--warm);border-radius:12px;padding:12px 14px;}
 .st b{font-family:var(--b2-serif);font-size:24px;font-weight:600;display:block;line-height:1.1;}
 .st span{font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--muted);font-weight:750;}
@@ -607,6 +609,7 @@ details.help a{color:var(--accent-deep);font-weight:650;}
   .ap-card{grid-template-columns:1fr;}
   .crow .cs{display:none;}
   .stats4{grid-template-columns:repeat(2,minmax(0,1fr));}
+  .stats5{grid-template-columns:repeat(2,minmax(0,1fr));}
   .grades{grid-template-columns:repeat(2,minmax(0,1fr));}
   .tools{grid-template-columns:1fr;}
   .f-front{font-size:32px;}
@@ -1748,7 +1751,11 @@ function deckViewHtml(d){
   h+='</div><div class="dv-tools">'+(renaming?'<button type="button" class="btn btn-dark btn-sm" data-act="renameSave">Save</button>':'<button type="button" class="btn btn-ghost btn-sm" data-act="rename">Rename</button>')+
     '<select data-chg="deckLang" aria-label="Deck language">'+Object.keys(LANGS).map(function(k){return '<option value="'+k+'"'+(d.lang===k?' selected':'')+'>'+L(k).flag+' '+L(k).name+'</option>';}).join('')+'</select>'+
     '<button type="button" class="btn btn-danger btn-sm" data-act="delDeck">Delete deck</button></div></div>';
-  h+='<div class="stats4"><div class="st hl"><b>'+s.due+'</b><span>Due now</span></div><div class="st"><b>'+s.nw+'</b><span>New</span></div><div class="st"><b>'+s.learn+'</b><span>Learning</span></div><div class="st"><b>'+s.mast+'</b><span>Mastered</span></div></div>';
+  /* like Anki: today = reviews that came due + today's new cards; the deck total of unseen cards is just context */
+  h+='<div class="stats5"><div class="st hl"><b>'+s.study+'</b><span>To study today</span></div>'+
+    '<div class="st"><b>'+s.due+'</b><span>Reviews due</span></div>'+
+    '<div class="st"><b>'+s.newToday+'</b><span>New today</span><small>'+s.nw.toLocaleString()+' not started</small></div>'+
+    '<div class="st"><b>'+s.learn+'</b><span>Learning</span></div><div class="st"><b>'+s.mast+'</b><span>Mastered</span></div></div>';
   if(d.media&&d.media.n)h+=deckMediaLine(d,deckMediaChk[d.id]||null);
   h+='<div class="dv-daily"><label>New cards per day <input class="f-input" type="number" min="0" max="999" value="'+newLimit(d)+'" data-chg="deckNew" aria-label="New cards per day"></label><span class="muted small">'+
     (!s.nw?'No new cards left in this deck':s.newLeft?s.newLeft+' new left today':'Today’s new cards are done — more tomorrow')+'</span></div>';
