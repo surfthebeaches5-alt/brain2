@@ -423,6 +423,145 @@ select.inp{appearance:none;-webkit-appearance:none;background:var(--raised) url(
   .card{padding:18px;}
 }
 .lab-hint{font-weight:500;letter-spacing:0;text-transform:none;color:var(--faint);margin-left:4px;}
+
+/* ───────── music: track lists, song ratings, Spotify ───────── */
+.rr-m b{color:var(--ink-2);font-weight:700;}
+.rr-hint{font-size:11px;color:var(--muted);font-weight:600;align-self:center;margin-left:4px;white-space:nowrap;}
+.lnk{border:none;background:none;font:650 12px var(--sans);color:var(--accent-deep);cursor:pointer;padding:0 2px;}
+.lnk:hover{text-decoration:underline;text-underline-offset:3px;}
+.add-spin.on{display:block;}
+/* shelf: rating line under album covers */
+.trk{display:flex;align-items:center;gap:5px;font-size:11px;font-weight:650;color:var(--muted);margin-top:5px;white-space:nowrap;overflow:hidden;}
+.trk .av{color:var(--ink-2);font-weight:750;}
+.trk .av i{font-style:normal;color:var(--star);margin-right:2px;}
+.trk .dim{color:var(--faint);overflow:hidden;text-overflow:ellipsis;}
+.bk .bar.rated{height:4px;margin-top:7px;}
+.bar.rated i{background:var(--star);}
+/* drawer */
+.drawer.music{width:min(520px,100vw);}
+.drawer.music .dr-top{margin-bottom:14px;}
+.drawer.music .dr-top .cv{width:152px;border-radius:8px;align-self:flex-start;}
+.drawer.music .dr-id{gap:0;}
+.drawer.music .dr-stars{margin-top:auto;padding-top:10px;}
+.m-meta{display:flex;align-items:center;gap:6px;flex-wrap:wrap;font-size:12px;color:var(--muted);font-weight:600;margin-top:8px;}
+.gchip{display:inline-flex;align-items:center;height:22px;padding:0 9px;border-radius:20px;background:var(--accent-soft);color:var(--accent-deep);font:700 11px var(--sans);}
+.m-len{font-size:12px;color:var(--muted);font-weight:600;margin-top:5px;}
+.m-len b{color:var(--ink-2);font-weight:700;}
+.cov-row{display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin:0 0 6px;}
+.cov-row .lbl{font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--muted);font-weight:750;margin-right:4px;}
+.copt{display:inline-flex;align-items:center;gap:7px;height:30px;padding:0 10px 0 4px;border-radius:9px;border:1px solid var(--line);background:var(--raised);font:650 11.5px var(--sans);color:var(--ink-2);cursor:pointer;white-space:nowrap;}
+.copt:hover{border-color:var(--accent-line);}
+.copt .th{width:22px;height:22px;border-radius:5px;overflow:hidden;flex-shrink:0;background:var(--warm-deep);}
+.copt .th img{width:100%;height:100%;object-fit:cover;display:block;}
+.copt.on{border-color:var(--accent-line);background:var(--accent-soft);color:var(--accent-deep);}
+.copt.on::after{content:"✓";font-size:11px;margin-left:-1px;}
+.copt.link{padding-left:10px;border-style:dashed;color:var(--muted);}
+.copt.link.on{border-style:solid;color:var(--accent-deep);}
+.cov-own{margin:4px 0 6px;}
+.cov-hint{font-size:11.5px;color:var(--faint);font-weight:550;margin:0 0 16px;}
+.cov-hint b{color:var(--muted);font-weight:650;}
+.sp-frame{display:block;width:100%;height:152px;border:0;border-radius:12px;background:var(--warm-deep);}
+.sp-note{display:flex;align-items:flex-start;gap:7px;font-size:11.5px;color:var(--muted);font-weight:550;line-height:1.5;margin-top:9px;}
+.sp-note .ic{font-size:14px;color:var(--faint);margin-top:2px;}
+.sp-acts{display:flex;align-items:center;gap:8px;margin-left:auto;flex-shrink:0;}
+.listen-empty{display:flex;gap:6px;}
+.listen-empty .inp{flex:1;min-width:0;}
+.listen-sub{font-size:11.5px;color:var(--faint);font-weight:550;margin-top:7px;}
+.listen-sub.err{color:var(--over);}
+.tsum{display:grid;grid-template-columns:1fr 1px 1.25fr;gap:16px;align-items:center;background:var(--warm);border-radius:12px;padding:12px 16px;margin-bottom:8px;}
+.tsum .sep{width:1px;height:38px;background:var(--line);}
+.tsum .k{font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);font-weight:750;}
+.tsum .stars{font-size:17px;margin-top:5px;}
+.tsum-mode{font-size:11px;color:var(--faint);font-weight:600;margin-top:3px;}
+.tsum-mode .lnk{font-size:11px;padding:0;}
+.tsum .avg{display:flex;align-items:baseline;gap:8px;margin-top:3px;flex-wrap:wrap;}
+.tsum .avg b{font:600 22px var(--serif);letter-spacing:-.4px;color:var(--ink);}
+.tsum .avg b i{font-style:normal;color:var(--star);font-size:17px;margin-right:3px;}
+.tsum .avg span{font-size:12px;color:var(--muted);font-weight:600;}
+.tsum .bar{height:4px;margin-top:6px;}
+.tr{display:grid;grid-template-columns:20px minmax(0,1fr) 36px 78px 22px 22px;align-items:center;gap:8px;padding:0 6px;margin:0 -6px;border-bottom:1px solid var(--hair);min-height:40px;}
+.tr:hover{background:var(--warm);border-radius:8px;}
+.tr-n{display:flex;justify-content:flex-end;}
+.tr .no{font-size:11px;color:var(--muted);font-weight:700;text-align:right;}
+.tr .rm{display:none;border:none;background:var(--over-bg);color:var(--over);font-size:10px;width:20px;height:20px;border-radius:6px;cursor:pointer;padding:0;align-items:center;justify-content:center;}
+.tr:hover .no,.tr:focus-within .no{display:none;}
+.tr:hover .rm,.tr:focus-within .rm{display:inline-flex;}
+.tr input{border:none;outline:none;background:transparent;font:550 13px var(--sans);color:var(--ink);padding:9px 0;min-width:0;width:100%;text-overflow:ellipsis;}
+.tr.unr input{color:var(--ink-2);}
+.tr .len{font-size:11.5px;color:var(--faint);font-weight:600;text-align:right;font-variant-numeric:tabular-nums;}
+.tr .stars{margin:0;font-size:14px;letter-spacing:.5px;}
+.tr .ib{border:none;background:none;cursor:pointer;color:var(--star-off);font-size:14px;width:22px;height:22px;border-radius:6px;display:flex;align-items:center;justify-content:center;padding:0;}
+.tr .ib .ic{font-size:14px;}
+.tr .ib:hover{color:var(--accent-deep);}
+.tr .ib.hrt.on{color:var(--over);}
+.tr .ib.note{color:var(--faint);}
+.tr .ib.note.has{color:var(--accent-deep);}
+.tr .ib.note.open{background:var(--accent-soft);color:var(--accent-deep);}
+.tr-note{padding:6px 0 10px 28px;border-bottom:1px solid var(--hair);}
+.tr-note .inp{font-size:12.5px;padding:8px 11px;min-height:0;line-height:1.5;resize:none;}
+.tr-note .meta{display:flex;justify-content:space-between;gap:10px;font-size:10.5px;color:var(--faint);font-weight:600;margin-top:5px;}
+.tr-disc{font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);font-weight:750;padding:12px 0 4px;}
+.tl-foot{display:flex;align-items:center;gap:10px;margin-top:12px;flex-wrap:wrap;}
+.tl-foot .src{margin-left:auto;font-size:11.5px;color:var(--faint);font-weight:550;text-align:right;}
+.tl-foot .src .lnk{font-size:11.5px;}
+.dr-flash{display:flex;align-items:center;gap:6px;flex-wrap:wrap;background:var(--ok-bg);color:var(--ok);border-radius:12px;padding:9px 12px;font-size:12.5px;font-weight:650;margin-bottom:16px;}
+.dr-flash span{color:var(--ink-2);font-weight:550;}
+.dr-flash.wait{background:var(--accent-soft);color:var(--accent-deep);}
+.fill{border:1.5px dashed var(--accent-line);border-radius:14px;background:var(--accent-soft);padding:16px;}
+.fill-t{font:600 17px var(--serif);letter-spacing:-.2px;}
+.fill-s{font-size:12.5px;color:var(--muted);font-weight:550;margin-top:3px;line-height:1.5;}
+.fill-m{display:flex;align-items:center;gap:12px;background:var(--raised);border:1px solid var(--line);border-radius:12px;padding:9px;margin-top:12px;font-size:12.5px;color:var(--muted);font-weight:550;}
+.fill-m .cv{width:46px;border-radius:5px;flex-shrink:0;}
+.fill-m .t{font-weight:700;font-size:13px;color:var(--ink);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.fill-m .m{font-size:11.5px;color:var(--muted);font-weight:550;margin-top:2px;}
+.fill-m .m b{color:var(--ink-2);font-weight:700;}
+.fill-alts{background:var(--raised);border:1px solid var(--line);border-radius:12px;margin-top:8px;padding:4px;}
+.fill-alts .rr{padding:6px 8px;}
+.fill-acts{display:flex;align-items:center;gap:8px;margin-top:12px;flex-wrap:wrap;}
+.okdot{color:var(--ok);font-weight:750;font-size:11.5px;white-space:nowrap;}
+.maybe{color:var(--warn);font-weight:750;font-size:11.5px;white-space:nowrap;}
+/* Import → Music: album search, Spotify link match, bulk track-list filler */
+.imp-q-box{margin-bottom:6px;}
+#imp-res .res-h{padding:10px 2px 6px;}
+#imp-res .res-msg{padding:8px 2px;}
+.imp-list{max-height:min(360px,46vh);overflow-y:auto;margin:0 -8px;}
+.imp-list .rr:first-child .rr-acts{display:flex;}
+button.rr-on{border:none;cursor:pointer;font-family:var(--sans);}
+.imp-count{font-size:12.5px;color:var(--ok);font-weight:650;margin-top:10px;display:flex;align-items:center;gap:6px;flex-wrap:wrap;}
+.imp-count span{color:var(--ink-2);font-weight:550;}
+.imp-count:empty{display:none;}
+.imp-fill{display:flex;align-items:center;gap:14px;background:var(--warm);border-radius:12px;padding:12px 14px;}
+.imp-fill-txt{flex:1;min-width:0;font-size:12px;color:var(--muted);line-height:1.5;font-weight:500;}
+.imp-fill-txt b{display:block;color:var(--ink);font-size:13px;font-weight:700;margin-bottom:2px;}
+.imp-fill-bar{margin-top:10px;}
+.imp-fill-bar i{background:var(--accent);}
+.imp-fill-note{font-size:12.5px;color:var(--muted);line-height:1.6;margin-top:10px;font-weight:500;}
+.imp-fill-note b{color:var(--ink);font-weight:650;}
+.spm{padding:0 0 4px;}
+.spm-card{display:flex;gap:16px;padding:12px;border-radius:14px;background:var(--accent-soft);border:1px solid var(--accent-line);}
+.spm-art{width:96px;height:96px;border-radius:6px;flex-shrink:0;box-shadow:var(--cover-shadow);object-fit:cover;background:var(--warm-deep);}
+.spm-ey{font-size:10px;letter-spacing:.14em;text-transform:uppercase;font-weight:800;color:var(--accent-deep);display:flex;align-items:center;gap:6px;}
+.spm-t{font:600 20px var(--serif);letter-spacing:-.3px;margin-top:4px;line-height:1.15;}
+.spm-a{font-size:12.5px;color:var(--ink-2);font-weight:600;margin-top:3px;}
+.spm-m{font-size:11.5px;color:var(--muted);font-weight:550;margin-top:4px;display:flex;align-items:center;gap:6px;flex-wrap:wrap;}
+.spm-m b{color:var(--ink-2);font-weight:700;}
+.spm .rr-acts{display:flex;margin-top:10px;}
+.spm .rr-b{height:28px;padding:0 11px;font-size:11.5px;}
+.spm-load{display:flex;align-items:center;gap:8px;font-size:12px;color:var(--accent-deep);font-weight:650;margin-top:8px;}
+.spm-msg{font-size:12.5px;color:var(--muted);font-weight:550;line-height:1.5;margin-top:6px;}
+.spm-steps{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px;font-size:11px;color:var(--muted);font-weight:600;}
+.spm-steps span{display:inline-flex;align-items:center;gap:4px;background:var(--raised);border:1px solid var(--line);border-radius:20px;padding:2px 8px;}
+.spm-steps span.ok{color:var(--ok);}
+.alt-h{font-size:11.5px;color:var(--muted);font-weight:650;padding:12px 2px 4px;}
+.alt-list{margin:0 -8px;}
+.sp-refine{display:flex;gap:6px;padding:8px 0 2px;}
+.sp-refine .inp{flex:1;min-width:0;padding:7px 11px;font-size:12.5px;}
+@media (max-width:760px){
+  .imp-fill{flex-direction:column;align-items:stretch;}
+  .tsum{grid-template-columns:1fr;gap:10px;}
+  .tsum .sep{display:none;}
+  .drawer.music .dr-top .cv{width:110px;}
+}
 </style>
 <link rel="stylesheet" href="../assets/brain.css?v=1026a">
 </head>
@@ -451,7 +590,7 @@ select.inp{appearance:none;-webkit-appearance:none;background:var(--raised) url(
     <nav class="tabs" id="tabs" aria-label="Library sections"></nav>
     <div class="lib-acts">
       <button class="btn" type="button" id="yr-btn" data-act="tab" data-tab="year">Year in review</button>
-      <button class="btn" type="button" data-act="import" title="Import from Goodreads or Letterboxd">Import</button>
+      <button class="btn" type="button" data-act="import" title="Import from Goodreads or Letterboxd, or add albums">Import</button>
     </div>
   </div>
 
@@ -495,6 +634,10 @@ var IC_STATS=IC('<line x1="12" x2="12" y1="20" y2="10"/><line x1="18" x2="18" y1
 var IC_SEARCH=IC('<circle cx="11" cy="11" r="6.5"/><path d="m20 20-4.2-4.2"/>');
 var IC_SPARK=IC('<path d="M12 3l1.7 5L19 9.5l-5.3 1.5L12 16l-1.7-5L5 9.5 10.3 8Z"/>');
 var IC_EXT=IC('<path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/>');
+var IC_NOTE=IC('<path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>');
+var IC_NOTE_F='<svg class="ic" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>';
+var IC_INFO=IC('<circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 8h.01"/>');
+var IC_LINK=IC('<path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/>');
 
 /* Section config — keys and status values are shared with the Home page; don't rename. */
 var SECTIONS={
@@ -572,7 +715,10 @@ function load(){
   var VSTAT={queue:'want',watching:'progress',following:'progress',archived:'done'};
   (data.videos||[]).forEach(function(v){if(VSTAT[v.status]){v.status=VSTAT[v.status];migrated=true;}if(v.date===undefined){v.date='';}});
   // Migrate: ensure music items have songs array
-  (data.music||[]).forEach(function(m){if(!m.songs)m.songs=[];m.songs.forEach(function(sg){if(sg.fav===undefined){sg.fav=((sg.rating||0)>=4);migrated=true;}});});
+  (data.music||[]).forEach(function(m){if(!m.songs)m.songs=[];m.songs.forEach(function(sg){if(sg.fav===undefined){sg.fav=((sg.rating||0)>=4);migrated=true;}});
+    // album rating: a rating set by hand stays the user's pick; unrated albums follow their track average
+    if(m.ratingAuto===undefined){m.ratingAuto=!(m.rating>0);migrated=true;}
+    if(m.ratingAuto){var r0=m.rating;syncAuto(m);if(m.rating!==r0)migrated=true;}});
   // Defensive: every item needs an id + title string
   SEC_KEYS.forEach(function(s){data[s].forEach(function(it,i){if(!it.id){it.id='i_'+Date.now()+'_'+s+i;migrated=true;}if(it.title==null)it.title='';
     // the old one-shot "coverLookup:'none'" marker is superseded by coverTried (auto cover finder retries later)
@@ -656,6 +802,14 @@ function coverOk(img){
 function coverFail(img){
   var cv=img.parentNode,src=img.getAttribute('src')||'';
   if(!cv)return;
+  // Spotify art: the 640px version isn't always there — fall back to the 300px one Spotify gave us
+  if(src.indexOf(SP640)>=0){
+    var alt=src.replace(SP640,SP300);
+    cv.querySelectorAll('img').forEach(function(x){x.setAttribute('src',alt);});
+    var ck0=cv.getAttribute('data-ck');
+    if(ck0){var p0=ck0.split('|'),it0=findItem(p0[0],p0.slice(1).join('|'));if(it0){if(it0.cover===src)it0.cover=alt;if(it0.coverSpotify===src)it0.coverSpotify=alt;save();}}
+    return;
+  }
   cv.querySelectorAll('img').forEach(function(x){x.remove();});cv.classList.remove('has-img');
   // Goodreads imports point at Open Library by ISBN with ?default=false — a 404 there means "no such cover",
   // so drop it and let the background finder search by title instead.
@@ -702,7 +856,11 @@ function setStatus(sec,id,st,opts){
 }
 function rate(sec,id,n){
   var it=findItem(sec,id);if(!it)return;
-  it.rating=(it.rating===n&&!justFinished[sec+':'+id])?0:n;save();
+  // albums: tapping the stars while they follow the track average sets the user's own pick (no toggle-off)
+  if(sec==='music'&&it.ratingAuto!==false)it.rating=n;
+  else it.rating=(it.rating===n&&!justFinished[sec+':'+id])?0:n;
+  if(sec==='music')it.ratingAuto=false;
+  save();
   if(justFinished[sec+':'+id]){setTimeout(function(){delete justFinished[sec+':'+id];renderAll();},900);}
   renderAll();if(drawerRef&&drawerRef.sec===sec&&drawerRef.id===id)renderDrawer();
 }
@@ -981,6 +1139,7 @@ function gridCard(sec,it,opts){
   else if(st==='done'){meta=starsHTML(sec,it);if(!opts.home&&it.date)meta+='<div class="bk-m">'+fmtShort(it.date)+'</div>';if(opts.home)sub='';}
   else if(st==='progress'&&sec==='books'&&it.pages)meta='<div class="bar"><i style="width:'+Math.round((it.progress||0)/it.pages*100)+'%"></i></div>';
   else if(st==='progress'&&sec==='screen'&&isSeries(it))meta='<div class="bk-m">S'+(it.season||1)+' · E'+(it.episode||1)+'</div>';
+  if(sec==='music'&&!opts.tag&&!opts.home)meta+=trackLine(it);
   return '<div class="bk" data-act="open"'+dat+'>'+coverHTML(it,sec,extra)+'<div class="bk-t">'+esc(it.title)+'</div>'+(sub?'<div class="bk-a">'+esc(sub)+'</div>':'')+meta+'</div>';
 }
 function rowCard(sec,it){
@@ -1026,8 +1185,10 @@ function renderYear(body){
 
 /* ── DRAWER ── */
 var drawerRef=null,delArm=null;
+var drFull=true,noteOpen=-1,coverOwn=false,refillAsk=false,drFlash='',fillState={};   // album drawer state (per opening)
 function openDrawer(sec,id,focus){
   var it=findItem(sec,id);if(!it)return;
+  noteOpen=-1;coverOwn=false;refillAsk=false;drFlash='';drFull=true;delete fillState[id];
   drawerRef={sec:sec,id:id};closeResults();
   renderDrawer();
   document.getElementById('drawer').classList.add('open');document.getElementById('scrim').classList.add('open');
@@ -1051,6 +1212,8 @@ function renderDrawer(){
   if(!drawerRef)return;
   var sec=drawerRef.sec,it=findItem(sec,drawerRef.id),S=SECTIONS[sec];
   if(!it){closeDrawer();return;}
+  if(sec==='music'){renderMusicDrawer(it);return;}
+  document.getElementById('drawer').classList.remove('music');
   var st=normStatus(it.status);
   var cats=allCats(sec);if(it.category&&cats.indexOf(it.category)<0)cats.unshift(it.category);
   var h='<div class="dr-bar"><span class="eyebrow">'+(sec==='videos'?(isPodcast(it)?'Podcast':'Video'):S.label)+'</span><button class="x" data-act="close" aria-label="Close">✕</button></div><div class="dr-body">';
@@ -1099,6 +1262,12 @@ function drawerInput(e){
   var it=findItem(drawerRef.sec,drawerRef.id);if(!it)return;
   var t=e.target;
   if(t.hasAttribute('data-song')){var i=+t.getAttribute('data-song');if(it.songs&&it.songs[i])it.songs[i].name=t.value;}
+  else if(t.hasAttribute('data-snote')){
+    var j=+t.getAttribute('data-snote');if(!it.songs||!it.songs[j])return;
+    var nv=t.value;if(nv.trim())it.songs[j].note=nv;else delete it.songs[j].note;
+    var box=t.closest('.tr-note'),sv=box&&box.querySelector('.sn-saved');if(sv)sv.textContent='Saved';
+    var ib=box&&box.previousElementSibling&&box.previousElementSibling.querySelector('.ib.note');if(ib)ib.classList.toggle('has',!!nv.trim());
+  }
   else{
     var k=t.getAttribute('data-f');if(!k)return;
     var NUMS=['pages','progress','season','episode','seasonsTotal','epCurrent','epTotal','tracksTotal'];
@@ -1191,11 +1360,15 @@ function itunesMovies(q,sig){
       return {sec:'screen',kind:'movie',title:m.trackName||'',creator:m.artistName||'',year:yr,category:/documentary/i.test(m.primaryGenreName||'')?'Documentary':'Movie',
         cover:art.replace('100x100','600x600'),thumb:art,link:m.trackViewUrl||'',meta:['Film',yr,m.artistName,m.primaryGenreName].filter(Boolean).join(' · ')};});});
 }
-function searchAlbums(q,sig){
-  return itunesJSONP('https://itunes.apple.com/search?term='+encodeURIComponent(q)+'&media=music&entity=album&limit=8&country=US',sig)
-    .then(function(j){return (j.results||[]).map(function(m){var yr=(m.releaseDate||'').slice(0,4);var art=m.artworkUrl100||'';var n=m.trackCount||0;
-      return {sec:'music',title:m.collectionName||'',creator:m.artistName||'',year:yr,category:n&&n<=6?'EP':'Album',tracksTotal:n,
-        cover:art.replace('100x100','600x600'),thumb:art,link:m.collectionViewUrl||'',meta:[m.artistName,yr,n?n+' tracks':''].filter(Boolean).join(' · ')};});});
+function searchAlbums(q,sig,limit){
+  return itunesJSONP('https://itunes.apple.com/search?term='+encodeURIComponent(q)+'&media=music&entity=album&limit='+(limit||8)+'&country=US',sig)
+    .then(function(j){return (j.results||[]).map(albumResult);});
+}
+/* one Apple album (search result or lookup collection) → result shape; itunesId + genre let the songs fill in later */
+function albumResult(m){
+  var yr=(m.releaseDate||'').slice(0,4);var art=m.artworkUrl100||'';var n=m.trackCount||0;
+  return {sec:'music',title:m.collectionName||'',creator:m.artistName||'',year:yr,category:n&&n<=6?'EP':'Album',tracksTotal:n,itunesId:m.collectionId||'',genre:m.primaryGenreName||'',
+    cover:art.replace('100x100','600x600'),thumb:art,link:m.collectionViewUrl||'',meta:[m.artistName,yr,n?n+' tracks':''].filter(Boolean).join(' · ')};
 }
 function searchPodcasts(q,sig,limit){
   return itunesJSONP('https://itunes.apple.com/search?term='+encodeURIComponent(q)+'&media=podcast&entity=podcast&limit='+(limit||8)+'&country=US',sig)
@@ -1295,7 +1468,7 @@ function addItem(sec,fields,status){
   var it={id:uid(),title:'',creator:'',category:allCats(sec)[0],status:'want',rating:0,cover:'',link:'',note:'',date:'',pages:0,addedAt:Date.now()};
   if(sec==='screen'){it.season=1;it.episode=1;it.seasonsTotal=0;}
   if(sec==='videos'){it.epCurrent=0;it.epTotal=0;}
-  if(sec==='music'){it.tracksTotal=0;it.songs=[];}
+  if(sec==='music'){it.tracksTotal=0;it.songs=[];it.ratingAuto=true;}
   Object.keys(fields).forEach(function(k){if(fields[k]!==undefined&&fields[k]!==''&&fields[k]!==null)it[k]=fields[k];});
   it.status=status||'want';
   if(it.status==='progress')it.startedAt=todayStr();
@@ -1307,7 +1480,10 @@ function addFromResult(k,status){
   var f=flat[k];if(!f||f.type!=='res')return;
   if(f.ex){openDrawer(f.r.sec,f.ex.id);return;}
   var r=f.r,fields={title:r.title,creator:r.creator,category:r.category,cover:r.cover,link:r.link,year:r.year,pages:r.pages,isbn:r.isbn,olKey:r.olKey,kind:r.kind,tvmazeId:r.tvmazeId,note:r.note,tracksTotal:r.tracksTotal,epTotal:r.epTotal};
+  if(r.sec==='music'&&r.itunesId){fields.itunesId=r.itunesId;fields.genre=r.genre;fields.coverApple=r.cover;}
   var it=addItem(r.sec,fields,status);
+  // albums: the songs fill in quietly from Apple's catalog
+  if(r.sec==='music'&&r.itunesId)fillFromApple(it.id,r.itunesId).then(function(n){if(n>0){renderAll();if(drawerRef&&drawerRef.id===it.id)renderDrawer();}},function(){});
   if(r.tvmazeId)fetch('https://api.tvmaze.com/shows/'+r.tvmazeId+'/seasons').then(function(x){return x.json();}).then(function(s){var cur=findItem('screen',it.id);if(cur&&Array.isArray(s)&&s.length){cur.seasonsTotal=s.length;save();renderAll();}}).catch(function(){});
   document.getElementById('add-q').value='';closeResults();
   var vw=viewOf(r.sec,it);if(ui.tab!=='all'&&ui.tab!==vw){ui.tab=vw;ui.status='all';ui.cat='all';ui.year='all';ui.q='';saveUI();}
@@ -1441,6 +1617,422 @@ function runAuto(lane,j){
   }).then(done);
 }
 
+/* ── MUSIC: track lists, song ratings, Spotify ──
+   Album fields (all optional — older albums simply lack them):
+   songs:[{name, fav, rating?(1–5), note?, ms?, no?, disc?}] — ms (length), no (track #) and disc come from Apple's catalog
+   itunesId (Apple collectionId) · genre · coverApple / coverSpotify (the cover choices) · spotifyId (album player)
+   ratingAuto: true → `rating` follows the track average (rounded to a whole star, like every rating here); false → the user's own pick
+   tracksTried: ms timestamp — the bulk filler found no sure match, so it's left out of "Fill track lists" for a month */
+var SP640='ab67616d0000b273',SP300='ab67616d00001e02';
+function songStats(it){
+  var n=0,sum=0,ms=0,favs=0,s=it.songs||[];
+  s.forEach(function(x){var r=+x.rating||0;if(r>=1&&r<=5){n++;sum+=r;}ms+=+x.ms||0;if(x.fav)favs++;});
+  return {total:s.length,n:n,avg:n?sum/n:0,ms:ms,favs:favs};
+}
+function syncAuto(it){if(it.ratingAuto===false)return;var s=songStats(it);it.rating=s.n?Math.round(s.avg):0;}
+function fmtLen(ms){var t=Math.round((+ms||0)/1000);return Math.floor(t/60)+':'+pad(t%60);}
+function fmtMin(ms){return Math.max(1,Math.round(ms/60000))+' min';}
+/* shelf line under album covers: "★ 4.1 · 8/12 rated" + bar, or "11 tracks · 63 min" */
+function trackLine(it){
+  var s=songStats(it),total=Math.max(s.total,+it.tracksTotal||0);
+  if(s.n)return '<div class="trk"><span class="av"><i>★</i>'+s.avg.toFixed(1)+'</span>·<span>'+s.n+'/'+s.total+' rated</span></div><div class="bar rated"><i style="width:'+Math.round(s.n/s.total*100)+'%"></i></div>';
+  if(!total)return '';
+  return '<div class="trk"><span class="dim">'+total+' track'+(total===1?'':'s')+(s.ms?' · '+fmtMin(s.ms):'')+'</span></div>';
+}
+function albumMetaHTML(r){
+  var n=+r.tracksTotal||0;
+  return [r.creator,r.year,r.genre].filter(Boolean).map(esc).join(' · ')+(n?' · <b>'+n+' song'+(n===1?'':'s')+'</b>':'');
+}
+function albumThumb(r){return coverHTML({title:r.title,creator:r.creator,cover:r.thumb||r.cover},'music','',{tiny:true});}
+function parseSpotify(v){
+  var m=/(?:open\.spotify\.com\/(?:intl-[a-z]{2}(?:-[a-z]{2})?\/)?|spotify:)(album|track|playlist|artist|episode|show)[\/:]([A-Za-z0-9]{22})/i.exec(String(v||''));
+  return m?{type:m[1].toLowerCase(),id:m[2]}:null;
+}
+/* Spotify's oEmbed only gives the album name + a 300px cover (CORS is open); the 640px art usually sits at a sibling URL */
+function spOembed(id,sig){
+  return fetch('https://open.spotify.com/oembed?url='+encodeURIComponent('https://open.spotify.com/album/'+id),{signal:sig})
+    .then(function(r){if(!r.ok)throw new Error(r.status);return r.json();})
+    .then(function(j){var th=safeUrl(j&&j.thumbnail_url);return {title:String(j&&j.title||'').trim(),thumb:th,cover:th?th.replace(SP300,SP640):''};});
+}
+function spFallback(img){var s=img.getAttribute('src')||'';if(s.indexOf(SP640)>=0)img.setAttribute('src',s.replace(SP640,SP300));else img.style.visibility='hidden';}
+
+/* matching Apple editions */
+function albumKey(t){return looseKey(String(t||'').replace(/\s+-\s+(single|ep)\s*$/i,'').replace(/\s*[\(\[][^\)\]]*[\)\]]/g,''));}
+function isSingle(r){return /\s-\s+single\s*$/i.test(r.title||'')||(+r.tracksTotal>0&&+r.tracksTotal<=2);}
+function rankAlbums(list,title,creator){
+  var tk=albumKey(title),tl=looseKey(title);
+  function sc(r){var s=0;if(tk&&albumKey(r.title)===tk)s+=4;else if(fuzzyHit(r.title,title))s+=2;if(tl&&looseKey(r.title)===tl)s+=2;if(creator&&fuzzyHit(r.creator,creator))s+=3;if(isSingle(r))s-=3;return s;}
+  return list.map(function(r,i){return {r:r,s:sc(r),i:i};}).sort(function(a,b){return b.s-a.s||a.i-b.i;}).map(function(x){return x.r;});
+}
+/* a match we'd fill without asking: same album title (editions in brackets ignored) and the artist matches */
+function sureMatch(list,it){
+  var tk=albumKey(it.title);if(!tk)return null;
+  var c=list.filter(function(r){return albumKey(r.title)===tk&&!isSingle(r)&&(!it.creator||fuzzyHit(r.creator,it.creator));});
+  if(!c.length)return null;
+  if(!it.creator&&c.some(function(r){return looseKey(r.creator)!==looseKey(c[0].creator);}))return null;   // same title, different artists
+  return rankAlbums(c,it.title,it.creator)[0];
+}
+function albumCandidates(it,sig){
+  var t=String(it.title||'').trim();
+  return searchAlbums((t+' '+(it.creator||'')).trim(),sig,10).then(function(r){return r.length||!it.creator?r:searchAlbums(t,sig,10);});
+}
+/* Apple lookup → {album, songs[]} in disc/track order */
+var lookupCache={};
+function lookupAlbum(id,sig){
+  id=String(id||'').replace(/\D/g,'');
+  if(!id)return Promise.reject(new Error('no id'));
+  if(lookupCache[id])return Promise.resolve(lookupCache[id]);
+  return itunesJSONP('https://itunes.apple.com/lookup?id='+id+'&entity=song&country=US',sig,15000).then(function(j){
+    var col=null,tr=[];
+    (j.results||[]).forEach(function(r){if(r.wrapperType==='collection'){if(!col)col=r;}else if(r.wrapperType==='track'&&(!r.kind||r.kind==='song'))tr.push(r);});
+    tr.sort(function(a,b){return (a.discNumber||1)-(b.discNumber||1)||(a.trackNumber||0)-(b.trackNumber||0);});
+    var multi=tr.some(function(t){return (t.discNumber||1)>1;});
+    var L={album:col?albumResult(col):null,songs:tr.map(function(t){var s={name:String(t.trackName||'')};if(t.trackTimeMillis)s.ms=+t.trackTimeMillis;if(t.trackNumber)s.no=+t.trackNumber;if(multi)s.disc=+t.discNumber||1;return s;})};
+    if(L.album&&!L.album.genre&&tr[0])L.album.genre=tr[0].primaryGenreName||'';
+    if(L.songs.length)lookupCache[id]=L;
+    return L;
+  });
+}
+var TRACK_FIELDS=['songs','tracksTotal','itunesId','genre','year','cover','coverApple','link','tracksTried','rating'];
+/* put Apple's track list on an album; songs whose names match keep their stars, ♥ and notes. Returns an undo snapshot. */
+function applyTracks(it,L){
+  var snap={};TRACK_FIELDS.forEach(function(k){snap[k]=it[k]===undefined?undefined:JSON.parse(JSON.stringify(it[k]));});
+  var old=it.songs||[],used={};
+  it.songs=L.songs.map(function(s){
+    var k=looseKey(s.name),n={name:s.name,fav:false};
+    ['ms','no','disc'].forEach(function(f){if(s[f])n[f]=s[f];});
+    var j=old.findIndex(function(o,ix){return !used[ix]&&looseKey(o.name)===k;});
+    if(j>=0){used[j]=1;var o=old[j];n.fav=!!o.fav;if(o.rating)n.rating=o.rating;if(o.note)n.note=o.note;}
+    return n;
+  });
+  it.tracksTotal=it.songs.length;
+  var a=L.album||{};
+  if(a.itunesId)it.itunesId=a.itunesId;
+  if(a.genre)it.genre=a.genre;
+  if(a.year&&!it.year)it.year=a.year;
+  if(a.cover){it.coverApple=a.cover;if(!it.cover){it.cover=a.cover;delete it.coverTried;delete it.coverErr;}}
+  if(a.link&&!it.link)it.link=a.link;
+  delete it.tracksTried;
+  syncAuto(it);
+  return snap;
+}
+function restoreTracks(it,snap){TRACK_FIELDS.forEach(function(k){if(snap[k]===undefined)delete it[k];else it[k]=snap[k];});}
+/* fill a just-added album (no songs yet) → resolves to the number of songs filled (0 = Apple has none) */
+function fillFromApple(id,itunesId){
+  return lookupAlbum(itunesId).then(function(L){
+    var cur=findItem('music',id);if(!cur||(cur.songs&&cur.songs.length)||!L.songs.length)return 0;
+    applyTracks(cur,L);save();return cur.songs.length;
+  });
+}
+
+/* album drawer — rendered in three parts so the Spotify player keeps playing while songs are rated */
+function appleCover(it){return it.coverApple||(/mzstatic\.com\//.test(it.cover||'')?it.cover:'');}
+function coverRow(it){
+  var apple=appleCover(it),spc=it.spotifyId?(it.coverSpotify||''):'',cur=String(it.cover||'').trim();
+  var isA=!!cur&&cur===apple,isS=!!cur&&!!spc&&cur===spc,own=!!cur&&!isA&&!isS;
+  function th(u){return '<span class="th"><img src="'+esc(coverSrc(u))+'" alt="" referrerpolicy="no-referrer" onerror="spFallback(this)"></span>';}
+  var h='<div class="cov-row"><span class="lbl">Cover</span>';
+  h+=apple?'<button class="copt'+(isA?' on':'')+'" data-act="cvpick" data-v="apple">'+th(apple)+'Apple</button>':'<button class="copt link" data-act="findone">'+IC_SEARCH+' Find on Apple</button>';
+  if(spc)h+='<button class="copt'+(isS?' on':'')+'" data-act="cvpick" data-v="spotify">'+th(spc)+'Spotify</button>';
+  h+='<button class="copt link'+(own?' on':'')+'" data-act="cvpick" data-v="own">'+IC_LINK+' Paste your own image link</button></div>';
+  if(own||coverOwn)h+='<div class="cov-own"><input class="inp" type="text" data-f="cover" value="'+esc(it.cover||'')+'" placeholder="https://…" aria-label="Cover image URL"></div>';
+  return h+'<div class="cov-hint">Found one on Pinterest? Right-click it → <b>Copy Image Address</b>, then paste.</div>';
+}
+function listenHTML(it){
+  var h='<div class="dr-sec">Listen</div>';
+  if(it.spotifyId){
+    var id=esc(it.spotifyId);
+    return h+'<iframe class="sp-frame" title="Spotify player" src="https://open.spotify.com/embed/album/'+id+'" height="152" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>'+
+      '<div class="sp-note">'+IC_INFO+'<span>Plays full songs if you’re logged in to Spotify in this browser, otherwise 30-second previews.</span><span class="sp-acts"><a class="bk-link" href="https://open.spotify.com/album/'+id+'" target="_blank" rel="noopener">Open in Spotify ↗</a><button class="lnk" data-act="spdetach" title="Remove the Spotify link">Remove</button></span></div>';
+  }
+  return h+'<div class="listen-empty"><input class="inp" type="text" data-spin placeholder="Paste the album’s Spotify link to play it here" aria-label="Spotify album link"><button class="mini-btn" data-act="spattach">Add Spotify link</button></div>'+
+    '<div class="listen-sub">Optional · in Spotify: ··· → Share → Copy link to album</div>';
+}
+function trackListHTML(it,s){
+  var auto=it.ratingAuto!==false;
+  var h='<div class="tsum"><div><div class="k">Album rating</div>'+starsHTML('music',it)+'<div class="tsum-mode">'+
+    (auto?(s.n?'Follows your track average':'Rate the songs and it fills in'):'Your own pick'+(s.n?' · <button class="lnk" data-act="useavg">use track average</button>':''))+'</div></div><span class="sep"></span>'+
+    '<div><div class="k">Your track average</div><div class="avg"><b><i>★</i>'+(s.n?s.avg.toFixed(1):'–')+'</b><span>'+s.n+' of '+s.total+' rated'+(s.favs?' · <span style="color:var(--over)">♥</span> '+s.favs:'')+'</span></div>'+
+    '<div class="bar rated"><i style="width:'+Math.round(s.n/s.total*100)+'%"></i></div></div></div>';
+  var songs=it.songs,multi=songs.some(function(x){return (+x.disc||1)>1;}),lastDisc=0;
+  h+='<div class="tracks">';
+  songs.forEach(function(sg,i){
+    var d=+sg.disc||1;if(multi&&d!==lastDisc){h+='<div class="tr-disc">Disc '+d+'</div>';lastDisc=d;}
+    var r=+sg.rating||0,open=noteOpen===i,hasN=!!String(sg.note||'').trim();
+    var st='<span class="stars" title="Rate this song">';for(var n=1;n<=5;n++)st+='<b class="'+(n<=r?'on':'')+'" data-act="srate" data-i="'+i+'" data-n="'+n+'">★</b>';st+='</span>';
+    h+='<div class="tr'+(r?'':' unr')+'"><span class="tr-n"><span class="no">'+(multi&&sg.no?sg.no:i+1)+'</span><button class="rm" data-act="songdel" data-i="'+i+'" title="Remove song" aria-label="Remove song">✕</button></span>'+
+      '<input data-song="'+i+'" value="'+esc(sg.name||'')+'" placeholder="Song title…" aria-label="Song title"><span class="len">'+(sg.ms?fmtLen(sg.ms):'')+'</span>'+st+
+      '<button class="ib hrt'+(sg.fav?' on':'')+'" data-act="songfav" data-i="'+i+'" title="Favourite">♥</button>'+
+      '<button class="ib note'+(hasN?' has':'')+(open?' open':'')+'" data-act="snote" data-i="'+i+'" title="'+(hasN?esc(sg.note):'Add a note')+'">'+(hasN?IC_NOTE_F:IC_NOTE)+'</button></div>';
+    if(open)h+='<div class="tr-note"><textarea class="inp" rows="2" data-snote="'+i+'" placeholder="A line about this song…">'+esc(sg.note||'')+'</textarea><div class="meta"><span>Note on “'+esc(sg.name||'this song')+'”</span><span class="sn-saved">'+(hasN?'Saved':'')+'</span></div></div>';
+  });
+  h+='</div><div class="tl-foot"><button class="pill" data-act="songadd">+ Add song</button>';
+  if(it.itunesId){
+    var fromApple=songs.some(function(x){return x.ms||x.no;});
+    h+='<span class="src">'+(refillAsk==='busy'?'Getting Apple’s list…':refillAsk?'Replace with Apple’s list? Stars, ♥ and notes stay on songs with the same name. <button class="lnk" data-act="refillgo">Replace</button> <button class="lnk" data-act="refillno">Cancel</button>':
+      (fromApple?'Filled in from Apple Music · ':'')+'<button class="lnk" data-act="refill">'+(fromApple?'Refill':'Get Apple’s track list')+'</button>')+'</span>';
+  }
+  return h+'</div>';
+}
+function lookable(it){return !!String(it.title||'').trim()&&!/^Untitled /.test(it.title);}
+function fillBoxHTML(it){
+  var fs=fillState[it.id],acts='';
+  var h='<div class="fill"><div class="fill-t">No songs listed yet</div><div class="fill-s">Fill them in from Apple’s catalog: names, order and lengths.'+(it.rating&&it.ratingAuto===false?' Your album rating stays as it is.':'')+'</div>';
+  if(!lookable(it))h+='<div class="fill-m">Type the album name and artist above, then <button class="lnk" data-act="fillfind">look it up</button>.</div>';
+  else if(!fs||fs.state==='loading')h+='<div class="fill-m"><span class="add-spin on"></span>Looking up “'+esc(it.title)+'” in Apple’s catalog…</div>';
+  else if(fs.state==='err')h+='<div class="fill-m">Couldn’t reach Apple’s catalog. <button class="lnk" data-act="fillfind">Try again</button></div>';
+  else if(fs.state==='none')h+='<div class="fill-m">Nothing in Apple’s catalog matched. Check the title and artist above, then <button class="lnk" data-act="fillfind">look again</button>.</div>';
+  else{
+    var m=fs.list[fs.pick];
+    h+='<div class="fill-m">'+albumThumb(m)+'<div style="flex:1;min-width:0"><div class="t">'+esc(m.title)+'</div><div class="m">'+albumMetaHTML(m)+'</div></div>'+
+      (fs.pick?'<span class="okdot">✓ Your pick</span>':fs.sure?'<span class="okdot">✓ Best match</span>':'<span class="maybe">Closest match</span>')+'</div>';
+    if(fs.more)h+='<div class="fill-alts">'+fs.list.map(function(r,j){return j===fs.pick?'':'<div class="rr" data-act="fillpick" data-j="'+j+'">'+albumThumb(r)+'<div class="rr-txt"><div class="rr-t">'+esc(r.title)+'</div><div class="rr-m">'+albumMetaHTML(r)+'</div></div></div>';}).join('')+'</div>';
+    if(fs.msg)h+='<div class="fill-s" style="color:var(--over);margin-top:8px">'+esc(fs.msg)+'</div>';
+    acts='<button class="btn pri" data-act="fillgo"'+(fs.busy?' disabled':'')+'>'+(fs.busy?'Filling…':'Fill track list')+'</button>'+
+      (fs.list.length>1?'<button class="btn" data-act="fillmore">'+(fs.more?'Hide other editions':'Pick another edition')+'</button>':'');
+  }
+  return h+'<div class="fill-acts">'+acts+'<button class="lnk" data-act="songadd">or add songs by hand</button></div></div>';
+}
+function fillFind(it){
+  var id=it.id,fs=fillState[id]={state:'loading',list:[],pick:0};
+  var p=it.itunesId?lookupAlbum(it.itunesId).then(function(L){return L.album?[L.album]:albumCandidates(it);},function(){return albumCandidates(it);}):albumCandidates(it);
+  p.then(function(list){
+    if(fillState[id]!==fs)return;
+    var sure=it.itunesId&&list.length===1&&String(list[0].itunesId)===String(it.itunesId)?list[0]:sureMatch(list,it);
+    var ranked=rankAlbums(list,it.title,it.creator);
+    fs.list=(sure?[sure].concat(ranked.filter(function(r){return r!==sure;})):ranked).slice(0,6);
+    fs.sure=!!sure;fs.state=fs.list.length?'ok':'none';
+  },function(){if(fillState[id]===fs)fs.state='err';}).then(function(){if(drawerRef&&drawerRef.id===id)renderDrawer();});
+}
+function fillGo(){
+  if(!drawerRef)return;var id=drawerRef.id,fs=fillState[id];
+  if(!fs||fs.state!=='ok'||fs.busy)return;
+  var m=fs.list[fs.pick];fs.busy=true;fs.msg='';renderDrawer();
+  lookupAlbum(m.itunesId).then(function(L){
+    var cur=findItem('music',id);if(!cur)return;
+    if(!L.songs.length){fs.busy=false;fs.msg='Apple doesn’t list the songs for this edition — try another one.';renderDrawer();return;}
+    var snap=applyTracks(cur,L);save();delete fillState[id];
+    if(drawerRef&&drawerRef.id===id)drFlash='<div class="dr-flash">✓ '+cur.songs.length+' songs filled in<span>· rate them whenever you relisten</span></div>';
+    renderAll();renderDrawer();
+    toast('Filled in '+cur.songs.length+' songs · <i>'+esc(cur.title)+'</i>',[{label:'Undo',fn:function(){
+      var c=findItem('music',id);if(!c)return;restoreTracks(c,snap);save();renderAll();
+      if(drawerRef&&drawerRef.id===id){drFlash='';delete fillState[id];renderDrawer();}
+    }}],8000);
+  },function(){fs.busy=false;fs.msg='Couldn’t reach Apple’s catalog — try again.';renderDrawer();});
+}
+function refillGo(){
+  if(!drawerRef)return;var id=drawerRef.id,it=findItem('music',id);if(!it||!it.itunesId)return;
+  refillAsk='busy';renderDrawer();
+  lookupAlbum(it.itunesId).then(function(L){
+    refillAsk=false;var cur=findItem('music',id);if(!cur)return;
+    if(!L.songs.length){renderDrawer();toast('Apple doesn’t list the songs for this album.');return;}
+    var snap=applyTracks(cur,L);save();renderAll();if(drawerRef&&drawerRef.id===id)renderDrawer();
+    toast('Track list refilled from Apple Music',[{label:'Undo',fn:function(){var c=findItem('music',id);if(!c)return;restoreTracks(c,snap);save();renderAll();if(drawerRef&&drawerRef.id===id)renderDrawer();}}],8000);
+  },function(){refillAsk=false;renderDrawer();toast('Couldn’t reach Apple’s catalog — try again in a moment.');});
+}
+function spAttach(){
+  if(!drawerRef)return;var id=drawerRef.id,it=findItem('music',id);if(!it)return;
+  var inp=document.querySelector('#drawer [data-spin]'),sub=document.querySelector('#drawer .listen-sub');
+  var p=parseSpotify(inp&&inp.value);
+  if(!p||p.type!=='album'){if(sub){sub.textContent=p?'That’s a Spotify '+p.type+' link — paste the album’s link instead.':'That doesn’t look like a Spotify album link (open.spotify.com/album/…).';sub.classList.add('err');}return;}
+  it.spotifyId=p.id;save();renderDrawer();
+  spOembed(p.id).then(function(j){
+    var cur=findItem('music',id);if(!cur||cur.spotifyId!==p.id||!j.cover)return;
+    cur.coverSpotify=j.cover;if(!cur.cover){cur.cover=j.cover;delete cur.coverTried;delete cur.coverErr;}
+    save();renderAll();if(drawerRef&&drawerRef.id===id)renderDrawer();
+  },function(){});
+}
+function renderMusicDrawer(it){
+  var sec='music',S=SECTIONS.music,st=normStatus(it.status),s=songStats(it),dr=document.getElementById('drawer');
+  dr.classList.add('music');
+  var cats=allCats(sec);if(it.category&&cats.indexOf(it.category)<0)cats.unshift(it.category);
+  var bar='<span class="eyebrow">'+S.label+'</span><button class="x" data-act="close" aria-label="Close">✕</button>';
+  var total=Math.max(s.total,+it.tracksTotal||0),info=[it.year,it.category].filter(Boolean).map(esc);
+  var a=drFlash+'<div class="dr-top">'+coverHTML(it,sec,'',{tiny:true})+'<div class="dr-id"><textarea class="dr-title" rows="1" data-f="title" aria-label="Title">'+esc(it.title)+'</textarea>'+
+    '<input class="dr-creator" data-f="creator" value="'+esc(it.creator||'')+'" placeholder="'+S.creatorLabel+'…" aria-label="'+S.creatorLabel+'">'+
+    '<div class="m-meta">'+(it.genre?'<span class="gchip">'+esc(it.genre)+'</span>':'')+(info.length?'<span>'+info.join(' · ')+'</span>':'')+'</div>'+
+    (total?'<div class="m-len"><b>'+total+' track'+(total===1?'':'s')+'</b>'+(s.ms?' · '+fmtMin(s.ms):'')+'</div>':'')+
+    '<div class="dr-stars">'+starsHTML(sec,it)+'<button class="heart'+(it.fav?' on':'')+'" data-act="fav" title="Favorite">♥</button></div></div></div>';
+  a+=coverRow(it);
+  a+='<div class="seg" role="group" aria-label="Status">'+S.statuses.map(function(x){return '<button class="'+(st===x.val?'on':'')+'" data-act="dst" data-v="'+x.val+'">'+x.label+'</button>';}).join('')+'</div>';
+  a+='<div class="fg">'+fld('Category','category',it.category||cats[0],'select',{options:cats})+(it.itunesId&&s.total?'':fld('Tracks on album','tracksTotal',it.tracksTotal||'','number',{ph:'e.g. 12'}))+(st==='done'?fld(S.dateLabel,'date',it.date||'','date'):'')+'</div>';
+  var p=listenHTML(it);
+  var b='<div class="dr-sec">Track list</div>'+(s.total?trackListHTML(it,s):fillBoxHTML(it));
+  b+='<div class="dr-sec">Notes</div><div class="fg">'+fld('Note','note',it.note||'','text',{full:true,ph:'Who recommended it, which edition…'})+fld('Review','review',it.review||'','textarea',{full:true,rows:4,ph:'Your thoughts, favorite lines…'})+'</div>';
+  var lk=safeUrl(it.link);
+  b+='<div class="dr-sec">Links</div><div class="fg">'+fld('Link','link',it.link||'','text',{full:true,ph:'https://…',btn:lk?'<a class="mini-btn" style="display:flex;align-items:center;text-decoration:none" href="'+esc(lk)+'" target="_blank" rel="noopener">Open ↗</a>':''})+'</div>';
+  b+='<div class="dr-foot"><button class="del'+(delArm?' arm':'')+'" data-act="del">'+(delArm?'Tap again to delete':'Delete')+'</button><span class="saved" id="saved">Changes save automatically</span></div>';
+  var key=sec+'|'+it.id,spk=it.spotifyId||'',body=dr.querySelector('.dr-body');
+  if(!drFull&&body&&body.getAttribute('data-k')===key&&document.getElementById('dr-p')){
+    dr.querySelector('.dr-bar').innerHTML=bar;
+    document.getElementById('dr-a').innerHTML=a;
+    var pe=document.getElementById('dr-p');if(pe.getAttribute('data-sp')!==spk){pe.innerHTML=p;pe.setAttribute('data-sp',spk);}
+    document.getElementById('dr-b').innerHTML=b;
+  }else{
+    dr.innerHTML='<div class="dr-bar">'+bar+'</div><div class="dr-body" data-k="'+esc(key)+'"><div id="dr-a">'+a+'</div><div id="dr-p" data-sp="'+esc(spk)+'">'+p+'</div><div id="dr-b">'+b+'</div></div>';
+  }
+  drFull=false;
+  var ta=dr.querySelector('.dr-title');if(ta){ta.style.height='auto';ta.style.height=ta.scrollHeight+'px';}
+  if(!s.total&&!fillState[it.id]&&lookable(it))fillFind(it);
+}
+
+/* bulk "Fill track lists" (Import → Music): one album at a time, gently, skipping anything without a sure match */
+var trackJob=null,lastFill='';
+function wantsTracks(it){return !(it.songs&&it.songs.length)&&lookable(it)&&!(it.tracksTried&&Date.now()-it.tracksTried<30*864e5);}
+function fillAllTracks(){
+  if(trackJob)return;
+  var queue=(data.music||[]).filter(wantsTracks);if(!queue.length)return;
+  trackJob={total:queue.length,done:0,filled:0,skipped:[],failed:0};lastFill='';renderImpFill();
+  var i=0;
+  function next(){
+    if(i>=queue.length)return Promise.resolve();
+    var it=queue[i++];
+    var p=(it.itunesId?lookupAlbum(it.itunesId).then(function(L){return L.album?[L.album]:[];}):albumCandidates(it)).then(function(list){
+      var m=it.itunesId&&list.length===1?list[0]:sureMatch(list,it);
+      if(!m){it.tracksTried=Date.now();trackJob.skipped.push(it.title);return;}
+      return lookupAlbum(m.itunesId).then(function(L){
+        var cur=findItem('music',it.id);if(!cur||(cur.songs&&cur.songs.length))return;
+        if(!L.songs.length){cur.tracksTried=Date.now();trackJob.skipped.push(cur.title);return;}
+        applyTracks(cur,L);trackJob.filled++;
+      });
+    }).catch(function(){trackJob.failed++;});
+    return p.then(function(){trackJob.done++;save();renderImpFill();return new Promise(function(r){setTimeout(r,FILL_GAP);}).then(next);});
+  }
+  next().then(function(){
+    var j=trackJob;trackJob=null;save();renderAll();
+    var sk=j.skipped.length;
+    lastFill='Filled <b>'+j.filled+'</b> track list'+(j.filled===1?'':'s')+(sk?' · skipped <b>'+sk+'</b> without a sure match: '+j.skipped.slice(0,5).map(function(t){return '<i>'+esc(t)+'</i>';}).join(', ')+(sk>5?'…':'')+' — open '+(sk===1?'it':'them')+' on the Music shelf to pick the edition':'')+(j.failed?' · '+j.failed+' couldn’t be reached, try again later':'')+'.';
+    renderImpFill();
+    toast('Filled '+j.filled+' track list'+(j.filled===1?'':'s')+(sk?' · skipped '+sk:'')+'.');
+  });
+}
+var FILL_GAP=2500;   // ms between albums — Apple's catalog rate-limits bursts
+
+/* Import → Music: search Apple's catalog or paste a Spotify album link, add several albums in a row */
+var impM=null;
+function impMusicReset(){if(impM&&impM.ctl){try{impM.ctl.abort();}catch(e){}}impM={q:'',state:'idle',items:[],sp:null,added:{},count:0,seq:0,pool:[]};}
+function impMusicHTML(){
+  return '<div class="add-box imp-q-box" id="imp-box">'+IC_SEARCH+'<input id="imp-q" type="text" autocomplete="off" spellcheck="false" placeholder="Type an album name or paste a Spotify album link" aria-label="Album name or Spotify album link"><span class="add-spin"></span></div>'+
+    '<div id="imp-res"></div><div class="imp-count" id="imp-count"></div>'+
+    '<div class="dr-sec">Track lists</div><div id="imp-fill"></div>'+
+    '<div class="modal-acts"><button class="btn pri" data-act="impclose">Done</button></div>';
+}
+function impSearch(now){
+  var q=(document.getElementById('imp-q')||{}).value||'';q=q.trim();
+  clearTimeout(impM.t);var seq=++impM.seq;impM.q=q;
+  if(impM.ctl){try{impM.ctl.abort();}catch(e){}impM.ctl=null;}
+  var sp=parseSpotify(q);
+  if(sp){
+    impM.items=[];impM.state='sp';impM.sp={id:sp.id,type:sp.type,state:sp.type==='album'?'loading':'notalbum',matches:[],pick:0,artist:''};renderImpRes();
+    if(sp.type==='album')impSpotify(seq);
+    return;
+  }
+  impM.sp=null;
+  if(q.length<2){impM.state='idle';impM.items=[];renderImpRes();return;}
+  impM.state='loading';renderImpRes();
+  impM.t=setTimeout(function(){
+    var c=new AbortController();impM.ctl=c;
+    withTimeout(searchAlbums(q,c.signal,10),12000,c).then(function(r){if(impM.seq===seq){impM.items=r;impM.state='ok';}},function(){if(impM.seq===seq)impM.state='err';}).then(function(){if(impM.seq===seq)renderImpRes();});
+  },now?0:350);
+}
+function impSpotify(seq){
+  var sp=impM.sp,c=new AbortController();impM.ctl=c;
+  withTimeout(spOembed(sp.id,c.signal),12000,c).then(function(j){
+    if(impM.seq!==seq)return;
+    if(!j.title)throw new Error('untitled');
+    sp.title=j.title;sp.thumb=j.thumb;sp.cover=j.cover;sp.state='matching';renderImpRes();
+    return impSpMatch(seq);
+  }).catch(function(){if(impM.seq!==seq)return;sp.state=sp.title?'matcherr':'err';renderImpRes();});
+}
+function impSpMatch(seq){
+  var sp=impM.sp,c=new AbortController();impM.ctl=c;
+  return withTimeout(searchAlbums((sp.title+' '+sp.artist).trim(),c.signal,15),12000,c).then(function(list){
+    if(impM.seq!==seq)return;
+    sp.matches=rankAlbums(list,sp.title,sp.artist).slice(0,6);sp.pick=0;sp.state=sp.matches.length?'ok':'none';renderImpRes();
+    if(sp.matches.length)lookupAlbum(sp.matches[0].itunesId).then(function(){if(impM.seq===seq)renderImpRes();},function(){});
+  });
+}
+function impRefine(){
+  if(!impM||!impM.sp||!impM.sp.title)return;
+  var v=(document.getElementById('imp-sprefine')||{}).value||'';
+  var seq=++impM.seq,sp=impM.sp;sp.artist=v.trim();sp.state='matching';renderImpRes();
+  impSpMatch(seq).catch(function(){if(impM.seq===seq){sp.state='matcherr';renderImpRes();}});
+}
+function impKey(r){return r.itunesId?'it:'+r.itunesId:'sp:'+(r._sp?r._sp.spotifyId:normTitle(r.title));}
+function impExisting(r){
+  return (data.music||[]).find(function(x){return (r.itunesId&&String(x.itunesId)===String(r.itunesId))||(r._sp&&x.spotifyId===r._sp.spotifyId);})||matchExisting(r);
+}
+/* shelf buttons / "Added ✓" / "On shelf" for one album */
+function impActs(r){
+  var j=impM.pool.push(r)-1,ad=impM.added[impKey(r)],ex=ad?null:impExisting(r),n=+r.tracksTotal||0;
+  if(ad)return {right:'<span class="rr-on st-'+ad.st+'">Added ✓'+(ad.n==null?' · filling songs…':ad.n>0?' · '+ad.n+' songs':'')+'</span>',acts:''};
+  if(ex)return {right:'<button class="rr-on st-'+normStatus(ex.status)+'" data-act="imopen" data-j="'+j+'" data-id="'+esc(ex.id)+'" title="Open it">On shelf · '+esc(statusLabel('music',normStatus(ex.status)))+'</button>',acts:''};
+  var S=SECTIONS.music.statuses;
+  return {right:'',acts:'<div class="rr-acts"><button class="rr-b main" data-act="imadd" data-j="'+j+'" data-st="want">+ Want</button><button class="rr-b" data-act="imadd" data-j="'+j+'" data-st="progress">'+S[1].label+'</button><button class="rr-b" data-act="imadd" data-j="'+j+'" data-st="done">'+S[2].label+'</button>'+
+    (n?'<span class="rr-hint">adds all '+n+' songs</span>':'')+'</div>'};
+}
+function impSpHTML(){
+  var sp=impM.sp,h='<div class="res-h">From your Spotify link <small>· matched in Apple’s catalog</small></div><div class="spm">';
+  var art=sp.thumb?'<img class="spm-art" src="'+esc(sp.thumb)+'" alt="" referrerpolicy="no-referrer" onerror="this.style.visibility=\'hidden\'">':'<div class="spm-art"></div>';
+  if(sp.state==='notalbum')return h+'<div class="res-msg">That’s a Spotify '+esc(sp.type)+' link. Paste an album link instead (··· → Share → Copy link to album), or type the album name.</div></div>';
+  if(sp.state==='err')return h+'<div class="res-msg">Couldn’t read that Spotify link right now — check it’s an album link, or type the album name instead.</div></div>';
+  if(sp.state==='loading'||sp.state==='matching')
+    return h+'<div class="spm-card">'+art+'<div style="flex:1;min-width:0"><div class="spm-ey">Found on Spotify</div><div class="spm-t">'+esc(sp.title||'…')+'</div><div class="spm-load"><span class="add-spin on"></span>'+(sp.state==='loading'?'Reading the link…':'Matching in Apple’s catalog…')+'</div></div></div></div>';
+  var spx={spotifyId:sp.id,coverSpotify:sp.cover||sp.thumb||''};
+  var refine='<div class="sp-refine"><input class="inp" id="imp-sprefine" type="text" value="'+esc(sp.artist)+'" placeholder="Not the right album? Add the artist and search again" aria-label="Artist"><button class="btn sm" data-act="imrefine">Search</button></div>';
+  if(sp.state!=='ok'){
+    var r0={sec:'music',title:sp.title,creator:'',category:'Album',cover:spx.coverSpotify,thumb:sp.thumb,_sp:spx},a0=impActs(r0);
+    return h+'<div class="spm-card">'+art+'<div style="flex:1;min-width:0"><div class="spm-ey">Found on Spotify</div><div class="spm-t">'+esc(sp.title)+'</div>'+
+      '<div class="spm-msg">'+(sp.state==='none'?'Not in Apple’s catalog under this name. Add it with the player now and fill in the songs later — or add the artist below.':'Couldn’t reach Apple’s catalog to match it. Add it with the player now, or try again in a moment.')+'</div>'+a0.acts+a0.right+'</div></div></div>'+refine;
+  }
+  var m=Object.assign({},sp.matches[sp.pick],{_sp:spx}),L=lookupCache[String(m.itunesId)],n=L?L.songs.length:+m.tracksTotal||0;
+  var ms=L?L.songs.reduce(function(t,x){return t+(+x.ms||0);},0):0,a=impActs(m);
+  h+='<div class="spm-card">'+art+'<div style="flex:1;min-width:0"><div class="spm-ey">'+(sp.pick?'Your pick':albumKey(m.title)===albumKey(sp.title)?'<span class="okdot">✓</span> Matched':'Closest match')+'</div><div class="spm-t">'+esc(m.title)+'</div><div class="spm-a">'+esc(m.creator)+'</div>'+
+    '<div class="spm-m">'+(m.genre?'<span class="gchip">'+esc(m.genre)+'</span>':'')+[m.year,n?'<b>'+n+' songs</b>':'',ms?fmtMin(ms):''].filter(Boolean).map(function(x){return /^</.test(x)?x:esc(x);}).join(' · ')+'</div>'+a.acts+a.right+'</div></div>'+
+    '<div class="spm-steps"><span class="ok">✓ Name &amp; cover from Spotify</span><span class="'+(L?'ok':'')+'">'+(L?'✓ '+L.songs.length+' song names + lengths':'Songs come in with it')+'</span><span class="ok">✓ Spotify player included</span></div></div>';
+  var alts=sp.matches.map(function(r,i){return i===sp.pick?'':'<div class="rr" data-act="imalt" data-i="'+i+'">'+albumThumb(r)+'<div class="rr-txt"><div class="rr-t">'+esc(r.title)+'</div><div class="rr-m">'+albumMetaHTML(r)+'</div></div></div>';}).join('');
+  if(alts)h+='<div class="alt-h">Not this edition?</div><div class="alt-list">'+alts+'</div>';
+  return h+refine;
+}
+function renderImpRes(){
+  var el=document.getElementById('imp-res');if(!el||!impM)return;
+  var sp=impM.sp,box=document.getElementById('imp-box');
+  if(box)box.classList.toggle('busy',impM.state==='loading'||!!(sp&&(sp.state==='loading'||sp.state==='matching')));
+  impM.pool=[];var h;
+  if(impM.state==='sp')h=impSpHTML();
+  else if(impM.state==='loading')h=[0,1,2].map(function(){return '<div class="skel"><i style="width:36px;height:36px"></i><div style="flex:1"><i style="height:12px;width:70%"></i><i style="height:9px;width:45%;margin-top:7px"></i></div></div>';}).join('');
+  else if(impM.state==='err')h='<div class="res-msg">Couldn’t reach Apple’s catalog right now — try again in a moment.</div>';
+  else if(impM.state==='ok')h=impM.items.length?'<div class="res-h">Albums <small>· Apple Music catalog · songs fill in automatically</small></div><div class="imp-list">'+impM.items.map(function(r){var a=impActs(r);
+      return '<div class="rr">'+albumThumb(r)+'<div class="rr-txt"><div class="rr-t">'+esc(r.title)+'</div><div class="rr-m">'+albumMetaHTML(r)+'</div>'+a.acts+'</div>'+a.right+'</div>';}).join('')+'</div>'
+    :'<div class="res-msg">No albums matched. Try the artist and album name together.</div>';
+  else h='<div class="res-msg">Artist + album name works best. From Spotify: <b>··· → Share → Copy link to album</b>, then paste it here.</div>';
+  el.innerHTML=h;
+  var c=document.getElementById('imp-count');
+  if(c)c.innerHTML=impM.count?'✓ '+impM.count+' album'+(impM.count===1?'':'s')+' added<span>· on your Music shelf with their songs</span><button class="lnk" data-act="imgo">Go to Music →</button>':'';
+}
+function impAdd(j,st){
+  var r=impM.pool[j];if(!r)return;var k=impKey(r);if(impM.added[k])return;
+  var x=r._sp||{};
+  var it=addItem('music',{title:r.title,creator:r.creator,category:r.category,cover:r.cover||x.coverSpotify,link:r.link,year:r.year,tracksTotal:r.tracksTotal,
+    itunesId:r.itunesId,genre:r.genre,coverApple:r.itunesId?r.cover:'',spotifyId:x.spotifyId,coverSpotify:x.coverSpotify},st);
+  var ad=impM.added[k]={st:st,id:it.id,n:r.itunesId?null:0};impM.count++;
+  renderAll();renderImpRes();
+  if(r.itunesId)fillFromApple(it.id,r.itunesId).then(function(n){ad.n=n;},function(){ad.n=0;}).then(function(){renderAll();renderImpRes();renderImpFill();});
+  else renderImpFill();
+}
+function renderImpFill(){
+  var el=document.getElementById('imp-fill');if(!el)return;
+  var need=(data.music||[]).filter(wantsTracks).length,left=(data.music||[]).filter(function(m){return !(m.songs&&m.songs.length);}).length;
+  var h='<div class="imp-fill"><div class="imp-fill-txt"><b>Albums without songs ('+left+')</b>Looks each one up in Apple’s catalog by title and artist. Anything without a sure match is skipped, so you can pick the edition yourself.</div>';
+  if(trackJob)h+='<button class="btn soft" disabled>'+IC_SPARK+'Filling… '+trackJob.done+'/'+trackJob.total+'</button>';
+  else if(need)h+='<button class="btn soft" data-act="filltracks">'+IC_SPARK+'Fill track lists</button>';
+  h+='</div>';
+  if(trackJob)h+='<div class="bar imp-fill-bar"><i style="width:'+Math.round(trackJob.done/trackJob.total*100)+'%"></i></div>';
+  else if(lastFill)h+='<div class="imp-fill-note">'+lastFill+'</div>';
+  else if(!need)h+='<div class="imp-fill-note">'+(left?left+' album'+(left===1?'':'s')+' still without songs — open '+(left===1?'it':'them')+' on the Music shelf to pick the edition or add songs by hand.':'Every album has its songs listed ✓')+'</div>';
+  el.innerHTML=h;
+}
+
 /* ── CSV IMPORT (Goodreads / Letterboxd) ── */
 function parseCSV(text){
   text=String(text).replace(/^﻿/,'');
@@ -1555,14 +2147,22 @@ function addItemRaw(sec,fields){
   data[sec].push(it);return it;
 }
 var imp={src:'goodreads',plan:null,parsed:null,fname:''};
-function openImport(src){imp={src:src||'goodreads',plan:null,parsed:null,fname:''};renderImport();document.getElementById('import-bg').classList.add('open');}
-function closeImport(){document.getElementById('import-bg').classList.remove('open');}
+function openImport(src){imp={src:src||'goodreads',plan:null,parsed:null,fname:''};impMusicReset();renderImport();document.getElementById('import-bg').classList.add('open');}
+function closeImport(){
+  document.getElementById('import-bg').classList.remove('open');
+  // albums were added from Import → Music: show them
+  if(impM){var n=impM.count;impMusicReset();if(n&&ui.tab!=='music'){ui.tab='music';ui.status='all';ui.cat='all';ui.year='all';ui.q='';saveUI();renderAll();}}
+}
 function renderImport(){
-  var el=document.getElementById('import'),h;
-  h='<div class="modal-h"><div class="modal-t">'+(imp.plan?'Ready to import':'Bring your history over')+'</div><button class="x" data-act="impclose" aria-label="Close">✕</button></div>';
-  if(!imp.plan){
+  var el=document.getElementById('import'),h,music=imp.src==='music'&&!imp.plan;
+  h='<div class="modal-h"><div class="modal-t">'+(imp.plan?'Ready to import':music?'Add albums':'Bring your history over')+'</div><button class="x" data-act="impclose" aria-label="Close">✕</button></div>';
+  if(music){
+    h+='<div class="modal-s">Search Apple’s catalog or paste a Spotify album link. Every album comes in with all its songs listed, ready to rate.</div>';
+    h+='<div class="src-tabs"><button class="fchip" data-act="impsrc" data-v="goodreads">Goodreads</button><button class="fchip" data-act="impsrc" data-v="letterboxd">Letterboxd</button><button class="fchip on" data-act="impsrc" data-v="music">Music</button></div>';
+    h+=impMusicHTML();
+  }else if(!imp.plan){
     h+='<div class="modal-s">Drop in a CSV export and your shelves fill themselves in — ratings, dates, reviews and all. Nothing leaves your browser.</div>';
-    h+='<div class="src-tabs"><button class="fchip'+(imp.src==='goodreads'?' on':'')+'" data-act="impsrc" data-v="goodreads">Goodreads</button><button class="fchip'+(imp.src==='letterboxd'?' on':'')+'" data-act="impsrc" data-v="letterboxd">Letterboxd</button></div>';
+    h+='<div class="src-tabs"><button class="fchip'+(imp.src==='goodreads'?' on':'')+'" data-act="impsrc" data-v="goodreads">Goodreads</button><button class="fchip'+(imp.src==='letterboxd'?' on':'')+'" data-act="impsrc" data-v="letterboxd">Letterboxd</button><button class="fchip" data-act="impsrc" data-v="music">Music</button></div>';
     h+='<div class="drop" id="drop" data-act="pick"><div class="big">'+(imp.src==='goodreads'?IC_BOOK:IC_FILM)+'</div><div class="drop-t">Drop your '+(imp.src==='goodreads'?'goodreads_library_export.csv':'Letterboxd CSV')+' here</div><div class="drop-s">or click to choose a file</div></div>';
     h+=imp.src==='goodreads'?'<div class="howto"><b>Where to find it:</b> on goodreads.com go to <b>My Books → Import and export</b> (left sidebar, under Tools) → <b>Export Library</b>. After a minute a download link appears.</div>'
       :'<div class="howto"><b>Where to find it:</b> on letterboxd.com go to <b>Settings → Import &amp; Export → Export your data</b>. Unzip it and drop in <b>diary.csv</b> or <b>watched.csv</b> (or <b>watchlist.csv</b> for your want-to-watch list).</div>';
@@ -1580,6 +2180,7 @@ function renderImport(){
     h+='<div class="modal-acts"><button class="btn" data-act="impback">Choose another file</button><button class="btn pri" data-act="impgo">Import '+p.items.length+'</button></div>';
   }
   el.innerHTML=h;
+  if(music){renderImpRes();renderImpFill();var iq=document.getElementById('imp-q');if(iq){iq.value=impM.q||'';setTimeout(function(){iq.focus();},40);}}
   var drop=document.getElementById('drop');
   if(drop){
     ['dragenter','dragover'].forEach(function(t){drop.addEventListener(t,function(e){e.preventDefault();drop.classList.add('over');});});
@@ -1669,7 +2270,31 @@ document.addEventListener('click',function(e){
       break;
     case 'songadd':if(drawerRef){var m=findItem('music',drawerRef.id);if(!m.songs)m.songs=[];m.songs.push({name:'',fav:false});save();renderDrawer();var ins=document.querySelectorAll('#drawer [data-song]');if(ins.length)ins[ins.length-1].focus();}break;
     case 'songfav':if(drawerRef){var m2=findItem('music',drawerRef.id),si=+el.getAttribute('data-i');if(m2.songs[si]){m2.songs[si].fav=!m2.songs[si].fav;save();renderDrawer();}}break;
-    case 'songdel':if(drawerRef){var m3=findItem('music',drawerRef.id);m3.songs.splice(+el.getAttribute('data-i'),1);save();renderDrawer();}break;
+    case 'songdel':if(drawerRef){var m3=findItem('music',drawerRef.id);m3.songs.splice(+el.getAttribute('data-i'),1);noteOpen=-1;syncAuto(m3);save();renderDrawer();renderAll();}break;
+    case 'srate':if(drawerRef){var m4=findItem('music',drawerRef.id),sx=+el.getAttribute('data-i'),sn=+el.getAttribute('data-n');
+      if(m4&&m4.songs[sx]){if(+m4.songs[sx].rating===sn)delete m4.songs[sx].rating;else m4.songs[sx].rating=sn;syncAuto(m4);save();renderDrawer();renderAll();}}break;
+    case 'snote':var ni=+el.getAttribute('data-i');noteOpen=noteOpen===ni?-1:ni;renderDrawer();if(noteOpen>=0){var nt=document.querySelector('#drawer [data-snote="'+ni+'"]');if(nt){nt.focus();nt.setSelectionRange(nt.value.length,nt.value.length);}}break;
+    case 'useavg':if(drawerRef){var m5=findItem('music',drawerRef.id);m5.ratingAuto=true;syncAuto(m5);save();renderDrawer();renderAll();}break;
+    case 'refill':refillAsk=true;renderDrawer();break;
+    case 'refillno':refillAsk=false;renderDrawer();break;
+    case 'refillgo':refillGo();break;
+    case 'fillfind':if(drawerRef){var m6=findItem('music',drawerRef.id);if(m6&&lookable(m6))fillFind(m6);renderDrawer();}break;
+    case 'fillgo':fillGo();break;
+    case 'fillmore':if(drawerRef&&fillState[drawerRef.id]){fillState[drawerRef.id].more=!fillState[drawerRef.id].more;renderDrawer();}break;
+    case 'fillpick':if(drawerRef&&fillState[drawerRef.id]){var fsp=fillState[drawerRef.id];fsp.pick=+el.getAttribute('data-j');fsp.more=false;fsp.msg='';renderDrawer();}break;
+    case 'cvpick':if(drawerRef){var cm=findItem('music',drawerRef.id),cvv=el.getAttribute('data-v');
+      if(cvv==='own'){coverOwn=true;renderDrawer();var ce=document.querySelector('#drawer [data-f="cover"]');if(ce){ce.focus();ce.select();}}
+      else{var cu=cvv==='apple'?appleCover(cm):cm.coverSpotify;if(cu){cm.cover=cu;coverOwn=false;delete cm.coverTried;delete cm.coverErr;save();renderDrawer();renderAll();}}}break;
+    case 'spattach':spAttach();break;
+    case 'spdetach':if(drawerRef){var sd=findItem('music',drawerRef.id);delete sd.spotifyId;save();renderDrawer();}break;
+    case 'filltracks':fillAllTracks();break;
+    case 'imadd':impAdd(+el.getAttribute('data-j'),el.getAttribute('data-st'));break;
+    case 'imalt':if(impM&&impM.sp){impM.sp.pick=+el.getAttribute('data-i');renderImpRes();var am=impM.sp.matches[impM.sp.pick];if(am)lookupAlbum(am.itunesId).then(renderImpRes,function(){});}break;
+    case 'imrefine':impRefine();break;
+    case 'imopen':var io=impM&&impM.pool[+el.getAttribute('data-j')],ie=findItem('music',id);
+      if(ie&&io&&io._sp&&!ie.spotifyId){ie.spotifyId=io._sp.spotifyId;if(!ie.coverSpotify)ie.coverSpotify=io._sp.coverSpotify;save();toast('Spotify link added to <i>'+esc(ie.title)+'</i>');}
+      closeImport();if(ie)openDrawer('music',ie.id);break;
+    case 'imgo':closeImport();ui.tab='music';ui.status='all';ui.cat='all';ui.year='all';ui.q='';saveUI();renderAll();window.scrollTo({top:0,behavior:'smooth'});break;
     case 'import':openImport(el.getAttribute('data-src'));break;
     case 'impclose':closeImport();break;
     case 'impsrc':imp.src=el.getAttribute('data-v');imp.err='';renderImport();break;
@@ -1695,6 +2320,7 @@ document.addEventListener('change',function(e){
 document.addEventListener('input',function(e){
   var t=e.target;
   if(t.closest&&t.closest('#drawer')){drawerInput(e);return;}
+  if(t.id==='imp-q'&&impM){impSearch();return;}
   if(t.getAttribute&&t.getAttribute('data-inp')==='q'){
     ui.q=t.value;var pos=t.selectionStart;renderShelf();
     var n=document.querySelector('[data-inp="q"]');if(n){n.focus();try{n.setSelectionRange(pos,pos);}catch(x){}}
@@ -1702,6 +2328,8 @@ document.addEventListener('input',function(e){
 });
 document.addEventListener('keydown',function(e){
   if(e.key==='Enter'&&e.target.classList&&(e.target.classList.contains('pg-in')||e.target.classList.contains('dr-title')||e.target.classList.contains('goal-in'))){e.preventDefault();e.target.blur();return;}
+  if(e.key==='Enter'&&impM&&(e.target.id==='imp-q'||e.target.id==='imp-sprefine')){e.preventDefault();if(e.target.id==='imp-q')impSearch(true);else impRefine();return;}
+  if(e.key==='Enter'&&e.target.hasAttribute&&e.target.hasAttribute('data-spin')){e.preventDefault();spAttach();return;}
   if(e.key==='Escape'){
     if(document.getElementById('import-bg').classList.contains('open')){closeImport();return;}
     if(drawerRef){closeDrawer();return;}
