@@ -3,181 +3,172 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Stoic Girl Workbook · Brain 2.0</title>
+<title>Stoic Workbook · Brain 2.0</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,500;0,9..144,600;0,9..144,700;1,9..144,500&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Archivo:wght@500;600;700;800&family=Playfair+Display:ital,wght@0,500;0,600;1,400;1,500;1,600&family=Fraunces:ital,opsz,wght@0,9..144,500;0,9..144,600;1,9..144,500&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../assets/brain.css">
 <style>
+/* the workbook's own palette — same coral as inside the modules */
+:root{--coral:#D64C63;--coral-deep:#B83A51;--coral-soft:#FBE9EC;--coral-line:#F3C9D1;--paper:#FFFBF8;
+  --heavy:'Archivo Black','Archivo',sans-serif;--serif:'Playfair Display',Georgia,serif;--body:'Archivo',system-ui,sans-serif;}
 *{box-sizing:border-box;margin:0;padding:0;}
-:root{
-  --bg:#f3ecd8; --surface:#fff; --sidebar:#f8f1dd; --sidebar-line:#e6dec5;
-  --ink:#1a1612; --muted:#7a7468; --line:#ececec; --line-soft:#f0ead9; --warm:#faf6ec;
-  /* section accent: the workbook's coral */
-  --accent:#d64c63; --accent-deep:#c23a54; --accent-soft:#f9e7ea; --accent-faint:#f0c4ce;
-}
-html,body{background:var(--bg);font-family:'Plus Jakarta Sans',system-ui,sans-serif;color:var(--ink);min-height:100vh;-webkit-font-smoothing:antialiased;}
+body{background:var(--bg);color:var(--ink);font-family:var(--b2-sans);-webkit-font-smoothing:antialiased;}
+a{color:inherit;text-decoration:none;}
+.wrap{max-width:1280px;margin:0 auto;padding:20px 40px 90px;}
+.sub{font-size:14px;color:var(--muted);margin:-2px 0 24px;}
 
-/* ── TOPBAR ── */
-.topbar{background:var(--sidebar);border-bottom:1px solid var(--sidebar-line);padding:16px 32px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:300;}
-.topbar-left{display:flex;align-items:center;gap:14px;}
-.back-btn{display:inline-flex;align-items:center;gap:6px;padding:7px 14px;border:1.5px solid #d9d2bd;border-radius:20px;font-size:12px;color:var(--muted);cursor:pointer;background:transparent;font-family:inherit;text-decoration:none;transition:all .15s;}
-.back-btn:hover{border-color:var(--accent-deep);color:var(--ink);}
-.topbar-title{font-family:'Fraunces',serif;font-size:22px;font-weight:600;letter-spacing:-0.4px;}
-.topbar-date{font-size:11px;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted);font-weight:600;}
-@media(max-width:560px){.topbar{padding:14px 18px}.topbar-date{display:none}}
+/* ── module cover (looks like each module's red title page) ── */
+.cover{position:relative;aspect-ratio:4/4.6;border-radius:10px;background:var(--coral);color:#fff;overflow:hidden;display:flex;flex-direction:column;padding:18px 16px 16px;
+  box-shadow:0 1px 2px rgba(120,30,45,.18),0 12px 26px rgba(120,30,45,.18);transition:transform .18s,box-shadow .18s;}
+.cover::before{content:"";position:absolute;left:10px;top:0;bottom:0;width:1px;background:rgba(255,255,255,.28);}
+.cover .big{position:absolute;right:14px;top:4px;font-family:var(--serif);font-style:italic;font-weight:500;font-size:120px;line-height:1;color:rgba(255,255,255,.16);pointer-events:none;}
+.hero .cover .big{font-size:70px;right:8px;}
+.cover .brand{font-family:var(--body);font-size:8.5px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;opacity:.85;padding-left:6px;}
+.cover .num{font-family:var(--serif);font-style:italic;font-size:15px;margin-top:auto;padding-left:6px;}
+.cover .ttl{font-family:var(--heavy);font-size:21px;line-height:.98;text-transform:uppercase;letter-spacing:-.2px;margin-top:4px;padding-left:6px;}
+.cover .st{font-family:var(--body);font-size:10.5px;font-weight:600;opacity:.9;margin-top:6px;padding-left:6px;}
+.cover .q{font-family:var(--serif);font-style:italic;font-size:10.5px;opacity:.85;margin-top:14px;padding-left:6px;line-height:1.35;}
+.cover.done::after{content:"✓ Finished";position:absolute;top:12px;right:12px;font:700 10px var(--body);background:#fff;color:var(--coral-deep);padding:3px 8px;border-radius:99px;}
 
-/* ── MAIN ── */
-.wrap{max-width:1060px;margin:0 auto;padding:30px 32px 80px;}
-@media(max-width:560px){.wrap{padding:22px 18px 60px}}
-.page-head{margin-bottom:20px;}
-.page-head h1{font-family:'Fraunces',serif;font-size:2.2rem;font-weight:500;letter-spacing:.2px;line-height:1.1;}
-.page-head p{color:var(--muted);font-size:.9rem;margin-top:6px;max-width:640px;line-height:1.55;}
+/* ── continue ── */
+.hero{display:grid;grid-template-columns:150px 1fr auto;gap:28px;align-items:center;background:var(--paper);border:1px solid var(--coral-line);border-radius:20px;padding:22px 28px;
+  box-shadow:0 1px 2px rgba(60,50,30,.04),0 10px 28px rgba(214,76,99,.08);margin-bottom:22px;}
+.hero .cover{width:150px;aspect-ratio:3/4;}
+.hero .cover .ttl{font-size:17px;}
+.eyebrow{font:700 10.5px var(--body);letter-spacing:.16em;text-transform:uppercase;color:var(--coral);}
+.hero h2{font-family:var(--serif);font-size:30px;font-weight:600;line-height:1.15;margin:6px 0 6px;letter-spacing:-.2px;}
+.hero h2 em{color:var(--coral);}
+.hero p{font-size:14px;color:var(--muted);line-height:1.55;}
+.hero .meta{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px;}
+.pill{font:700 11px var(--body);padding:4px 10px;border-radius:99px;background:var(--coral-soft);color:var(--coral-deep);}
+.go{display:inline-flex;align-items:center;gap:8px;background:var(--coral);color:#fff;font:800 14px var(--body);padding:14px 26px;border-radius:99px;white-space:nowrap;transition:background .15s;}
+.go:hover{background:var(--coral-deep);}
 
-/* ── STATS BAR ── */
-.statsbar{display:flex;gap:20px;flex-wrap:wrap;margin:22px 0;padding:15px 22px;background:var(--surface);border:1px solid var(--line);border-radius:18px;align-items:center;}
-.stat{text-align:center;}
-.stat-num{font-family:'Fraunces',serif;font-size:24px;font-weight:600;color:var(--ink);line-height:1;letter-spacing:-.5px;}
-.stat-label{font-size:9px;letter-spacing:1.4px;text-transform:uppercase;color:var(--muted);margin-top:4px;font-weight:700;}
-.stat-divider{width:1px;height:32px;background:var(--line);flex-shrink:0;}
-.stats-note{margin-left:auto;font-size:11.5px;color:var(--muted);line-height:1.45;max-width:280px;}
-.stats-note b{color:var(--ink);font-weight:600;}
-@media(max-width:720px){.stats-note{margin-left:0;max-width:none}}
+/* ── how to use ── */
+.how{display:grid;grid-template-columns:repeat(3,1fr) 1.15fr;gap:14px;margin-bottom:34px;}
+.step{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:18px 18px 16px;}
+.step .ic{width:38px;height:38px;border-radius:12px;background:var(--coral-soft);color:var(--coral);display:flex;align-items:center;justify-content:center;margin-bottom:12px;}
+.step .ic svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;}
+.step b{display:block;font-family:var(--serif);font-size:17px;font-weight:600;margin-bottom:4px;}
+.step b span{color:var(--coral);font-style:italic;margin-right:4px;}
+.step p{font-size:13px;color:var(--muted);line-height:1.5;}
+.pace{background:var(--coral);color:#fff;border-radius:16px;padding:18px 20px;display:flex;flex-direction:column;justify-content:center;}
+.pace .eyebrow{color:#fff;opacity:.85;}
+.pace b{font-family:var(--serif);font-size:19px;font-weight:600;line-height:1.3;margin:6px 0 4px;}
+.pace p{font-size:12.5px;opacity:.9;line-height:1.5;}
 
-/* ── MODULE GRID ── */
-.mod-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
-@media(max-width:720px){.mod-grid{grid-template-columns:1fr}}
-.mod-tile{background:var(--surface);border:1px solid var(--line);border-left:3px solid var(--accent);border-radius:13px;padding:18px 20px 15px;display:flex;flex-direction:column;gap:8px;text-decoration:none;color:var(--ink);transition:all .15s;}
-.mod-tile:hover{border-color:var(--accent);box-shadow:0 4px 16px rgba(214,76,99,.14);transform:translateY(-1px);}
-.mod-tile:focus-visible{outline:2.5px solid var(--accent-deep);outline-offset:2px;}
-@media(prefers-reduced-motion:reduce){.mod-tile,.back-btn{transition:none}.mod-tile:hover{transform:none}}
+/* ── shelf ── */
+.sec{display:flex;align-items:baseline;gap:10px;margin:0 0 14px;}
+.sec h3{font-family:var(--serif);font-size:24px;font-weight:600;}
+.sec span{font-size:13px;color:var(--muted);}
+.shelf{display:grid;grid-template-columns:repeat(4,1fr);gap:22px 22px;margin-bottom:38px;}
+.mod:hover .cover{transform:translateY(-3px);box-shadow:0 2px 4px rgba(120,30,45,.18),0 18px 34px rgba(120,30,45,.22);}
+.mod .info{margin-top:11px;}
+.mod .bar{height:5px;border-radius:4px;background:#efe3dc;overflow:hidden;}
+.mod .bar i{display:block;height:100%;background:var(--coral);border-radius:4px;}
+.mod .line{display:flex;justify-content:space-between;align-items:center;margin-top:7px;font-size:12.5px;font-weight:600;color:var(--ink-2);}
+.mod .line small{font-size:11.5px;color:var(--muted);font-weight:600;}
+.mod .last{color:var(--coral-deep);font-weight:700;}
 
-.mod-top{display:flex;align-items:center;justify-content:space-between;gap:10px;}
-.mod-meta{font-size:.58rem;letter-spacing:1.6px;text-transform:uppercase;color:var(--muted);font-weight:700;}
-.mod-dots{display:flex;gap:4px;}
-.mod-dots i{width:7px;height:7px;border-radius:50%;border:1.3px solid var(--accent-faint);display:block;}
-.mod-dots i.on{background:var(--accent);border-color:var(--accent);}
+/* ── exercises ── */
+.ex{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;}
+.exg{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:16px 16px 10px;}
+.exg h4{font:700 10.5px var(--body);letter-spacing:.14em;text-transform:uppercase;color:var(--coral);}
+.exg h5{font-family:var(--serif);font-size:16px;font-weight:600;margin:2px 0 8px;}
+.exg a{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:8px 0;border-top:1px solid var(--hair);font-size:13px;font-weight:600;color:var(--ink-2);}
+.exg a:first-of-type{border-top:none;}
+.exg a:hover{color:var(--coral-deep);}
+.exg a i{font-style:normal;font-size:11px;color:var(--muted);font-weight:600;white-space:nowrap;}
+.exg a i.ok{color:var(--ok);}
 
-.mod-title{font-family:'Fraunces',serif;font-size:1.22rem;font-weight:600;line-height:1.2;letter-spacing:-.2px;}
-.mod-sub{font-size:.78rem;color:var(--muted);font-weight:500;margin-top:-3px;}
-.mod-quote{font-family:'Fraunces',serif;font-style:italic;font-size:.85rem;color:var(--accent-deep);line-height:1.4;margin-top:2px;}
-
-.mod-foot{display:flex;align-items:center;justify-content:space-between;margin-top:auto;padding-top:8px;}
-.mod-pill{display:inline-flex;align-items:center;padding:4px 10px;border-radius:9px;font-size:.58rem;font-weight:700;letter-spacing:.6px;text-transform:uppercase;background:var(--accent-soft);color:var(--accent-deep);}
-.mod-open{font-size:.76rem;font-weight:700;color:var(--muted);transition:color .15s;}
-.mod-tile:hover .mod-open{color:var(--accent-deep);}
-
-/* ── HOW IT WORKS ── */
+@media (max-width:1000px){.shelf,.ex{grid-template-columns:repeat(2,1fr);}.how{grid-template-columns:1fr 1fr;}.hero{grid-template-columns:110px 1fr;}.hero .cover{width:110px;}.hero .go{grid-column:1/-1;justify-self:start;}}
 </style>
 </head>
 <body>
+<script src="../assets/shell.js"></script>
 
-<div class="topbar">
-  <div class="topbar-left">
-    <a href="../" class="back-btn">
-      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
-      Back
-    </a>
-    <span class="topbar-title">Stoic Girl Workbook</span>
-  </div>
-  <span class="topbar-date" id="today-date"></span>
-</div>
+<div class="topbar"><div class="topbar-left"><span class="topbar-title">Stoic Workbook</span></div></div>
 
-<div class="wrap">
-  <div class="page-head">
-    <h1>Your interactive workbook</h1>
-  </div>
+<main class="wrap">
 
-  <div class="statsbar">
-    <div class="stat"><div class="stat-num">8</div><div class="stat-label">Modules</div></div>
-    <div class="stat-divider"></div>
-    <div class="stat"><div class="stat-num">31</div><div class="stat-label">Exercises</div></div>
-    <div class="stat-divider"></div>
-    <div class="stat"><div class="stat-num">125</div><div class="stat-label">Pages</div></div>
-  </div>
+  <!-- CONTINUE / START -->
+  <section class="hero" id="hero"></section>
 
-  <div class="mod-grid">
+  <!-- HOW TO USE -->
+  <section class="how">
+    <div class="step"><div class="ic"><svg viewBox="0 0 24 24"><path d="M4 5.5A2.5 2.5 0 0 1 6.5 3H20v15H6.5A2.5 2.5 0 0 0 4 20.5Z"/><path d="M4 20.5A2.5 2.5 0 0 0 6.5 23H20v-5"/></svg></div>
+      <b><span>1</span>Read one section</b><p>Each module is split into short sections — read just one sitting’s worth, 5–10 minutes.</p></div>
+    <div class="step"><div class="ic"><svg viewBox="0 0 24 24"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg></div>
+      <b><span>2</span>Do its exercise</b><p>Write straight into the boxes. Everything saves on its own — no need to finish in one go.</p></div>
+    <div class="step"><div class="ic"><svg viewBox="0 0 24 24"><path d="M3 12a9 9 0 1 0 3-6.7"/><path d="M3 4v5h5"/></svg></div>
+      <b><span>3</span>Come back to it</b><p>Next time, press <b style="display:inline;font:inherit;font-weight:700;color:var(--ink)">Continue</b> — it opens the exact section you stopped on.</p></div>
+    <div class="pace"><span class="eyebrow">A gentle pace</span><b>One module every 1–2 weeks</b><p>Two or three short sittings a week is plenty. Skip around anytime — use the exercises below when something comes up.</p></div>
+  </section>
 
-    <a class="mod-tile" href="module-1-the-foundation.html">
-      <div class="mod-top"><span class="mod-meta">Module 01</span>
-        <div class="mod-dots"><i class="on"></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div></div>
-      <div class="mod-title">The Foundation</div>
-      <div class="mod-sub">Who You Are Beneath the Chaos</div>
-      <div class="mod-quote">"Your mind is your most intimate space."</div>
-      <div class="mod-foot"><span class="mod-pill">3 Exercises</span><span class="mod-open">Open →</span></div>
-    </a>
+  <!-- SHELF -->
+  <div class="sec"><h3>Your modules</h3><span>tap a cover to open it</span></div>
+  <section class="shelf" id="shelf"></section>
 
-    <a class="mod-tile" href="module-2-dichotomy-of-control.html">
-      <div class="mod-top"><span class="mod-meta">Module 02</span>
-        <div class="mod-dots"><i class="on"></i><i class="on"></i><i></i><i></i><i></i><i></i><i></i><i></i></div></div>
-      <div class="mod-title">The Dichotomy of Control</div>
-      <div class="mod-sub">But Make It Relatable</div>
-      <div class="mod-quote">"Control your controllables, release the rest."</div>
-      <div class="mod-foot"><span class="mod-pill">4 Exercises</span><span class="mod-open">Open →</span></div>
-    </a>
-
-    <a class="mod-tile" href="module-3-four-virtues.html">
-      <div class="mod-top"><span class="mod-meta">Module 03</span>
-        <div class="mod-dots"><i class="on"></i><i class="on"></i><i class="on"></i><i></i><i></i><i></i><i></i><i></i></div></div>
-      <div class="mod-title">The Four Virtues</div>
-      <div class="mod-sub">Character Building, Soft Girl Edition</div>
-      <div class="mod-quote">"Be the person your younger self needed."</div>
-      <div class="mod-foot"><span class="mod-pill">5 Exercises</span><span class="mod-open">Open →</span></div>
-    </a>
-
-    <a class="mod-tile" href="module-4-emotional-regulation.html">
-      <div class="mod-top"><span class="mod-meta">Module 04</span>
-        <div class="mod-dots"><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i></i><i></i><i></i><i></i></div></div>
-      <div class="mod-title">Emotional Regulation</div>
-      <div class="mod-sub">For Sensitive Souls</div>
-      <div class="mod-quote">"Feel deeply, respond wisely."</div>
-      <div class="mod-foot"><span class="mod-pill">4 Exercises</span><span class="mod-open">Open →</span></div>
-    </a>
-
-    <a class="mod-tile" href="module-5-relationships.html">
-      <div class="mod-top"><span class="mod-meta">Module 05</span>
-        <div class="mod-dots"><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i></i><i></i><i></i></div></div>
-      <div class="mod-title">Relationships &amp; Boundaries</div>
-      <div class="mod-sub">The Hardest Part</div>
-      <div class="mod-quote">"Attachment creates suffering, love creates freedom."</div>
-      <div class="mod-foot"><span class="mod-pill">3 Exercises</span><span class="mod-open">Open →</span></div>
-    </a>
-
-    <a class="mod-tile" href="module-6-daily-practices.html">
-      <div class="mod-top"><span class="mod-meta">Module 06</span>
-        <div class="mod-dots"><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i></i><i></i></div></div>
-      <div class="mod-title">Daily Practices</div>
-      <div class="mod-sub">For Inner Peace</div>
-      <div class="mod-quote">"Consistency is the mother of mastery."</div>
-      <div class="mod-foot"><span class="mod-pill">4 Exercises</span><span class="mod-open">Open →</span></div>
-    </a>
-
-    <a class="mod-tile" href="module-7-navigating-modern-life.html">
-      <div class="mod-top"><span class="mod-meta">Module 07</span>
-        <div class="mod-dots"><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i></i></div></div>
-      <div class="mod-title">Navigating Modern Life</div>
-      <div class="mod-sub">With Ancient Wisdom</div>
-      <div class="mod-quote">"The mind may race, but the wisdom stays still."</div>
-      <div class="mod-foot"><span class="mod-pill">4 Exercises</span><span class="mod-open">Open →</span></div>
-    </a>
-
-    <a class="mod-tile" href="module-8-your-integrated-self.html">
-      <div class="mod-top"><span class="mod-meta">Module 08</span>
-        <div class="mod-dots"><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i></div></div>
-      <div class="mod-title">Your Integrated Self</div>
-      <div class="mod-sub">Identity Beyond Circumstance</div>
-      <div class="mod-quote">"Strength grows in the spaces between storms."</div>
-      <div class="mod-foot"><span class="mod-pill">4 Exercises</span><span class="mod-open">Open →</span></div>
-    </a>
-
-  </div>
-
-</div>
+  <!-- EXERCISES -->
+  <div class="sec"><h3>Jump to an exercise</h3><span>when you need one for something going on right now</span></div>
+  <section class="ex" id="ex"></section>
+</main>
 
 <script>
-  var DAYS=['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
-  var MONTHS=['January','February','March','April','May','June','July','August','September','October','November','December'];
-  var n=new Date();
-  document.getElementById('today-date').textContent=DAYS[n.getDay()]+', '+MONTHS[n.getMonth()]+' '+n.getDate()+', '+n.getFullYear();
+/* modules — titles, subtitles and quotes are the workbook's own; prompts = writing boxes in each module */
+var MODS=[
+  {n:1,file:'module-1-the-foundation.html',title:'The Foundation',sub:'Who You Are Beneath the Chaos',quote:'Your mind is your most intimate space.',prompts:27,
+   ex:[['p-ex1','TFB Tracker'],['p-ex2','Observer Journal'],['p-ex3','Distortions Bingo']]},
+  {n:2,file:'module-2-dichotomy-of-control.html',title:'The Dichotomy of Control',sub:'(But Make It Relatable)',quote:'Control your controllables, release the rest.',prompts:33,
+   ex:[['p-ex1','Circle of Control'],['p-ex2','Control Inventory'],['p-ex3','Decision-Making'],['p-ex4','Energy Audit']]},
+  {n:3,file:'module-3-four-virtues.html',title:'The Four Virtues',sub:'Character Building (Soft Girl Edition)',quote:'Be the person your younger self needed.',prompts:70,
+   ex:[['p-ex1','Perspective Shifter'],['p-ex2','Comfort Zone Challenge'],['p-ex3a','Boundary Blueprint'],['p-ex4a','Balance Check'],['p-ex5a','Virtue Compass']]},
+  {n:4,file:'module-4-emotional-regulation.html',title:'Emotional Regulation',sub:'For Sensitive Souls',quote:'Feel deeply, respond wisely.',prompts:46,
+   ex:[['p-ex1a','Gap Pause Practice'],['p-ex2a','Wise Mind Worksheet'],['p-ex3a','Distress Tolerance Menu'],['p-ex4a','Daily Weather Report']]},
+  {n:5,file:'module-5-relationships.html',title:'Relationships',sub:'And Boundaries (The Hardest Part)',quote:'Attachment creates suffering, love creates freedom.',prompts:67,
+   ex:[['p-ex1a','Boundary Clarification'],['p-ex2a','Attachment Journal'],['p-ex3a','Hard Conversation']]},
+  {n:6,file:'module-6-daily-practices.html',title:'Daily Practices',sub:'Small Rituals For Inner Peace',quote:'Consistency is the mother of mastery.',prompts:44,
+   ex:[['p-ex1','Morning Intention Page'],['p-ex2','Evening Reflection Journal'],['p-ex3a','Micro-Habit Builder'],['p-ex4a','Mood & Ritual Matchmaker']]},
+  {n:7,file:'module-7-navigating-modern-life.html',title:'Navigating Modern Life',sub:'with Ancient Wisdom',quote:'The mind may race, but the wisdom stays still.',prompts:54,
+   ex:[['p-ex1','Digital Comparison Reframe'],['p-ex2a','Career Value Sorting'],['p-ex3a','Rejection Recovery'],['p-ex4a','Preferred Indifferents List']]},
+  {n:8,file:'module-8-your-integrated-self.html',title:'Your Integrated Self',sub:'Identity Beyond Circumstance',quote:'Strength grows in the spaces between storms.',prompts:105,
+   ex:[['p-ex1','Future Self Visualization'],['p-ex2a','Before & After Self-Reflection'],['p-ex3a','Virtue-Driven Action Plan'],['p-ex4a','Integration Map']]}
+];
+function esc(s){return String(s==null?'':s).replace(/[&<>"']/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];});}
+function lsGet(k){try{return JSON.parse(localStorage.getItem(k));}catch(e){return null;}}
+/* answers already saved by each module (blussomly_stoic_m{n}_v1 → {text:{field:value}, …}) */
+function answered(m){var d=lsGet('blussomly_stoic_m'+m.n+'_v1');if(!d||!d.text)return 0;var c=0;for(var k in d.text)if(String(d.text[k]||'').trim())c++;return Math.min(c,m.prompts);}
+function coverHtml(m){return '<div class="cover'+(answered(m)>=m.prompts?' done':'')+'"><span class="big">'+m.n+'</span><span class="brand">The Stoic Girl Starter Pack</span><span class="num">Module '+m.n+':</span><span class="ttl">'+esc(m.title)+'</span><span class="st">'+esc(m.sub)+'</span><span class="q">“'+esc(m.quote)+'”</span></div>';}
+var R=lsGet('stoicResume1')||{},last=R.last,byMod=R.byModule||{};
+
+/* hero */
+(function(){
+  var h=document.getElementById('hero');
+  if(last&&last.file){
+    var m=MODS.find(function(x){return x.file===last.file;})||MODS[0];
+    var days=Math.floor((Date.now()-last.at)/864e5),when=days<1?'today':days===1?'yesterday':days<7?new Date(last.at).toLocaleDateString(undefined,{weekday:'long'}):new Date(last.at).toLocaleDateString(undefined,{month:'short',day:'numeric'});
+    h.innerHTML='<a href="'+esc(m.file)+'#'+esc(last.section)+'">'+coverHtml(m)+'</a><div><span class="eyebrow">Continue where you left off</span><h2>'+esc(last.label||m.title)+'</h2><p>Module '+m.n+' · '+esc(m.title)+' — last opened '+when+'.</p>'+
+      '<div class="meta"><span class="pill">'+answered(m)+' of '+m.prompts+' answered</span><span class="pill">about 5–10 minutes</span></div></div><a class="go" href="'+esc(m.file)+'#'+esc(last.section)+'">Continue →</a>';
+  }else{
+    var m1=MODS[0];
+    h.innerHTML='<a href="'+m1.file+'">'+coverHtml(m1)+'</a><div><span class="eyebrow">Start here</span><h2>Module 1 · <em>The Foundation</em></h2><p>Begin with the first short section. Next time you open this page, a Continue button will take you right back to where you stopped.</p>'+
+      '<div class="meta"><span class="pill">about 10 minutes</span><span class="pill">saves as you go</span></div></div><a class="go" href="'+m1.file+'">Start →</a>';
+  }
+})();
+
+/* shelf */
+document.getElementById('shelf').innerHTML=MODS.map(function(m){
+  var a=answered(m),pct=Math.round(a/m.prompts*100),here=byMod[m.file],isLast=last&&last.file===m.file;
+  var status=a?(a>=m.prompts?'Finished':a+' of '+m.prompts+' answered'):(here?'Started reading':'Not started');
+  var href=m.file+(here&&here.section?'#'+here.section:'');
+  return '<a class="mod" href="'+esc(href)+'">'+coverHtml(m)+'<div class="info"><div class="bar"><i style="width:'+pct+'%"></i></div><div class="line"><span>'+status+'</span>'+(isLast?'<small class="last">Last read</small>':here?'<small>in progress</small>':'')+'</div></div></a>';
+}).join('');
+
+/* exercises */
+document.getElementById('ex').innerHTML=MODS.map(function(m){
+  return '<div class="exg"><h4>Module '+m.n+'</h4><h5>'+esc(m.title)+'</h5>'+m.ex.map(function(e,i){return '<a href="'+esc(m.file)+'#'+e[0]+'"><span>'+m.n+'.'+(i+1)+' '+esc(e[1])+'</span><i>open →</i></a>';}).join('')+'</div>';
+}).join('');
 </script>
 </body>
 </html>
