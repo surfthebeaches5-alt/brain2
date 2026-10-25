@@ -159,6 +159,8 @@ body.dr-open .drawer{transform:none;visibility:visible;}
 .img-row .row2{display:flex;gap:8px;align-items:center;}
 .img-err{font-size:11.5px;color:var(--over);font-weight:600;display:none;}
 .img-err.show{display:block;}
+.lk-st{font-size:11.5px;color:var(--muted);font-weight:600;margin-top:5px;min-height:0;}
+.lk-st:empty{display:none;}
 .fl{display:flex;flex-direction:column;gap:6px;min-width:0;}
 .fl > label,.fl > .lab{font-size:10.5px;letter-spacing:.13em;text-transform:uppercase;color:var(--muted);font-weight:750;}
 .in{width:100%;height:38px;border-radius:10px;border:1px solid var(--line);background:var(--raised);padding:0 12px;font:600 13.5px var(--b2-sans);color:var(--ink);outline:none;transition:border-color .15s,box-shadow .15s;}
@@ -274,7 +276,7 @@ body.dr-open .drawer{transform:none;visibility:visible;}
     </div></div>
     <div class="fl"><span class="lab">Priority</span><div class="seg" id="d-pri"></div></div>
     <div class="fl"><span class="lab">Category</span><div class="catpick" id="d-cat"></div></div>
-    <div class="fl"><label for="d-link">Link</label><input class="in" id="d-link" type="text" placeholder="Shop or product page (optional)" autocomplete="off"></div>
+    <div class="fl"><label for="d-link">Link</label><input class="in" id="d-link" type="text" placeholder="Shop or product page (optional)" autocomplete="off"><div class="lk-st" id="d-link-st"></div></div>
     <div class="fl"><label for="d-note">Note</label><input class="in" id="d-note" type="text" placeholder="Size, colour, why you want it…" autocomplete="off"></div>
     <div class="dr-info"><div id="d-added"></div><span>Esc closes · changes save when you press Save</span></div>
   </div>
@@ -625,6 +627,7 @@ function openDrawer(id){
   $('d-date').value=it&&validMonth(it.date)?it.date:'';
   $('d-date').classList.toggle('empty',!$('d-date').value);
   $('d-link').value=it?(it.link||''):'';
+  $('d-link-st').textContent='';lastLook=$('d-link').value.trim();
   $('d-note').value=it?(it.note||''):'';
   $('d-image').value=draft.image;
   $('d-img-err').classList.remove('show');
@@ -700,6 +703,24 @@ $('d-image').addEventListener('input',function(){
 });
 $('d-img-clear').addEventListener('click',function(){$('d-image').value='';$('d-img-err').classList.remove('show');if(draft){draft.image='';paintDraft();}});
 $('d-name').addEventListener('input',function(){this.classList.remove('bad');});
+/* paste a product link → its picture (and name, if blank) fill in from the page's preview image */
+var linkLook=0,lastLook='';
+function lookupLink(){
+  var u=$('d-link').value.trim(),st=$('d-link-st');
+  if(!/^https?:\/\//i.test(u)||!draft){st.textContent='';return;}
+  if(u===lastLook)return;lastLook=u;
+  if(safeImg(draft.image)&&$('d-name').value.trim()){st.textContent='';return;}
+  var n=++linkLook;st.textContent='Looking for a picture…';
+  fetch('https://api.microlink.io/?url='+encodeURIComponent(u)).then(function(r){return r.json();}).then(function(j){
+    if(n!==linkLook||!draft)return;
+    var d=(j&&j.status==='success'&&j.data)||{},img=d.image&&d.image.url,got=[];
+    if(img&&safeImg(img)&&!safeImg(draft.image)){draft.image=img;$('d-image').value=img;paintDraft();got.push('picture');}
+    if(d.title&&!$('d-name').value.trim()){$('d-name').value=String(d.title).slice(0,90);got.push('name');}
+    st.textContent=got.length?'Added the '+got.join(' and ')+' from the link — change anything you like.':'Couldn’t find a picture on that page — you can paste an image link above.';
+  }).catch(function(){if(n===linkLook)st.textContent='Couldn’t reach that page — you can paste an image link above.';});
+}
+$('d-link').addEventListener('change',lookupLink);
+$('d-link').addEventListener('paste',function(){setTimeout(lookupLink,0);});
 $('d-date').addEventListener('input',function(){this.classList.toggle('empty',!this.value);});
 $('d-save').addEventListener('click',function(){saveDrawer(false);});
 $('d-bought').addEventListener('click',function(){saveDrawer(true);});
