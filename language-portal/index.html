@@ -501,6 +501,18 @@ details.help a{color:var(--accent-deep);font-weight:650;}
 .ep-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(30px,1fr));gap:4px;margin-top:10px;}
 .ep-grid button{height:26px;border-radius:7px;border:1px solid var(--line);background:var(--raised);color:var(--muted);font-size:11px;font-weight:700;cursor:pointer;padding:0;}
 .ep-grid button.on{background:var(--accent);border-color:var(--accent);color:#fff;}
+.sc-dock{position:fixed;left:22px;bottom:22px;z-index:1150;width:360px;max-width:calc(100vw - 32px);background:var(--surface);border:1px solid var(--line);border-radius:16px;box-shadow:0 18px 40px -18px rgba(36,31,23,.45);padding:10px 10px 8px;}
+.sc-dock[hidden]{display:none;}
+.sc-h{display:flex;align-items:center;gap:8px;padding:0 2px 8px;}
+.sc-h span{flex:1;min-width:0;font-size:12.5px;font-weight:650;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.sc-h small{display:block;font-size:11px;font-weight:600;color:var(--muted);}
+.sc-ext{font-size:11.5px;font-weight:650;color:var(--accent-deep);text-decoration:none;white-space:nowrap;}
+.sc-ext[hidden]{display:none;}
+.sc-h button{width:28px;height:28px;border-radius:8px;border:1px solid var(--line);background:var(--raised);color:var(--muted);font-size:16px;line-height:1;cursor:pointer;flex-shrink:0;}
+.sc-dock iframe{display:block;width:100%;height:166px;border:0;border-radius:10px;}
+.sc-dock.yt iframe{height:190px;}
+body.sc-on{padding-bottom:230px;}
+@media (max-width:640px){.sc-dock{left:16px;right:16px;width:auto;bottom:16px;}body.tm-on .sc-dock{bottom:86px;}}
 .res-name a{color:inherit;text-decoration:none;}
 .res-name a:hover{color:var(--accent-deep);}
 .res-tag.country{background:transparent;padding:0;font-size:12px;}
@@ -852,6 +864,7 @@ details.help a{color:var(--accent-deep);font-weight:650;}
 <div class="tip" id="tip" role="tooltip"></div>
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
 <div class="tm-pill" id="tm-pill" role="region" aria-label="Study timer" hidden></div>
+<div class="sc-dock" id="sc-dock" role="region" aria-label="Player" hidden><div class="sc-h"><span><b id="sc-title"></b><small id="sc-sub"></small></span><a class="sc-ext" id="sc-ext" target="_blank" rel="noopener" hidden>Open ↗</a><button type="button" data-act="scClose" aria-label="Close player">×</button></div><div id="sc-slot"></div></div>
 <audio id="fc-audio" preload="auto" hidden></audio>
 
 <script>
@@ -2701,11 +2714,83 @@ function libFiltered(lang){
 /* numbered series (resource.eps): epDone = ticked numbers, epRound = how many times through */
 var epOpen={};
 function epNext(d){var done=d.epDone||[];for(var i=1;i<=d.eps;i++)if(done.indexOf(i)<0)return i;return 0;}
-function epUrl(d,n){var u=safeUrl(d.url)||'';return /track-\d+/i.test(u)?u.replace(/track-\d+/i,'track-'+n):u;}
+/* Series from a SoundCloud or YouTube playlist play in one dock that sits outside the
+   re-rendered views (so it keeps playing), jump straight to track N, and tick a track
+   off when it finishes. Anything else opens in a new tab. */
+function scSet(u){
+  var m=/^https?:\/\/(?:www\.|m\.)?soundcloud\.com\/([^\/?#]+)\/sets\/([^\/?#]+)/i.exec(u);if(m)return 'https://soundcloud.com/'+m[1]+'/sets/'+m[2];
+  m=/soundcloud\.com\/.*[?&]in=([^\/&]+)\/sets\/([^&#\/]+)/i.exec(u);if(m)return 'https://soundcloud.com/'+m[1]+'/sets/'+m[2];
+  m=/^https?:\/\/(?:www\.|m\.)?soundcloud\.com\/([^\/?#]+)\/([a-z0-9-]+?)-track-\d+/i.exec(u);if(m)return 'https://soundcloud.com/'+m[1]+'/sets/'+m[2];
+  return '';
+}
+function ytList(u){var m=/(?:youtube\.com|youtu\.be)\/.*[?&]list=([\w-]+)/i.exec(u);return m?m[1]:'';}
+function canDock(u){return !!(scSet(u)||ytList(u));}
+var PL={kind:'',key:'',res:null,lang:null,w:null,idx:-1,want:-1,ready:false};
+function loadScript(src,ok){var s=document.createElement('script');s.src=src;if(ok)s.onload=ok;s.onerror=function(){toast('Couldn’t load the player. Check your connection');};document.head.appendChild(s);}
+function scApi(cb){if(window.SC&&SC.Widget)return cb();loadScript('https://w.soundcloud.com/player/api.js',cb);}
+var ytWait=null;
+function ytApi(cb){
+  if(window.YT&&YT.Player)return cb();
+  if(ytWait){ytWait.push(cb);return;}ytWait=[cb];
+  window.onYouTubeIframeAPIReady=function(){var q=ytWait||[];ytWait=null;q.forEach(function(f){f();});};
+  loadScript('https://www.youtube.com/iframe_api');
+}
+/* the widget loads a skipped-to track asynchronously, so press play once it has had a moment, and again if still paused */
+function scGo(w,i){w.skip(i);setTimeout(function(){if(PL.w!==w)return;w.play();setTimeout(function(){if(PL.w===w)w.isPaused(function(p){if(p)w.play();});},1500);},700);}
+function dockSub(t){$('#sc-sub').textContent=t;}
+function dockLink(u){var a=$('#sc-ext');if(u){a.href=u;a.hidden=false;}else a.hidden=true;}
+function dockPlay(d,lang,n){
+  var u=safeUrl(d.url)||'',sc=scSet(u),kind=sc?'sc':'yt',key=sc||ytList(u);
+  PL.res=d.id;PL.lang=lang;PL.want=n-1;
+  $('#sc-dock').hidden=false;document.body.classList.add('sc-on');$('#sc-title').textContent=d.name;dockSub('Loading track '+n+'…');
+  if(PL.kind===kind&&PL.key===key&&PL.w&&PL.ready){
+    if(kind==='sc')scGo(PL.w,n-1);else PL.w.playVideoAt(n-1);
+    return;
+  }
+  PL.kind=kind;PL.key=key;PL.ready=false;PL.idx=-1;PL.w=null;dockLink('');
+  $('#sc-dock').classList.toggle('yt',kind==='yt');
+  var slot=$('#sc-slot');slot.innerHTML='';
+  if(kind==='sc'){
+    var f=document.createElement('iframe');f.allow='autoplay; encrypted-media';f.title='SoundCloud player';
+    f.src='https://w.soundcloud.com/player/?url='+encodeURIComponent(key)+'&auto_play=false&visual=false&show_comments=false&hide_related=true&show_reposts=false&show_teaser=false&color=%239a7fd4';
+    slot.appendChild(f);
+    scApi(function(){
+      var w=SC.Widget(f);PL.w=w;
+      /* skip only works once the playlist's sounds are loaded */
+      w.bind(SC.Widget.Events.READY,function(){if(PL.w!==w)return;w.getSounds(function(){if(PL.w!==w)return;PL.ready=true;if(PL.want>=0)scGo(w,PL.want);});});
+      w.bind(SC.Widget.Events.PLAY,function(){if(PL.w!==w)return;w.getCurrentSoundIndex(function(i){PL.idx=i;dockSub('Track '+(i+1));});w.getCurrentSound(function(c){dockLink(c&&c.permalink_url?safeUrl(c.permalink_url):'');});});
+      w.bind(SC.Widget.Events.FINISH,function(){if(PL.w===w&&PL.idx>=0)dockFinished(PL.idx+1);});
+    });
+  }else{
+    var box=document.createElement('div');slot.appendChild(box);
+    ytApi(function(){
+      if(PL.key!==key||!box.isConnected)return;
+      var p=new YT.Player(box,{width:'100%',height:'190',playerVars:{listType:'playlist',list:key,index:n-1,rel:0,playsinline:1},
+        events:{
+          onReady:function(e){if(PL.key!==key)return;PL.w=e.target;PL.ready=true;if(PL.want>=0)e.target.playVideoAt(PL.want);},
+          onStateChange:function(e){
+            if(PL.key!==key)return;var i=e.target.getPlaylistIndex();ytLink(e.target,i,key);
+            if(e.data===YT.PlayerState.PLAYING&&i>=0){PL.idx=i;dockSub('Track '+(i+1));}
+            if(e.data===YT.PlayerState.ENDED&&PL.idx>=0)dockFinished(PL.idx+1);
+          },
+          onError:function(e){if(PL.key!==key)return;var i=PL.want>=0?PL.want:e.target.getPlaylistIndex();ytLink(e.target,i,key);dockSub('Track '+(i+1)+' won’t play here. Tap Open ↗ to watch it on YouTube');}
+        }});
+      PL.w=null;void p;
+    });
+  }
+}
+/* exact watch link for playlist position i (video ids come from the player) */
+function ytLink(p,i,list){var ids=p.getPlaylist&&p.getPlaylist();dockLink(ids&&ids[i]?'https://www.youtube.com/watch?v='+encodeURIComponent(ids[i])+'&list='+encodeURIComponent(list)+'&index='+(i+1):'');}
+function dockFinished(n){
+  var d=(LP.resources[PL.lang]||[]).filter(function(x){return x.id===PL.res;})[0];if(!d||!(n>=1&&n<=d.eps))return;
+  var l=d.epDone||(d.epDone=[]);if(l.indexOf(n)<0){l.push(n);saveLP();toast('✓ Track '+n+' done');}
+  if(tab==='library')renderLibBody();
+}
+function scClose(){dockLink('');PL={kind:'',key:'',res:null,lang:null,w:null,idx:-1,want:-1,ready:false};$('#sc-slot').innerHTML='';$('#sc-dock').hidden=true;document.body.classList.remove('sc-on');}
 function epHtml(d){
   var done=(d.epDone||[]).filter(function(n){return n>=1&&n<=d.eps;}),nx=epNext(d),id=esc(d.id);
   var h='<div class="ep"><div class="ep-top"><span>'+done.length+' / '+d.eps+'</span><i class="ep-bar"><b style="width:'+(done.length/d.eps*100)+'%"></b></i>'+((d.epRound||1)>1?'<span>Round '+d.epRound+'</span>':'')+'</div><div class="ep-acts">';
-  if(nx)h+='<button type="button" class="qb go" data-act="epPlay" data-id="'+id+'" title="Open track '+nx+' and start your study timer">▶ Track '+nx+'</button><button type="button" class="qb" data-act="epTick" data-id="'+id+'">✓ Done with '+nx+'</button>';
+  if(nx)h+='<button type="button" class="qb go" data-act="epPlay" data-id="'+id+'" title="Play track '+nx+' and start your study timer">▶ Track '+nx+'</button><button type="button" class="qb" data-act="epTick" data-id="'+id+'">✓ Done with '+nx+'</button>';
   else h+='<span class="chip chip-ok">✓ All '+d.eps+' done</span>';
   h+='<button type="button" class="linkish" data-act="epGrid" data-id="'+id+'">'+(epOpen[d.id]?'Hide tracks':'All tracks')+'</button></div>';
   if(epOpen[d.id]){
@@ -3035,8 +3120,11 @@ var ACT={
   epGrid:function(el){var id=el.getAttribute('data-id');epOpen[id]=!epOpen[id];renderLibBody();},
   epTog:function(el){var d=epRes(el.getAttribute('data-id'));if(!d)return;var n=+el.getAttribute('data-n'),l=d.epDone||(d.epDone=[]),i=l.indexOf(n);if(i>=0)l.splice(i,1);else l.push(n);saveLP();renderLibBody();},
   epTick:function(el){var d=epRes(el.getAttribute('data-id'));if(!d)return;var n=epNext(d);if(!n)return;(d.epDone||(d.epDone=[])).push(n);saveLP();renderLibBody();toast(n===d.eps?'✓ That’s all '+d.eps+'! 🎉':'✓ Track '+n+' done');},
-  epPlay:function(el){var d=epRes(el.getAttribute('data-id'));if(!d)return;var n=epNext(d),u=epUrl(d,n);if(u)window.open(u,'_blank','noopener');
-    var o=timerGet();if(!o){timerStart(libLang);toast('Track '+n+' opened · study timer started');}else if(o.lang===libLang)toast('Track '+n+' opened · your timer is running');},
+  epPlay:function(el){var d=epRes(el.getAttribute('data-id'));if(!d)return;var n=epNext(d),u=safeUrl(d.url)||'',dock=canDock(u);
+    if(dock)dockPlay(d,libLang,n);else if(u)window.open(u,'_blank','noopener');
+    var what=dock?'Playing track '+n:'Opened · find track '+n;
+    var o=timerGet();if(!o){timerStart(libLang);toast(what+' · study timer started');}else toast(what+(o.lang===libLang?' · your timer is running':''));},
+  scClose:function(){scClose();},
   epReset:function(el){var d=epRes(el.getAttribute('data-id'));if(!d||!confirm('Start '+d.name+' over? Your ticks clear and this becomes round '+((d.epRound||1)+1)+'.'))return;d.epDone=[];d.epRound=(d.epRound||1)+1;epOpen[d.id]=false;saveLP();renderLibBody();},
   resDel:function(){deleteRes();},
   resetLib:function(){if(!confirm('Restore the default '+L(libLang).name+' list? This removes resources you added or edited.'))return;LP.resources[libLang]=libLang==='es'?seedEs():seedPt();saveLP();renderLibrary();}
