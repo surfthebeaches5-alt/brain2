@@ -491,6 +491,18 @@ details.help a{color:var(--accent-deep);font-weight:650;}
 .res-name{font-size:14px;font-weight:650;line-height:1.3;display:block;}
 .res-tags{display:flex;flex-wrap:wrap;gap:4px;margin-top:5px;align-items:center;}
 .res-tag{font-size:11px;font-weight:700;color:var(--muted);background:var(--warm);border-radius:20px;padding:2px 8px;white-space:nowrap;}
+.ep{margin-top:10px;}
+.ep-top{display:flex;align-items:center;gap:8px;font-size:11.5px;font-weight:700;color:var(--muted);}
+.ep-bar{flex:1;height:5px;border-radius:5px;background:var(--warm);overflow:hidden;}
+.ep-bar b{display:block;height:100%;background:var(--accent);border-radius:5px;}
+.ep-acts{display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin-top:8px;}
+.ep-acts .qb{height:28px;padding:0 10px;}
+.ep-acts .qb.go{color:var(--accent-deep);border-color:var(--accent-line);}
+.ep-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(30px,1fr));gap:4px;margin-top:10px;}
+.ep-grid button{height:26px;border-radius:7px;border:1px solid var(--line);background:var(--raised);color:var(--muted);font-size:11px;font-weight:700;cursor:pointer;padding:0;}
+.ep-grid button.on{background:var(--accent);border-color:var(--accent);color:#fff;}
+.res-name a{color:inherit;text-decoration:none;}
+.res-name a:hover{color:var(--accent-deep);}
 .res-tag.country{background:transparent;padding:0;font-size:12px;}
 .res-note{font-size:12px;color:var(--muted);margin-top:5px;line-height:1.45;display:block;}
 .res-kebab{flex-shrink:0;background:transparent;border:none;color:var(--faint);padding:4px 6px;border-radius:7px;display:inline-flex;align-items:center;transition:all .15s;}
@@ -807,6 +819,7 @@ details.help a{color:var(--accent-deep);font-weight:650;}
       <div class="f-field" id="rf-country-field"><label class="f-label" for="rf-country">Country</label><select class="f-input" id="rf-country"><option value="">—</option><option value="Brazil">Brazil</option><option value="Portugal">Portugal</option></select></div>
       <div class="f-field"><label class="f-label" for="rf-tags">Tags</label><input class="f-input" id="rf-tags" type="text" placeholder="comma, separated"></div>
     </div>
+    <div class="f-field"><label class="f-label" for="rf-eps">Episodes / tracks <span class="muted" style="text-transform:none;letter-spacing:0;font-weight:600">· optional, for a numbered series like Language Transfer</span></label><input class="f-input" id="rf-eps" type="number" min="1" max="999" inputmode="numeric" placeholder="e.g. 90"></div>
     <div class="f-field"><label class="f-label" for="rf-note">Note</label><textarea class="f-input" id="rf-note" rows="2" placeholder="Optional description"></textarea></div>
     <div class="m-actions">
       <div class="left"><button type="button" class="btn btn-danger" id="rf-del" data-act="resDel">Delete</button></div>
@@ -2685,11 +2698,29 @@ function libFiltered(lang){
     return true;
   });
 }
+/* numbered series (resource.eps): epDone = ticked numbers, epRound = how many times through */
+var epOpen={};
+function epNext(d){var done=d.epDone||[];for(var i=1;i<=d.eps;i++)if(done.indexOf(i)<0)return i;return 0;}
+function epUrl(d,n){var u=safeUrl(d.url)||'';return /track-\d+/i.test(u)?u.replace(/track-\d+/i,'track-'+n):u;}
+function epHtml(d){
+  var done=(d.epDone||[]).filter(function(n){return n>=1&&n<=d.eps;}),nx=epNext(d),id=esc(d.id);
+  var h='<div class="ep"><div class="ep-top"><span>'+done.length+' / '+d.eps+'</span><i class="ep-bar"><b style="width:'+(done.length/d.eps*100)+'%"></b></i>'+((d.epRound||1)>1?'<span>Round '+d.epRound+'</span>':'')+'</div><div class="ep-acts">';
+  if(nx)h+='<button type="button" class="qb go" data-act="epPlay" data-id="'+id+'" title="Open track '+nx+' and start your study timer">▶ Track '+nx+'</button><button type="button" class="qb" data-act="epTick" data-id="'+id+'">✓ Done with '+nx+'</button>';
+  else h+='<span class="chip chip-ok">✓ All '+d.eps+' done</span>';
+  h+='<button type="button" class="linkish" data-act="epGrid" data-id="'+id+'">'+(epOpen[d.id]?'Hide tracks':'All tracks')+'</button></div>';
+  if(epOpen[d.id]){
+    h+='<div class="ep-grid">';for(var i=1;i<=d.eps;i++)h+='<button type="button" class="'+(done.indexOf(i)>=0?'on':'')+'" data-act="epTog" data-id="'+id+'" data-n="'+i+'" aria-label="Track '+i+'">'+i+'</button>';
+    h+='</div><div class="ep-acts"><button type="button" class="linkish" data-act="epReset" data-id="'+id+'">Start over</button></div>';
+  }
+  return h+'</div>';
+}
+function epRes(id){return libList(libLang).filter(function(x){return x.id===id;})[0]||null;}
 function resRow(lang,d){
   var chips=[];if(d.type)chips.push(d.type);(d.tags||[]).forEach(function(t){if(t)chips.push(t);});
   var tags=chips.slice(0,4).map(function(t){return '<span class="res-tag">'+esc(t)+'</span>';}).join('');
   if(d.country)tags+='<span class="res-tag country" title="'+esc(d.country)+'">'+flagOf(d.country)+'</span>';
   var u=safeUrl(d.url)||'#';
+  if(d.eps>0)return '<div class="res-row"><span class="res-icon">'+typeIcon(d.type)+'</span><span class="res-main"><span class="res-name"><a data-act="ext" href="'+esc(u)+'" target="_blank" rel="noopener">'+esc(d.name)+' ↗</a></span>'+(tags?'<span class="res-tags">'+tags+'</span>':'')+(d.note?'<span class="res-note">'+esc(d.note)+'</span>':'')+epHtml(d)+'</span><button type="button" class="res-kebab" title="Edit" aria-label="Edit '+esc(d.name)+'" data-act="editRes" data-id="'+esc(d.id)+'">'+kebabIcon()+'</button></div>';
   return '<a class="res-row" data-act="ext" href="'+esc(u)+'" target="_blank" rel="noopener"><span class="res-icon">'+typeIcon(d.type)+'</span><span class="res-main"><span class="res-name">'+esc(d.name)+'</span>'+(tags?'<span class="res-tags">'+tags+'</span>':'')+(d.note?'<span class="res-note">'+esc(d.note)+'</span>':'')+'</span><button type="button" class="res-kebab" title="Edit" aria-label="Edit '+esc(d.name)+'" data-act="editRes" data-id="'+esc(d.id)+'">'+kebabIcon()+'</button></a>';
 }
 function renderLibrary(){
@@ -2728,7 +2759,7 @@ function openResModal(lang,id){
   $('#res-sub').textContent=L(lang).flag+' '+L(lang).name+' library';
   $('#rf-name').value=d?d.name:'';$('#rf-url').value=d?d.url:'';$('#rf-type').value=d?(d.type||''):'';
   gsel.value=d?d.group:(lib[lang].cat!=='all'?lib[lang].cat:groups[0][0]);
-  $('#rf-country').value=d?(d.country||''):'';$('#rf-tags').value=d?(d.tags||[]).join(', '):'';$('#rf-note').value=d?(d.note||''):'';
+  $('#rf-country').value=d?(d.country||''):'';$('#rf-eps').value=d&&d.eps?d.eps:'';$('#rf-tags').value=d?(d.tags||[]).join(', '):'';$('#rf-note').value=d?(d.note||''):'';
   $('#rf-del').style.display=d?'inline-flex':'none';
   openModal('m-res');
 }
@@ -2737,7 +2768,8 @@ function saveRes(){
   if(!name||!url){alert('Name and URL are required.');return;}
   var fields={group:$('#rf-group').value,name:name,url:url,type:$('#rf-type').value.trim(),
     tags:$('#rf-tags').value.split(',').map(function(t){return t.trim();}).filter(Boolean),
-    country:lang==='pt'?$('#rf-country').value:'',note:$('#rf-note').value.trim()};
+    country:lang==='pt'?$('#rf-country').value:'',note:$('#rf-note').value.trim(),
+    eps:Math.max(0,Math.min(999,parseInt($('#rf-eps').value,10)||0))};
   if(!LP.resources[lang])LP.resources[lang]=[];
   if(resEdit.id){var d=LP.resources[lang].filter(function(x){return x.id===resEdit.id;})[0];if(d)for(var k in fields)d[k]=fields[k];}
   else{fields.id=uid('r');LP.resources[lang].unshift(fields);}
@@ -3000,6 +3032,12 @@ var ACT={
   addRes:function(){openResModal(libLang,null);},
   editRes:function(el,e){e.preventDefault();e.stopPropagation();openResModal(libLang,el.getAttribute('data-id'));},
   resSave:function(){saveRes();},
+  epGrid:function(el){var id=el.getAttribute('data-id');epOpen[id]=!epOpen[id];renderLibBody();},
+  epTog:function(el){var d=epRes(el.getAttribute('data-id'));if(!d)return;var n=+el.getAttribute('data-n'),l=d.epDone||(d.epDone=[]),i=l.indexOf(n);if(i>=0)l.splice(i,1);else l.push(n);saveLP();renderLibBody();},
+  epTick:function(el){var d=epRes(el.getAttribute('data-id'));if(!d)return;var n=epNext(d);if(!n)return;(d.epDone||(d.epDone=[])).push(n);saveLP();renderLibBody();toast(n===d.eps?'✓ That’s all '+d.eps+'! 🎉':'✓ Track '+n+' done');},
+  epPlay:function(el){var d=epRes(el.getAttribute('data-id'));if(!d)return;var n=epNext(d),u=epUrl(d,n);if(u)window.open(u,'_blank','noopener');
+    var o=timerGet();if(!o){timerStart(libLang);toast('Track '+n+' opened · study timer started');}else if(o.lang===libLang)toast('Track '+n+' opened · your timer is running');},
+  epReset:function(el){var d=epRes(el.getAttribute('data-id'));if(!d||!confirm('Start '+d.name+' over? Your ticks clear and this becomes round '+((d.epRound||1)+1)+'.'))return;d.epDone=[];d.epRound=(d.epRound||1)+1;epOpen[d.id]=false;saveLP();renderLibBody();},
   resDel:function(){deleteRes();},
   resetLib:function(){if(!confirm('Restore the default '+L(libLang).name+' list? This removes resources you added or edited.'))return;LP.resources[libLang]=libLang==='es'?seedEs():seedPt();saveLP();renderLibrary();}
 };
