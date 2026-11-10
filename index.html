@@ -105,6 +105,7 @@ button,input,select{font-family:inherit;}
 .wk-h.today b{background:var(--ink);color:#fff;}
 .ad-lab,.hr{font-size:10px;color:var(--faint);font-weight:650;text-align:right;padding-right:8px;}
 .ad-lab{padding-top:7px;}
+.ad-lab small{display:block;font-size:9.5px;font-weight:700;letter-spacing:.3px;opacity:.75;margin-top:2px;}
 .allday{min-height:30px;padding:3px 3px 6px;border-top:1px solid var(--hair);border-left:1px solid var(--hair);display:flex;flex-direction:column;gap:3px;min-width:0;}
 .ad{font-size:10.5px;font-weight:700;border-radius:6px;padding:3px 6px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;cursor:pointer;background:var(--bgc);color:var(--c);}
 .hours .hr{height:var(--H);transform:translateY(-6px);}
@@ -407,7 +408,7 @@ function renderCal(){
     var H=view==='day'?40:31;
     var g='<div class="wk" style="grid-template-columns:44px repeat('+n+',minmax(0,1fr));--H:'+H+'px"><div></div>';
     days.forEach(function(d){g+='<div class="wk-h'+(+d===+T?' today':'')+'" data-day="'+dk(d)+'">'+DS[d.getDay()].toUpperCase()+'<b>'+d.getDate()+'</b></div>';});
-    g+='<div class="ad-lab">all day</div>';
+    g+='<div class="ad-lab">all day<small title="Times are shown in your device’s time zone">'+esc(tzName())+'</small></div>';
     days.forEach(function(d){g+='<div class="allday">'+onDay(list,d).filter(function(e){return e.allDay;}).map(function(e){
       return '<div class="ad" data-ev="'+esc(evKey(e))+'" style="--c:'+e.color+';--bgc:'+tint(e.color,.15)+'" title="'+esc(e.title)+'">'+esc(e.title)+'</div>';}).join('')+'</div>';});
     var hrs='';for(var t=lo;t<hi;t++)hrs+='<div class="hr">'+(t%12||12)+(t<12?'a':'p')+'</div>';
@@ -446,12 +447,14 @@ $('cal').addEventListener('click',function(e){
 });
 
 /* event popover */
+/* short name of the device's current time zone (e.g. PST), which every time on this page uses */
+function tzName(){try{var p=new Intl.DateTimeFormat('en-US',{timeZoneName:'short'}).formatToParts(new Date()).filter(function(x){return x.type==='timeZoneName';})[0];return p?p.value:'';}catch(e){return '';}}
 function openPop(key,node){
   var e=CUR.find(function(x){return evKey(x)===key;});if(!e)return;
   if(e.source==='self'){try{localStorage.setItem('learningTab','self');}catch(x){}location.href='learning/index.html';return;}
   var d=parseDk(e.date);
   $('pop-t').textContent=e.title;
-  $('pop-m').innerHTML=DF[d.getDay()]+', '+MF[d.getMonth()]+' '+d.getDate()+(e.allDay?' · all day':' · '+fmtTime(e.time)+(e.endTime?' – '+fmtTime(e.endTime):''))+
+  $('pop-m').innerHTML=DF[d.getDay()]+', '+MF[d.getMonth()]+' '+d.getDate()+(e.allDay?' · all day':' · '+fmtTime(e.time)+(e.endTime?' – '+fmtTime(e.endTime):'')+' '+esc(tzName()))+
     (e.location?'<br>'+esc(e.location):'')+'<br><span style="color:'+e.color+'">●</span> '+esc(e.calName||'')+(e.source==='google'?' · Google':e.source==='local'?' · Brain 2.0':'');
   var a='';
   if(e.source==='google'&&e.link)a+='<a class="btn sm" href="'+esc(e.link)+'" target="_blank" rel="noopener">Open in Google ↗</a>';
