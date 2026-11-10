@@ -856,7 +856,10 @@ function nextWeekEvents(){
     var c=null;for(var i=0;i<cats.length;i++)if(cats[i]&&cats[i].id===e.cat){c=cats[i];break;}
     out.push({title:e.title,date:e.date<from?from:e.date,time:e.time||'',color:c&&c.dot?c.dot:'var(--accent)'});});
   var g=lsJSON('brain2GCalCache1',null);
-  if(g&&Array.isArray(g.events))g.events.forEach(function(e){if(!e||!e.title||!inR(e))return;
+  /* saved Google events: show timed ones in the current time zone (startAt is the exact instant) */
+  function gLoc(e){if(!e||e.allDay||!e.startAt)return e;var s=new Date(e.startAt),x=new Date(e.endAt||e.startAt);if(isNaN(s))return e;
+    return Object.assign({},e,{date:isoLocal(s),endDate:isoLocal(x),time:String(s.getHours()).padStart(2,'0')+':'+String(s.getMinutes()).padStart(2,'0')});}
+  if(g&&Array.isArray(g.events))g.events.map(gLoc).forEach(function(e){if(!e||!e.title||!inR(e))return;
     out.push({title:e.title,date:e.date<from?from:e.date,time:e.allDay?'':(e.time||''),color:e.color||'var(--accent)'});});
   var fin=lsJSON('finTrackerState2',null);
   if(fin&&Array.isArray(fin.cards)){
