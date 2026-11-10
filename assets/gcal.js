@@ -88,10 +88,17 @@
     var s=allDay?new Date(ev.start.date+'T00:00:00'):new Date(ev.start.dateTime);
     var e=allDay?new Date(ev.end.date+'T00:00:00'):new Date(ev.end.dateTime);
     return {id:ev.id,calId:cal.id,source:'google',title:ev.summary||'(no title)',date:dk(s),endDate:dk(allDay?new Date(e.getTime()-86400000):e),
-      time:allDay?'':hm(s),endTime:allDay?'':hm(e),allDay:allDay,location:ev.location||'',link:ev.htmlLink||'',recurring:!!ev.recurringEventId,
+      time:allDay?'':hm(s),endTime:allDay?'':hm(e),allDay:allDay,startAt:allDay?'':s.toISOString(),endAt:allDay?'':e.toISOString(),location:ev.location||'',link:ev.htmlLink||'',recurring:!!ev.recurringEventId,
       color:cal.backgroundColor||'#8e71d3',calName:cal.summary||''};
   }
 
+  /* timed events keep their exact instant (startAt/endAt), so saved events show in the
+     time zone you're in now, not the one you were in when they were fetched */
+  function localize(ev){
+    if(!ev||ev.allDay||!ev.startAt)return ev;
+    var s=new Date(ev.startAt),e=new Date(ev.endAt||ev.startAt);if(isNaN(s)||isNaN(e))return ev;
+    return Object.assign({},ev,{date:dk(s),endDate:dk(e),time:hm(s),endTime:hm(e)});
+  }
   function calendars(){
     return api('/users/me/calendarList?minAccessRole=writer&maxResults=100').then(function(j){
       var list=(j.items||[]).map(function(c){return {id:c.id,summary:c.summaryOverride||c.summary,backgroundColor:c.backgroundColor,primary:!!c.primary,selected:c.selected!==false};});
@@ -165,7 +172,8 @@
     config:function(){return Object.assign({},cfg);},
     setConfig:function(c){cfg=Object.assign({},cfg,c);lsSet(CFG_KEY,cfg);tokenClient=null;if(cfg.clientId)loadGIS().then(initClient).catch(function(){});},
     disconnect:function(){var t=tok();clearTok();if(t&&window.google&&google.accounts&&google.accounts.oauth2)google.accounts.oauth2.revoke(t,function(){});cfg.everConnected=false;lsSet(CFG_KEY,cfg);},
-    cached:function(){return lsGet(CACHE_KEY,null);},
+    cached:function(){var c=lsGet(CACHE_KEY,null);if(c&&Array.isArray(c.events))c.events=c.events.map(localize);return c;},
+    localize:localize,
     /* writable calendars from the last fetch: [{id,summary,backgroundColor,primary}] */
     calList:function(){return (cfg.calList||[]).slice();},
     signIn:signIn, calendars:calendars, events:events, create:create, update:update, remove:remove,
