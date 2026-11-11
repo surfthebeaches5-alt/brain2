@@ -662,9 +662,14 @@ function activeNow(){var t=pd('');return PC.map(function(x){return {x:x,pg:'pc'}
 function tdRow(k,t,sub){var on=(S.tdOn||{})[k];return '<div class="ck2'+(on?' on':'')+'" data-act="tdown" data-k="'+k+'"><span class="ck'+(on?' on':'')+'">'+(on?'✓':'')+'</span><span class="tx"><b>'+esc(t)+'</b>'+(sub?'<small>'+esc(sub)+'</small>':'')+'</span></div>';}
 function todayPage(){
   var t=pd(''),act=activeNow(),rows=[];
-  act.forEach(function(o){var x=o.x,u=nowUnit(x);if(u<0){var k=nextOf(x);u=k?k.u:0;}var n=0;
-    (x.units[u]||{items:[]}).items.forEach(function(it,i){if(!it.done&&n<2){n++;rows.push({o:o,u:u,i:i,it:it});}});
-    if(!n){var k2=nextOf(x);if(k2&&k2.u!==u)rows.push({o:o,u:k2.u,i:k2.i,it:x.units[k2.u].items[k2.i]});}});
+  /* one to-do from Personal Curriculum and one from Courses: for each, the study that is furthest behind in its current unit */
+  ['pc','co'].forEach(function(pg){var best=null;
+    act.forEach(function(o){if(o.pg!==pg)return;var x=o.x,u=nowUnit(x);if(u<0){var k=nextOf(x);u=k?k.u:0;}
+      var its=(x.units[u]||{items:[]}).items,i=-1;its.forEach(function(q,n){if(!q.done&&i<0)i=n;});
+      if(i<0){var k2=nextOf(x);if(!k2)return;u=k2.u;i=k2.i;its=x.units[u].items;}
+      var c={o:o,u:u,i:i,it:its[i],ratio:its.filter(function(q){return q.done;}).length/its.length,end:o.sp.dated?+o.sp.units[u].to:Infinity};
+      if(!best||c.ratio<best.ratio||(c.ratio===best.ratio&&c.end<best.end))best=c;});
+    if(best)rows.push(best);});
   /* a practice test is asked for every two weeks, and ticks itself when one is taken */
   var test=CO.filter(function(c){return c.testDate&&testOf(c)&&c.status!=='Finished';})[0],last=test&&test.scores.length?Math.max.apply(null,test.scores.map(function(z){return z.at||0;})):0,
       ago=last?Math.floor((Date.now()-last)/86400000):null,due=test&&(ago==null||ago>=14),doneToday=test&&ago===0;
@@ -679,7 +684,7 @@ function todayPage(){
      '<button class="mini" data-act="fake" data-msg="Opens Spanish on the Languages page, where you tick the day’s rules"><span class="tt">Spanish · Day 2 of 75<small>1 of 6 done today</small></span><span class="pb"><i style="width:17%"></i></span></button>'+
      '<div class="grp new">Learning<button class="link" data-go="ov">Overview →</button></div>'+
      (due?'<div class="nudge"><span>'+esc(test.title)+' practice test<small>'+(ago==null?'None taken yet':'Last one '+ago+' days ago')+' · '+wk(testOf(test).weeks)+' to the test</small></span><button class="btn sm" data-act="quick" data-id="'+esc(test.id)+'">Take one</button></div>':doneToday?'<div class="ck2 on" style="cursor:default"><span class="ck on">✓</span><span class="tx"><b>'+esc(test.title)+' practice test</b><small>Taken today · ticked on its own</small></span></div>':'')+
-     (rows.length||due||doneToday?rows.map(function(r,n){var it=r.it,x=r.o.x;return '<div class="ck2'+(it.done?' on':'')+'" data-act="tdtick" data-n="'+n+'"><span class="ck'+(it.done?' on':'')+'">'+(it.done?'✓':'')+'</span><span class="tx"><b>'+esc(it.t)+'</b>'+(it.url?' <a href="'+esc(it.url)+'" target="_blank" rel="noopener">↗</a>':'')+
+     (rows.length||due||doneToday?rows.map(function(r,n){var it=r.it,x=r.o.x;return '<div class="ck2'+(it.done?' on':'')+'" style="box-shadow:inset 3px 0 0 '+(r.o.pg==='pc'?'var(--accent)':'#6a8fc2')+'" data-act="tdtick" data-n="'+n+'"><span class="ck'+(it.done?' on':'')+'">'+(it.done?'✓':'')+'</span><span class="tx"><b>'+esc(it.t)+'</b>'+(it.url?' <a href="'+esc(it.url)+'" target="_blank" rel="noopener">↗</a>':'')+
         '<small><button class="link" data-act="open" data-pg="'+r.o.pg+'" data-id="'+esc(x.id)+'" style="font-size:11.5px;color:var(--muted);font-weight:600">'+esc(x.title)+'</button> · '+esc(x.units[r.u].name)+'</small></span><span class="k" style="font-size:9.5px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--faint)">'+esc(it.k)+'</span></div>';}).join(''):'<div class="empty">Nothing to do for your courses right now</div>')+
      '<div class="grp">Body<button class="link" data-act="fake" data-msg="Opens the Fitness page">Fitness →</button></div>'+tdRow('move','Move today','A walk or the walking pad counts')+tdRow('water','Water','4 cups')+'</div></div></div>';
   S.tdRows=rows;return h;
@@ -925,7 +930,7 @@ document.addEventListener('input',function(e){
     clearTimeout(saveT);saveT=setTimeout(function(){var z=$('#nsaved');if(z)z.innerHTML='<b>Saved</b>';},500);}
 });
 /* the preview updates itself: if a newer copy has been published, load it (once per copy) */
-var PV='2611112011';
+var PV='2611112020';
 (function(){try{fetch(location.pathname+'?pv='+Date.now(),{cache:'no-store'}).then(function(r){return r.ok?r.text():'';}).then(function(t){
   var m=/var PV='(\d+)'/.exec(t);if(!m||m[1]===PV)return;var done='';try{done=sessionStorage.getItem('pv-seen')||'';}catch(e){}
   if(done===m[1])return;try{sessionStorage.setItem('pv-seen',m[1]);}catch(e){}
