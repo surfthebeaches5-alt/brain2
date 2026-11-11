@@ -258,6 +258,29 @@
     });
   }
 
+  /* ── Notes as Google Docs: "Brain 2.0 Notes" › <group> › <folder> › <name> ──
+     A note written on the Personal Curriculum or Courses page is kept as a Google Doc too.
+     o = {id (once it has one), name, html, group, folderKey, folderName}. Returns {id, webViewLink}.
+     The Doc is a copy of the note: saving the note again replaces the Doc's contents. */
+  var DOC_MIME='application/vnd.google-apps.document',NOTES_ROOT='Brain 2.0 Notes';
+  function driveDoc(o){
+    var name=String(o.name||'').replace(/\s+/g,' ').trim()||'Untitled',b='b2'+Date.now().toString(36)+Math.random().toString(36).slice(2);
+    function body(meta){return '--'+b+'\r\nContent-Type: application/json; charset=UTF-8\r\n\r\n'+JSON.stringify(meta)+'\r\n--'+b+'\r\nContent-Type: text/html; charset=UTF-8\r\n\r\n'+o.html+'\r\n--'+b+'--';}
+    var head={'Content-Type':'multipart/related; boundary='+b};
+    function create(){
+      return folder('notes',NOTES_ROOT,'').then(function(root){return folder('notes:'+o.group,o.group,root);})
+        .then(function(g){return folder('notes:'+o.group+':'+o.folderKey,String(o.folderName||'Untitled').replace(/\s+/g,' ').trim()||'Untitled',g);})
+        .then(function(dir){return dfetch(DRIVE_UP+'/files?uploadType=multipart&fields=id,webViewLink',{method:'POST',headers:head,body:body({name:name,mimeType:DOC_MIME,parents:[dir]})});});
+    }
+    if(!o.id)return create();
+    return dfetch(DRIVE_UP+'/files/'+encodeURIComponent(o.id)+'?uploadType=multipart&fields=id,webViewLink,trashed',{method:'PATCH',headers:head,body:body({name:name})})
+      .then(function(f){return f&&f.trashed?create():f;},function(e){if(e.status===404)return create();throw e;});
+  }
+  /* move a file this site made to the Drive trash (it can be restored from there for 30 days) */
+  function driveTrash(id){
+    return dfetch(DRIVE+'/files/'+encodeURIComponent(id),{method:'PATCH',headers:{'Content-Type':'application/json'},body:JSON.stringify({trashed:true})}).catch(function(e){if(e.status===404)return null;throw e;});
+  }
+
   window.GCal={
     configured:function(){return !!cfg.clientId;},
     connected:function(){return !!tok();},
@@ -270,7 +293,7 @@
     /* Drive backup: on = switched on in settings; ready = this sign-in can use it right now */
     drive:{on:function(){return !!cfg.drive;},ready:function(){return !!cfg.drive&&!!tok()&&tokDrive();},
       setOn:function(v){cfg.drive=!!v;if(!v){cfg.driveGranted=false;}lsSet(CFG_KEY,cfg);tokenClient=null;if(cfg.clientId)loadGIS().then(initClient).catch(function(){});},
-      save:driveSave,load:driveLoad,find:driveFind,fileName:DRIVE_NAME,savePdf:drivePdf},
+      save:driveSave,load:driveLoad,find:driveFind,fileName:DRIVE_NAME,savePdf:drivePdf,saveDoc:driveDoc,trash:driveTrash},
     /* writable calendars from the last fetch: [{id,summary,backgroundColor,primary}] */
     calList:function(){return (cfg.calList||[]).slice();},
     signIn:signIn, calendars:calendars, events:events, create:create, update:update, remove:remove,
