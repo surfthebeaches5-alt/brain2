@@ -143,7 +143,18 @@ button,input,select{font-family:inherit;}
 .pop{position:fixed;z-index:1200;width:300px;background:var(--raised);border:1px solid var(--line);border-radius:14px;box-shadow:0 18px 50px rgba(60,50,30,.2);padding:16px 18px;display:none;}
 .pop.open{display:block;}
 .pop-t{font-family:var(--b2-serif);font-size:17px;font-weight:600;line-height:1.25;padding-right:20px;}
-.pop-m{font-size:12.5px;color:var(--muted);font-weight:600;margin-top:6px;line-height:1.5;}
+.pop-m{font-size:12.5px;color:var(--muted);font-weight:600;margin-top:6px;line-height:1.5;overflow-wrap:anywhere;}
+.pop-link{color:var(--accent-deep);font-weight:650;text-decoration:none;}
+.pop-link:hover{text-decoration:underline;}
+.pop-lesson{width:100%;display:flex;align-items:center;gap:7px;flex-wrap:wrap;padding:9px 11px;border-radius:10px;background:var(--warm);font-size:12px;font-weight:650;color:var(--ink-2);}
+.pop-lesson span{flex:1;min-width:120px;}
+.task.lesson{cursor:default;align-items:center;flex-wrap:wrap;gap:4px 8px;}
+.task.lesson .tx{flex:0 0 100%;}
+.task.lesson .lsub{flex:1;min-width:0;font-size:11px;font-weight:600;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.lbtn{flex-shrink:0;height:26px;padding:0 9px;border-radius:8px;border:1px solid var(--line);background:var(--raised);color:var(--ink-2);font:650 11.5px var(--b2-sans);cursor:pointer;white-space:nowrap;}
+.lbtn:hover{border-color:var(--accent-line);color:var(--accent-deep);}
+.lbtn.ok{background:var(--ink);border-color:var(--ink);color:#fffdf9;}
+.lbtn.ok:hover{color:#fffdf9;opacity:.88;}
 .pop-a{display:flex;gap:7px;margin-top:14px;flex-wrap:wrap;}
 .pop-x{position:absolute;right:10px;top:8px;border:none;background:transparent;font-size:18px;color:var(--faint);cursor:pointer;}
 
@@ -228,10 +239,10 @@ button,input,select{font-family:inherit;}
   .cal-tools .seg{display:none;}
 }
 </style>
-<link rel="stylesheet" href="assets/brain.css?v=2611110221">
+<link rel="stylesheet" href="assets/brain.css?v=2611110234">
 </head>
 <body>
-<script src="assets/shell.js?v=2611110221"></script>
+<script src="assets/shell.js?v=2611110234"></script>
 
 <main class="page">
   <div class="head">
@@ -286,6 +297,7 @@ button,input,select{font-family:inherit;}
         <form class="addtask" id="addtask"><b>+</b><input id="taskin" type="text" placeholder="Add a task…" maxlength="140" autocomplete="off"></form>
         <div id="tasks"></div>
         <div id="lang"></div>
+        <div id="lessons"></div>
         <div id="body"></div>
       </section>
     </div>
@@ -319,8 +331,8 @@ button,input,select{font-family:inherit;}
   </div>
 </div>
 
-<script src="assets/gcal.js?v=2611110221"></script>
-<script src="assets/backup.js?v=2611110221"></script>
+<script src="assets/gcal.js?v=2611110234"></script>
+<script src="assets/backup.js?v=2611110234"></script>
 <script>
 /* ───────── helpers ───────── */
 function lsGet(k){try{var r=localStorage.getItem(k);return r?JSON.parse(r):null;}catch(e){return null;}}
@@ -456,21 +468,32 @@ $('cal').addEventListener('click',function(e){
 /* event popover */
 /* short name of the device's current time zone (e.g. PST), which every time on this page uses */
 function tzName(){try{var p=new Intl.DateTimeFormat('en-US',{timeZoneName:'short'}).formatToParts(new Date()).filter(function(x){return x.type==='timeZoneName';})[0];return p?p.value:'';}catch(e){return '';}}
+/* text with web addresses turned into short, clickable links ("preply.com ↗"); the full address shows on hover */
+function linkify(text){
+  var out='',re=/https?:\/\/[^\s<>"']+/g,last=0,m;text=String(text||'');
+  while((m=re.exec(text))){
+    out+=esc(text.slice(last,m.index));last=m.index+m[0].length;
+    var host='';try{host=new URL(m[0]).hostname.replace(/^www\./,'');}catch(x){}
+    out+=host?'<a class="pop-link" href="'+esc(m[0])+'" target="_blank" rel="noopener" title="'+esc(m[0])+'">'+esc(host)+' ↗</a>':esc(m[0]);
+  }
+  return out+esc(text.slice(last));
+}
 function openPop(key,node){
   var e=CUR.find(function(x){return evKey(x)===key;});if(!e)return;
   if(e.source==='self'){try{localStorage.setItem('learningTab','self');}catch(x){}location.href='learning/index.html';return;}
   var d=parseDk(e.date);
   $('pop-t').textContent=e.title;
   $('pop-m').innerHTML=DF[d.getDay()]+', '+MF[d.getMonth()]+' '+d.getDate()+(e.allDay?' · all day':' · '+fmtTime(e.time)+(e.endTime?' – '+fmtTime(e.endTime):'')+' '+esc(tzName()))+
-    (e.location?'<br>'+esc(e.location):'')+'<br><span style="color:'+e.color+'">●</span> '+esc(e.calName||'')+(e.source==='google'?' · Google':e.source==='local'?' · Brain 2.0':'');
+    (e.location?'<br>'+linkify(e.location):'')+(e.join&&String(e.location||'').indexOf(e.join)<0?'<br>'+linkify(e.join):'')+'<br><span style="color:'+e.color+'">●</span> '+esc(e.calName||'')+(e.source==='google'?' · Google':e.source==='local'?' · Brain 2.0':'');
   var a='';
   if(e.source==='google'&&e.link)a+='<a class="btn sm" href="'+esc(e.link)+'" target="_blank" rel="noopener">Open in Google ↗</a>';
   if(e.source==='bill')a+=(e.url?'<a class="btn sm" href="'+esc(e.url)+'" target="_blank" rel="noopener">Pay ↗</a>':'')+'<a class="btn sm" href="finances/">Finances</a>';
   if(e.source==='class')a+='<a class="btn sm" href="learning/">Open Classes</a>';
-  if(e.source==='google'||e.source==='local')a+='<button class="btn sm" type="button" id="pop-edit">Edit</button>';
+  if((e.source==='google'&&!e.ro)||e.source==='local')a+='<button class="btn sm" type="button" id="pop-edit">Edit</button>';
   if(e.source==='google')a+='<button class="btn sm" type="button" id="pop-copy">Copy to…</button>';
-  if(e.source==='local'||e.source==='google')a+='<button class="btn sm" type="button" id="pop-del">Delete</button>';
-  $('pop-a').innerHTML=a;
+  if(e.source==='local'||(e.source==='google'&&!e.ro))a+='<button class="btn sm" type="button" id="pop-del">Delete</button>';
+  $('pop-a').innerHTML=lessonPopHtml(e)+a;
+  var lb=$('pop-a').querySelector('.pop-lesson');if(lb)lb.onclick=function(ev2){var b=ev2.target.closest('[data-la]');if(!b)return;ev2.stopPropagation();lessonAct(lessonKey(e),b.getAttribute('data-la'));closePop();};
   var del=$('pop-del');if(del)del.onclick=function(){deleteEvent(e);};
   var cp=$('pop-copy');if(cp)cp.onclick=function(ev2){ev2.stopPropagation();copyForm(e);};
   var ed=$('pop-edit');if(ed)ed.onclick=function(ev2){ev2.stopPropagation();editForm(e);};
@@ -635,7 +658,7 @@ function loadGoogle(force){
   var from=addDays(today(),-14),to=addDays(today(),49),r=range();if(r[0]<from)from=addDays(r[0],-7);if(r[1]>to)to=addDays(r[1],7);
   if(!force&&gRange&&from>=gRange[0]&&to<=gRange[1]){renderCal();return Promise.resolve();}
   setSync('on busy','Syncing…');
-  return GCal.events(from,to).then(function(list){gEvents=list;gRange=[from,to];gAt=Date.now();syncLabel();renderCal();autoBackup();})
+  return GCal.events(from,to).then(function(list){gEvents=list;gRange=[from,to];gAt=Date.now();syncLabel();renderCal();renderLessons();autoBackup();})
     .catch(function(err){syncLabel();if(err.code!=='auth')flash(err.message,true);});
 }
 /* ───────── backup status ─────────
@@ -681,9 +704,9 @@ function openModal(){
 function closeModal(){$('gmodal').classList.remove('open');}
 function fillCals(){
   GCal.calendars().then(function(cals){
-    var c=GCal.config(),want=c.calendars&&c.calendars.length?c.calendars:cals.filter(function(x){return x.primary||x.selected;}).map(function(x){return x.id;});
-    $('gcal-list').innerHTML=cals.map(function(x){return '<label><input type="checkbox" value="'+esc(x.id)+'"'+(want.indexOf(x.id)>=0?' checked':'')+'><span class="dot" style="background:'+esc(x.backgroundColor)+'"></span>'+esc(x.summary)+(x.primary?' <span class="chip">main</span>':'')+'</label>';}).join('');
-    $('gdefault').innerHTML=cals.map(function(x){return '<option value="'+esc(x.id)+'"'+((c.defaultCal?c.defaultCal===x.id:x.primary)?' selected':'')+'>'+esc(x.summary)+'</option>';}).join('');
+    var c=GCal.config(),want=c.calendars&&c.calendars.length?c.calendars:cals.filter(function(x){return x.write&&(x.primary||x.selected);}).map(function(x){return x.id;});
+    $('gcal-list').innerHTML=cals.map(function(x){return '<label><input type="checkbox" value="'+esc(x.id)+'"'+(want.indexOf(x.id)>=0?' checked':'')+'><span class="dot" style="background:'+esc(x.backgroundColor)+'"></span>'+esc(x.summary)+(x.primary?' <span class="chip">main</span>':'')+(x.write?'':' <span class="chip">view only</span>')+'</label>';}).join('');
+    $('gdefault').innerHTML=cals.filter(function(x){return x.write;}).map(function(x){return '<option value="'+esc(x.id)+'"'+((c.defaultCal?c.defaultCal===x.id:x.primary)?' selected':'')+'>'+esc(x.summary)+'</option>';}).join('');
     $('gcals').style.display='';
   }).catch(function(){$('gcals').style.display='none';});
 }
@@ -882,6 +905,106 @@ $('lang').addEventListener('click',function(e){if(e.target.closest('a'))return;v
   var day=c.days[k]||(c.days[k]={done:[]});day.done=day.done||[];var id=row.getAttribute('data-lt'),i=day.done.indexOf(id);
   if(i>=0)day.done.splice(i,1);else day.done.push(id);lsSet('langChallenge1',db);renderLang();renderCount();});
 
+/* ───────── language lessons (Preply, italki…) ─────────
+   A lesson is a timed calendar event that names a tutoring site, or sits on a calendar named after a
+   language ("Spanish"). Once it has ended it waits here to be confirmed: "Count it" adds its length to
+   that day's study time for the language (the active challenge's day log, else the quick log), and
+   "Didn't happen" drops it. Nothing is counted on its own, because lessons get cancelled.
+   brain2Lessons1 {key: {s:'done'|'skip', mins, lang, date, ch?, ticked?[], logId?, t}}   key = the lesson's start time */
+var LESSON_SK='brain2Lessons1',LESSON_RE=/\b(preply|italki|lingoda|verbling|cambly)\b/i;
+var LANG_WORDS={es:/spanish|espa[nñ]ol/i,pt:/portugu/i,fr:/french|fran[cç]ais/i,it:/italian/i,de:/german|deutsch/i,ja:/japanese/i,ko:/korean/i};
+function lessons(){var s=lsGet(LESSON_SK);return s&&typeof s==='object'&&!Array.isArray(s)?s:{};}
+function lessonText(e){return [e.title,e.location,e.join].join(' ');}
+function isLesson(e){
+  if(!e||e.allDay||!e.time||(e.source!=='google'&&e.source!=='local'))return false;
+  if(LESSON_RE.test(lessonText(e)))return true;
+  for(var k in LANG_WORDS)if(LANG_WORDS[k].test(e.calName||''))return true;
+  return false;
+}
+function lessonLang(e){
+  var s=(e.calName||'')+' '+lessonText(e);for(var k in LANG_WORDS)if(LANG_WORDS[k].test(s))return k;
+  var c=lcActive(lsGet('langChallenge1'));return c&&c.lang?c.lang:'es';
+}
+function lessonKey(e){return e.startAt||(e.date+'T'+e.time);}
+function lessonEnd(e){return e.endAt?new Date(e.endAt):new Date(e.date+'T'+(e.endTime||e.time)+':00');}
+function lessonMins(e){
+  var m=e.startAt&&e.endAt?Math.round((new Date(e.endAt)-new Date(e.startAt))/60000):(e.endTime?mins(e.endTime)-mins(e.time):0);
+  return m>=5&&m<=300?m:60;
+}
+/* lessons from the last two weeks through today, one per start time (a copy on a second calendar is the same lesson) */
+function lessonList(){
+  var seen={},out=[];
+  eventsIn(addDays(today(),-14),addDays(today(),1)).forEach(function(e){if(!isLesson(e))return;var k=lessonKey(e);if(seen[k])return;seen[k]=1;out.push(e);});
+  return out.sort(function(a,b){return lessonEnd(a)-lessonEnd(b);});
+}
+function lessonByKey(k){return lessonList().filter(function(e){return lessonKey(e)===k;})[0]||null;}
+/* add (sign +1) or take back (sign −1) a lesson's minutes */
+function lessonLog(st,sign){
+  var db=lsGet('langChallenge1'),ch=null;
+  if(db&&Array.isArray(db.challenges)){
+    if(sign<0)ch=db.challenges.filter(function(c){return c.id===st.ch;})[0]||null;
+    else{var cand=db.challenges.filter(function(c){return !c.endedAt&&c.lang===st.lang&&c.start&&st.date>=c.start&&st.date<=dk(addDays(parseDk(c.start),(c.length||75)-1));});
+      ch=cand.filter(function(c){return c.id===db.active;})[0]||cand[0]||null;}
+  }
+  if(ch){
+    ch.days=ch.days||{};var d=ch.days[st.date]||(ch.days[st.date]={done:[]});if(!Array.isArray(d.done))d.done=[];
+    var before=+d.minutes||0,after=Math.max(0,before+sign*st.mins);
+    if(after)d.minutes=after;else delete d.minutes;
+    if(sign>0){(Array.isArray(d.sessions)?d.sessions:(d.sessions=[])).push({at:st.at,min:st.mins,what:'lesson'});st.ch=ch.id;st.ticked=[];}
+    else if(Array.isArray(d.sessions)){for(var i=d.sessions.length-1;i>=0;i--){var x=d.sessions[i];if(x&&x.what==='lesson'&&x.at===st.at&&+x.min===st.mins){d.sessions.splice(i,1);break;}}if(!d.sessions.length)delete d.sessions;}
+    /* the "minutes logged" rule ticks itself when the lesson takes the day over the line (and unticks on undo) */
+    (ch.tasks||[]).forEach(function(t){var a=t.auto,j=d.done.indexOf(t.id);if(!a||a.kind!=='minutes')return;
+      if(sign>0&&before<a.min&&after>=a.min&&j<0){d.done.push(t.id);st.ticked.push(t.id);}
+      if(sign<0&&(st.ticked||[]).indexOf(t.id)>=0&&after<a.min&&j>=0)d.done.splice(j,1);});
+    lsSet('langChallenge1',db);return;
+  }
+  var lp=lsGet('langPortal5')||{};lp.hours=lp.hours&&typeof lp.hours==='object'?lp.hours:{};lp.log=Array.isArray(lp.log)?lp.log:[];
+  if(sign>0){st.logId='l_'+Date.now();
+    lp.log.unshift({id:st.logId,lang:st.lang,skill:'lesson',skillLabel:'Lesson',resource:'--',note:'',mins:st.mins,date:new Date(st.date+'T'+st.at+':00').toISOString()});
+    lp.hours[st.lang]=(+lp.hours[st.lang]||0)+st.mins/60;}
+  else{var n=lp.log.length;lp.log=lp.log.filter(function(x){return x.id!==st.logId;});if(lp.log.length<n)lp.hours[st.lang]=Math.max(0,(+lp.hours[st.lang]||0)-st.mins/60);}
+  lsSet('langPortal5',lp);
+}
+function lessonAct(key,act){
+  var all=lessons(),st=all[key],e=lessonByKey(key);
+  if(act==='undo'){if(!st)return;if(st.s==='done')lessonLog(st,-1);delete all[key];flash('Undone');}
+  else{
+    if(!e||st)return;
+    if(act==='skip')all[key]={s:'skip',date:e.date,t:Date.now()};
+    else{st={s:'done',mins:lessonMins(e),lang:lessonLang(e),date:e.date,at:e.time,t:Date.now()};lessonLog(st,1);all[key]=st;
+      flash('Counted '+st.mins+' min of '+(LANG[st.lang]||'language')+' for '+DS[parseDk(e.date).getDay()]+' '+MS[parseDk(e.date).getMonth()]+' '+parseDk(e.date).getDate()+' ✓');}
+  }
+  /* forget decisions older than four months */
+  Object.keys(all).forEach(function(k){if(all[k]&&all[k].t&&Date.now()-all[k].t>120*864e5)delete all[k];});
+  lsSet(LESSON_SK,all);renderLessons();renderLang();renderCount();
+}
+function lessonWhen(e){var d=parseDk(e.date),t=today(),n=Math.round((t-d)/864e5);return (n===0?'Today':n===1?'Yesterday':DS[d.getDay()]+' '+MS[d.getMonth()]+' '+d.getDate())+' · '+fmtTime(e.time);}
+function renderLessons(){
+  var el=$('lessons');if(!el)return;
+  var st=lessons(),now=new Date(),list=lessonList(),h='';
+  var wait=list.filter(function(e){return lessonEnd(e)<=now&&!st[lessonKey(e)];});
+  var soon=list.filter(function(e){return lessonEnd(e)>now&&e.date===dk(today());});
+  soon.forEach(function(e){
+    h+='<div class="task lesson"><span class="tx" title="'+esc(e.title)+'">'+esc(e.title)+'</span><span class="lsub">'+lessonWhen(e)+' · '+lessonMins(e)+' min</span>'+
+      (e.join?'<a class="tag" href="'+esc(e.join)+'" target="_blank" rel="noopener">JOIN ↗</a>':'')+'</div>';});
+  wait.forEach(function(e){
+    h+='<div class="task lesson" data-lk="'+esc(lessonKey(e))+'"><span class="tx" title="'+esc(e.title)+'">'+esc(e.title)+'</span><span class="lsub">'+lessonWhen(e)+' · '+esc(LANG[lessonLang(e)]||'language')+'</span>'+
+      '<button type="button" class="lbtn ok" data-la="count" title="Add '+lessonMins(e)+' minutes to that day’s study time">Count '+lessonMins(e)+' min</button>'+
+      '<button type="button" class="lbtn" data-la="skip" title="Cancelled or missed: don’t count it">Didn’t happen</button></div>';});
+  el.innerHTML=h?'<div class="grp"><span>Lessons</span>'+(wait.length?'<span>'+wait.length+' to confirm</span>':'')+'</div>'+h:'';
+}
+$('lessons').addEventListener('click',function(e){var b=e.target.closest('[data-la]'),row=e.target.closest('[data-lk]');if(b&&row)lessonAct(row.getAttribute('data-lk'),b.getAttribute('data-la'));});
+/* whenever the calendar is redrawn (events added, edited, synced), the lesson list follows */
+var drawCal=renderCal;renderCal=function(){drawCal.apply(this,arguments);safe(renderLessons);};
+/* in an event's pop-up: where a lesson stands, and the same buttons */
+function lessonPopHtml(e){
+  if(!isLesson(e))return '';
+  var st=lessons()[lessonKey(e)],m=lessonMins(e),lg=LANG[lessonLang(e)]||'language';
+  if(st)return '<div class="pop-lesson"><span>'+(st.s==='done'?'✓ Counted '+st.mins+' min of '+esc(LANG[st.lang]||'language'):'Marked as didn’t happen')+'</span><button type="button" class="lbtn" data-la="undo">Undo</button></div>';
+  if(lessonEnd(e)>new Date())return '<div class="pop-lesson"><span>Lesson · '+m+' min of '+esc(lg)+'. You can count it once it’s over.</span></div>';
+  return '<div class="pop-lesson"><span>Did this lesson happen?</span><button type="button" class="lbtn ok" data-la="count">Count '+m+' min</button><button type="button" class="lbtn" data-la="skip">Didn’t happen</button></div>';
+}
+
 /* Body — the Fitness page's daily non-negotiables (fitnessTracker1_day_YYYY-MM-DD) */
 /* today's routine name comes from your own weekly plan on the Fitness page */
 function planRoutine(){var p=lsGet('fitnessTracker1_plan');if(!p||!p.week)return '';var id=p.week[new Date().getDay()];if(id===null)return 'Rest';var r=(p.routines||[]).filter(function(x){return x.id===id;})[0];return r?r.name:'';}
@@ -904,7 +1027,8 @@ function renderCount(){
 /* ───────── boot ───────── */
 safe(renderHead);safe(renderBills);safe(renderNow);safe(renderTasks);safe(renderLang);safe(renderBody);safe(renderCount);
 safe(function(){var c=GCal.cached();if(GCal.configured()&&c){gEvents=c.events||[];gAt=c.at;}});
-safe(renderCal);safe(syncLabel);safe(renderBackup);
+safe(renderCal);safe(syncLabel);safe(renderBackup);safe(renderLessons);
+setInterval(function(){safe(renderLessons);},60000);   /* a lesson moves to "to confirm" when it ends */
 if(GCal.configured()&&GCal.connected())loadGoogle(true);
 /* stay in step when another tab (Finances, Library, Languages…) changes data */
 window.addEventListener('storage',function(e){
@@ -912,6 +1036,7 @@ window.addEventListener('storage',function(e){
   if(e.key==='brain2BackupMeta1'||e.key==='brain2GCal1')safe(renderBackup);
   else if(e.key==='mediaTracker3')safe(renderNow);
   else if(e.key==='langChallenge1'){safe(renderLang);safe(renderCount);}
+  if(e.key==='brain2Lessons1'||e.key==='lifeCalendar1')safe(renderLessons);
   else if(e.key===TASK_SK){safe(renderTasks);safe(renderCount);}
   else if(e.key&&e.key.indexOf('fitnessTracker1_day_')===0){safe(renderBody);safe(renderCount);}
   else if(e.key==='lifeCalendar1'||e.key==='classTracker1'||e.key==='curriculum1')safe(renderCal);
