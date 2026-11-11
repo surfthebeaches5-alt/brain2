@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex">
+<title>Preview · Learning · Brain 2.0</title>
+<!-- A clickable preview of two proposed pages: Personal Curriculum and Courses.
+     Everything on it is example content held in memory. It reads and saves nothing. -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,500;0,9..144,600;1,9..144,500&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#f4eedf;--surface:#fffdf8;--raised:#fff;--warm:#f5efe1;--warm-deep:#ede5d2;--ink:#241f17;--ink-2:#4f473a;--muted:#8c8374;--faint:#b9b09e;--line:#ebe2cf;--hair:#f0e9da;
+  --accent:#a98fe0;--accent-deep:#8e71d3;--accent-soft:#f0eafc;--accent-line:#ddd0f5;--ok:#3f9866;--ok-bg:#e4f1e8;--warn:#c08a2e;--warn-bg:#f7eedb;--over:#cc5a70;
+  --serif:'Fraunces',Georgia,serif;--sans:'Plus Jakarta Sans',system-ui,-apple-system,sans-serif;}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--sans);-webkit-font-smoothing:antialiased;font-size:14px}
+button,input,select,textarea{font:inherit;color:inherit}
+button{cursor:pointer}
+.nav{height:64px;display:flex;align-items:center;gap:30px;padding:0 32px;border-bottom:1px solid var(--line);position:sticky;top:0;background:rgba(244,238,223,.94);backdrop-filter:blur(10px);z-index:20}
+.logo{font-family:var(--serif);font-size:20px;font-weight:600;margin-right:6px;white-space:nowrap}.logo em{color:var(--accent-deep)}
+.nav .sp{font-size:14.5px;font-weight:600;color:var(--muted)}
+.nav .sp.on{color:var(--ink)}
+.lmenu{display:flex;gap:4px;background:var(--warm-deep);border-radius:12px;padding:4px;margin-left:8px}
+.lmenu button{white-space:nowrap;border:0;background:transparent;padding:7px 14px;border-radius:9px;font-size:13px;font-weight:650;color:var(--muted)}
+.lmenu button.on{background:#fff;color:var(--ink);box-shadow:0 1px 2px rgba(60,50,30,.1)}
+.pv{margin-left:auto;font-size:12px;font-weight:650;color:var(--warn);background:var(--warn-bg);padding:6px 12px;border-radius:20px;white-space:nowrap}
+.page{max-width:1200px;margin:0 auto;padding:28px 32px 70px}
+.head{display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap}
+h1{font-family:var(--serif);font-size:36px;font-weight:600;letter-spacing:-.6px;margin:0}
+.tabs{display:inline-flex;background:var(--warm-deep);border-radius:13px;padding:4px}
+.tabs button{border:0;background:transparent;padding:8px 16px;border-radius:10px;font-size:13.5px;font-weight:650;color:var(--muted)}
+.tabs button.on{background:#fff;color:var(--ink);box-shadow:0 1px 2px rgba(60,50,30,.1)}
+.bar{display:flex;align-items:center;gap:8px;margin:20px 0 16px;flex-wrap:wrap}
+.pick{height:40px;border:1px solid var(--line);border-radius:12px;background:#fff;padding:0 34px 0 14px;font-weight:650;font-size:14px;box-shadow:0 1px 2px rgba(60,50,30,.04);appearance:none;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%238c8374' stroke-width='2.5' stroke-linecap='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 12px center}
+.grow{flex:1}
+.btn{display:inline-flex;align-items:center;gap:6px;height:34px;padding:0 13px;border-radius:10px;border:1px solid var(--line);background:#fff;font-size:12.5px;font-weight:650;color:var(--ink-2);text-decoration:none}
+.btn:hover{border-color:var(--accent-line);color:var(--accent-deep)}
+.btn.dark{background:var(--ink);border-color:var(--ink);color:#fffdf9}.btn.dark:hover{opacity:.9;color:#fffdf9}
+.cols{display:grid;grid-template-columns:minmax(0,1.55fr) minmax(0,1fr);gap:18px;align-items:start}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:20px;box-shadow:0 1px 2px rgba(60,50,30,.04),0 10px 26px rgba(60,50,30,.06);padding:24px 26px}
+.card+.card{margin-top:18px}
+h2{font-family:var(--serif);font-size:25px;font-weight:600;margin:0;letter-spacing:-.3px}
+.meta{display:flex;align-items:center;gap:10px;flex-wrap:wrap;font-size:12.5px;color:var(--muted);font-weight:600;margin-top:5px}
+.wks{display:inline-flex;gap:3px;vertical-align:middle}.wks i{width:10px;height:10px;border-radius:3px;background:var(--warm-deep)}.wks i.on{background:var(--accent)}
+.next{display:flex;align-items:center;gap:10px;margin-top:14px;padding:9px 12px;border-radius:11px;background:var(--accent-soft);font-size:13px;font-weight:600}
+.next .l{font-size:10px;letter-spacing:.14em;text-transform:uppercase;font-weight:700;color:var(--accent-deep)}
+.next .tx{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.next .u{font-size:11.5px;color:var(--muted);font-weight:600;white-space:nowrap}
+.lab{font-size:10.5px;letter-spacing:.15em;text-transform:uppercase;color:var(--muted);font-weight:700;margin:22px 0 8px;display:flex;justify-content:space-between;align-items:center}
+.link{border:0;background:none;padding:0;font-family:var(--sans);letter-spacing:0;text-transform:none;font-size:12px;color:var(--accent-deep);font-weight:650}
+.link:hover{text-decoration:underline}
+ul.goals{margin:0;padding:0;list-style:none}
+ul.goals li{position:relative;padding:3px 0 3px 16px;font-size:14px;font-weight:500;line-height:1.5}
+ul.goals li::before{content:"";position:absolute;left:2px;top:11px;width:5px;height:5px;border-radius:50%;background:var(--accent)}
+.line{width:100%;height:36px;border:1px solid var(--line);border-radius:10px;background:#fff;padding:0 11px;font-size:13px}
+.line:focus,.note:focus,.pick:focus{outline:2px solid var(--accent-line);outline-offset:0}
+.unit{border-top:1px solid var(--hair)}
+.unit:last-of-type{border-bottom:1px solid var(--hair)}
+.uh{display:flex;align-items:center;gap:12px;width:100%;border:0;background:none;padding:12px 0;text-align:left}
+.uh .n{font-family:var(--serif);font-size:17px;font-weight:600;color:var(--accent-deep);width:18px}
+.uh .t{flex:1;font-family:var(--serif);font-size:17px;font-weight:600}
+.uh .c{font-size:12px;color:var(--muted);font-weight:600}
+.uh .v{color:var(--faint);font-size:11px;width:12px;transition:transform .15s}
+.unit.open .uh .v{transform:rotate(180deg)}
+.ub{display:none;padding:0 0 14px 30px}.unit.open .ub{display:block}
+.q{font-family:var(--serif);font-style:italic;font-size:14.5px;color:var(--ink-2);margin:0 0 10px;line-height:1.4}
+.it{display:flex;align-items:center;gap:10px;padding:7px 10px;border-radius:10px;background:var(--warm);margin-bottom:4px;font-size:13px;font-weight:600;cursor:pointer}
+.ck{width:16px;height:16px;border-radius:5px;border:1.5px solid var(--faint);background:#fff;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:10px;color:#fff;cursor:pointer}
+.on>.ck,.ck.on{background:var(--accent-deep);border-color:var(--accent-deep)}
+.it.on .tx{color:var(--muted);text-decoration:line-through}
+.it .tx{flex:1;min-width:0}
+.it .k{font-size:9.5px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--faint)}
+.addit{display:flex;gap:6px;margin-top:6px}
+.addit select{height:36px;border:1px solid var(--line);border-radius:10px;background:#fff;padding:0 8px;font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+.proj{font-size:14px;font-weight:500;line-height:1.5;border-radius:8px;padding:2px 4px;margin:0 -4px}
+.proj[contenteditable=true]{outline:2px solid var(--accent-line);background:#fff}
+.ttl{font-family:var(--serif);font-size:19px;font-weight:600;display:flex;justify-content:space-between;align-items:baseline;margin-bottom:12px;gap:10px}
+.note{width:100%;min-height:210px;border-radius:12px;border:1px solid var(--line);padding:5px 12px;font-size:13.5px;line-height:28px;color:var(--ink);font-weight:500;resize:vertical;
+  background:repeating-linear-gradient(#fff,#fff 27px,var(--hair) 27px,var(--hair) 28px);background-attachment:local}
+.saved{font-size:11.5px;color:var(--muted);font-weight:600;margin-top:8px;min-height:16px}
+.saved b{color:var(--ok);font-weight:650}
+.mat{display:flex;align-items:center;gap:10px;padding:8px 0;border-top:1px solid var(--hair);font-size:13px;font-weight:600}
+.mat:first-of-type{border-top:0}
+.mat i{width:26px;height:26px;border-radius:7px;background:var(--warm);display:flex;align-items:center;justify-content:center;font-style:normal;font-size:10px;font-weight:700;color:var(--muted);flex-shrink:0}
+.mat small{display:block;font-weight:500;color:var(--muted);font-size:11.5px}
+.empty{color:var(--faint);font-size:13px;font-weight:500;padding:4px 0}
+/* notes tab */
+.ncols{display:grid;grid-template-columns:280px minmax(0,1fr);gap:18px;align-items:start}
+.nl{padding:10px}
+.ne{display:block;width:100%;text-align:left;border:0;background:none;padding:10px 12px;border-radius:11px;font-size:13px;font-weight:650}
+.ne small{display:block;font-weight:500;color:var(--muted);font-size:11.5px;margin-top:2px}
+.ne.on{background:var(--accent-soft)}.ne:hover{background:var(--warm)}.ne.on:hover{background:var(--accent-soft)}
+.etitle{width:100%;border:0;background:none;font-family:var(--serif);font-size:22px;font-weight:600;padding:0;margin-bottom:10px}
+.etitle:focus{outline:none}
+.editor .note{min-height:380px}
+/* ideas */
+.addrow{display:flex;gap:8px;margin-bottom:4px}
+.addrow .line{height:42px;border-radius:12px;font-size:14px}
+table{width:100%;border-collapse:collapse;font-size:13.5px}
+th{text-align:left;font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);font-weight:700;padding:14px 10px 8px 0;border-bottom:1px solid var(--line)}
+td{padding:11px 10px 11px 0;border-bottom:1px solid var(--hair);vertical-align:top;font-weight:500}
+td.t{font-weight:650}td.m{color:var(--muted);font-size:12.5px}
+.chip{display:inline-block;font-size:11px;font-weight:700;padding:3px 9px;border-radius:20px;background:var(--warm);color:var(--muted);white-space:nowrap}
+.chip.g{background:var(--ok-bg);color:var(--ok)}.chip.w{background:var(--warn-bg);color:var(--warn)}
+/* courses */
+.stats{display:grid;grid-template-columns:repeat(3,1fr);margin-top:14px;border:1px solid var(--hair);border-radius:12px}
+.stats div{padding:10px 14px}.stats div+div{border-left:1px solid var(--hair)}
+.stats b{font-family:var(--serif);font-size:19px;font-weight:600;display:block;line-height:1.15}
+.stats span{font-size:10px;letter-spacing:.13em;text-transform:uppercase;color:var(--muted);font-weight:700}
+.row{display:flex;align-items:center;gap:10px;padding:8px 0;border-top:1px solid var(--hair);font-size:13.5px;font-weight:500}
+.row:first-of-type{border-top:0}
+.row .g{flex:1;min-width:0}.row b{font-family:var(--serif);font-weight:600}
+.pbar{flex:1;height:6px;border-radius:6px;background:var(--warm-deep);overflow:hidden}.pbar i{display:block;height:100%;background:var(--accent);border-radius:6px}
+.pbar.low i{background:var(--over)}
+.setadd{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:8px}
+.setadd select,.setadd input{height:36px;border:1px solid var(--line);border-radius:10px;background:#fff;padding:0 9px;font-size:13px}
+.setadd input{width:64px;text-align:center}
+[hidden]{display:none !important}
+@media(max-width:900px){.cols,.ncols{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div class="nav">
+  <div class="logo">Brain <em>2.0</em></div>
+  <span class="sp on">Learning</span>
+  <div class="lmenu" id="lmenu"><button data-go="pc">Personal Curriculum</button><button data-go="fsot">FSOT</button><button data-go="excel">Online course</button></div>
+  <span class="pv">Preview · example content, nothing is saved</span>
+</div>
+<div class="page" id="page"></div>
+
+<script>
+'use strict';
+/* ── example content (in memory only) ── */
+var KINDS=['Read','Watch','Listen','Do','Write'];
+function I(t,k,done){return {t:t,k:k,done:!!done};}
+var PC=[
+  {id:'cities',title:'How cities work',weeks:[1,1,0,1,1,1,0,1],
+   goals:['Explain why some streets feel alive and others feel empty','Read one classic book on cities start to finish'],
+   units:[
+     {name:'What makes a street work',q:'Why do people linger on some blocks and hurry through others?',open:true,items:[I('The Death and Life of Great American Cities, part 1','Read',1),I('Not Just Bikes: why some streets feel safe','Watch',1),I('99% Invisible, three city episodes','Listen'),I('Walk a new neighbourhood and take notes','Do')]},
+     {name:'Housing and density',q:'What does it take for a place to be both dense and pleasant?',items:[I('Article: the missing middle','Read',1),I('Documentary on public housing','Watch',1),I('Compare two neighbourhoods on a map','Do'),I('One page: what I think now','Write')]},
+     {name:'Getting around',q:'',items:[I('Chapter on transit','Read'),I('Ride a bus line end to end','Do'),I('Podcast episode on parking','Listen')]}],
+   project:'A two-page write-up of my own neighbourhood: what works, what doesn’t, and one change I’d make.',
+   unitNotes:{0:'Jacobs: “eyes on the street” is about strangers feeling watched over, not surveillance.\nShort blocks = more corners = more reasons to turn.\nQuestion for the walk: where do people actually stop?'},
+   notes:[{title:'Why I’m doing this',date:'Nov 3',text:'I keep noticing how different two streets a block apart can feel. I want words for it.'}]},
+  {id:'art',title:'Learning to look at art',weeks:[0,0,0,0,0,1,1,1],
+   goals:['Stand in front of a painting and know what to look for'],
+   units:[{name:'Before the Impressionists',q:'What were they reacting against?',open:true,items:[I('Great Art Explained, three episodes','Watch',1),I('Museum visit: one room, one hour','Do')]}],
+   project:'',unitNotes:{},notes:[]}
+];
+var IDEAS=[
+  {t:'How cities work',theme:'Society',note:'Started after the trip',added:'Oct 28',study:'cities'},
+  {t:'Learning to look at art',theme:'Art',note:'The museum is free on Thursdays',added:'Nov 2',study:'art'},
+  {t:'How the Fed actually works',theme:'Money',note:'Planet Money has a series',added:'Nov 6'},
+  {t:'Film photography',theme:'Making',note:'Borrow a camera first',added:'Nov 8'},
+  {t:'Wine regions',theme:'Food & drink',note:'',added:'Nov 10'}
+];
+var CO=[
+  {id:'fsot',title:'FSOT',sub:'Test · February',test:{label:'February',weeks:12},weeks:[1,1,0,1,1,1,0,1],goals:['Cover every section once before January','Take three full practice tests'],
+   units:[
+     {name:'U.S. government',q:'',open:true,items:[I('Crash Course Government, episodes 1–5','Watch',1),I('Flashcards: the Constitution and amendments','Do',1),I('Study guide chapter: the three branches','Read'),I('20 practice questions','Do')]},
+     {name:'World history and geography',q:'',items:[I('Study guide chapter','Read',1),I('Map quiz','Do',1),I('20 practice questions','Do')]},
+     {name:'Economics',q:'',items:[I('Study guide chapter','Read'),I('20 practice questions','Do')]},
+     {name:'English expression',q:'',items:[I('Grammar review','Read'),I('30 practice questions','Do')]},
+     {name:'Situational judgment',q:'',items:[I('Read the official guidance','Read'),I('Practice set','Do')]},
+     {name:'Essay',q:'',items:[I('Timed essay 1','Write'),I('Timed essay 2','Write')]}],
+   project:'',unitNotes:{0:'Checks and balances: who can stop whom.\nI mix up the 14th and 15th amendments. Review again.'},
+   notes:[{title:'Timed essay 1 (draft)',date:'Nov 9',text:'Prompt: …\n\nMy answer: …'}],
+   sets:[{d:'Nov 10',sec:'U.S. government',right:15,total:20},{d:'Nov 8',sec:'World history and geography',right:12,total:20},{d:'Nov 5',sec:'Economics',right:9,total:20},{d:'Nov 3',sec:'U.S. government',right:13,total:20}],
+   scores:[{d:'Nov 2',score:142},{d:'Oct 12',score:131}]},
+  {id:'excel',title:'Data Skills for Excel Professionals',sub:'Online course',weeks:[1,0,1,1,0,0,1,0],goals:[],
+   units:[{name:'Fundamentals of data analysis',q:'',open:true,items:[I('Videos 1–6','Watch',1),I('Practice workbook','Do',1),I('Module quiz','Do')]},{name:'Dictionaries, quality and communication',q:'',items:[I('Videos 1–5','Watch'),I('Module quiz','Do')]}],
+   project:'',unitNotes:{},notes:[]},
+  {id:'ux',title:'Google UX Design',sub:'Certificate',weeks:[0,0,1,1,0,0,0,0],goals:[],
+   units:[{name:'Wireframes and low-fidelity prototypes',q:'',open:true,items:[I('Week 1 lessons','Watch'),I('Sketch three wireframes','Do')]}],
+   project:'',unitNotes:{},notes:[]}
+];
+var S={page:'pc',tab:{pc:'study',co:'plan'},cur:{pc:'cities',co:'fsot'},note:{pc:0,co:0}};
+
+/* ── helpers ── */
+function $(s,r){return (r||document).querySelector(s);}
+function esc(s){return String(s==null?'':s).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];});}
+function list(){return S.page==='pc'?PC:CO;}
+function cur(){var l=list(),id=S.cur[S.page];for(var i=0;i<l.length;i++)if(l[i].id===id)return l[i];return l[0];}
+function counts(x){var d=0,t=0;x.units.forEach(function(u){u.items.forEach(function(i){t++;if(i.done)d++;});});return {d:d,t:t};}
+function nextOf(x){for(var u=0;u<x.units.length;u++)for(var i=0;i<x.units[u].items.length;i++)if(!x.units[u].items[i].done)return {u:u,i:i};return null;}
+function openUnit(x){for(var u=0;u<x.units.length;u++)if(x.units[u].open)return u;return 0;}
+function folder(x){return (S.page==='pc'?'Brain 2.0 › Personal Curriculum › ':'Brain 2.0 › Courses › ')+x.title;}
+function wks(x){var n=x.weeks.filter(Boolean).length;return '<span class="wks">'+x.weeks.map(function(w){return '<i class="'+(w?'on':'')+'"></i>';}).join('')+'</span> studied '+n+' of the last 8 weeks';}
+
+/* ── the outline (goals, units with to-dos, final project) used by both pages ── */
+function outline(x){
+  var c=counts(x),nx=nextOf(x),unitWord=S.page==='pc'?'Units':'Sections',h='';
+  h+='<div class="card"><h2>'+esc(x.title)+'</h2><div class="meta"><span>'+x.units.length+' '+unitWord.toLowerCase()+' · '+c.d+' of '+c.t+' done</span><span>'+wks(x)+'</span></div>';
+  if(x.test){var sc=x.scores&&x.scores[0];
+    h+='<div class="stats"><div><b>'+x.test.weeks+' weeks</b><span>until the test · '+esc(x.test.label)+'</span></div><div><b>'+c.d+' / '+c.t+'</b><span>covered</span></div><div><b>'+(sc?sc.score:'–')+'</b><span>latest practice test</span></div></div>';}
+  if(nx){var it=x.units[nx.u].items[nx.i];
+    h+='<div class="next"><span class="ck" data-act="tick" data-u="'+nx.u+'" data-i="'+nx.i+'" title="Tick it off"></span><span class="l">Next</span><span class="tx">'+esc(it.t)+'</span><span class="u">'+esc(x.units[nx.u].name)+'</span></div>';}
+  else if(c.t)h+='<div class="next"><span class="l">All done</span><span class="tx">Every to-do is ticked.</span></div>';
+  h+='<div class="lab">Goals<button class="link" data-act="addgoal">+ Add</button></div>';
+  h+=x.goals.length?'<ul class="goals">'+x.goals.map(function(g){return '<li>'+esc(g)+'</li>';}).join('')+'</ul>':'<div class="empty">None yet</div>';
+  h+='<div class="lab">'+unitWord+'<button class="link" data-act="addunit">+ '+unitWord.slice(0,-1)+'</button></div>';
+  if(!x.units.length)h+='<div class="empty">None yet</div>';
+  x.units.forEach(function(u,ui){
+    var d=u.items.filter(function(i){return i.done;}).length;
+    h+='<div class="unit'+(u.open?' open':'')+'"><button class="uh" data-act="toggle" data-u="'+ui+'"><span class="n">'+(ui+1)+'</span><span class="t">'+esc(u.name)+'</span><span class="c">'+d+' of '+u.items.length+'</span><span class="v">▾</span></button><div class="ub">';
+    if(u.q)h+='<p class="q">'+esc(u.q)+'</p>';
+    u.items.forEach(function(it,ii){h+='<div class="it'+(it.done?' on':'')+'" data-act="tick" data-u="'+ui+'" data-i="'+ii+'"><span class="ck">'+(it.done?'✓':'')+'</span><span class="tx">'+esc(it.t)+'</span><span class="k">'+esc(it.k)+'</span></div>';});
+    h+='<div class="addit"><select aria-label="Kind">'+KINDS.map(function(k){return '<option>'+k+'</option>';}).join('')+'</select><input class="line" data-add="'+ui+'" placeholder="Add a to-do or paste a link" aria-label="Add a to-do"></div></div></div>';
+  });
+  if(S.page==='pc'){h+='<div class="lab">Final project<button class="link" data-act="editproj">Edit</button></div><div class="proj" id="proj">'+(x.project?esc(x.project):'<span class="empty">None yet</span>')+'</div>';}
+  return h+'</div>';
+}
+function side(x){
+  var ou=openUnit(x),u=x.units[ou],h='';
+  h+='<div class="card"><div class="ttl">Notes'+(u?' · '+esc(u.name):'')+'<button class="link" data-act="tab" data-tab="notes">All notes →</button></div>'+
+     '<textarea class="note" id="unote" data-u="'+ou+'" placeholder="Write here…">'+esc(x.unitNotes[ou]||'')+'</textarea><div class="saved" id="usaved"></div></div>';
+  var mats=[];x.units.forEach(function(un){un.items.forEach(function(i){if(/Read|Watch|Listen/.test(i.k)&&mats.length<4)mats.push(i);});});
+  h+='<div class="card"><div class="ttl">Materials</div>'+(mats.length?mats.map(function(m){return '<div class="mat"><i>'+m.k.charAt(0)+'</i><span>'+esc(m.t)+'<small>'+esc(m.k)+'</small></span></div>';}).join(''):'<div class="empty">Links and books from your to-dos collect here</div>')+'</div>';
+  return h;
+}
+function topbar(x,newLabel){
+  return '<div class="bar"><select class="pick" id="pick" aria-label="Choose">'+list().map(function(s){return '<option value="'+s.id+'"'+(s.id===x.id?' selected':'')+'>'+esc(s.title)+(s.sub?' · '+esc(s.sub):'')+'</option>';}).join('')+'</select>'+
+    '<span class="grow"></span><button class="btn" data-act="fake" data-msg="Saves this as a PDF, like the other pages">Save PDF</button>'+
+    '<button class="btn" data-act="fake" data-msg="Opens this study’s folder in your Google Drive: '+esc(folder(x))+'">Drive folder ↗</button>'+
+    '<button class="btn dark" data-act="new">+ '+newLabel+'</button></div>';
+}
+/* ── notes tab: one list per study (unit notes + your own notes and essays) ── */
+function allNotes(x){
+  var out=[];x.units.forEach(function(u,i){if((x.unitNotes[i]||'').trim())out.push({unit:i,title:u.name,date:(S.page==='pc'?'Unit ':'Section ')+(i+1)});});
+  x.notes.forEach(function(n,i){out.push({own:i,title:n.title,date:n.date});});return out;
+}
+function notesTab(x){
+  var l=allNotes(x),sel=Math.min(S.note[S.page],Math.max(0,l.length-1)),n=l[sel],text=n?(n.unit!=null?x.unitNotes[n.unit]:x.notes[n.own].text):'';
+  var h=topbar(x,S.page==='pc'?'New study':'New course')+'<div class="ncols"><div class="card nl">'+
+    (l.length?l.map(function(e,i){return '<button class="ne'+(i===sel?' on':'')+'" data-act="selnote" data-n="'+i+'">'+esc(e.title)+'<small>'+esc(e.date)+'</small></button>';}).join(''):'<div class="empty" style="padding:8px 12px">No notes yet</div>')+
+    '<div style="padding:8px 8px 4px"><button class="btn" data-act="newnote" style="width:100%;justify-content:center">+ New note or essay</button></div></div>';
+  h+='<div class="card editor">'+(n?'<input class="etitle" id="ntitle" value="'+esc(n.title)+'"'+(n.unit!=null?' readonly':'')+' aria-label="Title"><textarea class="note" id="nbody" placeholder="Write here…">'+esc(text)+'</textarea>'+
+    '<div class="bar" style="margin:12px 0 0"><span class="saved grow" id="nsaved">A copy is kept in Drive: '+esc(folder(x))+'</span><button class="btn" data-act="download">Download</button></div>':'<div class="empty">Pick a note, or start a new one</div>')+'</div></div>';
+  return h;
+}
+/* ── ideas (Personal Curriculum only) ── */
+function ideasTab(){
+  var themes=[];IDEAS.forEach(function(i){if(i.theme&&themes.indexOf(i.theme)<0)themes.push(i.theme);});
+  return '<div class="bar" style="margin-bottom:6px"></div><div class="card"><div class="addrow"><input class="line" id="idea" placeholder="Add an idea" aria-label="Idea"><input class="line" id="itheme" list="themes" placeholder="Theme" style="width:190px;flex:none" aria-label="Theme"><datalist id="themes">'+themes.map(function(t){return '<option value="'+esc(t)+'">';}).join('')+'</datalist><button class="btn dark" data-act="addidea" style="height:42px">Add</button></div>'+
+    '<table><thead><tr><th style="width:36%">Idea</th><th style="width:15%">Theme</th><th>Note</th><th style="width:10%">Added</th><th style="width:11%"></th></tr></thead><tbody>'+
+    IDEAS.map(function(i,n){return '<tr><td class="t">'+esc(i.t)+'</td><td>'+(i.theme?'<span class="chip">'+esc(i.theme)+'</span>':'')+'</td><td class="m">'+esc(i.note)+'</td><td class="m">'+esc(i.added)+'</td><td>'+(i.study?'<span class="chip g">Studying</span>':'<button class="link" data-act="start" data-n="'+n+'">Start →</button>')+'</td></tr>';}).join('')+'</tbody></table></div>';
+}
+/* ── practice (a course with a test) ── */
+function practiceTab(x){
+  var by={};x.units.forEach(function(u){by[u.name]={r:0,t:0};});
+  x.sets.forEach(function(s){if(!by[s.sec])by[s.sec]={r:0,t:0};by[s.sec].r+=s.right;by[s.sec].t+=s.total;});
+  var done=Object.keys(by).filter(function(k){return by[k].t;}),low=done.slice().sort(function(a,b){return by[a].r/by[a].t-by[b].r/by[b].t;})[0];
+  var h=topbar(x,'New course')+'<div class="cols"><div><div class="card"><div class="ttl">Practice questions</div>'+
+    '<div class="setadd"><select id="ssec" aria-label="Section">'+x.units.map(function(u){return '<option>'+esc(u.name)+'</option>';}).join('')+'</select><input id="sright" type="number" min="0" placeholder="right" aria-label="Right"><input id="stotal" type="number" min="1" placeholder="of" aria-label="Out of"><button class="btn dark" data-act="addset" style="height:36px">Add</button></div>'+
+    (x.sets.length?x.sets.map(function(s){var p=Math.round(s.right/s.total*100);return '<div class="row"><span class="g">'+esc(s.sec)+'<small style="display:block;color:var(--muted);font-size:11.5px">'+esc(s.d)+'</small></span><span>'+s.right+' / '+s.total+'</span><b style="width:44px;text-align:right">'+p+'%</b></div>';}).join(''):'<div class="empty">No question sets yet</div>')+'</div></div>'+
+    '<div><div class="card"><div class="ttl">By section</div>'+Object.keys(by).map(function(k){var b=by[k],p=b.t?Math.round(b.r/b.t*100):0;
+      return '<div class="row"><span style="width:44%;min-width:0">'+esc(k)+(k===low&&done.length>1?' <span class="chip w">weakest</span>':'')+'</span><span class="pbar'+(k===low&&done.length>1?' low':'')+'"><i style="width:'+p+'%"></i></span><b style="width:40px;text-align:right">'+(b.t?p+'%':'–')+'</b></div>';}).join('')+'</div>'+
+    '<div class="card"><div class="ttl">Practice tests<button class="link" data-act="addscore">+ Add a score</button></div>'+(x.scores.length?x.scores.map(function(s){return '<div class="row"><span class="g">'+esc(s.d)+'</span><b>'+s.score+'</b></div>';}).join(''):'<div class="empty">None yet</div>')+'</div></div></div>';
+  return h;
+}
+/* ── page ── */
+function render(){
+  var x=cur(),t=S.tab[S.page],pc=S.page==='pc';
+  [].forEach.call(document.querySelectorAll('#lmenu button'),function(b){var g=b.getAttribute('data-go');b.classList.toggle('on',g==='pc'?pc:(!pc&&(g==='fsot')===!!x.test));});
+  var tabs=pc?[['study','Studying'],['notes','Notes'],['ideas','Ideas']]:[['plan','Plan']].concat(x.test?[['practice','Practice']]:[]).concat([['notes','Notes']]);
+  if(!tabs.some(function(a){return a[0]===t;}))t=S.tab[S.page]=tabs[0][0];
+  var h='<div class="head"><h1>'+(pc?'Personal Curriculum':'Courses')+'</h1><div class="tabs">'+tabs.map(function(a){return '<button data-act="tab" data-tab="'+a[0]+'" class="'+(a[0]===t?'on':'')+'">'+a[1]+'</button>';}).join('')+'</div></div>';
+  if(t==='study'||t==='plan')h+=topbar(x,pc?'New study':'New course')+'<div class="cols"><div>'+outline(x)+'</div><div>'+side(x)+'</div></div>';
+  else if(t==='notes')h+=notesTab(x);
+  else if(t==='ideas')h+=ideasTab();
+  else if(t==='practice')h+=practiceTab(x);
+  $('#page').innerHTML=h;
+}
+var toastT;function say(msg){var t=$('#toast');if(!t){t=document.createElement('div');t.id='toast';t.style.cssText='position:fixed;left:50%;bottom:24px;transform:translateX(-50%);background:#241f17;color:#fffdf9;padding:11px 16px;border-radius:14px;font-weight:600;font-size:13px;z-index:50;max-width:calc(100vw - 32px);box-shadow:0 14px 34px rgba(36,31,23,.3)';document.body.appendChild(t);}
+  t.textContent=msg;t.style.display='block';clearTimeout(toastT);toastT=setTimeout(function(){t.style.display='none';},3200);}
+function today(){var d=new Date();return ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'][d.getMonth()]+' '+d.getDate();}
+
+document.addEventListener('click',function(e){
+  var go=e.target.closest('[data-go]');if(go){var g=go.getAttribute('data-go');if(g==='pc')S.page='pc';else{S.page='co';S.cur.co=g;S.tab.co='plan';}render();window.scrollTo(0,0);return;}
+  var el=e.target.closest('[data-act]');if(!el)return;
+  var a=el.getAttribute('data-act'),x=cur();
+  if(a==='tab'){S.tab[S.page]=el.getAttribute('data-tab');render();}
+  else if(a==='toggle'){var u=+el.getAttribute('data-u'),was=x.units[u].open;x.units.forEach(function(q){q.open=false;});x.units[u].open=!was;render();}
+  else if(a==='tick'){var it=x.units[+el.getAttribute('data-u')].items[+el.getAttribute('data-i')];it.done=!it.done;x.weeks[x.weeks.length-1]=1;render();}
+  else if(a==='fake'){say(el.getAttribute('data-msg'));}
+  else if(a==='addgoal'){var g=prompt('Goal');if(g&&g.trim()){x.goals.push(g.trim());render();}}
+  else if(a==='addunit'){var n=prompt(S.page==='pc'?'Unit name':'Section name');if(n&&n.trim()){x.units.forEach(function(q){q.open=false;});x.units.push({name:n.trim(),q:'',open:true,items:[]});render();}}
+  else if(a==='editproj'){var p=$('#proj');if(p.isContentEditable){x.project=p.textContent.trim();render();}else{p.textContent=x.project;p.contentEditable='true';p.focus();el.textContent='Done';}}
+  else if(a==='new'){var t=prompt(S.page==='pc'?'What do you want to study?':'Course name');if(t&&t.trim()){var id='n'+Date.now();list().push({id:id,title:t.trim(),sub:S.page==='pc'?'':'Online course',weeks:[0,0,0,0,0,0,0,0],goals:[],units:[],project:'',unitNotes:{},notes:[]});S.cur[S.page]=id;S.tab[S.page]=S.page==='pc'?'study':'plan';render();say('Created, with its own Drive folder: '+folder(cur()));}}
+  else if(a==='selnote'){S.note[S.page]=+el.getAttribute('data-n');render();}
+  else if(a==='newnote'){x.notes.push({title:'Untitled',date:today(),text:''});S.note[S.page]=allNotes(x).length-1;render();var nt=$('#ntitle');if(nt){nt.focus();nt.select();}}
+  else if(a==='download'){var l=allNotes(x),nn=l[S.note[S.page]];if(!nn)return;var body=$('#nbody').value,blob=new Blob([nn.title+'\n\n'+body],{type:'text/plain'}),link=document.createElement('a');link.href=URL.createObjectURL(blob);link.download=nn.title.replace(/[^\w -]+/g,'')+'.txt';link.click();}
+  else if(a==='addidea'){var v=$('#idea').value.trim();if(!v)return;IDEAS.push({t:v,theme:$('#itheme').value.trim(),note:'',added:today()});render();$('#idea').focus();}
+  else if(a==='start'){var idea=IDEAS[+el.getAttribute('data-n')],sid='n'+Date.now();PC.push({id:sid,title:idea.t,weeks:[0,0,0,0,0,0,0,0],goals:[],units:[],project:'',unitNotes:{},notes:[]});idea.study=sid;S.cur.pc=sid;S.tab.pc='study';render();say('Started. It has its own Drive folder: '+folder(cur()));}
+  else if(a==='addset'){var r=+$('#sright').value,tt=+$('#stotal').value;if(!(tt>0)||r<0||r>tt){say('Enter how many you got right, out of how many');return;}x.sets.unshift({d:today(),sec:$('#ssec').value,right:r,total:tt});render();}
+  else if(a==='addscore'){var s=prompt('Practice test score');if(s&&!isNaN(+s)){x.scores.unshift({d:today(),score:+s});render();}}
+});
+document.addEventListener('change',function(e){if(e.target.id==='pick'){S.cur[S.page]=e.target.value;S.note[S.page]=0;render();}});
+document.addEventListener('keydown',function(e){
+  if(e.key!=='Enter')return;var t=e.target;
+  if(t.hasAttribute&&t.hasAttribute('data-add')){var v=t.value.trim();if(!v)return;var x=cur(),u=+t.getAttribute('data-add');x.units[u].items.push(I(v,t.previousElementSibling.value));render();var again=$('[data-add="'+u+'"]');if(again)again.focus();}
+  if(t.id==='idea'||t.id==='itheme'){e.preventDefault();$('[data-act="addidea"]').click();}
+});
+var saveT;
+document.addEventListener('input',function(e){
+  var x=cur(),t=e.target;
+  if(t.id==='unote'){x.unitNotes[+t.getAttribute('data-u')]=t.value;x.weeks[x.weeks.length-1]=1;clearTimeout(saveT);saveT=setTimeout(function(){var s=$('#usaved');if(s)s.innerHTML='<b>Saved</b> · copy in Drive: '+esc(folder(x));},500);}
+  if(t.id==='nbody'||t.id==='ntitle'){var n=allNotes(x)[S.note[S.page]];if(!n)return;
+    if(n.unit!=null){if(t.id==='nbody')x.unitNotes[n.unit]=t.value;}else{if(t.id==='nbody')x.notes[n.own].text=t.value;else x.notes[n.own].title=t.value;}
+    clearTimeout(saveT);saveT=setTimeout(function(){var s=$('#nsaved');if(s)s.innerHTML='<b>Saved</b> · copy in Drive: '+esc(folder(x));},500);}
+});
+if(location.hash==='#fsot'){S.page='co';S.cur.co='fsot';}
+if(location.hash==='#course'){S.page='co';S.cur.co='excel';}
+render();
+</script>
+</body>
+</html>
