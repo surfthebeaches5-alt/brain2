@@ -226,7 +226,7 @@ function outline(x){
   var pc=S.page==='pc',c=counts(x),nx=nextOf(x),sp=span(x),now=nowUnit(x),sel=selUnit(x),tst=testOf(x),t=pd(''),h='';
   var eb=[pc?'Personal curriculum':'Course',subOf(x)].filter(Boolean).join(' · ');
   var when=!sp.dated?'No start date yet'+(x.end?' · ends '+fd(pd(x.end)):''):x.units.length||x.end?fd(sp.from)+' – '+fd(sp.to)+' · '+wk(sp.weeks)+(t<sp.from?' · starts '+fd(sp.from):t>sp.to?' · finished':' · week '+(Math.floor((t-sp.from)/604800000)+1)+' of '+sp.weeks):'Starts '+fd(sp.from);
-  h+='<div class="card"><div class="chead"><div style="min-width:0"><div class="eb">'+esc(eb)+'</div><h2>'+esc(x.title)+'</h2>'+(x.sub?'<div class="subt">'+esc(x.sub)+'</div>':'')+'</div><div class="acts"><button class="btn sm" data-act="pdf" title="Print or save as a PDF"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" x2="12" y1="15" y2="3"/></svg>PDF</button><button class="btn sm" data-act="editmain">Edit</button></div></div>'+
+  h+='<div class="card"><div class="chead"><div style="min-width:0"><div class="eb">'+esc(eb)+'</div><h2>'+esc(x.title)+'</h2>'+(x.sub?'<div class="subt">'+esc(x.sub)+'</div>':'')+'</div><div class="acts"><button class="btn sm" data-act="gdrive" title="Open this '+(pc?'study':'course')+'’s folder in Google Drive"><svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 13v8"/><path d="m8 17 4-4 4 4"/><path d="M20 16.6A4.5 4.5 0 0 0 17.5 8h-1.8A7 7 0 1 0 4 14.9"/></svg>Drive</button><button class="btn sm" data-act="editmain">Edit</button></div></div>'+
      '<div class="meta">'+(!pc&&x.platform?'<span>'+esc(x.platform)+'</span>':'')+(!pc&&x.status&&x.status!=='Active'?'<span class="chip w">'+esc(x.status)+'</span>':'')+'<span>'+when+'</span><span>'+c.d+' of '+c.t+' to-dos done</span></div>';
   if(tst){var sc=x.scores&&x.scores[0];
     h+='<div class="stats"><div><b>'+wk(tst.weeks)+'</b><span>until the test · '+esc(tst.label)+'</span></div><div><b>'+(sc?esc(sc.score):'–')+'</b><span>latest practice test</span></div><div><b>'+(x.scores?x.scores.length:0)+'</b><span>practice tests taken</span></div></div>';}
@@ -335,7 +335,7 @@ function overview(){
   var earlier='';ss.forEach(function(z,i){if(i>=S.season)return;all.filter(within(z)).forEach(function(o){if(pd(z.end)>=t&&!o.fin)return;
     earlier='<button class="past" data-act="open" data-pg="'+o.pg+'" data-id="'+esc(o.x.id)+'"><span class="chip">'+esc(z.name)+'</span><span class="tt">'+esc(o.x.title)+'<small>'+(o.fin?'all finished':o.c.d+' of '+o.c.t+' to-dos')+'</small></span><span class="dots2">'+o.x.units.map(function(u){return '<i class="'+(u.items.length&&u.items.every(function(q){return q.done;})?'on '+o.pg:'')+'"></i>';}).join('')+'</span></button>'+earlier;});});
   if(earlier)h+='<div class="pastl">Past seasons</div>'+earlier;
-  return h+'<div class="foot">Your old Classes page and its data are kept as they were: <a href="'+HOME+'learning/">open the old page</a></div>';
+  return h;
 }
 /* ── a note opens as its own page; on the real page each one is a Google Doc in the study's folder ── */
 function allNotes(x){return x.notes.map(function(n,i){return {own:i,title:n.title,date:n.date};});}
@@ -483,7 +483,13 @@ document.addEventListener('click',function(e){
   else if(a==='open'){go(el.getAttribute('data-pg'),'#id='+encodeURIComponent(el.getAttribute('data-id')));}
   else if(a==='pick'){S.unit[x.id]=+el.getAttribute('data-u');render();}
   else if(a==='tick'){var it=x.units[+el.getAttribute('data-u')].items[+el.getAttribute('data-i')];it.done=!it.done;x.weeks[x.weeks.length-1]=1;render();}
-  else if(a==='pdf'){window.print();}
+  else if(a==='gdrive'){var dg2=gd();
+    if(!dg2){say('Google isn’t set up in this browser yet');return;}
+    if(!dg2.drive.on()){say('Turn on Google Drive on the Backup page first');return;}
+    var w=window.open('about:blank','_blank'),inPc=PC.indexOf(x)>=0;
+    (dg2.drive.ready()?Promise.resolve():window.GCal.signIn()).then(function(){return dg2.drive.noteFolder({group:inPc?'Personal Curriculum':'Courses',folderKey:x.id,folderName:x.title});})
+      .then(function(id){var u='https://drive.google.com/drive/folders/'+id;if(w&&!w.closed)w.location=u;else location.href=u;},
+            function(err){if(w&&!w.closed)w.close();say(err&&err.message||'Could not open the Drive folder');});}
   else if(a==='bankpick'){$('#bankfile').click();}
   else if(a==='bankdel'){if(!el.getAttribute('data-armed')){el.setAttribute('data-armed','1');el.textContent='Click again to remove them';return;}try{localStorage.removeItem(BANKKEY);}catch(err){}BANK=undefined;render();}
   else if(a==='editmain'){mainForm(x);}

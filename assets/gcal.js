@@ -276,6 +276,11 @@
     return dfetch(DRIVE_UP+'/files/'+encodeURIComponent(o.id)+'?uploadType=multipart&fields=id,webViewLink,trashed',{method:'PATCH',headers:head,body:body({name:name})})
       .then(function(f){return f&&f.trashed?create():f;},function(e){if(e.status===404)return create();throw e;});
   }
+  /* the id of the Drive folder that holds one study's or course's notes (made if it isn't there yet) */
+  function noteFolder(o){
+    return folder('notes',NOTES_ROOT,'').then(function(root){return folder('notes:'+o.group,o.group,root);})
+      .then(function(g){return folder('notes:'+o.group+':'+o.folderKey,String(o.folderName||'Untitled').replace(/\s+/g,' ').trim()||'Untitled',g);});
+  }
   /* move a file this site made to the Drive trash (it can be restored from there for 30 days) */
   function driveTrash(id){
     return dfetch(DRIVE+'/files/'+encodeURIComponent(id),{method:'PATCH',headers:{'Content-Type':'application/json'},body:JSON.stringify({trashed:true})}).catch(function(e){if(e.status===404)return null;throw e;});
@@ -293,7 +298,7 @@
     /* Drive backup: on = switched on in settings; ready = this sign-in can use it right now */
     drive:{on:function(){return !!cfg.drive;},ready:function(){return !!cfg.drive&&!!tok()&&tokDrive();},
       setOn:function(v){cfg.drive=!!v;if(!v){cfg.driveGranted=false;}lsSet(CFG_KEY,cfg);tokenClient=null;if(cfg.clientId)loadGIS().then(initClient).catch(function(){});},
-      save:driveSave,load:driveLoad,find:driveFind,fileName:DRIVE_NAME,savePdf:drivePdf,saveDoc:driveDoc,trash:driveTrash},
+      save:driveSave,load:driveLoad,find:driveFind,fileName:DRIVE_NAME,savePdf:drivePdf,saveDoc:driveDoc,trash:driveTrash,noteFolder:noteFolder},
     /* writable calendars from the last fetch: [{id,summary,backgroundColor,primary}] */
     calList:function(){return (cfg.calList||[]).slice();},
     signIn:signIn, calendars:calendars, events:events, create:create, update:update, remove:remove,

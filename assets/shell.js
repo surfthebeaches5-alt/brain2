@@ -79,9 +79,7 @@
       {p:'language-portal/',label:'Languages',sub:'75-day challenge & flashcards',icon:'lang'},
       {p:'learn/overview/',label:'Overview',sub:'Each season at a glance',icon:'seasons'},
       {p:'learn/personal/',label:'Personal Curriculum',sub:'What I study on my own',icon:'book'},
-      {p:'learn/courses/',label:'Courses',sub:'Online courses & the FSOT',icon:'classes'},
-      {sep:true},
-      {p:'learning/',label:'Classes (old page)',sub:'Kept until the new pages are confirmed',icon:'guide'}]},
+      {p:'learn/courses/',label:'Courses',sub:'Online courses & the FSOT',icon:'classes'}]},
     {label:'Life',pages:[
       {p:'fitness/',label:'Fitness',sub:'Weekly plan & habits',icon:'fitness'},
       {p:'meals/',label:'Meals & Groceries',sub:'Staples & shopping',icon:'meals'},
