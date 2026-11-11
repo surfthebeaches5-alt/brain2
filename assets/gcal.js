@@ -100,7 +100,9 @@
     var allDay=!!(ev.start&&ev.start.date);
     var s=allDay?new Date(ev.start.date+'T00:00:00'):new Date(ev.start.dateTime);
     var e=allDay?new Date(ev.end.date+'T00:00:00'):new Date(ev.end.dateTime);
-    return {id:ev.id,calId:cal.id,source:'google',title:ev.summary||'(no title)',date:dk(s),endDate:dk(allDay?new Date(e.getTime()-86400000):e),
+    /* the first web link on the event (a video call or classroom): its location, else its description */
+    var join=/https?:\/\/[^\s<>"']+/.exec((ev.location||'')+' '+(ev.hangoutLink||'')+' '+(ev.description||''));
+    return {id:ev.id,calId:cal.id,source:'google',ro:cal.write===false,join:join?join[0]:'',title:ev.summary||'(no title)',date:dk(s),endDate:dk(allDay?new Date(e.getTime()-86400000):e),
       time:allDay?'':hm(s),endTime:allDay?'':hm(e),allDay:allDay,startAt:allDay?'':s.toISOString(),endAt:allDay?'':e.toISOString(),location:ev.location||'',link:ev.htmlLink||'',recurring:!!ev.recurringEventId,
       color:cal.backgroundColor||'#8e71d3',calName:cal.summary||''};
   }
@@ -113,17 +115,19 @@
     return Object.assign({},ev,{date:dk(s),endDate:dk(e),time:hm(s),endTime:hm(e)});
   }
   function calendars(){
-    return api('/users/me/calendarList?minAccessRole=writer&maxResults=100').then(function(j){
-      var list=(j.items||[]).map(function(c){return {id:c.id,summary:c.summaryOverride||c.summary,backgroundColor:c.backgroundColor,primary:!!c.primary,selected:c.selected!==false};});
+    /* every calendar you can see; write:false marks the ones shared with you as view-only */
+    return api('/users/me/calendarList?minAccessRole=reader&maxResults=250').then(function(j){
+      var list=(j.items||[]).map(function(c){return {id:c.id,summary:c.summaryOverride||c.summary,backgroundColor:c.backgroundColor,primary:!!c.primary,selected:c.selected!==false,write:c.accessRole==='owner'||c.accessRole==='writer'};});
       /* remember the writable calendars so pickers work before the next sign-in */
-      cfg.calList=list.map(function(c){return {id:c.id,summary:c.summary,backgroundColor:c.backgroundColor,primary:c.primary};});lsSet(CFG_KEY,cfg);
+      cfg.calList=list.filter(function(c){return c.write;}).map(function(c){return {id:c.id,summary:c.summary,backgroundColor:c.backgroundColor,primary:c.primary};});lsSet(CFG_KEY,cfg);
       return list;
     });
   }
   /* events between two Date objects across the chosen calendars; result is cached */
   function events(from,to){
     return calendars().then(function(cals){
-      var want=cfg.calendars&&cfg.calendars.length?cfg.calendars:cals.filter(function(c){return c.primary||c.selected;}).map(function(c){return c.id;});
+      /* unless you've chosen in settings: your own calendars that are ticked in Google (view-only ones are opt-in) */
+      var want=cfg.calendars&&cfg.calendars.length?cfg.calendars:cals.filter(function(c){return c.write&&(c.primary||c.selected);}).map(function(c){return c.id;});
       var prim=cals.find(function(c){return c.primary;});
       if(prim&&!cfg.email){cfg.email=prim.id;lsSet(CFG_KEY,cfg);}
       var use=cals.filter(function(c){return want.indexOf(c.id)>=0;});

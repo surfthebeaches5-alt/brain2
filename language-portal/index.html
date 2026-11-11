@@ -1522,7 +1522,7 @@ function logRowHtml(ch,date){
     (inf.minutes?'<span class="chip chip-mut">'+fmtHM(inf.minutes/60)+'</span>':'')+
     (inf.pages?'<span class="chip chip-mut">'+plural(inf.pages,'page')+'</span>':'')+
     (inf.cards?'<span class="chip chip-mut">'+plural(inf.cards,'card')+'</span>':'')+
-    (ch.days[date]&&Array.isArray(ch.days[date].sessions)?ch.days[date].sessions.map(function(x){return '<span class="chip chip-acc" title="Study timer">⏱ '+esc(fmtAt(x.at))+' · '+fmtHM((+x.min||0)/60)+'</span>';}).join(''):'')+'</div>';
+    (ch.days[date]&&Array.isArray(ch.days[date].sessions)?ch.days[date].sessions.map(function(x){return x.what==='lesson'?'<span class="chip chip-acc" title="A lesson you confirmed on Today">Lesson · '+esc(fmtAt(x.at))+' · '+fmtHM((+x.min||0)/60)+'</span>':'<span class="chip chip-acc" title="Study timer">⏱ '+esc(fmtAt(x.at))+' · '+fmtHM((+x.min||0)/60)+'</span>';}).join(''):'')+'</div>';
   if(ch.tasks.length)h+='<div class="sl-rules">'+ch.tasks.map(function(t){var ok=inf.done.indexOf(t.id)>=0;return '<span'+(ok?' class="ok"':'')+'>'+(ok?'✓ ':'· ')+esc(t.label)+'</span>';}).join(' ')+'</div>';
   if(inf.resources.length){
     h+='<div class="sl-res">'+inf.resources.map(function(r){var u=safeUrl(r.url),nm=r.name||hostOf(u);
@@ -2894,7 +2894,7 @@ function renderLog(){
   rows.forEach(function(r){
     if(r.q){
       var e=r.q,d=r.d,ds=isNaN(d)?'':MS[d.getMonth()]+' '+d.getDate()+', '+d.getFullYear(),m=+e.mins||0;
-      h+='<div class="log-e"><span style="font-size:17px">'+L(e.lang).flag+'</span><div class="le-m"><b>'+esc(e.skillLabel||e.skill||'Session')+'</b>'+(e.note?' <span class="muted">· '+esc(e.note)+'</span>':'')+'<div>'+ds+' · '+(e.skill==='timer'?'timer':'quick log')+'</div></div><span class="le-d">'+fmtHM(m/60)+'</span><button type="button" class="rm" style="width:28px;height:28px" data-act="delLog" data-id="'+esc(e.id)+'" aria-label="Delete entry">×</button></div>';
+      h+='<div class="log-e"><span style="font-size:17px">'+L(e.lang).flag+'</span><div class="le-m"><b>'+esc(e.skillLabel||e.skill||'Session')+'</b>'+(e.note?' <span class="muted">· '+esc(e.note)+'</span>':'')+'<div>'+ds+' · '+(e.skill==='timer'?'timer':e.skill==='lesson'?'lesson':'quick log')+'</div></div><span class="le-d">'+fmtHM(m/60)+'</span><button type="button" class="rm" style="width:28px;height:28px" data-act="delLog" data-id="'+esc(e.id)+'" aria-label="Delete entry">×</button></div>';
     }else{
       var x=r.m,dd=pd(x.date),dn=diffDays(x.ch.start,x.date)+1;
       h+='<div class="log-e"><span style="font-size:17px">'+L(x.ch.lang).flag+'</span><div class="le-m"><b>'+(dn>=1&&dn<=x.ch.length?'Day '+dn:'Study log')+'</b> <span class="muted">· '+esc(x.ch.title)+'</span><div>'+MS[dd.getMonth()]+' '+dd.getDate()+', '+dd.getFullYear()+' · study log</div></div><span class="le-d">'+fmtHM(x.mins/60)+'</span><button type="button" class="btn btn-ghost btn-sm" data-act="logDay" data-date="'+x.date+'" data-ch="'+esc(x.ch.id)+'">Edit</button></div>';
