@@ -138,6 +138,33 @@ td.t{font-weight:650}td.m{color:var(--muted);font-size:12.5px}
 .setadd{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:8px}
 .setadd select,.setadd input{height:36px;border:1px solid var(--line);border-radius:10px;background:#fff;padding:0 9px;font-size:13px}
 .setadd input{width:64px;text-align:center}
+.tintro{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.tintro select{height:36px;border:1px solid var(--line);border-radius:10px;background:#fff;padding:0 9px;font-size:13px;font-weight:600}
+.trun{max-width:820px;margin:20px auto 0}
+.thead{display:flex;align-items:center;gap:14px;margin-bottom:14px;font-size:12.5px;font-weight:650;color:var(--muted)}
+.thead b{color:var(--ink);font-weight:700}
+.clock{margin-left:auto;font-family:var(--serif);font-size:22px;font-weight:600;color:var(--ink);font-variant-numeric:tabular-nums;background:#fff;border:1px solid var(--line);border-radius:10px;padding:3px 12px}
+.clock.low{color:var(--over);border-color:var(--over)}
+.passage{background:var(--warm);border-left:3px solid var(--accent);border-radius:0 10px 10px 0;padding:12px 16px;font-size:14px;line-height:1.6;margin-bottom:14px}
+.qtext{font-family:var(--serif);font-size:19px;font-weight:600;line-height:1.4;margin:0 0 16px}
+.opt{display:flex;align-items:flex-start;gap:12px;width:100%;text-align:left;border:1.5px solid var(--line);background:#fff;border-radius:12px;padding:12px 14px;margin-bottom:8px;font-size:14px;font-weight:500;line-height:1.45}
+.opt:hover{border-color:var(--accent-line)}
+.opt i{flex-shrink:0;width:24px;height:24px;border-radius:50%;background:var(--warm);font-style:normal;font-size:12px;font-weight:700;display:flex;align-items:center;justify-content:center;color:var(--muted)}
+.opt.sel{border-color:var(--accent-deep);background:var(--accent-soft)}.opt.sel i{background:var(--accent-deep);color:#fff}
+.tfoot{display:flex;align-items:center;gap:8px;margin-top:16px;flex-wrap:wrap}
+.dots{display:flex;gap:5px;flex-wrap:wrap;flex:1;justify-content:center}
+.dots button{width:26px;height:26px;border-radius:8px;border:1.5px solid var(--line);background:#fff;font-size:11px;font-weight:700;color:var(--muted);padding:0}
+.dots button.ans{background:var(--warm-deep);border-color:var(--warm-deep);color:var(--ink-2)}
+.dots button.flag{border-color:var(--warn);color:var(--warn)}
+.dots button.cur{border-color:var(--ink);color:var(--ink)}
+.big{font-family:var(--serif);font-size:44px;font-weight:600;letter-spacing:-1px;line-height:1}
+.big small{font-family:var(--sans);font-size:14px;font-weight:600;color:var(--muted);letter-spacing:0;margin-left:10px}
+.rev{border-top:1px solid var(--hair);padding:14px 0}
+.rev .rq{font-weight:650;font-size:14px;line-height:1.45;margin-bottom:6px;display:flex;gap:10px}
+.rev .ra{font-size:13px;line-height:1.5;margin-left:34px}
+.rev .ra.bad{color:var(--over)}.rev .ra.good{color:var(--ok)}.rev .why{font-size:12.5px;color:var(--muted);margin:4px 0 0 34px;line-height:1.5}
+.mark{flex-shrink:0;width:24px;height:24px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:#fff;background:var(--ok)}
+.mark.x{background:var(--over)}
 [hidden]{display:none !important}
 @media(max-width:900px){.cols,.ncols{grid-template-columns:1fr}}
 </style>
@@ -179,18 +206,15 @@ var IDEAS=[
   {t:'Wine regions',theme:'Food & drink',note:'',added:'Nov 10'}
 ];
 var CO=[
-  {id:'fsot',title:'FSOT',sub:'Test · February',test:{label:'February',weeks:12},weeks:[1,1,0,1,1,1,0,1],goals:['Cover every section once before January','Take three full practice tests'],
+  {id:'fsot',title:'FSOT',sub:'Test · February',test:{label:'February',weeks:12},weeks:[1,1,0,1,1,1,0,1],goals:['Cover every part once before January','Take three full practice tests'],
    units:[
-     {name:'U.S. government',q:'',open:true,items:[I('Crash Course Government, episodes 1–5','Watch',1),I('Flashcards: the Constitution and amendments','Do',1),I('Study guide chapter: the three branches','Read'),I('20 practice questions','Do')]},
-     {name:'World history and geography',q:'',items:[I('Study guide chapter','Read',1),I('Map quiz','Do',1),I('20 practice questions','Do')]},
-     {name:'Economics',q:'',items:[I('Study guide chapter','Read'),I('20 practice questions','Do')]},
-     {name:'English expression',q:'',items:[I('Grammar review','Read'),I('30 practice questions','Do')]},
-     {name:'Situational judgment',q:'',items:[I('Read the official guidance','Read'),I('Practice set','Do')]},
-     {name:'Essay',q:'',items:[I('Timed essay 1','Write'),I('Timed essay 2','Write')]}],
+     {name:'Job knowledge',q:'',open:true,items:[I('U.S. government, history and society: study guide chapter','Read',1),I('World history and geography: study guide chapter','Read',1),I('Economics: study guide chapter','Read'),I('Math and statistics review','Do'),I('20 practice questions','Do')]},
+     {name:'English usage and comprehension',q:'',items:[I('Grammar and usage review','Read',1),I('Reading comprehension set','Do'),I('20 practice questions','Do')]},
+     {name:'Logical reasoning',q:'',items:[I('How assumptions and flaws work','Read'),I('Practice set: inferences','Do'),I('Practice set: flaws and assumptions','Do')]}],
    project:'',unitNotes:{0:'Checks and balances: who can stop whom.\nI mix up the 14th and 15th amendments. Review again.'},
-   notes:[{title:'Timed essay 1 (draft)',date:'Nov 9',text:'Prompt: …\n\nMy answer: …'}],
-   sets:[{d:'Nov 10',sec:'U.S. government',right:15,total:20},{d:'Nov 8',sec:'World history and geography',right:12,total:20},{d:'Nov 5',sec:'Economics',right:9,total:20},{d:'Nov 3',sec:'U.S. government',right:13,total:20}],
-   scores:[{d:'Nov 2',score:142},{d:'Oct 12',score:131}]},
+   notes:[{title:'Logic mistakes I keep making',date:'Nov 9',text:'Confusing “some” with “most”.\nMissing the unstated assumption.'}],
+   sets:[{d:'Nov 10',sec:'Job knowledge',right:15,total:20},{d:'Nov 8',sec:'English usage and comprehension',right:14,total:20},{d:'Nov 5',sec:'Logical reasoning',right:9,total:20},{d:'Nov 3',sec:'Job knowledge',right:13,total:20}],
+   scores:[{d:'Nov 2',score:'74%',label:'Version A'},{d:'Oct 12',score:'68%',label:'Version B'}]},
   {id:'excel',title:'Data Skills for Excel Professionals',sub:'Online course',weeks:[1,0,1,1,0,0,1,0],goals:[],
    units:[{name:'Fundamentals of data analysis',q:'',open:true,items:[I('Videos 1–6','Watch',1),I('Practice workbook','Do',1),I('Module quiz','Do')]},{name:'Dictionaries, quality and communication',q:'',items:[I('Videos 1–5','Watch'),I('Module quiz','Do')]}],
    project:'',unitNotes:{},notes:[]},
@@ -202,7 +226,7 @@ var MK={Video:'▶',Podcast:'♪',Book:'📖',Article:'📄',Link:'🔗'};
 function M(t,kind,src,unit){return {t:t,kind:kind,src:src,unit:unit};}
 PC[0].mats=[M('The Death and Life of Great American Cities','Book','Jane Jacobs',0),M('Not Just Bikes','Video','youtube.com',0),M('99% Invisible','Podcast','99pi.org',0),M('The missing middle','Article','strongtowns.org',1),M('Public housing documentary','Video','youtube.com',1)];
 PC[1].mats=[M('Great Art Explained','Video','youtube.com',0)];
-CO[0].mats=[M('Crash Course Government','Video','youtube.com',0),M('FSOT study guide','Book','Book'),M('Practice question bank','Link','Website')];
+CO[0].mats=[M('Crash Course Government','Video','youtube.com',0),M('Study guide','Book','Book'),M('Official practice test','Link','careers.state.gov')];
 CO[1].mats=[];CO[2].mats=[];
 /* notes are simple rich text: plain lines become paragraphs */
 function toHtml(t){return String(t||'').split('\n').map(function(l){return '<div>'+(esc(l)||'<br>')+'</div>';}).join('');}
@@ -295,14 +319,74 @@ function practiceTab(x){
   var by={};x.units.forEach(function(u){by[u.name]={r:0,t:0};});
   x.sets.forEach(function(s){if(!by[s.sec])by[s.sec]={r:0,t:0};by[s.sec].r+=s.right;by[s.sec].t+=s.total;});
   var done=Object.keys(by).filter(function(k){return by[k].t;}),low=done.slice().sort(function(a,b){return by[a].r/by[a].t-by[b].r/by[b].t;})[0];
-  var h=topbar(x,'New course')+'<div class="cols"><div><div class="card"><div class="ttl">Practice questions</div>'+
+  var h=topbar(x,'New course')+'<div class="card" style="margin-bottom:18px"><div class="tintro"><div class="ttl" style="margin:0">Practice test</div><span class="grow"></span><select id="tver" aria-label="Version"><option value="A">Version A</option><option value="B">Version B</option><option value="C">Version C</option></select><button class="btn dark" data-act="tstart" style="height:36px">Start timed test</button></div></div>'+
+    '<div class="cols"><div><div class="card"><div class="ttl">Practice questions</div>'+
     '<div class="setadd"><select id="ssec" aria-label="Section">'+x.units.map(function(u){return '<option>'+esc(u.name)+'</option>';}).join('')+'</select><input id="sright" type="number" min="0" placeholder="right" aria-label="Right"><input id="stotal" type="number" min="1" placeholder="of" aria-label="Out of"><button class="btn dark" data-act="addset" style="height:36px">Add</button></div>'+
     (x.sets.length?x.sets.map(function(s){var p=Math.round(s.right/s.total*100);return '<div class="row"><span class="g">'+esc(s.sec)+'<small style="display:block;color:var(--muted);font-size:11.5px">'+esc(s.d)+'</small></span><span>'+s.right+' / '+s.total+'</span><b style="width:44px;text-align:right">'+p+'%</b></div>';}).join(''):'<div class="empty">No question sets yet</div>')+'</div></div>'+
     '<div><div class="card"><div class="ttl">By section</div>'+Object.keys(by).map(function(k){var b=by[k],p=b.t?Math.round(b.r/b.t*100):0;
       return '<div class="row"><span style="width:44%;min-width:0">'+esc(k)+(k===low&&done.length>1?' <span class="chip w">weakest</span>':'')+'</span><span class="pbar'+(k===low&&done.length>1?' low':'')+'"><i style="width:'+p+'%"></i></span><b style="width:40px;text-align:right">'+(b.t?p+'%':'–')+'</b></div>';}).join('')+'</div>'+
-    '<div class="card"><div class="ttl">Practice tests<button class="link" data-act="addscore">+ Add a score</button></div>'+(x.scores.length?x.scores.map(function(s){return '<div class="row"><span class="g">'+esc(s.d)+'</span><b>'+s.score+'</b></div>';}).join(''):'<div class="empty">None yet</div>')+'</div></div></div>';
+    '<div class="card"><div class="ttl">Practice tests<button class="link" data-act="addscore">+ Add a score</button></div>'+(x.scores.length?x.scores.map(function(s){return '<div class="row"><span class="g">'+esc(s.d)+(s.label?'<small style="display:block;color:var(--muted);font-size:11.5px">'+esc(s.label)+'</small>':'')+'</span><b>'+esc(s.score)+'</b></div>';}).join(''):'<div class="empty">None yet</div>')+'</div></div></div>';
   return h;
 }
+/* ── practice test ──
+   Example questions written for this preview, in the style of the three parts. They are not real
+   test questions. The preview uses 4 questions and 3 minutes per part; the real page would use the
+   official counts and times and a much larger bank. */
+var PARTS=['Job knowledge','English usage and comprehension','Logical reasoning'],PART_SECS=180;
+var QB=[
+ {p:0,q:'Under the U.S. Constitution, which body has the sole power to try impeachments?',o:['The House of Representatives','The Senate','The Supreme Court','The Cabinet'],a:1,why:'The House brings impeachment charges; the Senate holds the trial (Article I, Section 3).'},
+ {p:0,q:'The Peace of Westphalia (1648) is most closely associated with which idea?',o:['Collective security through alliances','Free trade between empires','The sovereignty of states over their own territory','The end of colonial rule'],a:2,why:'Westphalia is the usual reference point for the modern system of sovereign states.'},
+ {p:0,q:'A central bank raises its main interest rate. What is the most likely short-run effect?',o:['Borrowing becomes cheaper and spending rises','Borrowing becomes more expensive and spending slows','The government’s budget is balanced','Import tariffs fall'],a:1,why:'A higher policy rate raises the cost of loans, which tends to cool spending and inflation.'},
+ {p:0,q:'What is the median of this data set: 4, 7, 7, 10, 12?',o:['7','8','10','12'],a:0,why:'The median is the middle value of the ordered list, which is 7. The mean is 8.'},
+ {p:1,q:'Choose the word that correctly completes the sentence: “Neither the ambassador nor her aides ___ available for comment.”',o:['was','were','is','has been'],a:1,why:'With “neither … nor”, the verb agrees with the nearer subject, “aides”, which is plural.'},
+ {p:1,q:'Choose the word that correctly completes the sentence: “The committee submitted ___ report on Friday.”',o:['it’s','its’','its','their’s'],a:2,why:'“Its” is the possessive. “It’s” means “it is”.'},
+ {p:1,q:'Which sentence is written most clearly and correctly?',o:['The officer’s duties include drafting cables, meeting contacts, and to attend briefings.','The officer’s duties include drafting cables, meeting contacts, and attending briefings.','The officer’s duties include to draft cables, meeting contacts, and attending briefings.','The officer’s duties includes drafting cables, to meet contacts, and attending briefings.'],a:1,why:'Items in a list should have the same form: drafting, meeting, attending.'},
+ {p:1,passage:'City officials replaced a four-lane road with two lanes and a bike path. Traffic counts on the road fell by a third, yet average travel times across the district barely changed, because many short car trips shifted to walking and cycling.',q:'Which statement is best supported by the passage?',o:['Narrowing the road increased congestion across the district.','Some trips that had been made by car were made another way.','Bike paths always shorten travel times.','Officials plan to ban cars from the district.'],a:1,why:'The passage says many short car trips shifted to walking and cycling. The other statements go beyond it.'},
+ {p:2,q:'“The visa line was shorter this month than last month. Therefore the new online appointment system is working.” The argument assumes that:',o:['the line will be shorter next month too','the number of applicants did not drop for some other reason','every applicant used the online system','the old system was never used'],a:1,why:'If fewer people applied, the shorter line would not show the system is working.'},
+ {p:2,q:'“Every diplomat I have met speaks French. So all diplomats speak French.” What is the flaw in this reasoning?',o:['It attacks the person, not the claim','It assumes what it sets out to prove','It generalises from a small sample that may not be typical','It confuses cause and effect'],a:2,why:'A handful of people the speaker happened to meet cannot stand for every diplomat.'},
+ {p:2,q:'All consular officers at the post completed crisis training. Maria is a consular officer at the post. Which conclusion must be true?',o:['Maria led the crisis training','Maria completed crisis training','Only consular officers completed crisis training','Maria will handle the next crisis'],a:1,why:'If every member of the group did it and Maria is in the group, she did it. Nothing more follows.'},
+ {p:2,q:'Towns with more libraries have higher literacy rates, so the author concludes that building libraries raises literacy. Which fact, if true, most weakens that conclusion?',o:['Libraries are popular with children','Towns with high literacy tend to vote to fund more libraries','Some towns have no library','Literacy is hard to measure exactly'],a:1,why:'It suggests the cause may run the other way: literate towns build libraries.'}
+];
+function rng(seed){return function(){seed|=0;seed=seed+0x6D2B79F5|0;var t=Math.imul(seed^seed>>>15,1|seed);t=t+Math.imul(t^t>>>7,61|t)^t;return ((t^t>>>14)>>>0)/4294967296;};}
+function shuffled(arr,r){var a=arr.slice();for(var i=a.length-1;i>0;i--){var j=Math.floor(r()*(i+1)),x=a[i];a[i]=a[j];a[j]=x;}return a;}
+var T=null,tick=null;
+/* each version orders the questions and the answer choices differently (the real page would also draw different questions) */
+function startTest(ver){
+  var r=rng(ver.charCodeAt(0)*7919),parts=PARTS.map(function(_,p){
+    return shuffled(QB.filter(function(q){return q.p===p;}),r).map(function(q){var order=shuffled([0,1,2,3],r);return {q:q,order:order,pick:-1,flag:false};});});
+  T={ver:ver,parts:parts,p:0,i:0,left:PART_SECS,used:0,done:false};
+  clearInterval(tick);tick=setInterval(function(){if(!T||T.done)return;T.left--;T.used++;var c=$('#clock');if(c){c.textContent=clock(T.left);c.classList.toggle('low',T.left<=30);}if(T.left<=0)nextPart();},1000);
+  render();window.scrollTo(0,0);
+}
+function clock(s){s=Math.max(0,s);return Math.floor(s/60)+':'+(s%60<10?'0':'')+s%60;}
+function nextPart(){if(T.p<PARTS.length-1){T.p++;T.i=0;T.left=PART_SECS;render();window.scrollTo(0,0);}else finishTest();}
+function finishTest(){
+  T.done=true;clearInterval(tick);var x=cur(),right=0,total=0;
+  T.parts.forEach(function(qs,p){var r=qs.filter(function(a){return a.pick>=0&&a.order[a.pick]===a.q.a;}).length;right+=r;total+=qs.length;x.sets.unshift({d:today(),sec:PARTS[p],right:r,total:qs.length});});
+  T.right=right;T.total=total;x.scores.unshift({d:today(),score:Math.round(right/total*100)+'%',label:'Version '+T.ver+' · '+right+' of '+total});x.weeks[x.weeks.length-1]=1;
+  render();window.scrollTo(0,0);
+}
+function testView(){
+  if(T.done){
+    var h='<div class="trun"><div class="card"><div class="lab" style="margin-top:0">Practice test · version '+T.ver+'</div><div class="big">'+Math.round(T.right/T.total*100)+'%<small>'+T.right+' of '+T.total+' right · '+clock(T.used)+' used</small></div>'+
+      '<div style="margin-top:16px">'+T.parts.map(function(qs,p){var r=qs.filter(function(a){return a.pick>=0&&a.order[a.pick]===a.q.a;}).length;return '<div class="row"><span style="width:46%">'+PARTS[p]+'</span><span class="pbar"><i style="width:'+(r/qs.length*100)+'%"></i></span><b style="width:54px;text-align:right">'+r+' / '+qs.length+'</b></div>';}).join('')+'</div>'+
+      '<div class="tfoot"><button class="btn dark" data-act="tclose">Back to Practice</button><button class="btn" data-act="tagain">Take another version</button></div></div>'+
+      '<div class="card"><div class="ttl">Review your answers</div>';
+    var n=0;T.parts.forEach(function(qs){qs.forEach(function(a){n++;var ok=a.pick>=0&&a.order[a.pick]===a.q.a;
+      h+='<div class="rev"><div class="rq"><span class="mark'+(ok?'':' x')+'">'+(ok?'✓':'✕')+'</span><span>'+n+'. '+esc(a.q.q)+'</span></div>'+
+        (ok?'':'<div class="ra bad">Your answer: '+(a.pick>=0?esc(a.q.o[a.order[a.pick]]):'not answered')+'</div>')+'<div class="ra good">Correct answer: '+esc(a.q.o[a.q.a])+'</div><div class="why">'+esc(a.q.why)+'</div></div>';});});
+    return h+'</div></div>';
+  }
+  var qs=T.parts[T.p],a=qs[T.i],last=T.i===qs.length-1;
+  return '<div class="trun"><div class="thead"><span><b>Part '+(T.p+1)+' of '+PARTS.length+'</b> · '+PARTS[T.p]+'</span><span>Question '+(T.i+1)+' of '+qs.length+'</span><span class="clock'+(T.left<=30?' low':'')+'" id="clock">'+clock(T.left)+'</span></div>'+
+    '<div class="card">'+(a.q.passage?'<div class="passage">'+esc(a.q.passage)+'</div>':'')+'<p class="qtext">'+esc(a.q.q)+'</p>'+
+    a.order.map(function(oi,k){return '<button class="opt'+(a.pick===k?' sel':'')+'" data-act="tpick" data-k="'+k+'"><i>'+'ABCD'.charAt(k)+'</i><span>'+esc(a.q.o[oi])+'</span></button>';}).join('')+
+    '<div class="tfoot"><button class="btn" data-act="tgo" data-d="-1"'+(T.i?'':' disabled style="opacity:.4"')+'>Back</button><button class="btn" data-act="tflag">'+(a.flag?'Flagged':'Flag for review')+'</button>'+
+    '<span class="dots">'+qs.map(function(z,k){return '<button data-act="tjump" data-k="'+k+'" class="'+(k===T.i?'cur ':'')+(z.pick>=0?'ans ':'')+(z.flag?'flag':'')+'">'+(k+1)+'</button>';}).join('')+'</span>'+
+    (last?'<button class="btn dark" data-act="tpart">'+(T.p<PARTS.length-1?'Finish this part':'Finish test')+'</button>':'<button class="btn dark" data-act="tgo" data-d="1">Next</button>')+'</div></div>'+
+    '<div style="text-align:center;margin-top:14px"><button class="link" data-act="tend">End the test now</button></div></div>';
+}
+
 /* ── page ── */
 function render(){
   var x=cur(),t=S.tab[S.page],pc=S.page==='pc';
@@ -310,6 +394,7 @@ function render(){
   var tabs=pc?[['study','Studying'],['notes','Notes'],['mats','Materials'],['ideas','Ideas']]:[['plan','Plan']].concat(x.test?[['practice','Practice']]:[]).concat([['notes','Notes'],['mats','Materials']]);
   if(!tabs.some(function(a){return a[0]===t;}))t=S.tab[S.page]=tabs[0][0];
   var h='<div class="head"><h1>'+(pc?'Personal Curriculum':'Courses')+'</h1><div class="tabs">'+tabs.map(function(a){return '<button data-act="tab" data-tab="'+a[0]+'" class="'+(a[0]===t?'on':'')+'">'+a[1]+'</button>';}).join('')+'</div></div>';
+  if(T&&!pc){$('#page').innerHTML='<div class="head"><h1>Courses</h1></div>'+testView();return;}
   if(t==='study'||t==='plan')h+=topbar(x,pc?'New study':'New course')+'<div class="cols"><div>'+outline(x)+'</div><div>'+side(x)+'</div></div>';
   else if(t==='notes')h+=notesTab(x);
   else if(t==='mats')h+=matsTab(x);
@@ -322,7 +407,7 @@ var toastT;function say(msg){var t=$('#toast');if(!t){t=document.createElement('
 function today(){var d=new Date();return ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'][d.getMonth()]+' '+d.getDate();}
 
 document.addEventListener('click',function(e){
-  var go=e.target.closest('[data-go]');if(go){S.page=go.getAttribute('data-go');render();window.scrollTo(0,0);return;}
+  var go=e.target.closest('[data-go]');if(go){if(T){clearInterval(tick);T=null;}S.page=go.getAttribute('data-go');render();window.scrollTo(0,0);return;}
   var el=e.target.closest('[data-act]');if(!el)return;
   var a=el.getAttribute('data-act'),x=cur();
   if(a==='tab'){S.tab[S.page]=el.getAttribute('data-tab');render();}
@@ -336,12 +421,21 @@ document.addEventListener('click',function(e){
   else if(a==='selnote'){S.note[S.page]=+el.getAttribute('data-n');render();}
   else if(a==='newnote'){x.notes.push({title:'Untitled',date:today(),text:''});S.note[S.page]=allNotes(x).length-1;render();var nt=$('#ntitle');if(nt){nt.focus();nt.select();}}
   else if(a==='mf'){S.mf=el.getAttribute('data-k');render();}
+  else if(a==='tstart'){startTest($('#tver').value);}
+  else if(a==='tpick'){T.parts[T.p][T.i].pick=+el.getAttribute('data-k');render();}
+  else if(a==='tgo'){T.i=Math.max(0,Math.min(T.parts[T.p].length-1,T.i+ +el.getAttribute('data-d')));render();}
+  else if(a==='tjump'){T.i=+el.getAttribute('data-k');render();}
+  else if(a==='tflag'){var fq=T.parts[T.p][T.i];fq.flag=!fq.flag;render();}
+  else if(a==='tpart'){var open=T.parts[T.p].filter(function(z){return z.pick<0;}).length;if(open&&!confirm(open+' question'+(open===1?' is':'s are')+' not answered. Finish this part anyway?'))return;nextPart();}
+  else if(a==='tend'){if(confirm('End the test now? Unanswered questions count as wrong.'))finishTest();}
+  else if(a==='tclose'){T=null;S.tab.co='practice';render();}
+  else if(a==='tagain'){var nv={A:'B',B:'C',C:'A'}[T.ver];T=null;startTest(nv);}
   else if(a==='addmat'){var mv=$('#mtitle').value.trim();if(!mv)return;var host='';try{host=new URL(mv).hostname.replace(/^www\./,'');}catch(err){}
     x.mats.unshift(M(host?mv.replace(/^https?:\/\/(www\.)?/,'').slice(0,60):mv,$('#mkind').value,host||'Added by hand'));S.mf='All';render();$('#mtitle').focus();}
   else if(a==='addidea'){var v=$('#idea').value.trim();if(!v)return;IDEAS.push({t:v,theme:$('#itheme').value.trim(),note:'',added:today()});render();$('#idea').focus();}
   else if(a==='start'){var idea=IDEAS[+el.getAttribute('data-n')],sid='n'+Date.now();PC.push({id:sid,title:idea.t,weeks:[0,0,0,0,0,0,0,0],goals:[],units:[],project:'',unitNotes:{},notes:[],mats:[]});idea.study=sid;S.cur.pc=sid;S.tab.pc='study';render();say('Started. On the real page it also gets its own Drive folder: '+folder(cur()));}
   else if(a==='addset'){var r=+$('#sright').value,tt=+$('#stotal').value;if(!(tt>0)||r<0||r>tt){say('Enter how many you got right, out of how many');return;}x.sets.unshift({d:today(),sec:$('#ssec').value,right:r,total:tt});render();}
-  else if(a==='addscore'){var s=prompt('Practice test score');if(s&&!isNaN(+s)){x.scores.unshift({d:today(),score:+s});render();}}
+  else if(a==='addscore'){var s=prompt('Practice test score');if(s&&s.trim()){x.scores.unshift({d:today(),score:s.trim(),label:'Added by hand'});render();}}
 });
 /* formatting buttons act on the note being edited (mousedown, so the cursor stays in the note) */
 document.addEventListener('mousedown',function(e){var b=e.target.closest('[data-fmt]');if(!b)return;e.preventDefault();var f=b.getAttribute('data-fmt');$('#nbody').focus();
