@@ -386,7 +386,7 @@ function practiceTab(x){
   var by={};PARTS.forEach(function(n){by[n]={r:0,t:0};});
   x.sets.forEach(function(z){if(by[z.sec]){by[z.sec].r+=z.right;by[z.sec].t+=z.total;}});
   var done=PARTS.filter(function(k){return by[k].t;}),low=done.slice().sort(function(a,b){return by[a].r/by[a].t-by[b].r/by[b].t;})[0],B=bank();
-  var lens=Object.keys(LENS).map(function(k){var n=0,m=0;PARTN.forEach(function(N,p){var c=sizeOf(p,k);n+=c;m+=Math.ceil(PARTMIN[p]*c/N);});return '<option value="'+k+'">'+k+' · '+n+' questions · '+m+' min</option>';}).join('');
+  var lens=Object.keys(LENS).map(function(k){var n=0,m=0;PARTN.forEach(function(N,p){var c=sizeOf(p,k);n+=c;m+=Math.ceil(PARTMIN[p]*c/N);});return '<option value="'+k+'"'+(k===S.preLen?' selected':'')+'>'+k+' · '+n+' questions · '+m+' min</option>';}).join('');
   return topbar(x,'New course')+'<div class="card" style="margin-bottom:18px">'+(B?
       '<div class="tintro"><div class="ttl" style="margin:0">Take a practice test</div><span class="grow"></span><select id="tver" aria-label="Test">'+B.versions.map(function(v,i){return '<option value="'+i+'">'+esc(v.name||('Test '+(i+1)))+'</option>';}).join('')+'</select><select id="tlen" aria-label="Length">'+lens+'</select><button class="btn dark" data-act="tstart" style="height:36px">Start timed test</button></div>'+
       '<div class="saved" style="margin-top:10px">'+B.versions.length+' tests loaded · <button class="link" data-act="bankdel">Remove the questions from this browser</button></div>'
@@ -545,6 +545,7 @@ document.addEventListener('input',function(e){
 });
 /* start: a link from the Overview can name the study or course to open */
 (function(){var m=/[#&]id=([^&]+)/.exec(location.hash);if(m&&S.page!=='ov'){var id=decodeURIComponent(m[1]);if(list().some(function(z){return z.id===id;}))S.cur[S.page]=id;}
+  var pm=/[#&]practice=(\w+)/.exec(location.hash);if(pm&&S.page==='co'&&cur()&&cur().testDate){S.tab.co='practice';S.preLen=pm[1];}
   if(S.page==='co')resumeTest();})();
 /* another tab changed something: show it here too (not while a note or a form is being typed in) */
 window.addEventListener('storage',function(e){if(e.key!==KEY||S.noteOpen||$('#formModal').classList.contains('show')||T)return;DB=loadDB();PC=DB.pc;CO=DB.co;IDEAS=DB.ideas;render();});

@@ -195,6 +195,36 @@ button,input,select{font-family:inherit;}
 .task .tag{font-size:10.5px;font-weight:700;color:var(--faint);letter-spacing:.04em;white-space:nowrap;}
 .task.on .tag{color:var(--accent);}
 .task a.tag:hover{color:var(--accent-deep);text-decoration:underline;}
+#lang .grp,#learn .grp,#body .grp{margin-top:16px;}
+.task .tx2{flex:1;min-width:0;}
+.task .tx2 b{display:block;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.task .tx2 small{display:block;font-size:11.5px;color:var(--muted);font-weight:500;margin-top:1px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.task .tx2 small a{color:inherit;font-weight:600;}
+.task .tx2 small a:hover{color:var(--accent-deep);text-decoration:underline;}
+.task.on .tx2 small{color:var(--accent);}
+.task.pc{box-shadow:inset 3px 0 0 var(--accent);}
+.task.co{box-shadow:inset 3px 0 0 #6a8fc2;}
+.task a.go{color:var(--accent-deep);font-weight:700;font-size:12px;text-decoration:none;}
+.lmini{display:flex;align-items:center;gap:12px;background:var(--warm);border-radius:12px;padding:10px 12px;margin-bottom:5px;color:inherit;text-decoration:none;transition:background .14s;}
+.lmini:hover{background:var(--warm-deep);}
+.lmini.on{background:var(--accent-soft);}
+.lmini .tt{flex:1;min-width:0;font-size:13px;font-weight:650;}
+.lmini .tt small{display:block;font-size:11.5px;color:var(--muted);font-weight:500;margin-top:1px;}
+.lmini .pb{width:64px;height:6px;border-radius:3px;background:var(--warm-deep);overflow:hidden;flex-shrink:0;}
+.lmini:hover .pb{background:#e2d8c2;}
+.lmini .pb i{display:block;height:100%;background:var(--accent);}
+.nudge{display:flex;align-items:center;gap:10px;background:#e3ebf6;border-radius:12px;padding:10px 12px;margin-bottom:5px;font-size:13px;font-weight:650;}
+.nudge span{flex:1;min-width:0;}
+.nudge small{display:block;font-size:11.5px;color:var(--ink-2);font-weight:500;margin-top:1px;}
+.dcl{font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);font-weight:750;margin-bottom:10px;}
+.dcs{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;}
+.dc{display:flex;flex-direction:column;gap:3px;background:var(--warm);border-radius:13px;padding:13px 14px;color:inherit;text-decoration:none;transition:background .14s;}
+.dc:hover{background:var(--warm-deep);}
+.dc b{font-size:14px;font-weight:650;line-height:1.3;}
+.dc small{font-size:12px;color:var(--muted);font-weight:500;line-height:1.4;}
+.dc .chip{align-self:flex-start;margin-top:6px;background:#fff;}
+.dc.add{border:1.5px dashed var(--line);background:transparent;justify-content:center;color:var(--accent-deep);font-weight:650;font-size:13px;}
+.dc.add:hover{background:var(--warm);}
 .task.gone{background:transparent;color:var(--faint);text-decoration:line-through;}
 .task.gone .ck{background:var(--faint);border-color:var(--faint);}
 .task .del{border:none;background:transparent;color:var(--faint);cursor:pointer;font-size:15px;line-height:1;padding:0 2px;opacity:0;transition:opacity .14s;}
@@ -239,10 +269,10 @@ button,input,select{font-family:inherit;}
   .cal-tools .seg{display:none;}
 }
 </style>
-<link rel="stylesheet" href="assets/brain.css?v=2611112328">
+<link rel="stylesheet" href="assets/brain.css?v=2611112337">
 </head>
 <body>
-<script src="assets/shell.js?v=2611112328"></script>
+<script src="assets/shell.js?v=2611112337"></script>
 
 <main class="page">
   <div class="head">
@@ -281,6 +311,12 @@ button,input,select{font-family:inherit;}
         <div class="card-h"><div class="card-t">Reading, watching &amp; listening</div><a class="more" href="media/">Library →</a></div>
         <div id="now"></div>
       </section>
+
+      <!-- OUT IN DC: a look at what is saved there, not a to-do -->
+      <section class="card">
+        <div class="card-h"><div class="card-t">Out in DC</div><a class="more" href="dc-guide/">See everything →</a></div>
+        <div id="dc"></div>
+      </section>
     </div>
 
     <div class="stack">
@@ -298,6 +334,7 @@ button,input,select{font-family:inherit;}
         <div id="tasks"></div>
         <div id="lang"></div>
         <div id="lessons"></div>
+        <div id="learn"></div>
         <div id="body"></div>
       </section>
     </div>
@@ -331,9 +368,10 @@ button,input,select{font-family:inherit;}
   </div>
 </div>
 
-<script src="assets/gcal.js?v=2611112328"></script>
-<script src="assets/backup.js?v=2611112328"></script>
-<script src="assets/lessons.js?v=2611112328"></script>
+<script src="assets/gcal.js?v=2611112337"></script>
+<script src="assets/backup.js?v=2611112337"></script>
+<script src="assets/learn-today.js?v=2611112337"></script>
+<script src="assets/lessons.js?v=2611112337"></script>
 <script>
 /* ───────── helpers ───────── */
 function lsGet(k){try{var r=localStorage.getItem(k);return r?JSON.parse(r):null;}catch(e){return null;}}
@@ -896,10 +934,10 @@ function renderLang(){
   if(!c){el.innerHTML='<div class="grp"><span>Languages</span><a href="language-portal/">Start a 75-day challenge →</a></div>';return;}
   var len=c.length||75,day=Math.max(1,Math.min(Math.floor((today()-parseDk(c.start))/864e5)+1,len));
   var done=((c.days||{})[dk(today())]||{}).done||[],streak=lcStreak(c);
-  el.innerHTML='<div class="grp"><span>'+esc(LANG[c.lang]||c.title||'Language')+' · day '+day+' of '+len+'</span><span>'+(streak?'🔥 '+streak:'')+'</span></div>'+
-    (c.tasks||[]).map(function(t){var on=done.indexOf(t.id)>=0;
-      return '<div class="task'+(on?' on':'')+'" data-lt="'+esc(t.id)+'"><span class="ck'+(on?' on':'')+'">'+(on?'✓':'')+'</span><span class="tx">'+esc(t.label)+'</span>'+
-        (t.url?'<a class="tag" href="'+esc(t.url)+'" target="_blank" rel="noopener">OPEN ↗</a>':'')+'</div>';}).join('');
+  var ids=(c.tasks||[]).map(function(t){return t.id;}),n=ids.length,dn=ids.filter(function(id){return done.indexOf(id)>=0;}).length;
+  el.innerHTML='<div class="grp"><span>Languages</span><span>'+(streak?'🔥 '+streak:'')+'</span></div>'+
+    '<a class="lmini'+(n&&dn===n?' on':'')+'" href="language-portal/" data-all="'+(n&&dn===n?1:0)+'"><span class="tt">'+esc(LANG[c.lang]||c.title||'Language')+' · Day '+day+' of '+len+
+    '<small>'+(n?dn+' of '+n+' done today':'No rules set')+'</small></span><span class="pb"><i style="width:'+(n?dn/n*100:0)+'%"></i></span></a>';
 }
 $('lang').addEventListener('click',function(e){if(e.target.closest('a'))return;var row=e.target.closest('[data-lt]');if(!row)return;
   var db=lsGet('langChallenge1'),c=lcActive(db);if(!c)return;var k=dk(today());c.days=c.days||{};
@@ -980,24 +1018,61 @@ function lessonPopHtml(e){
 /* Body — the Fitness page's daily non-negotiables (fitnessTracker1_day_YYYY-MM-DD) */
 /* today's routine name comes from your own weekly plan on the Fitness page */
 function planRoutine(){var p=lsGet('fitnessTracker1_plan');if(!p||!p.week)return '';var id=p.week[new Date().getDay()];if(id===null)return 'Rest';var r=(p.routines||[]).filter(function(x){return x.id===id;})[0];return r?r.name:'';}
-var NN=[{id:'water',label:'Water — 4 cups'},{id:'walk',label:'Walking pad — 1 hr'},{id:'steps',label:'6k+ steps'},{id:'workout',label:'Workout'}];
 function fitKey(){return 'fitnessTracker1_day_'+dk(today());}
+/* Move and Water every day; the workout row carries the name of today's routine from the Fitness
+   plan, and is left out on a rest day. The ids are the Fitness page's own (walk, water, workout). */
 function renderBody(){
   var nn=(lsGet(fitKey())||{}).nonneg||{},custom=lsGet('fitnessTracker1_custom_workout_'+dk(today()));
-  var wo=(custom&&custom.label)||planRoutine()||'Workout';
-  $('body').innerHTML='<div class="grp"><span>Body · '+esc(wo)+'</span><a href="fitness/">Fitness →</a></div>'+NN.map(function(n){var on=!!nn[n.id];
-    return '<div class="task'+(on?' on':'')+'" data-nn="'+n.id+'"><span class="ck'+(on?' on':'')+'">'+(on?'✓':'')+'</span><span class="tx">'+n.label+'</span></div>';}).join('');
+  var wo=(custom&&custom.label)||planRoutine(),rest=wo==='Rest';
+  var rows=[{id:'walk',label:'Move today',sub:'A walk or the walking pad counts'},{id:'water',label:'Water',sub:'4 cups'}];
+  if(!rest)rows.push({id:'workout',label:wo||'Workout',sub:wo?'Today’s workout':''});
+  $('body').innerHTML='<div class="grp"><span>Body'+(rest?' · rest day':'')+'</span><a href="fitness/">Fitness →</a></div>'+rows.map(function(n){var on=!!nn[n.id];
+    return '<div class="task'+(on?' on':'')+'" data-nn="'+n.id+'"><span class="ck'+(on?' on':'')+'">'+(on?'✓':'')+'</span><span class="tx2"><b>'+esc(n.label)+'</b>'+(n.sub?'<small>'+esc(n.sub)+'</small>':'')+'</span></div>';}).join('');
 }
 $('body').addEventListener('click',function(e){if(e.target.closest('a'))return;var row=e.target.closest('[data-nn]');if(!row)return;
   var k=fitKey(),d=lsGet(k)||{};d.nonneg=d.nonneg||{};var id=row.getAttribute('data-nn');d.nonneg[id]=!d.nonneg[id];lsSet(k,d);renderBody();renderCount();});
 
+/* Learning — from Personal Curriculum and Courses (assets/learn-today.js). A ticked to-do drops off
+   and the next one takes its place. A course with a test asks for a practice test every two weeks. */
+var learnRows=[];
+function renderLearn(){
+  var el=$('learn'),L=window.B2Learn?B2Learn.today():{rows:[],test:null},t=L.test;learnRows=L.rows;
+  if(!L.rows.length&&!(t&&(t.due||t.doneToday))){el.innerHTML='';return;}
+  var wk=function(n){return n+(n===1?' week':' weeks');};
+  el.innerHTML='<div class="grp"><span>Learning</span><a href="learn/overview/">Overview →</a></div>'+
+    (t&&t.due?'<div class="nudge"><span>'+esc(t.title)+' practice test<small>'+(t.ago==null?'None taken yet':'Last one '+t.ago+' days ago')+' · '+wk(t.weeks)+' to the test</small></span><a class="btn sm" href="learn/courses/#id='+encodeURIComponent(t.id)+'&practice=Quick">Take one</a></div>'
+     :t&&t.doneToday?'<div class="task on" style="cursor:default"><span class="ck on">✓</span><span class="tx2"><b>'+esc(t.title)+' practice test</b><small>Taken today</small></span></div>':'')+
+    L.rows.map(function(r,n){var href='learn/'+(r.pg==='pc'?'personal':'courses')+'/#id='+encodeURIComponent(r.id);
+      return '<div class="task '+r.pg+'" data-lr="'+n+'"><span class="ck"></span><span class="tx2"><b>'+esc(r.text)+'</b><small><a href="'+href+'">'+esc(r.title)+'</a>'+(r.unit?' · '+esc(r.unit):'')+'</small></span>'+
+        (r.url?'<a class="go" href="'+esc(r.url)+'" target="_blank" rel="noopener" title="Open the link">↗</a>':'')+(r.kind?'<span class="tag">'+esc(r.kind).toUpperCase()+'</span>':'')+'</div>';}).join('');
+}
+$('learn').addEventListener('click',function(e){if(e.target.closest('a'))return;var row=e.target.closest('[data-lr]');if(!row)return;
+  var r=learnRows[+row.getAttribute('data-lr')];if(r&&window.B2Learn)B2Learn.tick(r);renderLearn();renderCount();});
+
+/* Out in DC — a few things saved there for this month (then anytime ideas, then places not visited yet) */
+var MFULL=['January','February','March','April','May','June','July','August','September','October','November','December'];
+function renderDC(){
+  var g=lsGet('dcGuide1'),sp=lsGet('dcPassport1'),m=new Date().getMonth(),el=$('dc');
+  var items=(g&&Array.isArray(g.items)?g.items:[]).filter(function(i){return i&&i.name&&i.status!=='done';});
+  var month=items.filter(function(i){return i.month===m;}),any=items.filter(function(i){return i.month==='evergreen'||i.month==null;});
+  var spots=(Array.isArray(sp)?sp:[]).filter(function(x){return x&&x.name&&!x.visited;});
+  var pick=month.slice(0,3).map(function(i){return {n:i.name,s:[i.hood&&i.hood!=='Other'?i.hood:'',i.dates||''].filter(Boolean).join(' · '),p:i.price==='free'?'Free':(i.price||'')};});
+  var label=pick.length?'This month · '+MFULL[m]:'Anytime';
+  any.slice(0,3-pick.length).forEach(function(i){pick.push({n:i.name,s:[i.hood&&i.hood!=='Other'?i.hood:'','anytime'].filter(Boolean).join(' · '),p:i.price==='free'?'Free':(i.price||'')});});
+  spots.slice(0,3-pick.length).forEach(function(x){pick.push({n:x.name,s:[x.city||'','saved place'].filter(Boolean).join(' · '),p:''});});
+  if(!pick.length){el.innerHTML='<div class="dcs"><a class="dc add" style="grid-column:1/-1;align-items:center;padding:20px" href="dc-guide/">Nothing saved yet. Add a few places or things to do →</a></div>';return;}
+  el.innerHTML='<div class="dcl">'+esc(label)+'</div><div class="dcs">'+pick.map(function(d){
+      return '<a class="dc" href="dc-guide/"><b>'+esc(d.n)+'</b>'+(d.s?'<small>'+esc(d.s)+'</small>':'')+(d.p?'<span class="chip">'+esc(d.p)+'</span>':'')+'</a>';}).join('')+
+    (pick.length<3?'<a class="dc add" href="dc-guide/">+ Add something</a>':'')+'</div>';
+}
+
 function renderCount(){
-  var all=document.querySelectorAll('#tasks .task,#lang .task,#body .task').length,on=document.querySelectorAll('#tasks .task.gone,#lang .task.on,#body .task.on').length;
+  var all=document.querySelectorAll('#tasks .task,#lang .lmini,#learn [data-lr],#body .task').length,on=document.querySelectorAll('#tasks .task.gone,#lang .lmini.on,#body .task.on').length;
   $('ck-count').textContent=on+' of '+all;
 }
 
 /* ───────── boot ───────── */
-safe(renderHead);safe(renderBills);safe(renderNow);safe(renderTasks);safe(renderLang);safe(renderBody);safe(renderCount);
+safe(renderHead);safe(renderBills);safe(renderNow);safe(renderDC);safe(renderTasks);safe(renderLang);safe(renderLearn);safe(renderBody);safe(renderCount);
 safe(function(){var c=GCal.cached();if(GCal.configured()&&c){gEvents=c.events||[];gAt=c.at;}});
 safe(renderCal);safe(syncLabel);safe(renderBackup);safe(renderLessons);
 setInterval(function(){safe(renderLessons);},60000);   /* a lesson moves to "to confirm" when it ends */
@@ -1008,6 +1083,8 @@ window.addEventListener('storage',function(e){
   if(e.key==='brain2BackupMeta1'||e.key==='brain2GCal1')safe(renderBackup);
   else if(e.key==='mediaTracker3')safe(renderNow);
   else if(e.key==='langChallenge1'){safe(renderLang);safe(renderCount);}
+  else if(e.key==='study1'){safe(renderLearn);safe(renderCount);}
+  else if(e.key==='dcGuide1'||e.key==='dcPassport1')safe(renderDC);
   if(e.key==='brain2Lessons1'||e.key==='lifeCalendar1')safe(renderLessons);
   else if(e.key===TASK_SK){safe(renderTasks);safe(renderCount);}
   else if(e.key&&e.key.indexOf('fitnessTracker1_day_')===0){safe(renderBody);safe(renderCount);}
