@@ -8,7 +8,7 @@
 (function(){
   var META='brain2BackupMeta1';
   /* browser/site machinery, not your data */
-  var SKIP={sbCollapsed:1,brain2SidebarCollapsed:1,brain2auth:1,brain2GCalCache1:1,brain2BackupMeta1:1,brain2FavCache1:1,langTimer1:1};
+  var SKIP={sbCollapsed:1,brain2SidebarCollapsed:1,brain2auth:1,brain2GCalCache1:1,brain2BackupMeta1:1,brain2FavCache1:1,langTimer1:1,studyTest1:1};
   function meta(){try{var m=JSON.parse(localStorage.getItem(META)||'null');return m&&typeof m==='object'?m:{};}catch(e){return {};}}
   function setMeta(m){try{localStorage.setItem(META,JSON.stringify(m));}catch(e){}}
   function keys(){var out=[];for(var i=0;i<localStorage.length;i++){var k=localStorage.key(i);if(!SKIP[k])out.push(k);}return out.sort();}
