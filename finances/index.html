@@ -488,15 +488,18 @@ function renderProgress() {
   var active = cards.filter(function(c){ return c.active; });
   var total = active.length;
   if (!total) { el.innerHTML = ''; return; }
-  var paid = active.filter(function(c){ return isPaid(c, 'paid'); }).length;
+  /* the bar is about this calendar month: each card's statement due this month, and whether it's ticked */
+  var now = new Date(), y = now.getFullYear(), mo = now.getMonth();
+  function paidThisMonth(c, w) { var day = w === 'paid2' ? c.day2 : c.day; return !!day && paidList(c, w).indexOf(isoD(dueIn(y, mo, day))) >= 0; }
+  var paid = active.filter(function(c){ return paidThisMonth(c, 'paid'); }).length;
   var pct = Math.round(paid / total * 100);
   var withMid = active.filter(function(c){ return c.day2; });
-  var midDone = withMid.filter(function(c){ return isPaid(c, 'paid2'); }).length;
+  var midDone = withMid.filter(function(c){ return paidThisMonth(c, 'paid2'); }).length;
   var midLine = withMid.length
-    ? '<div class="cp-mid">Next mid-cycle payments <b>' + midDone + ' / ' + withMid.length + '</b></div>'
+    ? '<div class="cp-mid">' + MF[mo] + ' mid-cycle payments <b>' + midDone + ' / ' + withMid.length + '</b></div>'
     : '';
   el.innerHTML =
-    '<div class="cp-row"><span class="cp-label">Next statements paid</span><span class="cp-count">' + paid + ' / ' + total + '</span></div>' +
+    '<div class="cp-row"><span class="cp-label">' + MF[mo] + ' statements paid</span><span class="cp-count">' + paid + ' / ' + total + '</span></div>' +
     '<div class="cp-bar"><div class="cp-fill" style="width:' + pct + '%"></div></div>' +
     midLine;
 }
