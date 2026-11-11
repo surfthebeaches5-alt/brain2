@@ -454,7 +454,7 @@ function outline(x){
     if(!u.items.length)h+='<div class="empty">Nothing on this unit’s list yet</div>';
     h+='<div class="addit"><select aria-label="Kind">'+KINDS.map(function(k){return '<option>'+k+'</option>';}).join('')+'</select><input class="line" data-add="'+sel+'" placeholder="Add a to-do or paste a link" aria-label="Add a to-do"></div>'+
        '<div class="ulab">Materials<button class="link" data-act="addmat" data-u="'+sel+'">+ Add</button></div><div class="ulist">'+
-       (x.mats.some(function(m){return m.unit===sel;})?x.mats.map(function(m){return m.unit!==sel?'':'<div class="r"><i>'+(MK[m.kind]||'🔗')+'</i><span>'+(m.url?'<a href="'+esc(m.url)+'" target="_blank" rel="noopener">'+esc(m.t)+'</a>':esc(m.t))+' <small>'+esc(m.kind)+'</small></span></div>';}).join(''):'<div class="empty">None yet</div>')+'</div>'+
+       (x.mats.some(function(m){return m.unit===sel;})?x.mats.map(function(m){return m.unit!==sel?'':'<div class="r"><i title="'+esc(m.kind)+'">'+(MK[m.kind]||'🔗')+'</i><span>'+(m.url?'<a href="'+esc(m.url)+'" target="_blank" rel="noopener">'+esc(m.t)+'</a>':esc(m.t))+'</span></div>';}).join(''):'<div class="empty">None yet</div>')+'</div>'+
        '<div class="ulab">Notes<button class="link" data-act="newnote" data-u="'+sel+'">+ Write</button></div><div class="ulist">'+
        (x.notes.some(function(n){return n.unit===sel;})?x.notes.map(function(n,i){return n.unit!==sel?'':'<button class="r" data-act="opennote" data-n="'+i+'"><i class="doci"></i><span>'+esc(n.title||'Untitled')+' <small>'+esc(n.date)+'</small></span></button>';}).join(''):'<div class="empty">None yet</div>')+'</div></div>';
   }
@@ -475,8 +475,8 @@ function side(x){
      (pc&&x.project?'<div class="sub2">Final project</div><div class="why">'+esc(x.project)+'</div>':'')+
      (!x.why&&!x.goals.length&&!(pc&&x.project)?'<div class="empty">None yet</div>':'')+'</div>';
   h+='<div class="card"><div class="ttl">Materials<button class="link" data-act="addmat">+ Add</button></div>'+
-    (x.mats.length?'<div class="matlist">'+x.mats.map(function(m,i){return '<div class="mat"><i>'+(MK[m.kind]||'🔗')+'</i><span style="flex:1;min-width:0">'+(m.url?'<a href="'+esc(m.url)+'" target="_blank" rel="noopener">'+esc(m.t)+'</a>':esc(m.t))+
-      '<small>'+[m.kind,m.src,unitLabel(x,m.unit)].filter(Boolean).map(esc).join(' · ')+'</small></span><button class="ed" data-act="editmat" data-n="'+i+'">Edit</button></div>';}).join('')+'</div>':'<div class="empty">None yet</div>')+'</div>';
+    (x.mats.length?'<div class="matlist">'+x.mats.map(function(m,i){return '<div class="mat"><i title="'+esc(m.kind)+'">'+(MK[m.kind]||'🔗')+'</i><span style="flex:1;min-width:0">'+(m.url?'<a href="'+esc(m.url)+'" target="_blank" rel="noopener">'+esc(m.t)+'</a>':esc(m.t))+
+      '<small>'+[m.src,unitLabel(x,m.unit)].filter(Boolean).map(esc).join(' · ')+'</small></span><button class="ed" data-act="editmat" data-n="'+i+'">Edit</button></div>';}).join('')+'</div>':'<div class="empty">None yet</div>')+'</div>';
   h+='<div class="card"><div class="ttl">Notes<button class="link" data-act="newnote">+ Write</button></div>'+
     (x.notes.length?x.notes.map(function(n,i){return '<button class="ne row" data-act="opennote" data-n="'+i+'"><i class="doci"></i><span>'+esc(n.title||'Untitled')+'<small>'+[n.date,unitLabel(x,n.unit)].filter(Boolean).map(esc).join(' · ')+'</small></span></button>';}).join(''):'<div class="empty">None yet</div>')+'</div>';
   return h;
@@ -648,7 +648,7 @@ document.addEventListener('input',function(e){
     clearTimeout(saveT);saveT=setTimeout(function(){var z=$('#nsaved');if(z)z.innerHTML='<b>Saved</b>';},500);}
 });
 /* the preview updates itself: if a newer copy has been published, load it (once per copy) */
-var PV='2611111717';
+var PV='2611111738';
 (function(){try{fetch(location.pathname+'?pv='+Date.now(),{cache:'no-store'}).then(function(r){return r.ok?r.text():'';}).then(function(t){
   var m=/var PV='(\d+)'/.exec(t);if(!m||m[1]===PV)return;var done='';try{done=sessionStorage.getItem('pv-seen')||'';}catch(e){}
   if(done===m[1])return;try{sessionStorage.setItem('pv-seen',m[1]);}catch(e){}
