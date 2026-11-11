@@ -689,7 +689,7 @@ function todayPage(){
      '<div class="sub2" style="margin-top:0">This month · '+MONTHS[t.getMonth()]+'</div><div class="dcs">'+
      [['Farmers market','Dupont Circle · Sundays','Free'],['A museum you haven’t seen','National Mall · any day','Free'],['Trail walk','Rock Creek Park · weekends','Free']].map(function(d){
        return '<button class="dc" data-act="fake" data-msg="Opens this on the Out in DC page, where you can plan it"><b>'+esc(d[0])+'</b><small>'+esc(d[1])+'</small><span class="chip">'+esc(d[2])+'</span></button>';}).join('')+
-     '</div><div class="dcf">12 saved spots · 5 visited</div></div></div>';
+     '</div></div></div>';
   h+='<div><div class="card same"><div class="ttl">Bills due</div><div class="ph">As it is now</div></div>'+
      '<div class="card"><div class="ttl">Checklist</div>'+
      '<div class="grp">Tasks</div>'+tdRow('task','Book the dentist','')+'<div class="ck2 ph" style="padding:8px 12px">+ Add a task…</div>'+
@@ -943,7 +943,7 @@ document.addEventListener('input',function(e){
     clearTimeout(saveT);saveT=setTimeout(function(){var z=$('#nsaved');if(z)z.innerHTML='<b>Saved</b>';},500);}
 });
 /* the preview updates itself: if a newer copy has been published, load it (once per copy) */
-var PV='2611112024';
+var PV='2611112336';
 (function(){try{fetch(location.pathname+'?pv='+Date.now(),{cache:'no-store'}).then(function(r){return r.ok?r.text():'';}).then(function(t){
   var m=/var PV='(\d+)'/.exec(t);if(!m||m[1]===PV)return;var done='';try{done=sessionStorage.getItem('pv-seen')||'';}catch(e){}
   if(done===m[1])return;try{sessionStorage.setItem('pv-seen',m[1]);}catch(e){}
