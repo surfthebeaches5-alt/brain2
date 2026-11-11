@@ -597,6 +597,22 @@ body.sc-on{padding-bottom:230px;}
 .sl-tile small{display:block;font-size:11.5px;color:var(--muted);margin-top:3px;font-weight:550;}
 .sl-tile .eyebrow{display:block;margin-top:6px;}
 .sl-list{padding:6px 24px;}
+/* lessons taken (assets/lessons.js): a record that outlives challenges */
+.ls-card{margin-bottom:18px;}
+.ls-sum{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:6px;}
+.ls-sum .st{min-width:150px;}
+.ls-sum .st b{font-family:var(--b2-serif);font-size:20px;font-weight:600;display:block;}
+.ls-sum .st span{font-size:12px;color:var(--muted);font-weight:600;text-transform:none;letter-spacing:0;}
+.ls-row{display:flex;align-items:center;gap:12px;padding:10px 0;border-top:1px solid var(--hair);font-size:13px;}
+.ls-row .d{width:86px;flex-shrink:0;color:var(--muted);font-weight:600;font-size:12px;}
+.ls-row .t{flex:1;min-width:0;font-weight:650;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.ls-row .m{font-family:var(--b2-serif);font-weight:600;white-space:nowrap;}
+.ls-row .rm{width:26px;height:26px;opacity:0;transition:opacity .15s;}
+.ls-row:hover .rm,.ls-row .rm:focus{opacity:1;}
+.ls-form{display:flex;flex-wrap:wrap;gap:8px;align-items:flex-end;padding:12px 0 4px;border-top:1px solid var(--hair);}
+.ls-form label{display:flex;flex-direction:column;gap:4px;font-size:10.5px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);}
+.ls-form .f-input{height:36px;}
+.ls-form .grow{flex:1;min-width:160px;}
 .sl-row{display:grid;grid-template-columns:76px minmax(0,1fr) auto;gap:18px;padding:18px 0;align-items:start;}
 .sl-row + .sl-row{border-top:1px solid var(--hair);}
 .sl-date b{display:block;font-family:var(--b2-serif);font-size:20px;font-weight:600;letter-spacing:-.3px;line-height:1.1;}
@@ -679,10 +695,11 @@ body.sc-on{padding-bottom:230px;}
   *{animation:none !important;transition:none !important;}
 }
 </style>
-<link rel="stylesheet" href="../assets/brain.css?v=2611110234">
+<link rel="stylesheet" href="../assets/brain.css?v=2611110242">
 </head>
 <body>
-<script src="../assets/shell.js?v=2611110234"></script>
+<script src="../assets/shell.js?v=2611110242"></script>
+<script src="../assets/lessons.js?v=2611110242"></script>
 
 <header class="topbar">
   <div class="topbar-left">
@@ -905,7 +922,9 @@ var LANGS={
   fr:{name:'French',flag:'🇫🇷',voice:['fr-FR','fr']},
   it:{name:'Italian',flag:'🇮🇹',voice:['it-IT','it']},
   de:{name:'German',flag:'🇩🇪',voice:['de-DE','de']},
-  ja:{name:'Japanese',flag:'🇯🇵',voice:['ja-JP','ja']}
+  ja:{name:'Japanese',flag:'🇯🇵',voice:['ja-JP','ja']},
+  ko:{name:'Korean',flag:'🇰🇷',voice:['ko-KR','ko']},
+  zh:{name:'Chinese',flag:'🇨🇳',voice:['zh-CN','zh']}
 };
 function L(c){return LANGS[c]||{name:String(c||'Other').toUpperCase(),flag:'🌐',voice:[c||'en']};}
 var PRESETS=[
@@ -1507,13 +1526,39 @@ function renderStudyLog(){
   if(!ents.length){
     h+='<section class="card"><div class="sl-empty"><b>Nothing logged yet</b>Each day you log minutes, pages, resources and notes (or tick a rule), it shows up here.'+
       (canToday?'<div style="margin-top:14px"><button type="button" class="btn btn-soft btn-sm" data-act="day" data-date="'+TODAY()+'" data-ch="'+esc(a.id)+'">Log today</button></div>':(!a?'<div style="margin-top:14px"><button type="button" class="btn btn-soft btn-sm" data-act="tab" data-tab="challenge">Start a challenge</button></div>':''))+'</div></section>';
-    root.innerHTML=h;return;
+    root.innerHTML=h+lessonsHtml();return;
   }
-  h+='<section class="card sl-list">';
+  h+=lessonsHtml()+'<section class="card sl-list">';
   ents.slice(0,slLimit).forEach(function(e){h+=logRowHtml(e.ch,e.date);});
   if(ents.length>slLimit)h+='<div class="more"><button type="button" class="btn btn-ghost btn-sm" data-act="slMore">Show more ('+(ents.length-slLimit)+')</button></div>';
   root.innerHTML=h+'</section>';
 }
+/* every lesson you've confirmed (on Today) or typed in here, whatever challenge was running */
+var lsOpen=false,lsAll=false;
+function lessonsHtml(){
+  var list=B2Lessons.list().filter(function(x){return slLang==='all'||x.lang===slLang;}),by={},order=[];
+  list.forEach(function(x){if(!by[x.lang]){by[x.lang]={n:0,m:0};order.push(x.lang);}by[x.lang].n++;by[x.lang].m+=+x.mins||0;});
+  var h='<section class="card ls-card"><div class="card-h"><div><div class="ttl-sm">Lessons</div><div class="muted small" style="margin-top:2px">Every lesson you’ve taken, kept here even when a challenge ends or restarts.</div></div>'+
+    '<button type="button" class="linkish" data-act="lsAdd">'+(lsOpen?'Cancel':'+ Add a lesson')+'</button></div>';
+  if(order.length)h+='<div class="ls-sum">'+order.map(function(k){return '<div class="st"><b>'+L(k).flag+' '+fmtHM(by[k].m/60)+'</b><span>'+esc(L(k).name)+' · '+plural(by[k].n,'lesson')+'</span></div>';}).join('')+'</div>';
+  if(lsOpen){
+    var a=activeCh(),def=slLang!=='all'?slLang:(a?a.lang:'es');
+    h+='<div class="ls-form"><label>Date<input class="f-input" type="date" id="ls-date" value="'+TODAY()+'" max="'+TODAY()+'"></label>'+
+      '<label>Language<select class="f-input" id="ls-lang">'+Object.keys(LANGS).map(function(k){return '<option value="'+k+'"'+(k===def?' selected':'')+'>'+L(k).flag+' '+esc(L(k).name)+'</option>';}).join('')+'</select></label>'+
+      '<label>Minutes<input class="f-input" type="number" id="ls-min" min="5" max="300" step="5" value="50" style="width:90px"></label>'+
+      '<label class="grow">With / what<input class="f-input" type="text" id="ls-title" maxlength="80" placeholder="Preply lesson, tutor’s name…"></label>'+
+      '<button type="button" class="btn btn-dark btn-sm" data-act="lsSave" style="height:36px">Add</button></div>';
+  }
+  if(!list.length)h+='<div class="muted small" style="padding:10px 0 2px;line-height:1.55">'+(lsOpen?'':'None yet. When a lesson on your calendar ends, confirm it on Today and it lands here. You can also add one by hand.')+'</div>';
+  (lsAll?list:list.slice(0,6)).forEach(function(x){var d=pd(x.date);
+    h+='<div class="ls-row"><span class="d">'+(d?MS[d.getMonth()]+' '+d.getDate()+', '+d.getFullYear():esc(x.date))+'</span><span style="font-size:16px">'+L(x.lang).flag+'</span>'+
+      '<span class="t" title="'+esc(x.title||'Lesson')+'">'+esc(x.title||'Lesson')+'</span><span class="m">'+fmtHM((+x.mins||0)/60)+'</span>'+
+      '<button type="button" class="rm" data-act="lsDel" data-key="'+esc(x.key)+'" aria-label="Remove this lesson" title="Remove (also takes its minutes back)">×</button></div>';});
+  if(list.length>6)h+='<div class="more"><button type="button" class="btn btn-ghost btn-sm" data-act="lsMore">'+(lsAll?'Show fewer':'Show all '+list.length)+'</button></div>';
+  return h+'</section>';
+}
+/* lessons change study minutes in storage directly, so write anything pending first and re-read afterwards */
+function lessonsChanged(fn){flushSave();fn();loadC();loadLP();renderView();}
 function logRowHtml(ch,date){
   var inf=dayInfo(ch,date),dn=diffDays(ch.start,date)+1,dd=pd(date),h='';
   h+='<article class="sl-row"><div class="sl-date"><b>'+MS[dd.getMonth()]+' '+dd.getDate()+'</b><small>'+DW[dd.getDay()]+(dd.getFullYear()!==new Date().getFullYear()?' '+dd.getFullYear():'')+'</small></div><div style="min-width:0">';
@@ -3021,6 +3066,20 @@ var ACT={
   addLink:function(){openMini('link');},
   rmLink:function(el,e){e.preventDefault();e.stopPropagation();C.links=C.links.filter(function(l){return l.id!==el.getAttribute('data-id');});saveC();renderView();},
   qlog:function(el){quickLog(el.getAttribute('data-lang'),+el.getAttribute('data-min'),el);},
+  lsAdd:function(){lsOpen=!lsOpen;renderStudyLog();if(lsOpen){var t=$('#ls-title');if(t)t.focus();}},
+  lsMore:function(){lsAll=!lsAll;renderStudyLog();},
+  lsSave:function(){
+    var date=$('#ls-date').value,lang=$('#ls-lang').value,m=Math.round(+$('#ls-min').value),title=$('#ls-title').value.trim();
+    if(!pd(date)||date>TODAY()){toast('Pick the day the lesson happened');return;}
+    if(!(m>=5&&m<=300)){toast('Minutes should be between 5 and 300');return;}
+    lsOpen=false;
+    lessonsChanged(function(){B2Lessons.count('manual:'+uid('m'),{date:date,at:'12:00',mins:m,lang:lang,title:title||'Lesson'});});
+    toast('Lesson added · '+m+' min of '+L(lang).name+' counted for '+fmtD(date,true));
+  },
+  lsDel:function(el){
+    if(!confirm('Remove this lesson? Its minutes come off that day’s study time too.'))return;
+    var k=el.getAttribute('data-key');lessonsChanged(function(){B2Lessons.undo(k);});toast('Lesson removed');
+  },
   tmStart:function(el,e){e.stopPropagation();timerStart(el.getAttribute('data-lang'));},
   tmPause:function(){timerPause();},
   tmResume:function(){timerResume();},
@@ -3244,7 +3303,7 @@ function resync(){
   if(sess&&!deckById(sess.deckId)){sess=null;stopAudio();}
   if(!$('.modal-bg.open')&&!(document.activeElement&&/^(INPUT|TEXTAREA)$/.test(document.activeElement.tagName)))renderView();
 }
-window.addEventListener('storage',function(e){if(e.key===TM_KEY){tmAsk=false;renderTimer();renderView();return;}if(e.key===LP_KEY){loadLP();renderView();}else if(e.key===LC_KEY||e.key===null)resync();});
+window.addEventListener('storage',function(e){if(e.key===B2Lessons.KEY){if(tab==='log')renderView();return;}if(e.key===TM_KEY){tmAsk=false;renderTimer();renderView();return;}if(e.key===LP_KEY){loadLP();renderView();}else if(e.key===LC_KEY||e.key===null)resync();});
 window.addEventListener('focus',resync);
 document.addEventListener('visibilitychange',function(){if(document.hidden)flushSave();else resync();});
 window.addEventListener('pagehide',flushSave);
