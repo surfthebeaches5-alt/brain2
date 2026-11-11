@@ -197,6 +197,7 @@ button.srow:hover{background:var(--warm)}
 .ne.row .doci{width:14px;height:18px;border-radius:3px;background:#4d84e6;flex-shrink:0}
 .ne.row span{flex:1;min-width:0}
 .chead .acts{display:flex;gap:6px;flex-shrink:0}
+.btn.sm{height:30px;padding:0 10px;font-size:12px;gap:5px}
 .mat a,.it a.tl,.ulist a{color:inherit;text-decoration:none}
 .mat a:hover,.ulist a:hover{color:var(--accent-deep);text-decoration:underline}
 .mat a::after,.ulist a::after{content:" ↗";color:var(--faint);font-size:11px}
@@ -420,13 +421,10 @@ function outline(x){
   var pc=S.page==='pc',c=counts(x),nx=nextOf(x),sp=span(x),now=nowUnit(x),sel=selUnit(x),tst=testOf(x),t=pd(''),h='';
   var eb=[pc?'Personal curriculum':'Course',subOf(x)].filter(Boolean).join(' · ');
   var when=x.units.length?fd(sp.from)+' – '+fd(sp.to)+' · '+wk(sp.weeks)+(t<sp.from?' · starts '+fd(sp.from):t>sp.to?' · finished':' · week '+(Math.floor((t-sp.from)/604800000)+1)+' of '+sp.weeks):'Starts '+fd(sp.from);
-  h+='<div class="card"><div class="chead"><div style="min-width:0"><div class="eb">'+esc(eb)+'</div><h2>'+esc(x.title)+'</h2></div><div class="acts"><button class="btn" data-act="fake" data-msg="Saves this '+(pc?'study':'course')+' as a PDF, like the other pages">Save PDF</button><button class="btn" data-act="fake" data-msg="The preview isn’t connected to Google. On the real page this opens this '+(pc?'study':'course')+'’s own folder: '+esc(folder(x))+'">Drive folder ↗</button><button class="btn" data-act="editmain">Edit</button></div></div>'+
+  h+='<div class="card"><div class="chead"><div style="min-width:0"><div class="eb">'+esc(eb)+'</div><h2>'+esc(x.title)+'</h2></div><div class="acts"><button class="btn sm" data-act="fake" title="Save this '+(pc?'study':'course')+' as a PDF" data-msg="Saves this '+(pc?'study':'course')+' as a PDF, like the other pages"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" x2="12" y1="15" y2="3"/></svg>PDF</button><button class="btn sm" data-act="fake" title="Open this '+(pc?'study':'course')+'’s Drive folder" data-msg="The preview isn’t connected to Google. On the real page this opens this '+(pc?'study':'course')+'’s own folder: '+esc(folder(x))+'"><svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 13v8"/><path d="m8 17 4-4 4 4"/><path d="M20 16.6A4.5 4.5 0 0 0 17.5 8h-1.8A7 7 0 1 0 4 14.9"/></svg>Drive</button><button class="btn sm" data-act="editmain">Edit</button></div></div>'+
      '<div class="meta"><span>'+when+'</span><span>'+c.d+' of '+c.t+' to-dos done</span></div>';
   if(tst){var sc=x.scores&&x.scores[0];
     h+='<div class="stats"><div><b>'+wk(tst.weeks)+'</b><span>until the test · '+esc(tst.label)+'</span></div><div><b>'+c.d+' / '+c.t+'</b><span>covered</span></div><div><b>'+(sc?esc(sc.score):'–')+'</b><span>latest practice test</span></div></div>';}
-  if(nx){var it=x.units[nx.u].items[nx.i];
-    h+='<div class="next"><span class="ck" data-act="tick" data-u="'+nx.u+'" data-i="'+nx.i+'" title="Tick it off"></span><span class="l">Next</span><span class="tx">'+esc(it.t)+'</span><span class="u">'+esc(x.units[nx.u].name)+'</span></div>';}
-  else if(c.t)h+='<div class="next"><span class="l">All done</span><span class="tx">Every to-do is ticked.</span></div>';
   h+='</div>';
   /* the unit you are on */
   var u=x.units[sel];
@@ -597,7 +595,7 @@ document.addEventListener('click',function(e){
   else if(a==='editidea'){ideaForm(+el.getAttribute('data-n'));}
   else if(a==='opennote'){S.note[S.page]=+el.getAttribute('data-n');S.noteOpen=true;render();window.scrollTo(0,0);}
   else if(a==='closenote'){S.noteOpen=false;render();}
-  else if(a==='delnote'){if(!el.getAttribute('data-armed')){el.setAttribute('data-armed','1');el.textContent='Click again to delete';return;}x.notes.splice(S.note[S.page],1);S.noteOpen=false;render();}
+  else if(a==='delnote'){if(!el.getAttribute('data-armed')){el.setAttribute('data-armed','1');el.textContent='Click again to delete';return;}x.notes.splice(S.note[S.page],1);S.noteOpen=false;render();say('Deleted. On the real page its Google Doc moves to your Drive trash, where it can be restored for 30 days.');}
   else if(a==='newnote'){var nu=el.getAttribute('data-u');x.notes.unshift({title:'',date:today(),text:'',unit:nu==null?null:+nu});S.note[S.page]=0;S.noteOpen=true;render();window.scrollTo(0,0);var nt=$('#ntitle');if(nt)nt.focus();}
   else if(a==='tstart'){startTest($('#tver').value);}
   else if(a==='tpick'){T.parts[T.p][T.i].pick=+el.getAttribute('data-k');render();}
