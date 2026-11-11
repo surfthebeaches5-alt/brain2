@@ -21,9 +21,15 @@ button{cursor:pointer}
 .logo{font-family:var(--serif);font-size:20px;font-weight:600;margin-right:6px;white-space:nowrap}.logo em{color:var(--accent-deep)}
 .nav .sp{font-size:14.5px;font-weight:600;color:var(--muted)}
 .nav .sp.on{color:var(--ink)}
-.lmenu{display:flex;gap:4px;background:var(--warm-deep);border-radius:12px;padding:4px;margin-left:8px}
-.lmenu button{white-space:nowrap;border:0;background:transparent;padding:7px 14px;border-radius:9px;font-size:13px;font-weight:650;color:var(--muted)}
-.lmenu button.on{background:#fff;color:var(--ink);box-shadow:0 1px 2px rgba(60,50,30,.1)}
+.dd{position:relative}
+.ddb{border:0;background:none;font-size:14.5px;font-weight:600;color:var(--ink);padding:10px 0;display:flex;align-items:center;gap:6px;border-bottom:2px solid var(--accent-deep)}
+.ddb span{font-size:10px;color:var(--muted)}
+.ddm{display:none;position:absolute;top:calc(100% + 4px);left:-12px;min-width:256px;background:#fff;border:1px solid var(--line);border-radius:14px;padding:6px;box-shadow:0 14px 34px rgba(60,50,30,.14);z-index:30}
+.dd.open .ddm{display:block}
+.ddm button{display:block;width:100%;text-align:left;border:0;background:none;padding:9px 11px;border-radius:10px;font-size:13.5px;font-weight:600;color:var(--ink-2)}
+.ddm button:hover{background:var(--accent-soft);color:var(--accent-deep)}
+.ddm button.on{color:var(--accent-deep)}
+.ddm small{display:block;font-size:11.5px;color:var(--muted);font-weight:500;margin-top:2px}
 .pv{margin-left:auto;font-size:12px;font-weight:650;color:var(--warn);background:var(--warn-bg);padding:6px 12px;border-radius:20px;white-space:nowrap}
 .page{max-width:1200px;margin:0 auto;padding:28px 32px 70px}
 .head{display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap}
@@ -229,8 +235,10 @@ button.srow:hover{background:var(--warm)}
 <body>
 <div class="nav">
   <div class="logo">Brain <em>2.0</em></div>
-  <span class="sp on">Learning</span>
-  <div class="lmenu" id="lmenu"><button data-go="pc">Personal Curriculum</button><button data-go="co">Courses</button></div>
+  <div class="dd" id="lmenu"><button class="ddb" data-dd="1">Learning <span>▾</span></button>
+    <div class="ddm"><button data-act="fake" data-msg="Languages stays as it is. This preview only covers the two pages below it.">Languages<small>75-day challenge &amp; flashcards</small></button>
+      <button data-go="pc">Personal Curriculum<small>What I study on my own</small></button>
+      <button data-go="co">Courses<small>Online courses &amp; the FSOT</small></button></div></div>
   <span class="pv">Preview · example content, nothing is saved</span>
 </div>
 <div class="page" id="page"></div>
@@ -312,7 +320,7 @@ var FORM=(function(){
     var id='ff-'+f.name,lab='<label for="'+id+'">'+esc(f.label)+(f.opt?' <span class="hint">('+esc(f.opt)+')</span>':'')+'</label>',ph=f.placeholder?' placeholder="'+esc(f.placeholder)+'"':'',c;
     if(f.type==='textarea')c='<textarea id="'+id+'"'+ph+(f.rows?' rows="'+f.rows+'"':'')+'>'+esc(f.value||'')+'</textarea>';
     else if(f.type==='select')c='<select id="'+id+'">'+f.options.map(function(o){return '<option'+(o===f.value?' selected':'')+'>'+esc(o)+'</option>';}).join('')+'</select>';
-    else c='<input id="'+id+'" type="'+(f.type||'text')+'" value="'+esc(f.value==null?'':f.value)+'"'+ph+'>';
+    else c='<input id="'+id+'" type="'+(f.type||'text')+'" value="'+esc(f.value==null?'':f.value)+'"'+ph+(f.list?' list="'+id+'-dl"':'')+'>'+(f.list?'<datalist id="'+id+'-dl">'+f.list.map(function(o){return '<option value="'+esc(o)+'">';}).join('')+'</datalist>':'');
     return '<div class="fld">'+lab+c+'</div>';
   }
   function names(fs,out){fs.forEach(function(f){if(f.row)names(f.row,out);else out.push(f.name);});return out;}
@@ -329,10 +337,11 @@ var FORM=(function(){
   return {open:open,close:close};
 })();
 /* the forms */
+function themes(){var t=[];PC.concat(IDEAS).forEach(function(z){if(z.theme&&t.indexOf(z.theme)<0)t.push(z.theme);});return t.sort();}
 function mainForm(x){
   var pc=S.page==='pc',isNew=!x,v=x||blank('');
   var f=pc?[{name:'title',label:'What do you want to study?',placeholder:'e.g. The history of jazz',value:v.title},
-      {row:[{name:'theme',label:'Theme',opt:'optional',placeholder:'e.g. Art, Money, Places',value:v.theme},{name:'start',label:'Start date',type:'date',value:v.start}]},
+      {row:[{name:'theme',label:'Theme',opt:'optional',placeholder:'Pick one or type a new one',value:v.theme,list:themes()},{name:'start',label:'Start date',type:'date',value:v.start}]},
       {name:'why',label:'Why this, and why now?',type:'textarea',value:v.why},
       {name:'goals',label:'By the end I want to…',opt:'one per line',type:'textarea',value:v.goals.join('\n')},
       {name:'project',label:'Final project',opt:'optional',type:'textarea',rows:2,placeholder:'Something you make to show what you learned',value:v.project}]
@@ -401,7 +410,7 @@ function scoreForm(x){
 function ideaForm(n){
   var i=IDEAS[n];
   FORM.open({title:'Edit idea',deleteLabel:'Delete idea',
-    fields:[{name:'t',label:'Idea',value:i.t},{name:'theme',label:'Theme',opt:'optional',value:i.theme},{name:'note',label:'Note',opt:'optional',type:'textarea',value:i.note}],
+    fields:[{name:'t',label:'Idea',value:i.t},{name:'theme',label:'Theme',opt:'optional',placeholder:'Pick one or type a new one',value:i.theme,list:themes()},{name:'note',label:'Note',opt:'optional',type:'textarea',value:i.note}],
     onDelete:function(){IDEAS.splice(n,1);render();},
     onSave:function(o){if(!o.t.trim()){$('#ff-t').focus();return false;}i.t=o.t.trim();i.theme=o.theme.trim();i.note=o.note.trim();render();}});
 }
@@ -481,8 +490,8 @@ function noteView(x){
 }
 /* ── ideas (Personal Curriculum only) ── */
 function ideasTab(){
-  var themes=[];IDEAS.forEach(function(i){if(i.theme&&themes.indexOf(i.theme)<0)themes.push(i.theme);});
-  return '<div class="bar" style="margin-bottom:6px"></div><div class="card"><div class="addrow"><input class="line" id="idea" placeholder="Add an idea" aria-label="Idea"><input class="line" id="itheme" list="themes" placeholder="Theme" style="width:190px;flex:none" aria-label="Theme"><datalist id="themes">'+themes.map(function(t){return '<option value="'+esc(t)+'">';}).join('')+'</datalist><button class="btn dark" data-act="addidea" style="height:42px">Add</button></div>'+
+  var themes=window.themes();
+  return '<div class="bar" style="margin-bottom:6px"></div><div class="card"><div class="addrow"><input class="line" id="idea" placeholder="Add an idea" aria-label="Idea"><input class="line" id="itheme" list="themes" placeholder="Theme: pick or type new" style="width:210px;flex:none" aria-label="Theme"><datalist id="themes">'+themes.map(function(t){return '<option value="'+esc(t)+'">';}).join('')+'</datalist><button class="btn dark" data-act="addidea" style="height:42px">Add</button></div>'+
     '<table><thead><tr><th style="width:36%">Idea</th><th style="width:15%">Theme</th><th>Note</th><th style="width:10%">Added</th><th style="width:16%"></th></tr></thead><tbody>'+
     IDEAS.map(function(i,n){return '<tr><td class="t">'+esc(i.t)+'</td><td>'+(i.theme?'<span class="chip">'+esc(i.theme)+'</span>':'')+'</td><td class="m">'+esc(i.note)+'</td><td class="m">'+esc(i.added)+'</td><td>'+(i.study?'<span class="chip g">Studying</span>':'<button class="link" data-act="start" data-n="'+n+'">Start →</button>')+' <button class="link" data-act="editidea" data-n="'+n+'" style="margin-left:8px;color:var(--muted)">Edit</button></td></tr>';}).join('')+'</tbody></table></div>';
 }
@@ -578,6 +587,7 @@ var toastT;function say(msg){var t=$('#toast');if(!t){t=document.createElement('
 function today(){var d=new Date();return ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'][d.getMonth()]+' '+d.getDate();}
 
 document.addEventListener('click',function(e){
+  var dd=$('#lmenu');if(e.target.closest('[data-dd]')){dd.classList.toggle('open');return;}dd.classList.remove('open');
   var go=e.target.closest('[data-go]');if(go){if(T){clearInterval(tick);T=null;}S.page=go.getAttribute('data-go');S.noteOpen=false;render();window.scrollTo(0,0);return;}
   if(e.target.closest('a[href]'))return;
   var el=e.target.closest('[data-act]');if(!el)return;
