@@ -228,22 +228,57 @@ button.srow:hover{background:var(--warm)}
 td.t small{display:block;font-weight:500;color:var(--muted);font-size:12px;margin-top:2px;font-style:italic}
 .it .due{font-size:10.5px;font-weight:700;color:var(--muted);white-space:nowrap}
 .pv button{border:0;background:none;padding:0;margin-left:8px;font:inherit;color:var(--accent-deep);text-decoration:underline;cursor:pointer}
-.ov-sum{font-size:13px;font-weight:600;color:var(--muted);margin:18px 0 14px}
-.ov-h,.orow{display:grid;grid-template-columns:250px minmax(0,1fr) 110px;gap:16px;align-items:center}
-.ov-h{font-size:10px;font-weight:700;color:var(--faint);letter-spacing:.06em;padding-bottom:6px}
-.ov-w{display:grid;position:relative}
-.ov-w span{text-align:center}.ov-w span.now{color:var(--accent-deep)}
-.orow{width:100%;text-align:left;border:0;border-top:1px solid var(--hair);background:none;padding:12px 0}
-button.orow:hover .on b{color:var(--accent-deep)}
-.orow .on{min-width:0}.orow .on b{display:block;font-size:14px;font-weight:650;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.orow .on small{display:block;font-size:11.5px;color:var(--muted);font-weight:500;margin-top:1px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.otrack{position:relative;height:26px;border-radius:8px;background:var(--warm)}
-.otrack i{position:absolute;top:3px;bottom:3px;border-radius:5px;background:var(--accent);font-style:normal;font-size:10px;font-weight:700;color:#fff;display:flex;align-items:center;justify-content:center;overflow:hidden;min-width:3px}
-.otrack i.co{background:#7e9cc4}.otrack i.pj{background:var(--accent-line)}.otrack i.done{opacity:.55}
-.otrack u{position:absolute;top:-4px;bottom:-4px;width:2px;background:var(--ink);border-radius:2px;text-decoration:none}
-.orow .st{text-align:right}
-.ov-key{display:flex;gap:16px;font-size:11.5px;color:var(--muted);font-weight:600;margin-top:14px}
-.ov-key i{display:inline-block;width:10px;height:10px;border-radius:3px;background:var(--accent);margin-right:6px;vertical-align:-1px}.ov-key i.co{background:#7e9cc4}
+.stabs{display:inline-flex;background:var(--warm-deep);border-radius:14px;padding:4px;margin:18px 0 16px}
+.stabs button{border:0;background:transparent;padding:6px 16px;border-radius:10px;font-size:13.5px;font-weight:650;color:var(--muted);line-height:1.2;text-align:center}
+.stabs button small{display:block;font-size:10.5px;font-weight:600;margin-top:2px}
+.stabs button.on{background:#fff;color:var(--ink);box-shadow:0 1px 2px rgba(60,50,30,.1)}
+.stabs button i{font-style:normal;color:var(--accent-deep);margin-left:4px}
+.hero{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:40px;align-items:start}
+.hero .bigw{font-family:var(--serif);font-size:50px;font-weight:600;letter-spacing:-1.2px;line-height:1.05;margin:6px 0 14px}
+.hero .bigw small{font-size:24px;color:var(--muted);letter-spacing:-.3px;font-weight:500;margin-left:8px}
+.focus{display:block;width:100%;text-align:left;border:0;border-left:3px solid var(--accent);border-radius:0 12px 12px 0;background:var(--warm);padding:12px 16px}
+.focus b{display:block;font-size:10px;letter-spacing:.15em;text-transform:uppercase;color:var(--ink-2);font-weight:700;margin-bottom:5px}
+.focus span{font-family:var(--serif);font-style:italic;font-size:15.5px;color:var(--ink-2);line-height:1.45}
+.focus span.ph{color:var(--faint)}
+.busy{display:grid;gap:5px;align-items:end;height:118px;margin-top:22px}
+.busy .col{display:flex;flex-direction:column;justify-content:flex-end;align-items:stretch;height:100%;position:relative}
+.busy .n{text-align:center;font-size:10px;font-weight:700;color:var(--ink-2);margin-bottom:3px}
+.busy .bar{border-radius:4px 4px 0 0;min-height:3px;background:var(--warm-deep)}
+.busy .bar.pc{background:var(--accent)}.busy .bar.co{background:#6a8fc2}
+.busy .col.now{outline:1.5px solid var(--ink);outline-offset:2px;border-radius:5px}
+.wkn{display:grid;gap:5px;margin-top:7px;font-size:10px;font-weight:600;color:var(--faint);text-align:center}
+.wkn span.now{color:var(--accent-deep);font-weight:700}
+.wkn span.now::after{content:"NOW";display:block;font-size:8.5px;letter-spacing:.08em}
+.key{display:flex;gap:16px;font-size:11.5px;color:var(--muted);font-weight:600;margin-top:10px}
+.key i{display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--accent);margin-right:6px}.key i.co{background:#6a8fc2}
+.cols>.card+.card{margin-top:0}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-top:18px}.two>.card+.card{margin-top:0}
+.sc-h{display:flex;align-items:center;gap:12px;margin-bottom:14px}
+.sc-h .ic{width:32px;height:32px;border-radius:9px;background:var(--accent-soft);color:var(--accent-deep);display:flex;align-items:center;justify-content:center}
+.sc-h .ic.co{background:#e3ebf6;color:#5a7fb3}
+.sc-h .ic svg{width:17px;height:17px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
+.sc-h b{font-family:var(--serif);font-size:19px;font-weight:600;flex:1}
+.sc-m{display:flex;align-items:center;gap:16px}
+.sc-m .big2{font-family:var(--serif);font-size:25px;font-weight:600;line-height:1.1}
+.sc-m small{display:block;font-size:12.5px;color:var(--muted);font-weight:500;margin-top:2px}
+.nx{display:flex;gap:10px;align-items:baseline;background:var(--warm);border-radius:10px;padding:9px 12px;margin-top:14px;font-size:13px;font-weight:600}
+.nx b{font-size:10px;letter-spacing:.14em;color:var(--muted);font-weight:700}
+.nx span{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.prow{display:flex;align-items:center;gap:12px;width:100%;text-align:left;border:0;background:var(--warm);border-radius:11px;padding:10px 14px 10px 0;margin-bottom:6px}
+.prow:hover{background:var(--warm-deep)}
+.prow .edge{width:4px;align-self:stretch;border-radius:3px;background:var(--accent);margin-left:12px}.prow .edge.co{background:#6a8fc2}
+.prow .tt{flex:1;min-width:0;font-size:14px;font-weight:650}.prow .tt small{display:block;font-size:12px;color:var(--muted);font-weight:500;margin-top:1px}
+.cup{display:flex;align-items:center;gap:14px;padding:11px 0;border-top:1px solid var(--hair)}
+.cup:first-of-type{border-top:0}
+.cup .dtile{width:46px;height:46px;border-radius:11px;background:var(--accent-soft);display:flex;flex-direction:column;align-items:center;justify-content:center;flex-shrink:0;font-family:var(--serif);font-size:19px;font-weight:600;line-height:1}
+.cup .dtile.co{background:#e3ebf6}
+.cup .dtile small{font-family:var(--sans);font-size:8.5px;letter-spacing:.12em;font-weight:700;color:var(--muted);margin-bottom:2px}
+.cup .ct{flex:1;min-width:0;font-size:14px;font-weight:600}.cup .ct small{display:block;font-size:12px;color:var(--muted);font-weight:500;margin-top:1px}
+.pastl{font-size:10.5px;letter-spacing:.15em;text-transform:uppercase;color:var(--muted);font-weight:700;margin:24px 0 8px}
+.past{display:flex;align-items:center;gap:14px;background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:14px 20px;margin-bottom:8px;width:100%;text-align:left}
+.past:hover{border-color:var(--accent-line)}
+.past .tt{flex:1;min-width:0;font-size:14px;font-weight:650}.past .tt small{display:block;font-size:12px;color:var(--muted);font-weight:500;margin-top:1px}
+.dots2{display:flex;gap:3px}.dots2 i{width:9px;height:9px;border-radius:3px;background:var(--warm-deep)}.dots2 i.on{background:var(--accent)}.dots2 i.on.co{background:#9fb6d6}
 .chead{display:flex;justify-content:space-between;align-items:flex-start;gap:14px}
 .eb{font-size:10.5px;letter-spacing:.15em;text-transform:uppercase;color:var(--accent-deep);font-weight:700;margin-bottom:4px}
 .why{font-size:14px;font-weight:500;line-height:1.55;white-space:pre-wrap}
@@ -284,9 +319,9 @@ var PC=[
    project:'A two-page write-up of my own neighbourhood: what works, what doesn’t, and one change I’d make.',
    unitNotes:{0:'Jacobs: “eyes on the street” is about strangers feeling watched over, not surveillance.\nShort blocks = more corners = more reasons to turn.\nQuestion for the walk: where do people actually stop?'},
    notes:[]},
-  {id:'art',title:'Learning to look at art',start:'2026-11-09',theme:'Art',why:'',weeks:[0,0,0,0,0,1,1,1],
+  {id:'art',title:'Learning to look at art',start:'2026-12-14',theme:'Art',why:'',weeks:[0,0,0,0,0,1,1,1],
    goals:['Stand in front of a painting and know what to look for'],
-   units:[{name:'Before the Impressionists',q:'What were they reacting against?',open:true,items:[I('Great Art Explained, three episodes','Watch',1),I('Museum visit: one room, one hour','Do')]}],
+   units:[{name:'Before the Impressionists',q:'What were they reacting against?',items:[I('Great Art Explained, three episodes','Watch'),I('Museum visit: one room, one hour','Do')]},{name:'Light and colour',q:'',items:[I('One chapter on colour','Read')]},{name:'Modern and after',q:'',items:[]}],
    project:'',unitNotes:{},notes:[]}
 ];
 var IDEAS=[
@@ -380,15 +415,16 @@ function convertAll(get){
 /* your own courses, read from what the current Classes page saved in this browser; nothing is written */
 var EX={PC:PC,CO:CO,IDEAS:IDEAS},MINE=(function(){try{var r=convertAll(function(k){try{return JSON.parse(localStorage.getItem(k));}catch(e){return null;}});
   return r.PC.length+r.CO.length+r.IDEAS.length?r:null;}catch(e){return null;}})();
-function useData(mine){var d=mine&&MINE?MINE:EX;PC=d.PC;CO=d.CO;IDEAS=d.IDEAS;S.mine=!!(mine&&MINE);S.cur={pc:(PC[0]||{}).id,co:(CO[0]||{}).id};S.note={pc:0,co:0};S.noteOpen=false;S.unit={};S.season=null;
-  $('#pv').innerHTML=S.mine?'Preview · your own courses, read from this browser · nothing is saved<button data-act="swap">Show examples</button>':'Preview · example content, nothing is saved'+(MINE?'<button data-act="swap">Show my courses</button>':'');}
+function useData(mine){var d=mine&&MINE?MINE:EX;PC=d.PC;CO=d.CO;IDEAS=d.IDEAS;S.mine=!!(mine&&MINE);
+  S.demo=S.mine&&!CO.some(function(c){return c.testDate;});if(S.demo&&CO.indexOf(EX.CO[0])<0)CO=d.CO=[EX.CO[0]].concat(CO);S.cur={pc:(PC[0]||{}).id,co:(CO[0]||{}).id};S.note={pc:0,co:0};S.noteOpen=false;S.unit={};S.season=null;S.tab={pc:'study',co:'plan'};
+  $('#pv').innerHTML=S.mine?'Preview · your own courses'+(S.demo?' plus an example FSOT course':'')+' · nothing is saved<button data-act="swap">Show examples</button>':'Preview · example content, nothing is saved'+(MINE?'<button data-act="swap">Show my courses</button>':'');}
 var MK={Video:'▶',Podcast:'♪',Book:'📖',Article:'📄',Link:'🔗'};
 function M(t,kind,src,unit,url){return {t:t,kind:kind,src:src,unit:unit==null?null:unit,url:url||''};}
 PC[0].mats=[M('The Death and Life of Great American Cities','Book','Jane Jacobs',0),M('Not Just Bikes','Video','youtube.com',0,'https://www.youtube.com/@NotJustBikes'),M('99% Invisible','Podcast','99percentinvisible.org',0,'https://99percentinvisible.org'),M('The missing middle','Article','strongtowns.org',1,'https://www.strongtowns.org'),M('Public housing documentary','Video','youtube.com',1)];
 PC[1].mats=[M('Great Art Explained','Video','youtube.com',0)];
 CO[0].mats=[M('Crash Course Government','Video','youtube.com',0),M('Study guide','Book','Book'),M('Official practice test','Link','careers.state.gov',null,'https://careers.state.gov')];
 CO[1].mats=[];
-[[PC[0],[2,2,1]],[PC[1],[3]],[CO[0],[2,2,3,2,2,1]],[CO[1],[3,3]]].forEach(function(a){a[0].units.forEach(function(u,i){u.w=a[1][i]||1;});});
+[[PC[0],[2,2,1]],[PC[1],[3,3,4]],[CO[0],[2,2,3,2,2,1]],[CO[1],[3,3]]].forEach(function(a){a[0].units.forEach(function(u,i){u.w=a[1][i]||1;});});
 /* notes are simple rich text: plain lines become paragraphs */
 function toHtml(t){return String(t||'').split('\n').map(function(l){return '<div>'+(esc(l)||'<br>')+'</div>';}).join('');}
 /* a unit's notes are ordinary notes that belong to that unit */
@@ -586,37 +622,63 @@ function topbar(x,newLabel){
 function seasons(){
   var saved=null;if(S.mine){try{saved=JSON.parse(localStorage.getItem('learnSeasons1'));}catch(e){}}
   var ok=function(z){return z&&/^\d{4}-\d\d-\d\d$/.test(z.start||'')&&/^\d{4}-\d\d-\d\d$/.test(z.end||'')&&z.start<=z.end;};
-  if(Array.isArray(saved)&&saved.filter(ok).length)return saved.filter(ok).map(function(z){return {name:z.name||'Season',start:z.start,end:z.end};}).sort(function(a,b){return a.start<b.start?-1:1;});
+  if(Array.isArray(saved)&&saved.filter(ok).length)return saved.filter(ok).map(function(z){return {name:z.name||'Season',start:z.start,end:z.end,focus:z.focus||''};}).sort(function(a,b){return a.start<b.start?-1:1;});
   var y=new Date().getFullYear(),out=[];
   for(var k=y-1;k<=y+1;k++)out.push({name:'Spring '+k,start:k+'-03-22',end:k+'-06-13'},{name:'Summer '+k,start:k+'-06-14',end:k+'-08-23'},{name:'Fall '+k,start:k+'-08-24',end:k+'-12-12'},{name:'Winter '+(k+1),start:k+'-12-13',end:(k+1)+'-03-21'});
   var t=pd(''),at=0;out.forEach(function(z,i){if(pd(z.start)<=t)at=i;});return out.slice(Math.max(0,at-2),at+2);
 }
+function ring(pct,co){var r=19,c=2*Math.PI*r;return '<svg width="52" height="52" viewBox="0 0 52 52"><circle cx="26" cy="26" r="'+r+'" fill="none" stroke="var(--warm-deep)" stroke-width="6"/>'+
+  (pct>0?'<circle cx="26" cy="26" r="'+r+'" fill="none" stroke="'+(co?'#6a8fc2':'var(--accent)')+'" stroke-width="6" stroke-linecap="round" stroke-dasharray="'+(c*pct/100)+' '+c+'" transform="rotate(-90 26 26)"/>':'')+
+  '<text x="26" y="30" text-anchor="middle" font-size="11.5" font-weight="700" fill="var(--ink)" font-family="Fraunces,Georgia,serif">'+pct+'%</text></svg>';}
 function overview(){
   var ss=seasons(),t=pd(''),cur=0;ss.forEach(function(z,i){if(pd(z.start)<=t)cur=i;});
   if(S.season==null||S.season>=ss.length)S.season=cur;
-  var se=ss[S.season],a=pd(se.start),b=pd(se.end),days=(b-a)/86400000+1,W=Math.max(1,Math.round(days/7)),isNow=t>=a&&t<=b;
-  var pos=function(d){return Math.max(0,Math.min(100,(d-a)/86400000/days*100));};
+  var se=ss[S.season],a=pd(se.start),b=pd(se.end),W=Math.max(1,Math.round(((b-a)/86400000+1)/7)),isNow=t>=a&&t<=b,past=t>b,wkNow=Math.floor((t-a)/604800000)+1;
   var all=PC.map(function(x){return {x:x,pg:'pc'};}).concat(CO.map(function(x){return {x:x,pg:'co'};}));
   all.forEach(function(o){o.sp=span(o.x);o.c=counts(o.x);o.fin=o.x.status==='Finished'||(o.sp.dated&&t>o.sp.to&&o.c.t>0&&o.c.d===o.c.t);});
-  var inS=all.filter(function(o){return o.sp.dated&&o.sp.from<=b&&o.sp.to>=a;}).sort(function(p,q){return p.sp.from-q.sp.from;}),loose=all.filter(function(o){return !o.sp.dated;});
-  var h='<div class="head"><h1>Overview</h1><div class="tabs">'+ss.map(function(z,i){return '<button data-act="season" data-n="'+i+'" class="'+(i===S.season?'on':'')+'">'+esc(z.name)+'</button>';}).join('')+'</div></div>';
-  h+='<div class="ov-sum">'+fd(a)+' – '+fd(b)+' · '+wk(W)+(isNow?' · week '+(Math.floor((t-a)/604800000)+1)+' of '+W:t>b?' · past':' · coming up')+
-     ' · '+inS.filter(function(o){return !o.fin;}).length+' in progress · '+inS.filter(function(o){return o.fin;}).length+' finished</div>';
-  h+='<div class="card"><div class="ov-h"><span></span><span class="ov-w" style="grid-template-columns:repeat('+W+',1fr)">';
-  for(var w=1;w<=W;w++)h+='<span'+(isNow&&Math.floor((t-a)/604800000)+1===w?' class="now"':'')+'>'+w+'</span>';
-  h+='</span><span></span></div>';
-  if(!inS.length)h+='<div class="orow"><span class="empty">Nothing scheduled in this season</span></div>';
-  inS.forEach(function(o){var x=o.x,sp=o.sp,bars='';
-    x.units.forEach(function(u,i){var r=sp.units[i];if(r.to<a||r.from>b)return;var l=pos(r.from),rt=pos(addDays(r.to,1)),dn=u.items.length&&u.items.every(function(z){return z.done;});
-      bars+='<i class="'+o.pg+(dn?' done':'')+'" style="left:'+l+'%;width:calc('+(rt-l)+'% - 2px)" title="Unit '+(i+1)+' · '+esc(u.name)+' · '+fd(r.from)+' – '+fd(r.to)+'">'+(i+1)+'</i>';});
-    var lastEnd=sp.units.length?sp.units[sp.units.length-1].to:addDays(sp.from,-1);
-    if(sp.to>lastEnd&&sp.to>=a&&lastEnd<b){var l2=pos(addDays(lastEnd,1)),r2=pos(addDays(sp.to,1));bars+='<i class="pj" style="left:'+l2+'%;width:calc('+(r2-l2)+'% - 2px)" title="'+(o.pg==='pc'?'Final project · due ':'Until ')+fd(sp.to)+'"></i>';}
-    if(isNow)bars+='<u style="left:'+pos(t)+'%" title="Today"></u>';
-    var st=o.fin?'<span class="chip g">Finished</span>':t<sp.from?'<span class="chip">starts '+fd(sp.from)+'</span>':'<span class="chip">'+o.c.d+' of '+o.c.t+'</span>';
-    h+='<button class="orow" data-act="open" data-pg="'+o.pg+'" data-id="'+esc(x.id)+'"><span class="on"><b>'+esc(x.title)+'</b><small>'+[o.pg==='pc'?'Personal Curriculum':'Course',x.theme,fd(sp.from)+' – '+fd(sp.to)].filter(Boolean).map(esc).join(' · ')+'</small></span><span class="otrack">'+bars+'</span><span class="st">'+st+'</span></button>';});
-  h+='<div class="ov-key"><span><i></i>Personal Curriculum</span><span><i class="co"></i>Courses</span><span>Numbers are units</span></div></div>';
-  if(loose.length&&S.season===cur){h+='<div class="card" style="margin-top:18px"><div class="ttl">Not scheduled yet</div>'+loose.map(function(o){
-      return '<button class="orow" style="grid-template-columns:minmax(0,1fr) 110px" data-act="open" data-pg="'+o.pg+'" data-id="'+esc(o.x.id)+'"><span class="on"><b>'+esc(o.x.title)+'</b><small>'+[o.pg==='pc'?'Personal Curriculum':'Course',o.x.theme,o.x.status!=='Active'?o.x.status:''].filter(Boolean).map(esc).join(' · ')+'</small></span><span class="st"><span class="chip">'+o.c.d+' of '+o.c.t+'</span></span></button>';}).join('')+'</div>';}
+  var within=function(z){return function(o){return o.sp.dated&&o.sp.from<=pd(z.end)&&o.sp.to>=pd(z.start);};};
+  var inS=all.filter(within(se)).sort(function(p,q){return p.sp.from-q.sp.from;});
+  /* what happens when: units beginning, things due, projects, tests */
+  var ev=[];inS.forEach(function(o){var x=o.x,sp=o.sp;
+    x.units.forEach(function(u,i){ev.push({d:sp.units[i].from,pg:o.pg,o:o,t:x.title+' · Unit '+(i+1)+' begins',s:/^Unit \d+$/.test(u.name)?'':u.name});
+      u.items.forEach(function(it){if(it.due)ev.push({d:pd(it.due),pg:o.pg,o:o,t:it.t+' due',s:x.title,done:it.done});});});
+    if(o.pg==='pc'&&x.units.length)ev.push({d:sp.to,pg:'pc',o:o,t:x.title+' · final project due',s:x.project||''});
+    if(x.testDate)ev.push({d:pd(x.testDate),pg:'co',o:o,t:x.title+' · test day',s:''});
+    else if(o.pg==='co'&&x.end)ev.push({d:pd(x.end),pg:'co',o:o,t:x.title+' ends',s:''});});
+  ev=ev.filter(function(e){return e.d>=a&&e.d<=b;}).sort(function(p,q){return p.d-q.d;});
+  var busy=[];for(var w=0;w<W;w++)busy.push({pc:0,co:0});
+  ev.forEach(function(e){var k=Math.min(W-1,Math.floor((e.d-a)/604800000));busy[k][e.pg]++;});
+  var max=Math.max.apply(null,busy.map(function(q){return q.pc+q.co;}).concat([1]));
+  var h='<div class="head"><h1>Overview</h1></div><div class="stabs">'+ss.map(function(z,i){return '<button data-act="season" data-n="'+i+'" class="'+(i===S.season?'on':'')+'">'+esc(z.name)+(i===cur?'<i>•</i>':'')+'<small>'+fd(pd(z.start))+' – '+fd(pd(z.end))+'</small></button>';}).join('')+'</div>';
+  /* the season at a glance */
+  var fc=(S.focus||{})[se.name]!=null?S.focus[se.name]:(se.focus||'');
+  h+='<div class="card hero"><div><div class="eb" style="color:var(--muted)">'+esc(se.name)+' · '+fd(a)+' – '+fd(b)+'</div>'+
+     '<div class="bigw">'+(isNow?'Week '+wkNow+'<small>of '+W+'</small>':past?'Finished<small>'+wk(W)+'</small>':'Starts<small>in '+Math.round((a-t)/86400000)+' days</small>')+'</div>'+
+     '<button class="focus" data-act="focus"><b>This season I’m focusing on</b><span'+(fc?'':' class="ph"')+'>'+(fc?esc(fc):'Add a sentence about what matters this season…')+'</span></button></div>'+
+     '<div><div class="ttl" style="margin-bottom:0">How busy each week is</div><div class="busy" style="grid-template-columns:repeat('+W+',1fr)">'+
+       busy.map(function(q,i){var n=q.pc+q.co;return '<div class="col'+(isNow&&i+1===wkNow?' now':'')+'" title="Week '+(i+1)+' · '+fd(addDays(a,i*7))+' – '+fd(addDays(a,i*7+6))+(n?' · '+n+' thing'+(n>1?'s':''):'')+'">'+(n?'<div class="n">'+n+'</div>':'')+
+         (q.co?'<div class="bar co" style="height:'+(q.co/max*78)+'px'+(q.pc?';border-radius:0':'')+'"></div>':'')+(q.pc?'<div class="bar pc" style="height:'+(q.pc/max*78)+'px'+(q.co?';border-radius:0;order:-1':'')+'"></div>':'')+(n?'':'<div class="bar"></div>')+'</div>';}).join('')+'</div>'+
+       '<div class="wkn" style="grid-template-columns:repeat('+W+',1fr)">'+busy.map(function(q,i){return '<span'+(isNow&&i+1===wkNow?' class="now"':'')+'>'+(i+1)+'</span>';}).join('')+'</div>'+
+       '<div class="key"><span><i></i>Personal Curriculum</span><span><i class="co"></i>Courses</span></div></div></div>';
+  /* one card each for Personal Curriculum and Courses */
+  var IC={pc:'<path d="M12 7c-2-1.4-4.6-2-8-2v13c3.4 0 6 .6 8 2 2-1.4 4.6-2 8-2V5c-3.4 0-6 .6-8 2Z"/><path d="M12 7v13"/>',co:'<path d="M3 8l9-4 9 4-9 4Z"/><path d="M7 10v5c0 1 5 3 5 3s5-2 5-3v-5"/>'};
+  h+='<div class="two">'+['pc','co'].map(function(pg){var l=inS.filter(function(o){return o.pg===pg;}),d=0,tt=0,nx=null,un=all.filter(function(o){return o.pg===pg&&!o.sp.dated;}).length;
+    l.forEach(function(o){d+=o.c.d;tt+=o.c.t;if(!nx&&!o.fin){var k=nextOf(o.x);if(k)nx={o:o,it:o.x.units[k.u].items[k.i]};}});
+    var act=l.filter(function(o){return !o.fin;}).length,word=pg==='pc'?(l.length===1?'study':'studies'):(l.length===1?'course':'courses');
+    return '<div class="card"><div class="sc-h"><span class="ic '+pg+'"><svg viewBox="0 0 24 24">'+IC[pg]+'</svg></span><b>'+(pg==='pc'?'Personal Curriculum':'Courses')+'</b><button class="link" data-go="'+pg+'">Open →</button></div>'+
+      '<div class="sc-m">'+ring(tt?Math.round(d/tt*100):0,pg==='co')+'<div><div class="big2">'+l.length+' '+word+'</div><small>'+(l.length?l.map(function(o){return esc(o.x.title);}).join(' · '):'Nothing in this season')+(un&&S.season===cur?(l.length?' · ':'')+un+' not scheduled':'')+'</small></div></div>'+
+      '<div class="nx"><b>NEXT</b><span>'+(nx?esc(nx.it.t)+' · '+esc(nx.o.x.title):past&&l.length?'All finished':l.length?'Nothing open':'—')+'</span></div></div>';}).join('')+'</div>';
+  /* what is on, and what is coming up */
+  var soon=isNow?ev.filter(function(e){return e.d>=t&&e.d<=addDays(t,42);}):ev;
+  h+='<div class="cols" style="margin-top:18px"><div class="card"><div class="ttl">'+(isNow?'What’s on':past?'What was on':'What’s planned')+'<span class="chip">'+inS.length+'</span></div>'+
+     (inS.length?inS.map(function(o){var pc=o.c.t?Math.round(o.c.d/o.c.t*100):0;return '<button class="prow" data-act="open" data-pg="'+o.pg+'" data-id="'+esc(o.x.id)+'"><span class="edge '+o.pg+'"></span><span class="tt">'+esc(o.x.title)+
+        '<small>'+[o.pg==='pc'?'Personal Curriculum':'Course',o.x.units.length+' unit'+(o.x.units.length===1?'':'s'),o.c.d+' of '+o.c.t+' to-dos',fd(o.sp.from)+' – '+fd(o.sp.to)].join(' · ')+'</small></span>'+(o.fin?'<span class="chip g">Finished</span>':'<span class="chip">'+pc+'%</span>')+'</button>';}).join(''):'<div class="empty">Nothing in this season yet</div>')+'</div>'+
+     '<div class="card"><div class="ttl">Coming up<span style="font-family:var(--sans);font-size:12px;font-weight:600;color:var(--muted)">'+(isNow?'next 6 weeks':esc(se.name))+'</span></div>'+
+     (soon.length?soon.slice(0,7).map(function(e){return '<div class="cup"><span class="dtile '+e.pg+'"><small>'+MS[e.d.getMonth()].toUpperCase()+'</small>'+e.d.getDate()+'</span><span class="ct">'+esc(e.t)+(e.s?'<small>'+esc(e.s)+'</small>':'')+'</span>'+(e.done?'<span class="chip g">done</span>':'')+'</div>';}).join('')+(soon.length>7?'<div class="empty" style="padding-top:8px">and '+(soon.length-7)+' more</div>':''):'<div class="empty">Nothing in '+(isNow?'the next 6 weeks':'this season')+'</div>')+'</div></div>';
+  /* earlier seasons */
+  var earlier='';ss.forEach(function(z,i){if(i>=S.season)return;all.filter(within(z)).forEach(function(o){if(pd(z.end)>=t&&!o.fin)return;
+    earlier='<button class="past" data-act="open" data-pg="'+o.pg+'" data-id="'+esc(o.x.id)+'"><span class="chip">'+esc(z.name)+'</span><span class="tt">'+esc(o.x.title)+'<small>'+(o.fin?'all finished':o.c.d+' of '+o.c.t+' to-dos')+'</small></span><span class="dots2">'+o.x.units.map(function(u){return '<i class="'+(u.items.length&&u.items.every(function(q){return q.done;})?'on '+o.pg:'')+'"></i>';}).join('')+'</span></button>'+earlier;});});
+  if(earlier)h+='<div class="pastl">Past seasons</div>'+earlier;
   return h;
 }
 /* ── a note opens as its own page; on the real page each one is a Google Doc in the study's folder ── */
@@ -736,6 +798,7 @@ document.addEventListener('click',function(e){
   var a=el.getAttribute('data-act'),x=S.page==='ov'?null:cur();
   if(a==='tab'){S.tab[S.page]=el.getAttribute('data-tab');S.noteOpen=false;render();}
   else if(a==='swap'){if(T){clearInterval(tick);T=null;}useData(!S.mine);render();}
+  else if(a==='focus'){var sz=seasons()[S.season];FORM.open({title:sz.name,fields:[{name:'f',label:'This season I’m focusing on',type:'textarea',rows:3,value:(S.focus||{})[sz.name]!=null?S.focus[sz.name]:(sz.focus||'')}],onSave:function(o){S.focus=S.focus||{};S.focus[sz.name]=o.f.trim();render();}});}
   else if(a==='season'){S.season=+el.getAttribute('data-n');render();}
   else if(a==='open'){S.page=el.getAttribute('data-pg');S.cur[S.page]=el.getAttribute('data-id');S.tab[S.page]=S.page==='pc'?'study':'plan';S.noteOpen=false;render();window.scrollTo(0,0);}
   else if(a==='pick'){S.unit[x.id]=+el.getAttribute('data-u');render();}
@@ -786,7 +849,7 @@ document.addEventListener('input',function(e){
     clearTimeout(saveT);saveT=setTimeout(function(){var z=$('#nsaved');if(z)z.innerHTML='<b>Saved</b>';},500);}
 });
 /* the preview updates itself: if a newer copy has been published, load it (once per copy) */
-var PV='2611111852';
+var PV='2611111921';
 (function(){try{fetch(location.pathname+'?pv='+Date.now(),{cache:'no-store'}).then(function(r){return r.ok?r.text():'';}).then(function(t){
   var m=/var PV='(\d+)'/.exec(t);if(!m||m[1]===PV)return;var done='';try{done=sessionStorage.getItem('pv-seen')||'';}catch(e){}
   if(done===m[1])return;try{sessionStorage.setItem('pv-seen',m[1]);}catch(e){}
