@@ -375,7 +375,7 @@ var CO=[
    notes:[{title:'Logic mistakes I keep making',date:'Nov 9',text:'Confusing “some” with “most”.\nMissing the unstated assumption.'}],
    sets:[{d:'Nov 2',sec:'Job knowledge',right:36,total:50},{d:'Nov 2',sec:'English usage and comprehension',right:35,total:45},{d:'Nov 2',sec:'Logical reasoning',right:21,total:30},
          {d:'Oct 12',sec:'Job knowledge',right:33,total:50},{d:'Oct 12',sec:'English usage and comprehension',right:32,total:45},{d:'Oct 12',sec:'Logical reasoning',right:20,total:30}],
-   scores:[{d:'Nov 2',score:'74%',label:'Test 1 · 92 of 125'},{d:'Oct 12',score:'68%',label:'Test 2 · 85 of 125'}]},
+   scores:[{ago:18,score:'74%',label:'Test 1 · 92 of 125'},{ago:39,score:'68%',label:'Test 2 · 85 of 125'}]},
   {id:'excel',title:'Data Skills for Excel Professionals',theme:'Career',start:'2026-10-19',end:'2026-11-29',platform:'',status:'Active',url:'',testDate:'',why:'',weeks:[1,0,1,1,0,0,1,0],goals:[],
    units:[{name:'Fundamentals of data analysis',q:'',open:true,items:[I('Videos 1–6','Watch',1),I('Practice workbook','Do',1),I('Module quiz','Do')]},{name:'Dictionaries, quality and communication',q:'',items:[I('Videos 1–5','Watch'),I('Module quiz','Do')]}],
    project:'',unitNotes:{},notes:[]}
@@ -447,7 +447,7 @@ function convertAll(get){
 var EX={PC:PC,CO:CO,IDEAS:IDEAS},MINE=(function(){try{var r=convertAll(function(k){try{return JSON.parse(localStorage.getItem(k));}catch(e){return null;}});
   return r.PC.length+r.CO.length+r.IDEAS.length?r:null;}catch(e){return null;}})();
 function useData(mine){var d=mine&&MINE?MINE:EX;PC=d.PC;CO=d.CO;IDEAS=d.IDEAS;S.mine=!!(mine&&MINE);
-  S.demo=S.mine&&!CO.some(function(c){return c.testDate;});if(S.demo&&CO.indexOf(EX.CO[0])<0)CO=d.CO=[EX.CO[0]].concat(CO);S.cur={pc:(PC[0]||{}).id,co:(CO[0]||{}).id};S.note={pc:0,co:0};S.noteOpen=false;S.unit={};S.season=null;S.seasons=null;S.tab={pc:'study',co:'plan'};S.tdSeen=null;
+  S.demo=S.mine&&!CO.some(function(c){return c.testDate;});if(S.demo&&CO.indexOf(EX.CO[0])<0)CO=d.CO=[EX.CO[0]].concat(CO);S.cur={pc:(PC[0]||{}).id,co:(CO[0]||{}).id};S.note={pc:0,co:0};S.noteOpen=false;S.unit={};S.season=null;S.seasons=null;S.tab={pc:'study',co:'plan'};
   $('#pv').innerHTML=S.mine?'Preview · your own courses'+(S.demo?' plus an example FSOT course':'')+' · nothing is saved<button data-act="swap">Show examples</button>':'Preview · example content, nothing is saved'+(MINE?'<button data-act="swap">Show my courses</button>':'');}
 var MK={Video:'▶',Podcast:'♪',Book:'📖',Article:'📄',Link:'🔗'};
 function M(t,kind,src,unit,url){return {t:t,kind:kind,src:src,unit:unit==null?null:unit,url:url||''};}
@@ -455,6 +455,7 @@ PC[0].mats=[M('The Death and Life of Great American Cities','Book','Jane Jacobs'
 PC[1].mats=[M('Great Art Explained','Video','youtube.com',0)];
 CO[0].mats=[M('Crash Course Government','Video','youtube.com',0),M('Study guide','Book','Book'),M('Official practice test','Link','careers.state.gov',null,'https://careers.state.gov')];
 CO[1].mats=[];
+CO[0].scores.forEach(function(z){z.at=Date.now()-z.ago*86400000;var d=new Date(z.at);z.d=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'][d.getMonth()]+' '+d.getDate();});
 [[PC[0],[2,2,1]],[PC[1],[3,3,4]],[CO[0],[2,2,3,2,2,1]],[CO[1],[3,3]]].forEach(function(a){a[0].units.forEach(function(u,i){u.w=a[1][i]||1;});});
 /* notes are simple rich text: plain lines become paragraphs */
 function toHtml(t){return String(t||'').split('\n').map(function(l){return '<div>'+(esc(l)||'<br>')+'</div>';}).join('');}
@@ -491,7 +492,7 @@ var FORM=(function(){
   function open(o){now=o;$('#formBody').innerHTML='<h3>'+esc(o.title)+'</h3>'+o.fields.map(field).join('')+
       '<div class="modal-foot">'+(o.onDelete?'<button class="btn del" data-form="del">'+esc(o.deleteLabel||'Delete')+'</button>':'')+
       '<div><button class="btn" data-form="cancel">Cancel</button><button class="btn dark" data-form="save">'+esc(o.saveLabel||'Save')+'</button></div></div>';
-    $('#formModal').classList.add('show');var f=$('#formBody input,#formBody textarea');if(f)setTimeout(function(){f.focus();},30);}
+    $('#formModal').classList.add('show');var f=$('#formBody input,#formBody textarea');if(f)f.focus();}
   function close(){now=null;$('#formModal').classList.remove('show');}
   function save(){if(!now)return;var v={};names(now.fields,[]).forEach(function(n){v[n]=$('#ff-'+n).value;});var o=now;if(o.onSave(v)!==false&&now===o)close();}
   function del(btn){if(!now||!now.onDelete)return;if(!btn.getAttribute('data-armed')){btn.setAttribute('data-armed','1');btn.textContent='Click again to delete';return;}var o=now;o.onDelete();if(now===o)close();}
@@ -573,7 +574,7 @@ function todoForm(x,ui,ii){
 function scoreForm(x){
   FORM.open({title:'Add a practice test score',saveLabel:'Add score',
     fields:[{row:[{name:'score',label:'Score',placeholder:'e.g. 74%'},{name:'label',label:'Which test',type:'select',options:['Test 1','Test 2','Test 3','Test 4','Another test'],value:'Test 1'}]},{name:'note',label:'Note',opt:'optional',type:'textarea',rows:2,placeholder:'What went well, what to review'}],
-    onSave:function(o){if(!o.score.trim()){$('#ff-score').focus();return false;}x.scores.unshift({d:today(),score:o.score.trim(),label:o.label+(o.note.trim()?' · '+o.note.trim():'')});render();}});
+    onSave:function(o){if(!o.score.trim()){$('#ff-score').focus();return false;}x.scores.unshift({d:today(),at:Date.now(),score:o.score.trim(),label:o.label+(o.note.trim()?' · '+o.note.trim():'')});render();}});
 }
 function ideaForm(n){
   var i=IDEAS[n];
@@ -654,12 +655,13 @@ function activeNow(){var t=pd('');return PC.map(function(x){return {x:x,pg:'pc'}
     o.sp=span(o.x);o.c=counts(o.x);if(o.x.status==='Finished'||o.x.status==='Queued'||o.x.status==='On hold')return false;
     return o.sp.dated?(t>=o.sp.from&&t<=o.sp.to):o.c.t>o.c.d;});}
 function todayPage(){
-  var t=pd(''),act=activeNow(),rows=[],seen=S.tdSeen=S.tdSeen||[];
+  var t=pd(''),act=activeNow(),rows=[];
   act.forEach(function(o){var x=o.x,u=nowUnit(x);if(u<0){var k=nextOf(x);u=k?k.u:0;}var n=0;
-    (x.units[u]||{items:[]}).items.forEach(function(it,i){if(seen.indexOf(it)>=0||(!it.done&&n<2)){if(!it.done)n++;rows.push({o:o,u:u,i:i,it:it});}});
+    (x.units[u]||{items:[]}).items.forEach(function(it,i){if(!it.done&&n<2){n++;rows.push({o:o,u:u,i:i,it:it});}});
     if(!n){var k2=nextOf(x);if(k2&&k2.u!==u)rows.push({o:o,u:k2.u,i:k2.i,it:x.units[k2.u].items[k2.i]});}});
-  rows.forEach(function(r){if(seen.indexOf(r.it)<0)seen.push(r.it);});
-  var done=rows.filter(function(r){return r.it.done;}).length,test=CO.filter(function(c){return c.testDate&&testOf(c)&&c.status!=='Finished';})[0];
+  /* a practice test is asked for every two weeks, and ticks itself when one is taken */
+  var test=CO.filter(function(c){return c.testDate&&testOf(c)&&c.status!=='Finished';})[0],last=test&&test.scores.length?Math.max.apply(null,test.scores.map(function(z){return z.at||0;})):0,
+      ago=last?Math.floor((Date.now()-last)/86400000):null,due=test&&(ago==null||ago>=14),doneToday=test&&ago===0;
   var DAY=['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'],D3=['SUN','MON','TUE','WED','THU','FRI','SAT'],hr=new Date().getHours();
   var h='<h1 class="tdh">Good '+(hr<12?'morning':hr<18?'afternoon':'evening')+'</h1><div class="tdsub">'+DAY[t.getDay()]+', '+MONTHS[t.getMonth()]+' '+t.getDate()+'</div><div class="tdgrid"><div>';
   h+='<div class="card same"><div class="ttl">This week</div><div class="ph">Your calendar, as it is now</div><div class="calph">'+[0,1,2,3,4,5,6].map(function(i){var d=addDays(t,i);return '<span>'+D3[d.getDay()]+' '+d.getDate()+'</span>';}).join('')+'</div></div>';
@@ -668,12 +670,12 @@ function todayPage(){
         return '<button class="lw" data-act="open" data-pg="'+o.pg+'" data-id="'+esc(x.id)+'"><span class="edge '+o.pg+'"></span><span class="tt">'+esc(x.title)+'<small>'+(un?'Unit '+(u+1)+' of '+x.units.length+' · '+esc(un.name)+(o.sp.dated&&r?' · until '+fd(r.to):''):'No units yet')+'</small></span><span class="pb '+o.pg+'" title="'+d+' of '+n+' done in this unit"><i style="width:'+(n?d/n*100:0)+'%"></i></span></button>';}).join(''):'<div class="empty">Nothing running this week</div>')+'</div>'+
      '<div class="card same"><div class="ttl">Reading, watching &amp; listening</div><div class="ph">Your Library card, as it is now, narrower</div></div></div></div>';
   h+='<div><div class="card same"><div class="ttl">Bills due</div><div class="ph">As it is now</div></div>'+
-     '<div class="card"><div class="ttl">Checklist<span class="chip">'+done+' of '+rows.length+' learning</span></div>'+
+     '<div class="card"><div class="ttl">Checklist<span class="chip">'+(rows.length+(due?1:0))+' for learning</span></div>'+
      '<div class="grp">Tasks</div><div class="ck2 ph">As it is now</div>'+
      '<div class="grp">Languages</div><div class="ck2 ph">As it is now</div>'+
      '<div class="grp new">Learning<button class="link" data-go="ov">Overview →</button></div>'+
-     (test?'<div class="nudge"><span>'+esc(test.title)+' · '+wk(testOf(test).weeks)+' to go<small>A quick practice test takes about 29 minutes</small></span><button class="btn sm" data-act="quick" data-id="'+esc(test.id)+'">Take one</button></div>':'')+
-     (rows.length?rows.map(function(r,n){var it=r.it,x=r.o.x;return '<div class="ck2'+(it.done?' on':'')+'" data-act="tdtick" data-n="'+n+'"><span class="ck'+(it.done?' on':'')+'">'+(it.done?'✓':'')+'</span><span class="tx"><b>'+esc(it.t)+'</b>'+(it.url?' <a href="'+esc(it.url)+'" target="_blank" rel="noopener">↗</a>':'')+
+     (due?'<div class="nudge"><span>'+esc(test.title)+' practice test<small>'+(ago==null?'None taken yet':'Last one '+ago+' days ago')+' · '+wk(testOf(test).weeks)+' to the test</small></span><button class="btn sm" data-act="quick" data-id="'+esc(test.id)+'">Take one</button></div>':doneToday?'<div class="ck2 on" style="cursor:default"><span class="ck on">✓</span><span class="tx"><b>'+esc(test.title)+' practice test</b><small>Taken today · ticked on its own</small></span></div>':'')+
+     (rows.length||due||doneToday?rows.map(function(r,n){var it=r.it,x=r.o.x;return '<div class="ck2'+(it.done?' on':'')+'" data-act="tdtick" data-n="'+n+'"><span class="ck'+(it.done?' on':'')+'">'+(it.done?'✓':'')+'</span><span class="tx"><b>'+esc(it.t)+'</b>'+(it.url?' <a href="'+esc(it.url)+'" target="_blank" rel="noopener">↗</a>':'')+
         '<small>'+esc(x.title)+' · '+esc(x.units[r.u].name)+'</small></span><span class="k" style="font-size:9.5px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--faint)">'+esc(it.k)+'</span></div>';}).join(''):'<div class="empty">Nothing to do for your courses right now</div>')+
      '<div class="grp">Body · Workout</div><div class="ck2 ph">As it is now</div></div></div></div>';
   S.tdRows=rows;return h;
@@ -806,7 +808,7 @@ function nextPart(){if(T.p<PARTS.length-1){T.p++;T.i=0;T.left=T.secs;render();wi
 function finishTest(){
   T.done=true;clearInterval(tick);var x=cur(),right=0,total=0;
   T.parts.forEach(function(qs,p){var r=qs.filter(function(a){return a.pick>=0&&a.order[a.pick]===a.q.a;}).length;right+=r;total+=qs.length;x.sets.unshift({d:today(),sec:PARTS[p],right:r,total:qs.length});});
-  T.right=right;T.total=total;x.scores.unshift({d:today(),score:Math.round(right/total*100)+'%',label:(T.len==='Full'?'':T.len+' · ')+'Test '+T.ver+' · '+right+' of '+total});x.weeks[x.weeks.length-1]=1;
+  T.right=right;T.total=total;x.scores.unshift({d:today(),at:Date.now(),score:Math.round(right/total*100)+'%',label:(T.len==='Full'?'':T.len+' · ')+'Test '+T.ver+' · '+right+' of '+total});x.weeks[x.weeks.length-1]=1;
   render();window.scrollTo(0,0);
 }
 function testView(){
@@ -918,7 +920,7 @@ document.addEventListener('input',function(e){
     clearTimeout(saveT);saveT=setTimeout(function(){var z=$('#nsaved');if(z)z.innerHTML='<b>Saved</b>';},500);}
 });
 /* the preview updates itself: if a newer copy has been published, load it (once per copy) */
-var PV='2611111934';
+var PV='2611111944';
 (function(){try{fetch(location.pathname+'?pv='+Date.now(),{cache:'no-store'}).then(function(r){return r.ok?r.text():'';}).then(function(t){
   var m=/var PV='(\d+)'/.exec(t);if(!m||m[1]===PV)return;var done='';try{done=sessionStorage.getItem('pv-seen')||'';}catch(e){}
   if(done===m[1])return;try{sessionStorage.setItem('pv-seen',m[1]);}catch(e){}
