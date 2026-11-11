@@ -58,6 +58,7 @@ html, body { background: var(--bg); font-family: var(--b2-sans); color: var(--in
 .cc-info { flex: 1; min-width: 0; }
 .cc-name { font-size: 14px; font-weight: 650; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .cc-due { font-size: 12px; color: var(--muted); font-weight: 550; margin-top: 2px; }
+.cc-od { color: var(--over); font-weight: 700; }
 
 .cc-urgency { font-size: 11px; font-weight: 700; padding: 3px 9px; border-radius: 20px; white-space: nowrap; flex-shrink: 0; }
 .urgent { background: var(--over-bg); color: var(--over); }
@@ -141,10 +142,10 @@ html, body { background: var(--bg); font-family: var(--b2-sans); color: var(--in
 .swatch.sel { border-color:var(--ink); box-shadow:0 0 0 2px #fff, 0 0 0 3.5px var(--ink); }
 @media (max-width:700px){ .cc-actions{ gap:4px; } }
 </style>
-<link rel="stylesheet" href="../assets/brain.css?v=1026a">
+<link rel="stylesheet" href="../assets/brain.css?v=1111a">
 </head>
 <body>
-<script src="../assets/shell.js?v=1026a"></script>
+<script src="../assets/shell.js?v=1111a"></script>
 
 <!-- Tool/Resource Modal -->
 <div class="modal-bg" id="res-modal">
@@ -267,16 +268,10 @@ html, body { background: var(--bg); font-family: var(--b2-sans); color: var(--in
   </div>
 </div>
 
+<script src="../assets/gate.js?v=1111a"></script>
 <script>
-/* AUTH */
-(function() {
-  var p = localStorage.getItem('brain2auth');
-  if (p !== 'Nikkireed234!') {
-    var a = prompt('Password:');
-    if (a !== 'Nikkireed234!') { document.body.innerHTML = ''; return; }
-    localStorage.setItem('brain2auth', a);
-  }
-})();
+/* AUTH — the check lives in assets/gate.js (no password in the code) */
+if (!B2Gate()) { document.body.innerHTML = ''; throw new Error('Unauth'); }
 
 /* CARD DATA */
 var CARD_SK = 'finTrackerState2';
@@ -315,10 +310,23 @@ function togglePaid(c, w) {
   var l = paidList(c, w), key = isoD(nextDueDate(w === 'paid2' ? c.day2 : c.day)), i = l.indexOf(key);
   if (i >= 0) l.splice(i, 1); else { l.push(key); l.sort(); while (l.length > 12) l.shift(); }
 }
+/* Overdue: a statement whose due date passed in the last OVERDUE_DAYS days without being marked paid.
+   Only statements due on or after overdueFrom (the day this check was added) and after the card was
+   added are flagged, so old history never shows as overdue. Mid-cycle payments are optional: never flagged. */
+var OVERDUE_DAYS = 7, overdueFrom = '';
+function overdue(c) {
+  if (!c.active || !c.day) return null;
+  var last = lastDueDate(c.day), key = isoD(last);
+  if (paidList(c, 'paid').indexOf(key) >= 0) return null;
+  if (!overdueFrom || key < overdueFrom || (c.added && key < c.added)) return null;
+  var now = new Date(); now.setHours(0,0,0,0);
+  var days = Math.round((now - last) / 86400000);
+  return days >= 1 && days <= OVERDUE_DAYS ? { date: last, key: key, days: days } : null;
+}
 function syncPaid() { cards.forEach(function(c) { c.paid = isPaid(c, 'paid'); c.paid2 = isPaid(c, 'paid2'); }); }
 function saveCards() {
   syncPaid();
-  localStorage.setItem(CARD_SK, JSON.stringify({ cards: cards, lastReset: monthKey(), midCycleSeeded: midCycleSeeded, paidByStatement: true }));
+  localStorage.setItem(CARD_SK, JSON.stringify({ cards: cards, lastReset: monthKey(), midCycleSeeded: midCycleSeeded, paidByStatement: true, overdueFrom: overdueFrom }));
 }
 function loadCards() {
   var raw = localStorage.getItem(CARD_SK);
@@ -364,6 +372,8 @@ function loadCards() {
       });
       saveCards();
     }
+    overdueFrom = s.overdueFrom || '';
+    if (!overdueFrom) { overdueFrom = isoD(new Date()); saveCards(); }
     syncPaid();
   } catch(e) {
     cards = JSON.parse(JSON.stringify(DEFAULT_CARDS));
@@ -385,10 +395,11 @@ function urgency(d) {
 }
 function sortedCards() {
   return cards.map(function(c) {
-    return { id:c.id, name:c.name, day:c.day, day2:c.day2, url:c.url, color:c.color, active:c.active, paid:isPaid(c, 'paid'), paid2:isPaid(c, 'paid2'), lastPaid:paidList(c, 'paid').indexOf(isoD(lastDueDate(c.day))) >= 0, d:daysUntil(c.day) };
+    return { id:c.id, name:c.name, day:c.day, day2:c.day2, url:c.url, color:c.color, active:c.active, paid:isPaid(c, 'paid'), paid2:isPaid(c, 'paid2'), od:overdue(c), d:daysUntil(c.day) };
   }).sort(function(a, b) {
     if (a.active && !b.active) return -1;
     if (!a.active && b.active) return 1;
+    if (!a.od !== !b.od) return a.od ? -1 : 1;   // overdue first
     return a.d - b.d;
   });
 }
@@ -411,17 +422,24 @@ function renderCards() {
     var main = document.createElement('div'); main.className = 'cc-main';
     var dot = document.createElement('div'); dot.className = 'cc-dot'; dot.style.background = c.color;
     var info = document.createElement('div'); info.className = 'cc-info';
-    info.innerHTML = '<div class="cc-name">' + esc(c.name) + '</div><div class="cc-due">Statement due ' + dueDateStr(c.day) + (!c.paid && c.lastPaid ? ' · ' + shortD(lastDueDate(c.day)) + ' paid ✓' : '') + '</div>';
+    info.innerHTML = '<div class="cc-name">' + esc(c.name) + '</div><div class="cc-due">Statement due ' + dueDateStr(c.day) + (c.od ? ' · <span class="cc-od">' + shortD(c.od.date) + ' not marked paid</span>' : '') + '</div>';
 
     var actions = document.createElement('div'); actions.className = 'cc-actions';
-    if (c.active && !c.paid) {
+    if (c.od) {
+      var ob = document.createElement('span'); ob.className = 'cc-urgency urgent'; ob.textContent = 'Overdue';
+      actions.appendChild(ob);
+    } else if (c.active && !c.paid) {
       var badge = document.createElement('span'); badge.className = 'cc-urgency ' + u.cls; badge.textContent = u.label;
       actions.appendChild(badge);
     }
     var paidBtn = document.createElement('button');
-    paidBtn.className = 'paid-btn ' + (c.paid ? 'paid-yes' : 'paid-no');
-    paidBtn.textContent = c.paid ? '✓ Paid' : 'Unpaid';
-    paidBtn.onclick = (function(id){ return function(){ var card = cards.find(function(x){return x.id===id;}); if(card){ togglePaid(card, 'paid'); saveCards(); renderCards(); } }; })(c.id);
+    paidBtn.className = 'paid-btn ' + (c.paid && !c.od ? 'paid-yes' : 'paid-no');
+    paidBtn.textContent = c.od ? 'Mark paid' : c.paid ? '✓ Paid' : 'Unpaid';
+    if (c.od) paidBtn.title = 'Mark the ' + shortD(c.od.date) + ' statement as paid';
+    /* an overdue row is about the statement that just passed; otherwise the button is for the next one */
+    paidBtn.onclick = (function(id, odKey){ return function(){ var card = cards.find(function(x){return x.id===id;}); if(!card) return;
+      if (odKey) { var l = paidList(card, 'paid'); if (l.indexOf(odKey) < 0) { l.push(odKey); l.sort(); } } else togglePaid(card, 'paid');
+      saveCards(); renderCards(); }; })(c.id, c.od ? c.od.key : '');
     actions.appendChild(paidBtn);
     if (c.url) {
       var portal = document.createElement('a');
@@ -685,7 +703,7 @@ function saveCardModal() {
     var c = cards.find(function(x){ return x.id === editCardId; });
     if (c) { c.name = name; c.day = day; c.day2 = day2; c.url = url; c.color = selectedColor; c.active = active; }
   } else {
-    cards.push({ id:'c' + Date.now() + Math.random().toString(36).slice(2,5), name:name, day:day, day2:day2, url:url, color:selectedColor, active:active, paid:false, paid2:false, paidDates:[], paid2Dates:[] });
+    cards.push({ id:'c' + Date.now() + Math.random().toString(36).slice(2,5), name:name, day:day, day2:day2, url:url, color:selectedColor, active:active, paid:false, paid2:false, paidDates:[], paid2Dates:[], added:isoD(new Date()) });
   }
   saveCards(); closeCardModal(); renderCards();
 }

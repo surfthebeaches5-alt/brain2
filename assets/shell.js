@@ -30,6 +30,7 @@
   };
   window.B2FavOk=function(img){
     if(img.naturalWidth<8){window.B2FavNext(img);return;}
+    img.classList.add('ok');   /* quick-link tiles show the site's first letter until an icon has really loaded */
     var h=img.getAttribute('data-h');if(h&&cache[h]!==img.src){cache[h]=img.src;save();}
   };
   window.B2FavNext=function(img){

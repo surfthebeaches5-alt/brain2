@@ -358,10 +358,11 @@ button{font-family:inherit;}
   body.mp-printing #mp-print{display:block;}
 }
 </style>
-<link rel="stylesheet" href="../assets/brain.css?v=1026a">
+<link rel="stylesheet" href="../assets/brain.css?v=1111a">
 </head>
 <body>
-<script src="../assets/shell.js?v=1026a"></script>
+<script src="../assets/shell.js?v=1111a"></script>
+<script src="../assets/stats.js?v=1111a"></script>
 
 <div class="topbar">
   <div class="topbar-left">
@@ -401,6 +402,10 @@ button{font-family:inherit;}
   <section class="panel" id="s1">
     <p class="lead">Everything in this step is about <b data-mn="prev"></b>, the month that just ended — it’s saved with <span data-mn="prev"></span>.</p>
     <div class="grid">
+      <section class="card s12">
+        <div class="card-h"><div class="card-t"><span data-mn="prev"></span> in numbers</div><span class="card-m">from your other pages</span></div>
+        <div id="nums"></div>
+      </section>
       <section class="card s7">
         <div class="card-h"><div class="card-t"><span data-mn="prev"></span>’s goals</div><span class="chip" id="pg-chip" hidden></span></div>
         <div id="prev-goals"></div>
@@ -909,8 +914,13 @@ function goStep(n,noScroll){
   refreshSteps();expandIn($('s'+step));
   if(!noScroll)window.scrollTo({top:0,behavior:'smooth'});
 }
+/* the month being reviewed, in numbers (read-only, from the other pages: assets/stats.js) */
+function renderNumbers(){
+  var p=prevYM(),mm=String(p.m+1).padStart(2,'0');
+  B2Stats.render($('nums'),p.y+'-'+mm+'-01',p.y+'-'+mm+'-'+String(daysIn(p)).padStart(2,'0'),{onPick:function(text){if(!text)return;$('wins-input').value=text;addItem('wins');}});
+}
 function renderMonth(){
-  paintLabels();fillFields();
+  paintLabels();fillFields();renderNumbers();
   renderPrevGoals();renderRating();renderWheel();renderList('wins');renderList('notwork');
   renderChips();renderCarry();renderNonNegs();renderMid();refreshSteps();
   expandIn($('s'+step));

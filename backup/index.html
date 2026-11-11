@@ -57,12 +57,20 @@
   .toggle{display:flex;background:none;border:none;font:650 12px var(--b2-sans);color:var(--accent-deep);cursor:pointer;margin-top:12px;padding:0;align-items:center;gap:5px}
   .toggle:hover{text-decoration:underline}
   input[type=file]{display:none}
+  .drive{margin-bottom:18px}
+  .drive .row{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px}
+  .drive .state{display:flex;align-items:center;gap:8px;margin-top:12px;font-size:13px;font-weight:650;color:var(--ink-2)}
+  .drive .state i{width:8px;height:8px;border-radius:50%;background:var(--line)}
+  .drive .state.on i{background:var(--ok)}
+  .drive .state.warn i{background:var(--warn)}
+  .drive ol{margin:8px 0 0 18px;padding:0;font-weight:500;line-height:1.7}
+  .drive .msg a{color:inherit}
   @media (max-width:760px){ .wrap{padding:16px 16px 60px} .card{padding:18px} }
 </style>
-<link rel="stylesheet" href="../assets/brain.css?v=1026a">
+<link rel="stylesheet" href="../assets/brain.css?v=1111a">
 </head>
 <body>
-<script src="../assets/shell.js?v=1026a"></script>
+<script src="../assets/shell.js?v=1111a"></script>
 <div class="topbar">
   <div class="topbar-left">
     <a class="back" href="../" id="backLink"></a>
@@ -72,6 +80,14 @@
 <div class="wrap">
 <div class="col">
   <p class="sub">Everything you enter in Brain 2.0 lives inside this browser on this device. Export it to a file to keep it safe, move it to another device, or carry it to a new home for the site.</p>
+
+  <div class="card drive" id="driveCard">
+    <h2 id="drvTitle">Google Drive backup</h2>
+    <p>Saves a copy of everything to your own Google Drive, in one file named “Brain 2.0 backup.json”. It updates about once a day, whenever you’re signed in to Google on the Today page. The site can only see that one file, nothing else in your Drive.</p>
+    <div class="state" id="drvState"></div>
+    <div class="row" id="drvRow"></div>
+    <div class="msg" id="drvMsg"></div>
+  </div>
 
   <div class="grid">
     <div class="card">
@@ -105,6 +121,8 @@
 </div>
 </div>
 
+<script src="../assets/gcal.js?v=1111a"></script>
+<script src="../assets/backup.js?v=1111a"></script>
 <script>
 (function(){
   'use strict';
@@ -129,7 +147,7 @@
   var $ = function(id){ return document.getElementById(id); };
 
   // Keys that belong to the browser/site machinery, not to your data — excluded from export
-  var SKIP = { sbCollapsed:1, brain2SidebarCollapsed:1, brain2auth:1, brain2GCalCache1:1 };
+  var SKIP = B2Backup.SKIP;
 
   function collectKeys(){
     var out = [];
@@ -214,6 +232,7 @@
     a.click();
     document.body.removeChild(a);
     setTimeout(function(){ URL.revokeObjectURL(a.href); }, 4000);
+    B2Backup.markFile();
     var msg = $('expMsg');
     msg.className = 'msg ok show';
     msg.innerHTML = IC('check',15) + '<span>Exported ' + keys.length + ' section' + (keys.length===1?'':'s') + ' (' + fmtSize(str) + '). Keep the file somewhere safe \u2014 email it to yourself, or put it in your cloud drive.</span>';
@@ -244,33 +263,35 @@
     pending = null;
     if (!f) return;
     var reader = new FileReader();
-    reader.onload = function(){
-      var parsed;
-      try { parsed = JSON.parse(reader.result); }
-      catch(e){ return fail('That file couldn\u2019t be read as a backup. Make sure you picked a brain2-backup file ending in .json.'); }
-      if (!parsed || parsed.app !== 'brain2' || typeof parsed.data !== 'object' || parsed.data === null){
-        return fail('That file isn\u2019t a Brain 2.0 backup. Look for a file named like brain2-backup-2026-07-18.json.');
-      }
-      var keys = Object.keys(parsed.data);
-      if (keys.length === 0) return fail('This backup file is empty \u2014 it was exported from a browser with no saved data.');
-      var overlap = keys.filter(function(k){ return hasContent(localStorage.getItem(k)); });
-      pending = parsed;
-      var pv = $('impPreview');
-      pv.className = 'msg warn show';
-      var when = parsed.exportedAt ? new Date(parsed.exportedAt).toLocaleDateString() : 'an unknown date';
-      var txt = 'Backup from ' + when + ' with ' + keys.length + ' section' + (keys.length===1?'':'s') + '.';
-      txt += overlap.length
-        ? ' ' + (overlap.length===1 ? 'One of them already has' : overlap.length + ' of them already have') + ' your data here. \u201cAdd only what\u2019s missing\u201d keeps yours and adds the other ' + (keys.length-overlap.length) + '; \u201cReplace all\u201d swaps yours for the file\u2019s version.'
-        : ' None of them exist here yet, so nothing will be overwritten.';
-      $('importNewBtn').hidden = !overlap.length || overlap.length === keys.length;
-      $('importBtn').innerHTML = IC('check',16) + (overlap.length ? ' Replace all' : ' Import now');
-      $('importBtn').className = overlap.length ? 'btn ghost' : 'btn';
-      pv.innerHTML = IC('alert',15) + '<span>' + txt + '</span>';
-      $('impChoice').classList.add('show');
-    };
+    reader.onload = function(){ loadBackupText(reader.result); };
     reader.onerror = function(){ fail('Couldn\u2019t open that file. Try choosing it again.'); };
     reader.readAsText(f);
   });
+  /* check a backup document and show the "what will happen" preview */
+  function loadBackupText(text){
+    var parsed;
+    try { parsed = JSON.parse(text); }
+    catch(e){ return fail('That file couldn\u2019t be read as a backup. Make sure you picked a brain2-backup file ending in .json.'); }
+    if (!parsed || parsed.app !== 'brain2' || typeof parsed.data !== 'object' || parsed.data === null){
+      return fail('That file isn\u2019t a Brain 2.0 backup. Look for a file named like brain2-backup-2026-07-18.json.');
+    }
+    var keys = Object.keys(parsed.data);
+    if (keys.length === 0) return fail('This backup file is empty \u2014 it was exported from a browser with no saved data.');
+    var overlap = keys.filter(function(k){ return hasContent(localStorage.getItem(k)); });
+    pending = parsed;
+    var pv = $('impPreview');
+    pv.className = 'msg warn show';
+    var when = parsed.exportedAt ? new Date(parsed.exportedAt).toLocaleDateString() : 'an unknown date';
+    var txt = 'Backup from ' + when + ' with ' + keys.length + ' section' + (keys.length===1?'':'s') + '.';
+    txt += overlap.length
+      ? ' ' + (overlap.length===1 ? 'One of them already has' : overlap.length + ' of them already have') + ' your data here. \u201cAdd only what\u2019s missing\u201d keeps yours and adds the other ' + (keys.length-overlap.length) + '; \u201cReplace all\u201d swaps yours for the file\u2019s version.'
+      : ' None of them exist here yet, so nothing will be overwritten.';
+    $('importNewBtn').hidden = !overlap.length || overlap.length === keys.length;
+    $('importBtn').innerHTML = IC('check',16) + (overlap.length ? ' Replace all' : ' Import now');
+    $('importBtn').className = overlap.length ? 'btn ghost' : 'btn';
+    pv.innerHTML = IC('alert',15) + '<span>' + txt + '</span>';
+    $('impChoice').classList.add('show');
+  }
 
   $('cancelBtn').addEventListener('click', function(){
     pending = null;
@@ -310,7 +331,66 @@
   }
   function hide(id){ var el = $(id); el.className = el.className.replace(' show','').replace('show',''); }
 
+  // ---------- Google Drive ----------
+  function drvMsg(kind, html){ var m = $('drvMsg'); if (!kind){ m.className = 'msg'; return; } m.className = 'msg ' + kind + ' show'; m.innerHTML = IC(kind==='ok'?'check':'alert',15) + '<span>' + html + '</span>'; }
+  function when(ms){
+    var d = new Date(ms), days = Math.floor((new Date().setHours(0,0,0,0) - new Date(ms).setHours(0,0,0,0)) / 864e5);
+    var t = d.toLocaleTimeString([], { hour:'numeric', minute:'2-digit' });
+    return (days === 0 ? 'today' : days === 1 ? 'yesterday' : d.toLocaleDateString([], { month:'short', day:'numeric' })) + ' at ' + t;
+  }
+  function renderDrive(){
+    var on = GCal.drive.on(), m = B2Backup.meta(), st = $('drvState'), row = $('drvRow');
+    $('drvTitle').innerHTML = IC('archive') + ' Google Drive backup';
+    if (!GCal.configured()){
+      st.className = 'state'; st.innerHTML = '<i></i>Connect Google Calendar on the Today page first. The Drive backup uses the same Google sign-in.';
+      row.innerHTML = ''; return;
+    }
+    if (!on){
+      st.className = 'state'; st.innerHTML = '<i></i>Off';
+      row.innerHTML = '<button class="btn" id="drvOn">' + IC('check',16) + ' Turn on</button>';
+    } else {
+      st.className = 'state ' + (m.driveAt ? 'on' : 'warn');
+      st.innerHTML = '<i></i>' + (m.driveAt ? 'On · last saved ' + when(m.driveAt) + (m.driveSize ? ' · ' + (m.driveSize < 1048576 ? Math.max(1, Math.round(m.driveSize/1024)) + ' KB' : (m.driveSize/1048576).toFixed(1) + ' MB') : '') : 'On · nothing saved yet');
+      row.innerHTML = '<button class="btn" id="drvNow">' + IC('upload',16) + ' Back up now</button>' +
+        '<button class="btn ghost" id="drvGet">' + IC('download',16) + ' Restore from Drive</button>' +
+        '<button class="btn ghost" id="drvOff">Turn off</button>';
+    }
+    var b;
+    if ((b = $('drvOn'))) b.onclick = function(){ GCal.drive.setOn(true); backupNow(true); };
+    if ((b = $('drvNow'))) b.onclick = function(){ backupNow(false); };
+    if ((b = $('drvGet'))) b.onclick = restoreFromDrive;
+    if ((b = $('drvOff'))) b.onclick = function(){ GCal.drive.setOn(false); drvMsg('ok', 'Turned off. The file already in your Drive stays there until you delete it.'); renderDrive(); };
+  }
+  /* both run from a click, so Google's sign-in window is allowed to open */
+  function withDrive(fn){ return (GCal.drive.ready() ? Promise.resolve() : GCal.signIn()).then(fn); }
+  function driveFail(err, first){
+    if (err && err.code === 'drive-off'){
+      drvMsg('warn', 'One more step: Google Drive isn\u2019t switched on for your Google project yet.<ol><li>Open <a href="https://console.cloud.google.com/apis/library/drive.googleapis.com" target="_blank" rel="noopener">Google Drive API in Google Cloud</a> (the same project you made for the calendar).</li><li>Click <b>Enable</b>.</li><li>Wait a minute, then press \u201cBack up now\u201d here.</li></ol>');
+    } else {
+      drvMsg('bad', (err && err.message || 'Something went wrong.') + (first ? ' The backup is switched on; press \u201cBack up now\u201d to try again.' : ''));
+    }
+    renderDrive();
+  }
+  function backupNow(first){
+    if (!B2Backup.keys().length){ drvMsg('warn', 'Nothing saved in this browser yet, so there\u2019s nothing to back up.'); renderDrive(); return; }
+    drvMsg('warn', 'Saving to Google Drive\u2026');
+    withDrive(function(){ return B2Backup.driveNow(); })
+      .then(function(){ drvMsg('ok', 'Saved to your Google Drive as \u201c' + GCal.drive.fileName + '\u201d. From now on it updates about once a day.'); renderDrive(); })
+      .catch(function(err){ driveFail(err, first); });
+  }
+  function restoreFromDrive(){
+    drvMsg('warn', 'Fetching your backup from Google Drive\u2026');
+    withDrive(function(){ return GCal.drive.load(); }).then(function(r){
+      if (!r){ drvMsg('warn', 'There\u2019s no \u201c' + GCal.drive.fileName + '\u201d in your Google Drive yet.'); return; }
+      drvMsg('ok', 'Found your Drive backup from ' + when(new Date(r.modifiedTime).getTime()) + '. Choose what to do with it under Import.');
+      hide('impMsg'); hide('impPreview'); $('impChoice').classList.remove('show'); pending = null;
+      loadBackupText(r.text);
+      $('impTitle').scrollIntoView({ behavior:'smooth', block:'center' });
+    }).catch(function(err){ driveFail(err, false); });
+  }
+
   refreshCount();
+  renderDrive();
 })();
 </script>
 </body>
