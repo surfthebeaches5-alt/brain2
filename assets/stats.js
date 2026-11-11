@@ -106,5 +106,6 @@
       (pick&&t.some(function(x){return x.win;})?'<div class="nm-tip">Click a number to add it to your wins.</div>':'');
     if(pick)el.onclick=function(e){var b=e.target.closest('[data-nm]');if(b&&t[+b.getAttribute('data-nm')])opts.onPick(t[+b.getAttribute('data-nm')].win);};
   }
-  window.B2Stats={range:range,render:render};
+  /* the same numbers as plain data, for printed pages: [{big,label,small}] */
+  window.B2Stats={range:range,render:render,tiles:function(from,to){return (from&&to&&from<=to)?tiles(range(from,to)):[];}};
 })();

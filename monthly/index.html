@@ -276,34 +276,39 @@ button{font-family:inherit;}
 
 /* PRINT DOCUMENT — built into #mp-print on "Save PDF" (and Ctrl+P), emptied after printing */
 #mp-print{display:none;}
-.mpp{--acc:#7a60c6;--ink-p:#1f1b16;--mut-p:#6f675b;--rule:#ddd6c8;--hair-p:#ebe5d9;font-family:"Plus Jakarta Sans",system-ui,sans-serif;color:var(--ink-p);font-size:9.6pt;line-height:1.5;background:#fff;}
+.mpp{--acc:#7a60c6;--ink-p:#1f1b16;--mut-p:#6f675b;--rule:#ddd6c8;--hair-p:#ebe5d9;font-family:"Plus Jakarta Sans",system-ui,sans-serif;color:var(--ink-p);font-size:8.7pt;line-height:1.42;background:#fff;}
+.mp-two{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:0 26pt;align-items:start;margin-top:9pt;}
+.mp-two>div{min-width:0;}
+.mp-two>div>.mp-sec:first-child{margin-top:0;}
+.mp-two.mp-next{margin-top:16pt;}
+.mp-part{font-family:Fraunces,Georgia,serif;font-size:13pt;font-weight:600;margin:0 0 8pt;padding-bottom:5pt;border-bottom:1.2pt solid var(--acc);grid-column:1/-1;}
 .mpp *{box-sizing:border-box;}
-.mp-head{padding-bottom:11pt;border-bottom:1.6pt solid var(--acc);margin-bottom:4pt;}
-.mpp h1{font-family:Fraunces,Georgia,serif;font-size:24pt;font-weight:600;line-height:1.12;letter-spacing:-.012em;margin:0 0 2pt;}
-.mp-subt{font-family:Fraunces,Georgia,serif;font-style:italic;font-size:13pt;color:#4a4339;margin-top:3pt;}
+.mp-head{padding-bottom:7pt;border-bottom:1.4pt solid var(--acc);margin-bottom:0;display:flex;align-items:baseline;gap:12pt;flex-wrap:wrap;}
+.mpp h1{font-family:Fraunces,Georgia,serif;font-size:19pt;font-weight:600;line-height:1.12;letter-spacing:-.012em;margin:0 0 2pt;}
+.mp-subt{font-family:Fraunces,Georgia,serif;font-style:italic;font-size:11.5pt;color:#4a4339;}
 .mp-line{font-size:9.2pt;color:var(--mut-p);margin-top:6pt;font-weight:600;}
-.mp-sec{margin-top:15pt;}
-.mpp h2{font-family:Fraunces,Georgia,serif;font-size:13.5pt;font-weight:600;margin:0 0 7pt;padding-bottom:3.5pt;border-bottom:.6pt solid var(--rule);break-after:avoid;page-break-after:avoid;}
-.mpp h3{font-size:7.4pt;letter-spacing:.16em;text-transform:uppercase;color:var(--mut-p);font-weight:750;margin:10pt 0 4pt;break-after:avoid;page-break-after:avoid;}
+.mp-sec{margin-top:11pt;}
+.mpp h2{font-family:Fraunces,Georgia,serif;font-size:11.5pt;font-weight:600;margin:0 0 5pt;padding-bottom:2.5pt;border-bottom:.6pt solid var(--rule);break-after:avoid;page-break-after:avoid;}
+.mpp h3{font-size:6.8pt;letter-spacing:.15em;text-transform:uppercase;color:var(--mut-p);font-weight:750;margin:7pt 0 3pt;break-after:avoid;page-break-after:avoid;}
 .mpp h3:first-child{margin-top:0;}
-.mp-blk{margin-top:10pt;break-inside:avoid;page-break-inside:avoid;}
+.mp-blk{margin-top:7pt;break-inside:avoid;page-break-inside:avoid;}
 .mpp h2+.mp-blk,.mp-cols>.mp-blk{margin-top:0;}
 .mp-blk>h3{margin-top:0;}
 .mpp p{margin:0 0 5pt;orphans:3;widows:3;white-space:pre-wrap;overflow-wrap:anywhere;}
 .mp-info{display:grid;grid-template-columns:minmax(0,1fr);gap:5pt;}
 .mp-info div{display:flex;gap:10pt;min-width:0;break-inside:avoid;}
-.mp-info b{width:92pt;flex-shrink:0;font-size:7.3pt;letter-spacing:.14em;text-transform:uppercase;color:var(--mut-p);font-weight:750;padding-top:1.6pt;}
+.mp-info b{width:78pt;flex-shrink:0;font-size:7.3pt;letter-spacing:.14em;text-transform:uppercase;color:var(--mut-p);font-weight:750;padding-top:1.6pt;}
 .mp-info span{min-width:0;overflow-wrap:anywhere;white-space:pre-wrap;}
 .mp-list{list-style:none;margin:0;padding:0;}
-.mp-list li{position:relative;padding:2.5pt 0 2.5pt 13pt;break-inside:avoid;overflow-wrap:anywhere;white-space:pre-wrap;}
-.mp-list li::before{content:"";position:absolute;left:2pt;top:7.6pt;width:4pt;height:4pt;border-radius:50%;background:var(--acc);}
+.mp-list li{position:relative;padding:1.5pt 0 1.5pt 12pt;break-inside:avoid;overflow-wrap:anywhere;white-space:pre-wrap;}
+.mp-list li::before{content:"";position:absolute;left:2pt;top:5.8pt;width:4pt;height:4pt;border-radius:50%;background:var(--acc);}
 .mp-list.mp-num{counter-reset:n;}
 .mp-list.mp-num li{padding-left:15pt;}
-.mp-list.mp-num li::before{counter-increment:n;content:counter(n);background:none;width:auto;height:auto;top:2.5pt;left:0;font-family:Fraunces,Georgia,serif;font-weight:600;color:var(--acc);}
-.mp-list.mp-aff li{font-family:Fraunces,Georgia,serif;font-style:italic;font-size:10.6pt;}
-.mp-tbl{width:100%;border-collapse:collapse;font-size:9pt;line-height:1.45;}
-.mp-tbl th{text-align:left;font-size:7pt;letter-spacing:.15em;text-transform:uppercase;color:var(--mut-p);font-weight:750;padding:0 9pt 5pt 0;border-bottom:.9pt solid var(--acc);vertical-align:bottom;}
-.mp-tbl td{vertical-align:top;padding:4.6pt 9pt 4.6pt 0;border-bottom:.5pt solid var(--hair-p);overflow-wrap:anywhere;white-space:pre-wrap;}
+.mp-list.mp-num li::before{counter-increment:n;content:counter(n);background:none;width:auto;height:auto;top:1.5pt;left:0;font-family:Fraunces,Georgia,serif;font-weight:600;color:var(--acc);}
+.mp-list.mp-aff li{font-family:Fraunces,Georgia,serif;font-style:italic;font-size:9.6pt;}
+.mp-tbl{width:100%;border-collapse:collapse;font-size:8.3pt;line-height:1.4;}
+.mp-tbl th{text-align:left;font-size:6.6pt;letter-spacing:.15em;text-transform:uppercase;color:var(--mut-p);font-weight:750;padding:0 8pt 3pt 0;border-bottom:.9pt solid var(--acc);vertical-align:bottom;}
+.mp-tbl td{vertical-align:top;padding:2.8pt 8pt 2.8pt 0;border-bottom:.5pt solid var(--hair-p);overflow-wrap:anywhere;white-space:pre-wrap;}
 .mp-tbl th:last-child,.mp-tbl td:last-child{padding-right:0;}
 .mp-tbl tr{break-inside:avoid;page-break-inside:avoid;}
 .mp-tbl thead{display:table-header-group;}
@@ -318,7 +323,7 @@ button{font-family:inherit;}
 .mp-rate{display:flex;align-items:baseline;gap:10pt;break-inside:avoid;margin-bottom:6pt;}
 .mp-rate b{font-family:Fraunces,Georgia,serif;font-size:20pt;font-weight:600;line-height:1;}
 .mp-rate b small{font-size:10pt;color:var(--mut-p);font-weight:500;}
-.mp-foot{margin-top:18pt;padding-top:6pt;border-top:.6pt solid var(--rule);font-size:7.5pt;color:#8d8577;display:flex;justify-content:space-between;break-inside:avoid;}
+.mp-foot{margin-top:10pt;padding-top:6pt;border-top:.6pt solid var(--rule);font-size:7.5pt;color:#8d8577;display:flex;justify-content:space-between;break-inside:avoid;}
 
 @media(max-width:1100px){
   body.b2-shell .topbar{flex-wrap:wrap;}
@@ -351,18 +356,20 @@ button{font-family:inherit;}
   .mo .gl{display:none;}
 }
 @media print{
-  @page{size:letter;margin:16mm 16mm 17mm;}
+  @page{size:letter landscape;margin:10mm 12mm;}
   html,body{background:#fff !important;}
   body{-webkit-print-color-adjust:exact;print-color-adjust:exact;}
   body.mp-printing > *:not(#mp-print){display:none !important;}
   body.mp-printing #mp-print{display:block;}
 }
 </style>
-<link rel="stylesheet" href="../assets/brain.css?v=2611110147">
+<link rel="stylesheet" href="../assets/brain.css?v=2611110221">
 </head>
 <body>
-<script src="../assets/shell.js?v=2611110147"></script>
-<script src="../assets/stats.js?v=2611110147"></script>
+<script src="../assets/shell.js?v=2611110221"></script>
+<script src="../assets/stats.js?v=2611110221"></script>
+<script src="../assets/gcal.js?v=2611110221"></script>
+<script src="../assets/pdf.js?v=2611110221"></script>
 
 <div class="topbar">
   <div class="topbar-left">
@@ -385,6 +392,7 @@ button{font-family:inherit;}
       <button class="seg-btn" type="button" data-view="hist" role="tab">History</button>
     </div>
     <button class="btn" type="button" id="pdf-btn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" x2="12" y1="15" y2="3"/></svg>Save PDF</button>
+    <button class="btn" type="button" id="drive-btn" title="Save this month’s PDF to your Google Drive"></button>
   </div>
 </div>
 
@@ -1061,41 +1069,47 @@ function buildPrintHtml(){
   var C=readRec(keyFor(cur)),pym=prevYM(),P=readRec(keyFor(pym)),ppym=shiftYM(cur,-2),ab=MS[cur.m],last=daysIn(cur);
   var area=tr(C.focus_area_val),theme=tr(C.focus_theme);
   var h='<header class="mp-head"><h1>Monthly Plan · '+esc(mlong(cur))+'</h1>'+(theme?'<div class="mp-subt">'+esc(theme)+'</div>':'')+'</header>';
+  /* two columns: the plan first, then (only if there's anything) the check-in and last month in review */
+  var L='',R='',L2='',R2='';
   var ft=(tr(C.goals_current)||tr(C.goals_desired))?(tr(C.goals_current)||'—')+'  →  '+(tr(C.goals_desired)||'—'):'';
-  h+=pSec('Focus',blk(pInfo([['Area',area],['Why now',C.focus_why],['Start → target',ft]])));
-  h+=pSec('Goals',goalsTable(goalsOf(C),true));
-  h+=pSec('Affirmations',blk(pList([C.affirm1,C.affirm2,C.affirm3],'mp-aff')));
+  L+=pSec('Focus',blk(pInfo([['Area',area],['Why now',C.focus_why],['Start → target',ft]])));
+  L+=pSec('Goals',goalsTable(goalsOf(C),true));
+  L+=pSec('Affirmations',blk(pList([C.affirm1,C.affirm2,C.affirm3],'mp-aff')));
   var wk=[['Week 1',ab+' 1–7',C.wk0_theme],['Week 2',ab+' 8–14',C.wk1_theme],['Halfway reward',ab+' 15',C.rew_midpoint],['Week 3',ab+' 15–21',C.wk2_theme],['Week 4',ab+' 22–'+last,C.wk3_theme],['Month-end celebration',ab+' '+last,C.rew_monthly]].filter(function(r){return tr(r[2]);});
-  h+=pSec('Weeks at a glance',wk.length?'<div class="mp-blk"><table class="mp-tbl"><colgroup><col style="width:24%"><col style="width:14%"><col></colgroup><thead><tr><th></th><th>Dates</th><th>Theme</th></tr></thead><tbody>'+
+  L+=pSec('Weeks at a glance',wk.length?'<div class="mp-blk"><table class="mp-tbl"><colgroup><col style="width:24%"><col style="width:14%"><col></colgroup><thead><tr><th></th><th>Dates</th><th>Theme</th></tr></thead><tbody>'+
     wk.map(function(r){return '<tr><td class="k">'+esc(r[0])+'</td><td class="d">'+esc(r[1])+'</td><td>'+esc(tr(r[2]))+'</td></tr>';}).join('')+'</tbody></table></div>':'');
   var daily=pKV([['Physical win',C.habit_physical],['Mental win',C.habit_mental],['Spiritual win',C.habit_spiritual]]);
   var weekly=pKV([['Social win',C.habit_social],['Fear zone win',C.habit_fear],['Hobby win',C.habit_hobby],['Self-love win',C.habit_selflove]]);
   var nn=[['daily','Daily'],['weekly','Weekly'],['monthly','Monthly']].map(function(g){var l=pList(getNonNegs(g[0]).map(function(x){return x&&x.text;}));return l?'<div class="mp-blk"><h3>'+g[1]+'</h3>'+l+'</div>':'';}).join('');
-  h+=pSec('Habits & non-negotiables',(daily?'<div class="mp-blk"><h3>Daily wins</h3>'+daily+'</div>':'')+(weekly?'<div class="mp-blk"><h3>Weekly wins</h3>'+weekly+'</div>':'')+
+  R+=pSec('Habits & non-negotiables',(daily?'<div class="mp-blk"><h3>Daily wins</h3>'+daily+'</div>':'')+(weekly?'<div class="mp-blk"><h3>Weekly wins</h3>'+weekly+'</div>':'')+
     (nn?'<h3>Baseline non-negotiables</h3><div class="mp-cols">'+nn+'</div>':''));
   var obs=pList([C.obs1,C.obs2,C.obs3],'mp-num'),prev=pBlock(C.obs_prevent),adhd=pKV([['Novelty',C.adhd_novelty],['Accountability',C.adhd_accountability],['Visual reminder',C.adhd_visual]]);
-  h+=pSec('Obstacles & ADHD plan',(obs?'<div class="mp-blk"><h3>What might derail me</h3>'+obs+'</div>':'')+(prev?'<div class="mp-blk"><h3>How I’ll prevent it — and bounce back</h3>'+prev+'</div>':'')+(adhd?'<div class="mp-blk"><h3>ADHD considerations</h3>'+adhd+'</div>':''));
+  R+=pSec('Obstacles & ADHD plan',(obs?'<div class="mp-blk"><h3>What might derail me</h3>'+obs+'</div>':'')+(prev?'<div class="mp-blk"><h3>How I’ll prevent it — and bounce back</h3>'+prev+'</div>':'')+(adhd?'<div class="mp-blk"><h3>ADHD considerations</h3>'+adhd+'</div>':''));
   var bud=tr(C.res_budget);
-  h+=pSec('Resources & budget',blk(pKV([['Buy',C.res_buy],['Read / watch / listen',C.res_consume],['Schedule / book',C.res_schedule],['Budget',bud?'$'+bud.replace(/^\$\s*/,''):'']])));
+  R+=pSec('Resources & budget',blk(pKV([['Buy',C.res_buy],['Read / watch / listen',C.res_consume],['Schedule / book',C.res_schedule],['Budget',bud?'$'+bud.replace(/^\$\s*/,''):'']])));
   var e=energyOf(C);
-  if(midContent(C))h+=pSec('Mid-month check-in · '+ab+' 15',blk(pKV([['On track?',TRACK[C.mid_ontrack]||''],['Energy',e?e+'/10':''],['What’s working',C.mid_working],['What needs adjustment',C.mid_adjust],['Pivot?',C.mid_pivot]])));
+  if(midContent(C))L2+=pSec('Mid-month check-in · '+ab+' 15',blk(pKV([['On track?',TRACK[C.mid_ontrack]||''],['Energy',e?e+'/10':''],['What’s working',C.mid_working],['What needs adjustment',C.mid_adjust],['Pivot?',C.mid_pivot]])));
   // previous month in review
   if(reviewContent(P)||ratingOf(P)>0){
-    var r=ratingOf(P),b='';
+    var r=ratingOf(P),b='',b2='';
     if(r||tr(P.review_highlight))b+='<div class="mp-rate">'+(r?'<b>'+r+'<small>/10</small></b>':'')+(tr(P.review_highlight)?'<span>'+esc(tr(P.review_highlight))+'</span>':'')+'</div>';
     var pg=goalsTable(goalsOf(P).filter(function(g){return g.what;}),true);if(pg)b+='<div class="mp-blk"><h3>'+esc(mname(pym))+'’s goals</h3>'+pg+'</div>';
     var w=pList(listOf(P,'wins').map(function(x){return x.text;})),nw=pList(listOf(P,'notwork').map(function(x){return x.text;}));
-    if(w||nw)b+='<div class="mp-blk mp-cols">'+(w?'<div class="mp-blk"><h3>Top wins</h3>'+w+'</div>':'<div></div>')+(nw?'<div class="mp-blk"><h3>What didn’t work</h3>'+nw+'</div>':'')+'</div>';
-    if(tr(P.review_learned))b+='<div class="mp-blk"><h3>What I learned about myself</h3>'+pBlock(P.review_learned)+'</div>';
-    if(tr(P.review_attention))b+='<div class="mp-blk"><h3>Calling for attention next</h3>'+pBlock(P.review_attention)+'</div>';
+    if(w||nw)b2+='<div class="mp-blk mp-cols">'+(w?'<div class="mp-blk"><h3>Top wins</h3>'+w+'</div>':'<div></div>')+(nw?'<div class="mp-blk"><h3>What didn’t work</h3>'+nw+'</div>':'')+'</div>';
+    if(tr(P.review_learned))b2+='<div class="mp-blk"><h3>What I learned about myself</h3>'+pBlock(P.review_learned)+'</div>';
+    if(tr(P.review_attention))b2+='<div class="mp-blk"><h3>Calling for attention next</h3>'+pBlock(P.review_attention)+'</div>';
     var wh=wheelOf(P),wb=wheelOf(readRec(keyFor(ppym)));
     if(wh.some(function(v){return v>0;})){
       var cell=function(i){var v=wh[i],d=(v&&wb[i])?v-wb[i]:0;return '<td class="k">'+esc(CATS[i].label)+'</td><td class="sc">'+(v||'–')+'</td><td class="d">'+(d?(d>0?'↑':'↓')+Math.abs(d)+' vs '+MS[ppym.m]:'')+'</td>';};
-      b+='<div class="mp-blk"><h3>Life wheel — monthly average</h3><table class="mp-tbl"><colgroup><col style="width:21%"><col style="width:6%"><col style="width:15%"><col style="width:8%"><col style="width:21%"><col style="width:6%"><col style="width:15%"></colgroup><tbody>'+
+      b2+='<div class="mp-blk"><h3>Life wheel — monthly average</h3><table class="mp-tbl"><colgroup><col style="width:21%"><col style="width:6%"><col style="width:15%"><col style="width:8%"><col style="width:21%"><col style="width:6%"><col style="width:15%"></colgroup><tbody>'+
         [0,1,2,3].map(function(i){return '<tr>'+cell(i)+'<td></td>'+cell(i+4)+'</tr>';}).join('')+'</tbody></table></div>';
     }
-    h+=pSec(mname(pym)+' in review',b);
+    /* the review reads across both columns: rating and goals on the left (under the check-in), the rest on the right */
+    if(b)L2+=pSec(mname(pym)+' in review',b);
+    if(b2)R2+=pSec(b?mname(pym)+' in review, continued':mname(pym)+' in review',b2);
   }
+  h+='<div class="mp-two"><div>'+L+'</div><div>'+R+'</div></div>';
+  if(L2||R2){if(!L2){L2=R2;R2='';}h+='<div class="mp-two mp-next"><div class="mp-part">Check-in &amp; review</div><div>'+L2+'</div><div>'+R2+'</div></div>';}
   var d=new Date();
   h+='<footer class="mp-foot"><span>Monthly Plan · '+esc(mlong(cur))+'</span><span>Prepared '+esc(MS[d.getMonth()]+' '+d.getDate()+', '+d.getFullYear())+'</span></footer>';
   return h;
@@ -1120,6 +1134,10 @@ function wire(){
   $('m-next').addEventListener('click',function(){goMonth(shiftYM(cur,1));});
   $('m-back').addEventListener('click',function(){goMonth(defaultYM());});
   $('pdf-btn').addEventListener('click',savePDF);
+  $('drive-btn').innerHTML=B2PDF.icon+' Drive';
+  $('drive-btn').addEventListener('click',function(){
+    B2PDF.toDrive({build:function(){buildPrint();return $('mp-print');},cleanup:cleanupPrint,name:'Monthly Plan '+cur.y+'-'+String(cur.m+1).padStart(2,'0'),folder:'Monthly Plan',landscape:true,margin:[10,12]});
+  });
   $('done-btn').addEventListener('click',function(){setView('hist');window.scrollTo({top:0,behavior:'smooth'});});
   // every saved field writes straight to its month's record
   document.addEventListener('input',function(e){

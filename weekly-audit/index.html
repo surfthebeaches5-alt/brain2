@@ -268,30 +268,67 @@ button{font-family:inherit;}
   .dr-note{padding-left:0;}
 }
 
-/* PRINT — always the whole week: all three steps, no history */
+/* PRINT DOCUMENT — "PDF" (and Ctrl+P) builds a compact one-page landscape summary of the
+   whole week into #wa-print, prints it alone, and empties it afterwards. */
+#wa-print{display:none;}
+.wap{--acc:#7a60c6;--ink-p:#1f1b16;--mut-p:#6f675b;--rule:#ddd6c8;--hair-p:#ebe5d9;font-family:"Plus Jakarta Sans",system-ui,sans-serif;color:var(--ink-p);font-size:8.6pt;line-height:1.42;background:#fff;}
+.wap *{box-sizing:border-box;}
+.wa-head{display:flex;align-items:baseline;justify-content:space-between;gap:16pt;padding-bottom:7pt;border-bottom:1.4pt solid var(--acc);}
+.wap h1{font-family:Fraunces,Georgia,serif;font-size:19pt;font-weight:600;line-height:1.1;letter-spacing:-.012em;margin:0;}
+.wap h1 small{font-family:"Plus Jakarta Sans",system-ui,sans-serif;font-size:10pt;font-weight:600;color:var(--mut-p);margin-left:8pt;letter-spacing:0;}
+.wa-avg{font-size:8.4pt;color:var(--mut-p);font-weight:600;white-space:nowrap;}
+.wa-avg b{font-family:Fraunces,Georgia,serif;font-size:13pt;color:var(--ink-p);font-weight:600;}
+.wa-nums{display:flex;flex-wrap:wrap;gap:3pt 18pt;padding:6pt 0;border-bottom:.6pt solid var(--rule);font-size:8.2pt;color:var(--mut-p);}
+.wa-nums b{font-family:Fraunces,Georgia,serif;font-size:10.5pt;color:var(--ink-p);font-weight:600;margin-right:3pt;}
+.wa-cols{display:grid;grid-template-columns:1.06fr 1fr 1fr;gap:0 20pt;margin-top:9pt;align-items:start;}
+.wa-col{min-width:0;}
+.wap h2{font-family:Fraunces,Georgia,serif;font-size:11.5pt;font-weight:600;margin:0 0 5pt;padding-bottom:2.5pt;border-bottom:.6pt solid var(--rule);}
+.wap h2 small{font-family:"Plus Jakarta Sans",system-ui,sans-serif;font-size:7.6pt;font-weight:600;color:var(--mut-p);margin-left:5pt;}
+.wap h3{font-size:6.8pt;letter-spacing:.15em;text-transform:uppercase;color:var(--mut-p);font-weight:750;margin:8pt 0 3pt;break-after:avoid;}
+.wap h2+h3,.wap h2+.wa-blk>h3:first-child{margin-top:0;}
+.wa-blk{break-inside:avoid;}
+.wap p{margin:0 0 4pt;white-space:pre-wrap;overflow-wrap:anywhere;}
+.wa-list{list-style:none;margin:0;padding:0;}
+.wa-list li{position:relative;padding:1.4pt 0 1.4pt 10pt;overflow-wrap:anywhere;break-inside:avoid;}
+.wa-list li::before{content:"";position:absolute;left:1pt;top:5.6pt;width:3.6pt;height:3.6pt;border-radius:50%;background:var(--c,var(--acc));}
+.wa-goal{display:flex;gap:6pt;align-items:baseline;padding:2.4pt 0;border-bottom:.5pt solid var(--hair-p);break-inside:avoid;}
+.wa-goal:last-child{border-bottom:0;}
+.wa-goal .n{font-family:Fraunces,Georgia,serif;font-weight:600;color:var(--acc);width:9pt;flex-shrink:0;}
+.wa-goal .t{flex:1;min-width:0;overflow-wrap:anywhere;font-weight:600;}
+.wa-goal .t small{display:block;font-weight:500;color:var(--mut-p);font-size:7.8pt;}
+.wa-goal .r{font-size:7.6pt;font-weight:750;white-space:nowrap;}
+.wa-goal .r.ok{color:#2f7d54;}.wa-goal .r.half{color:#a9762a;}.wa-goal .r.no{color:#b5475b;}.wa-goal .r.un{color:var(--mut-p);font-weight:600;}
+.wa-wheel{width:100%;border-collapse:collapse;}
+.wa-wheel td{padding:1.7pt 0;vertical-align:middle;}
+.wa-wheel .k{font-weight:600;white-space:nowrap;padding-right:7pt;width:1%;}
+.wa-wheel .b i{display:block;height:4.2pt;border-radius:3pt;background:var(--hair-p);overflow:hidden;}
+.wa-wheel .b b{display:block;height:100%;border-radius:3pt;background:var(--c,var(--acc));}
+.wa-wheel .v{font-family:Fraunces,Georgia,serif;font-weight:600;text-align:right;width:15pt;padding-left:6pt;}
+.wa-wheel .d{font-size:7.2pt;color:var(--mut-p);text-align:right;width:20pt;white-space:nowrap;}
+.wa-wheel .nt td{padding:0 0 2pt;font-size:7.6pt;color:var(--mut-p);font-style:italic;}
+.wa-q{break-inside:avoid;margin-bottom:6pt;}
+.wa-q b{display:block;font-size:7.8pt;font-weight:700;color:#4a4339;margin-bottom:1pt;}
+.wa-focus{font-family:Fraunces,Georgia,serif;font-style:italic;font-size:10.4pt;line-height:1.35;border-left:1.6pt solid var(--acc);padding:1pt 0 1pt 8pt;white-space:pre-wrap;overflow-wrap:anywhere;}
+.wa-ev{display:flex;gap:6pt;padding:1.3pt 0;break-inside:avoid;}
+.wa-ev .d{width:21pt;flex-shrink:0;font-size:7pt;letter-spacing:.1em;text-transform:uppercase;color:var(--mut-p);font-weight:750;padding-top:1.2pt;}
+.wa-ev .t{min-width:0;overflow-wrap:anywhere;}
+.wa-none{color:var(--mut-p);font-style:italic;}
+.wa-foot{margin-top:9pt;padding-top:4pt;border-top:.6pt solid var(--rule);font-size:7pt;color:#8d8577;display:flex;justify-content:space-between;}
 @media print{
-  *{-webkit-print-color-adjust:exact;print-color-adjust:exact;}
+  @page{size:letter landscape;margin:10mm 12mm;}
   html,body{background:#fff !important;}
-  body.b2-shell .topbar{padding:0 0 4px !important;max-width:none !important;}
-  .topbar-right,.steps,.nextbar,.lead,#view-hist,.note-btn,.carry,.addrow,.drawer-back,.wk-pop,.li .x{display:none !important;}
-  #view-week{display:block !important;}
-  .hub{padding:0 !important;max-width:none !important;}
-  .panel{display:block !important;break-before:page;}
-  #s1{break-before:auto;}
-  .print-h{display:block;font-family:var(--b2-serif);font-size:22px;font-weight:600;margin:6px 0 14px;}
-  .print-h span{font-family:var(--b2-sans);font-size:13px;color:var(--muted);font-weight:600;margin-left:8px;}
-  .card{box-shadow:none !important;break-inside:avoid;}
-  .area-note{display:none !important;}
-  .area-note.has{display:block !important;}
-  textarea{field-sizing:content;}
-  .grid{gap:12px;}
+  body{-webkit-print-color-adjust:exact;print-color-adjust:exact;}
+  body.wa-printing > *:not(#wa-print){display:none !important;}
+  body.wa-printing #wa-print{display:block;}
 }
 </style>
-<link rel="stylesheet" href="../assets/brain.css?v=2611110147">
+<link rel="stylesheet" href="../assets/brain.css?v=2611110221">
 </head>
 <body>
-<script src="../assets/shell.js?v=2611110147"></script>
-<script src="../assets/stats.js?v=2611110147"></script>
+<script src="../assets/shell.js?v=2611110221"></script>
+<script src="../assets/stats.js?v=2611110221"></script>
+<script src="../assets/gcal.js?v=2611110221"></script>
+<script src="../assets/pdf.js?v=2611110221"></script>
 
 <div class="topbar">
   <div class="topbar-left">
@@ -322,6 +359,7 @@ button{font-family:inherit;}
       <button class="seg-btn" type="button" data-view="hist" role="tab">History</button>
     </div>
     <button class="btn" type="button" onclick="savePDF()"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" x2="12" y1="15" y2="3"/></svg>PDF</button>
+    <button class="btn" type="button" id="drive-btn" onclick="savePDFDrive()" title="Save this week’s PDF to your Google Drive"></button>
   </div>
 </div>
 
@@ -476,6 +514,7 @@ button{font-family:inherit;}
 </div>
 
 <!-- PAST WEEK DRAWER -->
+<div id="wa-print" aria-hidden="true"></div>
 <div class="drawer-back" id="drawer-back" hidden>
   <aside class="drawer" id="drawer" role="dialog" aria-modal="true" aria-labelledby="dr-title" tabindex="-1"></aside>
 </div>
@@ -519,7 +558,7 @@ function val(id){var el=field(id);return el?el.value:'';}
 function safeColor(c){c=String(c||'');return (/^#[0-9a-f]{3,8}$/i.test(c)||/^rgba?\([\d\s.,%]+\)$/i.test(c)||/^var\(--[a-z0-9-]+\)$/i.test(c))?c:'var(--accent)';}
 function autoExpand(el){
   if(!el||el.tagName!=='TEXTAREA')return;
-  if(!el.offsetParent&&!document.body.classList.contains('printing'))return; // hidden: measure when shown
+  if(!el.offsetParent)return; // hidden: measure when shown
   el.style.height='auto';el.style.height=el.scrollHeight+'px';
 }
 function expandIn(root){(root||document).querySelectorAll('textarea').forEach(autoExpand);}
@@ -917,13 +956,64 @@ function loadFocusBanner(){
 }
 
 /* ── PDF ── */
-function preparePrint(){document.body.classList.add('printing');expandIn(document);}
-function afterPrint(){document.body.classList.remove('printing');}
+/* The printed week: a compact landscape summary, three columns (look back · clear your head · plan ahead).
+   Only what you filled in is printed. */
+var printBuilt=false,oldTitle=null;
+function buildPrintHtml(){
+  var ws=val('week_start'),we=val('week_end'),h='',t0=new Date();
+  var filled=scores.filter(function(x){return num(x)>0;}),avg=filled.length?filled.reduce(function(a,b){return a+num(b);},0)/filled.length:0;
+  h+='<header class="wa-head"><h1>Weekly Audit<small>'+esc(thisRangeText())+(parseD(we)?', '+parseD(we).getFullYear():'')+'</small></h1>'+
+     (avg?'<span class="wa-avg">Life wheel average <b>'+fmt1(avg)+'</b> / 10</span>':'')+'</header>';
+  var tiles=(window.B2Stats&&ws&&we)?B2Stats.tiles(ws,we):[];
+  tiles=tiles.filter(function(x){return !x.zero;});
+  if(tiles.length)h+='<div class="wa-nums">'+tiles.map(function(x){return '<span><b>'+esc(x.big)+'</b>'+esc(x.label.toLowerCase())+(x.small?' · '+esc(x.small):'')+'</span>';}).join('')+'</div>';
+  function list(arr,color){return '<ul class="wa-list" style="--c:'+color+'">'+arr.map(function(x){return '<li>'+esc(x.text)+'</li>';}).join('')+'</ul>';}
+  /* column 1 — look back */
+  var c1='<h2>Look back</h2>',lg=filledLastGoals(),lab={done:['✓ Done','ok'],partial:['½ Partly','half'],skipped:['✗ No','no']};
+  if(lg.length)c1+='<div class="wa-blk"><h3>Last week’s goals</h3>'+lg.map(function(g,i){var st=normStatus(lastGoalsDone[i]);
+    return '<div class="wa-goal"><span class="n">'+(i+1)+'</span><span class="t">'+esc(g.what)+(g.when?'<small>planned: '+esc(g.when)+'</small>':'')+'</span><span class="r '+(st?lab[st][1]:'un')+'">'+(st?lab[st][0]:'not marked')+'</span></div>';}).join('')+'</div>';
+  if(wdData.wins.length)c1+='<div class="wa-blk"><h3>Wins</h3>'+list(wdData.wins,'#3f9866')+'</div>';
+  if(wdData.downfalls.length)c1+='<div class="wa-blk"><h3>Didn’t go well</h3>'+list(wdData.downfalls,'#c8556b')+'</div>';
+  if(filled.length){
+    c1+='<div class="wa-blk"><h3>Life wheel</h3><table class="wa-wheel">'+CATS.map(function(c,i){var v=num(scores[i]),pv=num(lastScores[i]),d=(v&&pv)?v-pv:0,n=catNotes[i]&&String(catNotes[i]).trim();
+      return '<tr><td class="k">'+esc(c.label)+'</td><td class="b"><i><b style="width:'+(v*10)+'%;--c:'+c.dark+'"></b></i></td><td class="v">'+(v||'–')+'</td><td class="d">'+(d?(d>0?'↑':'↓')+Math.abs(d):'')+'</td></tr>'+
+        (n?'<tr class="nt"><td></td><td colspan="3">'+esc(n)+'</td></tr>':'');}).join('')+'</table></div>';
+  }
+  if(c1==='<h2>Look back</h2>')c1+='<p class="wa-none">Nothing filled in yet.</p>';
+  /* column 2 — clear your head */
+  var bd=BD_IDS.filter(function(id){return val(id).trim();});
+  var c2='<h2>Clear your head</h2>'+(bd.length?bd.map(function(id){return '<div class="wa-q"><b>'+esc(BD_LABELS[id])+'</b><p>'+esc(val(id).trim())+'</p></div>';}).join(''):'<p class="wa-none">Nothing written yet.</p>');
+  /* column 3 — plan ahead */
+  var c3='<h2>Plan ahead<small>'+esc(nextRangeText())+'</small></h2>';
+  var gs=[1,2,3].map(function(k){return {what:val('g'+k+'_what').trim(),when:val('g'+k+'_when').trim(),two:val('g'+k+'_2min').trim()};}).filter(function(g){return g.what;});
+  if(gs.length)c3+='<div class="wa-blk"><h3>Top 3 for next week</h3>'+gs.map(function(g,i){var m=[];if(g.when)m.push(g.when);if(g.two)m.push('2-min start: '+g.two);
+    return '<div class="wa-goal"><span class="n">'+(i+1)+'</span><span class="t">'+esc(g.what)+(m.length?'<small>'+esc(m.join(' · '))+'</small>':'')+'</span></div>';}).join('')+'</div>';
+  var ff=val('focus_forward').trim();
+  if(ff)c3+='<div class="wa-blk"><h3>One focus</h3><div class="wa-focus">'+esc(ff)+'</div></div>';
+  var evs=nextWeekEvents();
+  if(evs.length)c3+='<div class="wa-blk"><h3>Already on the calendar</h3>'+evs.slice(0,14).map(function(e){var d=parseD(e.date);
+    return '<div class="wa-ev"><span class="d">'+(d?DAY3[d.getDay()]:'')+'</span><span class="t">'+esc(e.title)+(e.time&&fmtTime(e.time)?' · '+fmtTime(e.time):'')+'</span></div>';}).join('')+
+    (evs.length>14?'<div class="wa-ev"><span class="d"></span><span class="t wa-none">+ '+(evs.length-14)+' more</span></div>':'')+'</div>';
+  if(!gs.length&&!ff&&!evs.length)c3+='<p class="wa-none">Nothing planned yet.</p>';
+  h+='<div class="wa-cols"><div class="wa-col">'+c1+'</div><div class="wa-col">'+c2+'</div><div class="wa-col">'+c3+'</div></div>';
+  h+='<footer class="wa-foot"><span>Weekly Audit · '+esc(thisRangeText())+'</span><span>Prepared '+esc(MS[t0.getMonth()]+' '+t0.getDate()+', '+t0.getFullYear())+'</span></footer>';
+  return h;
+}
+function buildPrint(){
+  var el=$('wa-print');el.className='wap';el.innerHTML=buildPrintHtml();
+  document.body.classList.add('wa-printing');printBuilt=true;
+  if(oldTitle==null)oldTitle=document.title;document.title='Weekly Audit · '+thisRangeText();
+  return el;
+}
+function cleanupPrint(){var el=$('wa-print');el.innerHTML='';el.className='';document.body.classList.remove('wa-printing');printBuilt=false;if(oldTitle!=null){document.title=oldTitle;oldTitle=null;}}
+function preparePrint(){if(!printBuilt)buildPrint();}
+function afterPrint(){cleanupPrint();}
 window.addEventListener('beforeprint',preparePrint);
 window.addEventListener('afterprint',afterPrint);
 // don't lose the last few keystrokes when the page is closed mid-debounce
 window.addEventListener('pagehide',function(){if(saveTimer){clearTimeout(saveTimer);saveTimer=null;saveData();}});
-function savePDF(){preparePrint();setTimeout(function(){window.print();},50);}
+function savePDF(){buildPrint();try{window.print();}catch(e){cleanupPrint();}}
+function savePDFDrive(){B2PDF.toDrive({build:buildPrint,cleanup:cleanupPrint,name:'Weekly Audit '+val('week_start'),folder:'Weekly Audit',landscape:true,margin:[10,12]});}
 
 /* ── FINISH WEEK ── */
 function newWeek(){
@@ -1224,6 +1314,7 @@ var MF=['January','February','March','April','May','June','July','August','Septe
 var n=new Date();
 $('today-date').textContent=DS[n.getDay()]+', '+MF[n.getMonth()]+' '+n.getDate()+', '+n.getFullYear();
 
+$('drive-btn').innerHTML=B2PDF.icon+' Drive';
 buildCatList();
 restoreData();
 initWeekDates();
