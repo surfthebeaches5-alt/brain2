@@ -165,6 +165,45 @@ td.t{font-weight:650}td.m{color:var(--muted);font-size:12.5px}
 .rev .ra.bad{color:var(--over)}.rev .ra.good{color:var(--ok)}.rev .why{font-size:12.5px;color:var(--muted);margin:4px 0 0 34px;line-height:1.5}
 .mark{flex-shrink:0;width:24px;height:24px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:#fff;background:var(--ok)}
 .mark.x{background:var(--over)}
+.modal-bg{position:fixed;inset:0;background:rgba(36,31,23,.28);z-index:1000;display:none;align-items:flex-start;justify-content:center;padding:6vh 20px;overflow-y:auto}
+.modal-bg.show{display:flex}
+.modal{background:var(--surface);border:1px solid var(--line);border-radius:18px;width:100%;max-width:540px;padding:26px 28px;box-shadow:0 30px 70px rgba(60,50,30,.22);margin:auto 0}
+.modal h3{font-family:var(--serif);font-size:23px;font-weight:600;letter-spacing:-.3px;margin:0 0 18px}
+.fld{margin-bottom:14px;min-width:0}
+.fld label{display:block;font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--muted);font-weight:700;margin-bottom:6px}
+.fld label .hint{font-weight:500;letter-spacing:0;text-transform:none}
+.fld input,.fld textarea,.fld select{width:100%;border:1px solid var(--line);background:#fff;border-radius:10px;padding:9px 12px;font-size:13px;font-weight:500;outline:none}
+.fld input:focus,.fld textarea:focus,.fld select:focus{border-color:var(--accent-line);box-shadow:0 0 0 3px var(--accent-soft)}
+.fld textarea{resize:vertical;min-height:76px;line-height:1.5}
+.fld-row{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:12px}
+.modal-foot{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-top:22px}
+.modal-foot>div{display:flex;gap:8px;margin-left:auto}
+.btn.del{background:transparent;border-color:transparent;color:var(--over);padding:0 8px}
+.btn.del:hover{background:#f9e6ea;border-color:transparent;color:var(--over)}
+.srow{display:flex;align-items:center;gap:14px;width:100%;text-align:left;border:1px solid transparent;border-top-color:var(--hair);background:none;padding:12px 12px;font-size:14px}
+.srow:first-of-type{border-top-color:transparent}
+button.srow:hover{background:var(--warm)}
+.srow.sel,.srow.sel:hover{background:var(--accent-soft);border-color:var(--accent-line);border-radius:12px}
+.srow.sel+.srow{border-top-color:transparent}
+.srow .d{width:132px;flex:none;font-weight:650;font-size:13px}.srow .d small{display:block;color:var(--muted);font-weight:500;font-size:11.5px;margin-top:1px}
+.srow .t{flex:1;min-width:0;font-weight:650}
+.srow .t.pj{color:var(--accent-deep)}
+.chip.now{background:var(--accent-deep);color:#fff}
+.qbox{background:var(--accent-soft);border-radius:12px;padding:11px 14px;margin:14px 0 12px;font-family:var(--serif);font-style:italic;font-size:15px;line-height:1.45;color:var(--ink-2)}
+.matadd{display:flex;gap:6px;margin-bottom:8px}
+.matadd .line{flex:1;min-width:0}.matadd select{height:36px;border:1px solid var(--line);border-radius:10px;background:#fff;padding:0 6px;font-size:12px;font-weight:650;color:var(--ink-2)}
+.matlist{max-height:330px;overflow:auto}
+.ne.row{display:flex;align-items:center;gap:10px;padding:9px 10px;margin:0 -10px;width:calc(100% + 20px)}
+.ne.row .doci{width:14px;height:18px;border-radius:3px;background:#4d84e6;flex-shrink:0}
+.ne.row span{flex:1;min-width:0}
+.chead{display:flex;justify-content:space-between;align-items:flex-start;gap:14px}
+.eb{font-size:10.5px;letter-spacing:.15em;text-transform:uppercase;color:var(--accent-deep);font-weight:700;margin-bottom:4px}
+.why{font-size:14px;font-weight:500;line-height:1.55;white-space:pre-wrap}
+.sub2{font-size:10.5px;letter-spacing:.15em;text-transform:uppercase;color:var(--muted);font-weight:700;margin:16px 0 6px}
+.it .ed,.ub .edu{border:0;background:none;padding:0;font-size:11.5px;font-weight:650;color:var(--accent-deep);cursor:pointer}
+.it .ed{opacity:0;margin-left:8px}.it:hover .ed{opacity:1}
+.it .ed:hover,.ub .edu:hover{text-decoration:underline}
+.ub .qrow{display:flex;gap:12px;align-items:baseline;justify-content:space-between}
 [hidden]{display:none !important}
 @media(max-width:900px){.cols,.ncols{grid-template-columns:1fr}}
 </style>
@@ -177,6 +216,7 @@ td.t{font-weight:650}td.m{color:var(--muted);font-size:12.5px}
   <span class="pv">Preview · example content, nothing is saved</span>
 </div>
 <div class="page" id="page"></div>
+<div class="modal-bg" id="formModal"><div class="modal" id="formBody"></div></div>
 
 <script>
 'use strict';
@@ -184,7 +224,7 @@ td.t{font-weight:650}td.m{color:var(--muted);font-size:12.5px}
 var KINDS=['Read','Watch','Listen','Do','Write'];
 function I(t,k,done){return {t:t,k:k,done:!!done};}
 var PC=[
-  {id:'cities',title:'How cities work',weeks:[1,1,0,1,1,1,0,1],
+  {id:'cities',title:'How cities work',start:'2026-10-26',theme:'Places',why:'I keep noticing how different two streets a block apart can feel. I want words for it.',weeks:[1,1,0,1,1,1,0,1],
    goals:['Explain why some streets feel alive and others feel empty','Read one classic book on cities start to finish'],
    units:[
      {name:'What makes a street work',q:'Why do people linger on some blocks and hurry through others?',open:true,items:[I('The Death and Life of Great American Cities, part 1','Read',1),I('Not Just Bikes: why some streets feel safe','Watch',1),I('99% Invisible, three city episodes','Listen'),I('Walk a new neighbourhood and take notes','Do')]},
@@ -192,8 +232,8 @@ var PC=[
      {name:'Getting around',q:'',items:[I('Chapter on transit','Read'),I('Ride a bus line end to end','Do'),I('Podcast episode on parking','Listen')]}],
    project:'A two-page write-up of my own neighbourhood: what works, what doesn’t, and one change I’d make.',
    unitNotes:{0:'Jacobs: “eyes on the street” is about strangers feeling watched over, not surveillance.\nShort blocks = more corners = more reasons to turn.\nQuestion for the walk: where do people actually stop?'},
-   notes:[{title:'Why I’m doing this',date:'Nov 3',text:'I keep noticing how different two streets a block apart can feel. I want words for it.'}]},
-  {id:'art',title:'Learning to look at art',weeks:[0,0,0,0,0,1,1,1],
+   notes:[]},
+  {id:'art',title:'Learning to look at art',start:'2026-11-09',theme:'Art',why:'',weeks:[0,0,0,0,0,1,1,1],
    goals:['Stand in front of a painting and know what to look for'],
    units:[{name:'Before the Impressionists',q:'What were they reacting against?',open:true,items:[I('Great Art Explained, three episodes','Watch',1),I('Museum visit: one room, one hour','Do')]}],
    project:'',unitNotes:{},notes:[]}
@@ -206,7 +246,7 @@ var IDEAS=[
   {t:'Wine regions',theme:'Food & drink',note:'',added:'Nov 10'}
 ];
 var CO=[
-  {id:'fsot',title:'FSOT',sub:'Test · February',test:{label:'February',weeks:12},weeks:[1,1,0,1,1,1,0,1],goals:['Cover every part once before January','Take three full practice tests'],
+  {id:'fsot',title:'FSOT',start:'2026-11-09',platform:'Self-study',status:'Active',url:'',testDate:'2027-02-01',why:'',weeks:[1,1,0,1,1,1,0,1],goals:['Cover every part once before January','Take three full practice tests'],
    units:[
      {name:'Job knowledge',q:'',open:true,items:[I('U.S. government, history and society: study guide chapter','Read',1),I('World history and geography: study guide chapter','Read',1),I('Economics: study guide chapter','Read'),I('Math and statistics review','Do'),I('20 practice questions','Do')]},
      {name:'English usage and comprehension',q:'',items:[I('Grammar and usage review','Read',1),I('Reading comprehension set','Do'),I('20 practice questions','Do')]},
@@ -214,12 +254,9 @@ var CO=[
    project:'',unitNotes:{0:'Checks and balances: who can stop whom.\nI mix up the 14th and 15th amendments. Review again.'},
    notes:[{title:'Logic mistakes I keep making',date:'Nov 9',text:'Confusing “some” with “most”.\nMissing the unstated assumption.'}],
    sets:[{d:'Nov 10',sec:'Job knowledge',right:15,total:20},{d:'Nov 8',sec:'English usage and comprehension',right:14,total:20},{d:'Nov 5',sec:'Logical reasoning',right:9,total:20},{d:'Nov 3',sec:'Job knowledge',right:13,total:20}],
-   scores:[{d:'Nov 2',score:'74%',label:'Version A'},{d:'Oct 12',score:'68%',label:'Version B'}]},
-  {id:'excel',title:'Data Skills for Excel Professionals',sub:'Online course',weeks:[1,0,1,1,0,0,1,0],goals:[],
+   scores:[{d:'Nov 2',score:'74%',label:'Test 1'},{d:'Oct 12',score:'68%',label:'Test 2'}]},
+  {id:'excel',title:'Data Skills for Excel Professionals',start:'2026-10-19',platform:'',status:'Active',url:'',testDate:'',why:'',weeks:[1,0,1,1,0,0,1,0],goals:[],
    units:[{name:'Fundamentals of data analysis',q:'',open:true,items:[I('Videos 1–6','Watch',1),I('Practice workbook','Do',1),I('Module quiz','Do')]},{name:'Dictionaries, quality and communication',q:'',items:[I('Videos 1–5','Watch'),I('Module quiz','Do')]}],
-   project:'',unitNotes:{},notes:[]},
-  {id:'ux',title:'Google UX Design',sub:'Certificate',weeks:[0,0,1,1,0,0,0,0],goals:[],
-   units:[{name:'Wireframes and low-fidelity prototypes',q:'',open:true,items:[I('Week 1 lessons','Watch'),I('Sketch three wireframes','Do')]}],
    project:'',unitNotes:{},notes:[]}
 ];
 var MK={Video:'▶',Podcast:'♪',Book:'📖',Article:'📄',Link:'🔗'};
@@ -227,11 +264,14 @@ function M(t,kind,src,unit){return {t:t,kind:kind,src:src,unit:unit};}
 PC[0].mats=[M('The Death and Life of Great American Cities','Book','Jane Jacobs',0),M('Not Just Bikes','Video','youtube.com',0),M('99% Invisible','Podcast','99pi.org',0),M('The missing middle','Article','strongtowns.org',1),M('Public housing documentary','Video','youtube.com',1)];
 PC[1].mats=[M('Great Art Explained','Video','youtube.com',0)];
 CO[0].mats=[M('Crash Course Government','Video','youtube.com',0),M('Study guide','Book','Book'),M('Official practice test','Link','careers.state.gov')];
-CO[1].mats=[];CO[2].mats=[];
+CO[1].mats=[];
+[[PC[0],[2,2,1]],[PC[1],[3]],[CO[0],[4,4,4]],[CO[1],[3,3]]].forEach(function(a){a[0].units.forEach(function(u,i){u.w=a[1][i]||1;});});
 /* notes are simple rich text: plain lines become paragraphs */
 function toHtml(t){return String(t||'').split('\n').map(function(l){return '<div>'+(esc(l)||'<br>')+'</div>';}).join('');}
+/* a unit's notes are ordinary notes that belong to that unit */
+PC.concat(CO).forEach(function(x){Object.keys(x.unitNotes).forEach(function(k){x.notes.unshift({title:x.units[+k].name+' notes',date:'Unit '+(+k+1),text:toHtml(x.unitNotes[k]),unit:+k});});x.unitNotes={};});
 PC.concat(CO).forEach(function(x){Object.keys(x.unitNotes).forEach(function(k){x.unitNotes[k]=toHtml(x.unitNotes[k]);});x.notes.forEach(function(n){n.text=toHtml(n.text);});});
-var S={page:'pc',tab:{pc:'study',co:'plan'},cur:{pc:'cities',co:'fsot'},note:{pc:0,co:0},mf:'All'};
+var S={page:'pc',tab:{pc:'study',co:'plan'},cur:{pc:'cities',co:'fsot'},note:{pc:0,co:0},noteOpen:false,unit:{}};
 
 /* ── helpers ── */
 function $(s,r){return (r||document).querySelector(s);}
@@ -240,90 +280,182 @@ function list(){return S.page==='pc'?PC:CO;}
 function cur(){var l=list(),id=S.cur[S.page];for(var i=0;i<l.length;i++)if(l[i].id===id)return l[i];return l[0];}
 function counts(x){var d=0,t=0;x.units.forEach(function(u){u.items.forEach(function(i){t++;if(i.done)d++;});});return {d:d,t:t};}
 function nextOf(x){for(var u=0;u<x.units.length;u++)for(var i=0;i<x.units[u].items.length;i++)if(!x.units[u].items[i].done)return {u:u,i:i};return null;}
-function openUnit(x){for(var u=0;u<x.units.length;u++)if(x.units[u].open)return u;return 0;}
 function folder(x){return (S.page==='pc'?'Brain 2.0 › Personal Curriculum › ':'Brain 2.0 › Courses › ')+x.title;}
-function wks(x){var n=x.weeks.filter(Boolean).length;return '<span class="wks">'+x.weeks.map(function(w){return '<i class="'+(w?'on':'')+'"></i>';}).join('')+'</span> studied '+n+' of the last 8 weeks';}
+var MONTHS=['January','February','March','April','May','June','July','August','September','October','November','December'];
+function testOf(x){if(!x.testDate)return null;var p=x.testDate.split('-'),d=new Date(+p[0],+p[1]-1,+p[2]);if(isNaN(d))return null;return {label:MONTHS[d.getMonth()],weeks:Math.max(0,Math.ceil((d-new Date())/604800000))};}
+function subOf(x){return S.page==='pc'?(x.theme||''):[x.platform,x.status&&x.status!=='Active'?x.status:''].filter(Boolean).join(' · ');}
+function lines(t){return String(t||'').split('\n').map(function(l){return l.replace(/^\s*[-•*]\s*/,'').trim();}).filter(Boolean);}
+function blank(title){var d=new Date();return {id:'n'+Date.now(),title:title,start:d.getFullYear()+'-'+('0'+(d.getMonth()+1)).slice(-2)+'-'+('0'+d.getDate()).slice(-2),theme:'',platform:'',status:'Active',url:'',testDate:'',why:'',weeks:[0,0,0,0,0,0,0,0],goals:[],units:[],project:'',unitNotes:{},notes:[],mats:[],sets:[],scores:[]};}
+/* the fill-in form, the same kind the current Classes page uses */
+var FORM=(function(){
+  var now=null;
+  function field(f){
+    if(f.row)return '<div class="fld-row">'+f.row.map(field).join('')+'</div>';
+    var id='ff-'+f.name,lab='<label for="'+id+'">'+esc(f.label)+(f.opt?' <span class="hint">('+esc(f.opt)+')</span>':'')+'</label>',ph=f.placeholder?' placeholder="'+esc(f.placeholder)+'"':'',c;
+    if(f.type==='textarea')c='<textarea id="'+id+'"'+ph+(f.rows?' rows="'+f.rows+'"':'')+'>'+esc(f.value||'')+'</textarea>';
+    else if(f.type==='select')c='<select id="'+id+'">'+f.options.map(function(o){return '<option'+(o===f.value?' selected':'')+'>'+esc(o)+'</option>';}).join('')+'</select>';
+    else c='<input id="'+id+'" type="'+(f.type||'text')+'" value="'+esc(f.value==null?'':f.value)+'"'+ph+'>';
+    return '<div class="fld">'+lab+c+'</div>';
+  }
+  function names(fs,out){fs.forEach(function(f){if(f.row)names(f.row,out);else out.push(f.name);});return out;}
+  function open(o){now=o;$('#formBody').innerHTML='<h3>'+esc(o.title)+'</h3>'+o.fields.map(field).join('')+
+      '<div class="modal-foot">'+(o.onDelete?'<button class="btn del" data-form="del">'+esc(o.deleteLabel||'Delete')+'</button>':'')+
+      '<div><button class="btn" data-form="cancel">Cancel</button><button class="btn dark" data-form="save">'+esc(o.saveLabel||'Save')+'</button></div></div>';
+    $('#formModal').classList.add('show');var f=$('#formBody input,#formBody textarea');if(f)setTimeout(function(){f.focus();},30);}
+  function close(){now=null;$('#formModal').classList.remove('show');}
+  function save(){if(!now)return;var v={};names(now.fields,[]).forEach(function(n){v[n]=$('#ff-'+n).value;});var o=now;if(o.onSave(v)!==false&&now===o)close();}
+  function del(btn){if(!now||!now.onDelete)return;if(!btn.getAttribute('data-armed')){btn.setAttribute('data-armed','1');btn.textContent='Click again to delete';return;}var o=now;o.onDelete();if(now===o)close();}
+  document.addEventListener('click',function(e){var b=e.target.closest('[data-form]');if(b){var k=b.getAttribute('data-form');if(k==='save')save();else if(k==='del')del(b);else close();return;}
+    if(e.target.id==='formModal')close();});
+  document.addEventListener('keydown',function(e){if(!now)return;if(e.key==='Escape')close();else if(e.key==='Enter'&&e.target.tagName==='INPUT'){e.preventDefault();save();}});
+  return {open:open,close:close};
+})();
+/* the forms */
+function mainForm(x){
+  var pc=S.page==='pc',isNew=!x,v=x||blank('');
+  var f=pc?[{name:'title',label:'What do you want to study?',placeholder:'e.g. The history of jazz',value:v.title},
+      {row:[{name:'theme',label:'Theme',opt:'optional',placeholder:'e.g. Art, Money, Places',value:v.theme},{name:'start',label:'Start date',type:'date',value:v.start}]},
+      {name:'why',label:'Why this, and why now?',type:'textarea',value:v.why},
+      {name:'goals',label:'By the end I want to…',opt:'one per line',type:'textarea',value:v.goals.join('\n')},
+      {name:'project',label:'Final project',opt:'optional',type:'textarea',rows:2,placeholder:'Something you make to show what you learned',value:v.project}]
+    :[{name:'title',label:'Course name',placeholder:'e.g. Intro to Data Analysis',value:v.title},
+      {row:[{name:'platform',label:'Platform',opt:'optional',placeholder:'e.g. Coursera',value:v.platform},{name:'status',label:'Status',type:'select',options:['Active','Queued','On hold','Finished'],value:v.status}]},
+      {row:[{name:'start',label:'Start date',type:'date',value:v.start},{name:'testDate',label:'Test date',opt:'if it ends in a test',type:'date',value:v.testDate}]},
+      {name:'url',label:'Course link',opt:'optional',placeholder:'https://…',value:v.url},
+      {name:'why',label:'Why I’m taking it',type:'textarea',value:v.why},
+      {name:'goals',label:'Goals',opt:'one per line',type:'textarea',value:v.goals.join('\n')}];
+  if(isNew)f.push({name:'units',label:'Units',opt:'one per line; set how many weeks each takes afterwards',type:'textarea',rows:3});
+  FORM.open({title:isNew?(pc?'Start a new study':'Add a course'):(pc?'Edit study':'Edit course'),fields:f,saveLabel:isNew?(pc?'Start studying':'Add course'):'Save',
+    deleteLabel:pc?'Delete study':'Delete course',
+    onDelete:isNew?null:function(){var l=list();l.splice(l.indexOf(x),1);if(!l.length)l.push(blank('Untitled'));S.cur[S.page]=l[0].id;render();},
+    onSave:function(o){if(!o.title.trim()){$('#ff-title').focus();return false;}
+      v.title=o.title.trim();v.why=o.why.trim();v.goals=lines(o.goals);if(o.start)v.start=o.start;
+      if(pc){v.theme=o.theme.trim();v.project=o.project.trim();}else{v.platform=o.platform.trim();v.status=o.status;v.url=o.url.trim();v.testDate=o.testDate;}
+      if(isNew){lines(o.units).forEach(function(n,i){v.units.push({name:n,q:'',w:1,items:[]});});list().push(v);S.cur[S.page]=v.id;S.tab[S.page]=pc?'study':'plan';S.noteOpen=false;}
+      render();if(isNew)say('Created. On the real page it also gets its own Drive folder: '+folder(v));}});
+}
+function whyForm(x){
+  var pc=S.page==='pc',f=[{name:'why',label:pc?'Why this, and why now?':'Why I’m taking it',type:'textarea',value:x.why},{name:'goals',label:pc?'By the end I want to…':'Goals',opt:'one per line',type:'textarea',value:x.goals.join('\n')}];
+  if(pc)f.push({name:'project',label:'Final project',opt:'optional',type:'textarea',rows:2,value:x.project});
+  FORM.open({title:'Why & goals',fields:f,onSave:function(o){x.why=o.why.trim();x.goals=lines(o.goals);if(pc)x.project=o.project.trim();render();}});
+}
+function unitForm(x,ui){
+  var u=ui==null?null:x.units[ui];
+  FORM.open({title:u?'Edit unit':'Add a unit',saveLabel:u?'Save':'Add unit',deleteLabel:'Delete unit',
+    fields:[{row:[{name:'name',label:'Unit name',value:u?u.name:''},{name:'w',label:'How many weeks',type:'number',value:u?(u.w||1):1}]},{name:'q',label:'Guiding question',opt:'optional',type:'textarea',rows:2,placeholder:'What do you want to understand?',value:u?u.q:''}],
+    onDelete:u?function(){x.units.splice(ui,1);var n={};Object.keys(x.unitNotes).forEach(function(k){k=+k;if(k<ui)n[k]=x.unitNotes[k];else if(k>ui)n[k-1]=x.unitNotes[k];});x.unitNotes=n;
+      x.mats.forEach(function(m){if(m.unit===ui)m.unit=null;else if(m.unit>ui)m.unit--;});x.notes.forEach(function(m){if(m.unit===ui)m.unit=null;else if(m.unit>ui)m.unit--;});delete S.unit[x.id];render();}:null,
+    onSave:function(o){if(!o.name.trim()){$('#ff-name').focus();return false;}
+      var w=Math.max(1,parseInt(o.w,10)||1);if(u){u.name=o.name.trim();u.q=o.q.trim();u.w=w;}else{x.units.push({name:o.name.trim(),q:o.q.trim(),w:w,items:[]});S.unit[x.id]=x.units.length-1;}render();}});
+}
+function todoForm(x,ui,ii){
+  var it=x.units[ui].items[ii];
+  FORM.open({title:'Edit to-do',deleteLabel:'Delete to-do',
+    fields:[{name:'t',label:'To-do',type:'textarea',rows:2,value:it.t},{row:[{name:'k',label:'Kind',type:'select',options:KINDS,value:it.k},{name:'url',label:'Link',opt:'optional',placeholder:'https://…',value:it.url||''}]}],
+    onDelete:function(){x.units[ui].items.splice(ii,1);render();},
+    onSave:function(o){if(!o.t.trim()){$('#ff-t').focus();return false;}it.t=o.t.trim();it.k=o.k;it.url=o.url.trim();render();}});
+}
+function scoreForm(x){
+  FORM.open({title:'Add a practice test score',saveLabel:'Add score',
+    fields:[{row:[{name:'score',label:'Score',placeholder:'e.g. 74%'},{name:'label',label:'Which test',type:'select',options:['Test 1','Test 2','Test 3','Test 4','Another test'],value:'Test 1'}]},{name:'note',label:'Note',opt:'optional',type:'textarea',rows:2,placeholder:'What went well, what to review'}],
+    onSave:function(o){if(!o.score.trim()){$('#ff-score').focus();return false;}x.scores.unshift({d:today(),score:o.score.trim(),label:o.label+(o.note.trim()?' · '+o.note.trim():'')});render();}});
+}
+function ideaForm(n){
+  var i=IDEAS[n];
+  FORM.open({title:'Edit idea',deleteLabel:'Delete idea',
+    fields:[{name:'t',label:'Idea',value:i.t},{name:'theme',label:'Theme',opt:'optional',value:i.theme},{name:'note',label:'Note',opt:'optional',type:'textarea',value:i.note}],
+    onDelete:function(){IDEAS.splice(n,1);render();},
+    onSave:function(o){if(!o.t.trim()){$('#ff-t').focus();return false;}i.t=o.t.trim();i.theme=o.theme.trim();i.note=o.note.trim();render();}});
+}
+var MS=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+function pd(v){var q=String(v||'').split('-'),d=new Date(+q[0],+q[1]-1,+q[2]);if(isNaN(d)){d=new Date();}d.setHours(0,0,0,0);return d;}
+function addDays(d,n){var z=new Date(d);z.setDate(z.getDate()+n);return z;}
+function fd(d){return MS[d.getMonth()]+' '+d.getDate();}
+function wk(n){return n+(n===1?' week':' weeks');}
+/* each unit runs for its number of weeks, one after another, from the start date */
+function span(x){var st=pd(x.start),out=[],at=0;x.units.forEach(function(u){var w=Math.max(1,u.w||1);out.push({from:addDays(st,at*7),to:addDays(st,(at+w)*7-1),w:w});at+=w;});
+  return {units:out,weeks:at,from:st,to:addDays(st,Math.max(1,at)*7-1)};}
+function nowUnit(x){var sp=span(x),t=pd('');for(var i=0;i<sp.units.length;i++)if(t>=sp.units[i].from&&t<=sp.units[i].to)return i;return -1;}
+function selUnit(x){var k=S.unit[x.id];if(k==null||k>=x.units.length){k=nowUnit(x);if(k<0)k=0;}return k;}
 
-/* ── the outline (goals, units with to-dos, final project) used by both pages ── */
+/* ── the left column: title, the unit you are on with its to-dos, and the syllabus ── */
 function outline(x){
-  var c=counts(x),nx=nextOf(x),unitWord=S.page==='pc'?'Units':'Sections',h='';
-  h+='<div class="card"><h2>'+esc(x.title)+'</h2><div class="meta"><span>'+x.units.length+' '+unitWord.toLowerCase()+' · '+c.d+' of '+c.t+' done</span><span>'+wks(x)+'</span></div>';
-  if(x.test){var sc=x.scores&&x.scores[0];
-    h+='<div class="stats"><div><b>'+x.test.weeks+' weeks</b><span>until the test · '+esc(x.test.label)+'</span></div><div><b>'+c.d+' / '+c.t+'</b><span>covered</span></div><div><b>'+(sc?sc.score:'–')+'</b><span>latest practice test</span></div></div>';}
+  var pc=S.page==='pc',c=counts(x),nx=nextOf(x),sp=span(x),now=nowUnit(x),sel=selUnit(x),tst=testOf(x),t=pd(''),h='';
+  var eb=[pc?'Personal curriculum':'Course',subOf(x)].filter(Boolean).join(' · ');
+  var when=x.units.length?fd(sp.from)+' – '+fd(sp.to)+' · '+wk(sp.weeks)+(t<sp.from?' · starts '+fd(sp.from):t>sp.to?' · finished':' · week '+(Math.floor((t-sp.from)/604800000)+1)+' of '+sp.weeks):'Starts '+fd(sp.from);
+  h+='<div class="card"><div class="chead"><div style="min-width:0"><div class="eb">'+esc(eb)+'</div><h2>'+esc(x.title)+'</h2></div><button class="btn" data-act="editmain">Edit</button></div>'+
+     '<div class="meta"><span>'+when+'</span><span>'+c.d+' of '+c.t+' to-dos done</span></div>';
+  if(tst){var sc=x.scores&&x.scores[0];
+    h+='<div class="stats"><div><b>'+wk(tst.weeks)+'</b><span>until the test · '+esc(tst.label)+'</span></div><div><b>'+c.d+' / '+c.t+'</b><span>covered</span></div><div><b>'+(sc?esc(sc.score):'–')+'</b><span>latest practice test</span></div></div>';}
   if(nx){var it=x.units[nx.u].items[nx.i];
     h+='<div class="next"><span class="ck" data-act="tick" data-u="'+nx.u+'" data-i="'+nx.i+'" title="Tick it off"></span><span class="l">Next</span><span class="tx">'+esc(it.t)+'</span><span class="u">'+esc(x.units[nx.u].name)+'</span></div>';}
   else if(c.t)h+='<div class="next"><span class="l">All done</span><span class="tx">Every to-do is ticked.</span></div>';
-  h+='<div class="lab">Goals<button class="link" data-act="addgoal">+ Add</button></div>';
-  h+=x.goals.length?'<ul class="goals">'+x.goals.map(function(g){return '<li>'+esc(g)+'</li>';}).join('')+'</ul>':'<div class="empty">None yet</div>';
-  h+='<div class="lab">'+unitWord+'<button class="link" data-act="addunit">+ '+unitWord.slice(0,-1)+'</button></div>';
-  if(!x.units.length)h+='<div class="empty">None yet</div>';
-  x.units.forEach(function(u,ui){
-    var d=u.items.filter(function(i){return i.done;}).length;
-    h+='<div class="unit'+(u.open?' open':'')+'"><button class="uh" data-act="toggle" data-u="'+ui+'"><span class="n">'+(ui+1)+'</span><span class="t">'+esc(u.name)+'</span><span class="c">'+d+' of '+u.items.length+'</span><span class="v">▾</span></button><div class="ub">';
-    if(u.q)h+='<p class="q">'+esc(u.q)+'</p>';
-    u.items.forEach(function(it,ii){h+='<div class="it'+(it.done?' on':'')+'" data-act="tick" data-u="'+ui+'" data-i="'+ii+'"><span class="ck">'+(it.done?'✓':'')+'</span><span class="tx">'+esc(it.t)+'</span><span class="k">'+esc(it.k)+'</span></div>';});
-    h+='<div class="addit"><select aria-label="Kind">'+KINDS.map(function(k){return '<option>'+k+'</option>';}).join('')+'</select><input class="line" data-add="'+ui+'" placeholder="Add a to-do or paste a link" aria-label="Add a to-do"></div></div></div>';
-  });
-  if(S.page==='pc'){h+='<div class="lab">Final project<button class="link" data-act="editproj">Edit</button></div><div class="proj" id="proj">'+(x.project?esc(x.project):'<span class="empty">None yet</span>')+'</div>';}
+  h+='</div>';
+  /* the unit you are on */
+  var u=x.units[sel];
+  if(u){var r=sp.units[sel],lab=(sel===now?'Now · ':'')+'Unit '+(sel+1)+' of '+x.units.length+(sel!==now&&t<r.from?' · starts '+fd(r.from):'');
+    h+='<div class="card"><div class="chead"><div style="min-width:0"><div class="eb">'+esc(lab)+'</div><h2 style="font-size:22px">'+esc(u.name)+'</h2><div class="meta"><span>'+fd(r.from)+' – '+fd(r.to)+' · '+wk(r.w)+'</span></div></div><button class="btn" data-act="editunit" data-u="'+sel+'">Edit unit</button></div>';
+    h+=u.q?'<div class="qbox">'+esc(u.q)+'</div>':'<div style="height:14px"></div>';
+    u.items.forEach(function(it,ii){h+='<div class="it'+(it.done?' on':'')+'" data-act="tick" data-u="'+sel+'" data-i="'+ii+'"><span class="ck">'+(it.done?'✓':'')+'</span><span class="tx">'+esc(it.t)+'</span><span class="k">'+esc(it.k)+'</span><button class="ed" data-act="edittodo" data-u="'+sel+'" data-i="'+ii+'">Edit</button></div>';});
+    if(!u.items.length)h+='<div class="empty">Nothing on this unit’s list yet</div>';
+    h+='<div class="addit"><select aria-label="Kind">'+KINDS.map(function(k){return '<option>'+k+'</option>';}).join('')+'</select><input class="line" data-add="'+sel+'" placeholder="Add a to-do or paste a link" aria-label="Add a to-do"></div>'+
+       '<div style="margin-top:12px"><button class="link" data-act="unitnote" data-u="'+sel+'">Notes for this unit →</button></div></div>';
+  }
+  /* the syllabus: every unit with its dates */
+  h+='<div class="card"><div class="ttl">Syllabus<button class="link" data-act="addunit">+ Unit</button></div>';
+  if(!x.units.length)h+='<div class="empty">No units yet</div>';
+  x.units.forEach(function(q,i){var r=sp.units[i],d=q.items.filter(function(z){return z.done;}).length,n=q.items.length;
+    var chip=i===now?'<span class="chip now">Now</span>':n&&d===n?'<span class="chip g">Done</span>':n?'<span class="chip">'+d+' of '+n+'</span>':'<span class="chip">Not planned yet</span>';
+    h+='<button class="srow'+(i===sel?' sel':'')+'" data-act="pick" data-u="'+i+'"><span class="d">'+fd(r.from)+' – '+fd(r.to)+'<small>'+wk(r.w)+'</small></span><span class="t">'+(i+1)+' · '+esc(q.name)+'</span>'+chip+'</button>';});
+  if(pc)h+='<div class="srow"><span class="d">due '+fd(sp.to)+'<small>final project</small></span><span class="t pj">'+(x.project?esc(x.project):'Not decided yet')+'</span><button class="link" data-act="editwhy">Edit</button></div>';
   return h+'</div>';
 }
 function side(x){
-  var ou=openUnit(x),u=x.units[ou],h='';
-  h+='<div class="card"><div class="ttl">Notes'+(u?' · '+esc(u.name):'')+'<button class="link" data-act="tab" data-tab="notes">All notes →</button></div>'+
-     '<div class="rich" id="unote" contenteditable="true" data-u="'+ou+'" data-ph="Write here…">'+(x.unitNotes[ou]||'')+'</div><div class="saved" id="usaved"></div></div>';
-  h+='<div class="card"><div class="ttl">Materials<button class="link" data-act="tab" data-tab="mats">All materials →</button></div>'+
-    (x.mats.length?x.mats.slice(0,4).map(function(m){return '<div class="mat"><i>'+(MK[m.kind]||'🔗')+'</i><span>'+esc(m.t)+'<small>'+esc(m.kind)+' · '+esc(m.src)+'</small></span></div>';}).join(''):'<div class="empty">None yet</div>')+'</div>';
-  return h;
-}
-/* ── materials tab: every video, podcast, book and link for this study ── */
-function matsTab(x){
-  var kinds=['All'].concat(Object.keys(MK).filter(function(k){return x.mats.some(function(m){return m.kind===k;});}));
-  if(kinds.indexOf(S.mf)<0)S.mf='All';
-  var l=x.mats.filter(function(m){return S.mf==='All'||m.kind===S.mf;}),unitWord=S.page==='pc'?'Unit':'Section';
-  var h=topbar(x,S.page==='pc'?'New study':'New course')+'<div class="card"><div class="addrow"><input class="line" id="mtitle" placeholder="Paste a link or type a title" aria-label="Material"><select class="pick" id="mkind" aria-label="Kind" style="height:42px">'+Object.keys(MK).map(function(k){return '<option>'+k+'</option>';}).join('')+'</select><button class="btn dark" data-act="addmat" style="height:42px">Add</button></div>'+
-    '<div class="fchips">'+kinds.map(function(k){return '<button data-act="mf" data-k="'+k+'" class="'+(k===S.mf?'on':'')+'">'+(k==='All'?'All':k+'s')+'</button>';}).join('')+'</div>'+
-    (l.length?l.map(function(m){return '<div class="mrow"><span class="ic">'+(MK[m.kind]||'🔗')+'</span><span class="g">'+esc(m.t)+'<small>'+esc(m.kind)+' · '+esc(m.src)+'</small></span>'+(m.unit!=null&&x.units[m.unit]?'<span class="chip">'+unitWord+' '+(m.unit+1)+'</span>':'')+'<button class="link" data-act="fake" data-msg="On the real page this opens the link in a new tab">Open ↗</button></div>';}).join(''):'<div class="empty" style="padding:10px 0">None yet</div>')+'</div>';
+  var h='',pc=S.page==='pc';
+  h+='<div class="card"><div class="ttl">Why & goals<button class="link" data-act="editwhy">Edit</button></div>'+
+     (x.why?'<div class="why">'+esc(x.why)+'</div>':'')+
+     (x.goals.length?'<div class="sub2"'+(x.why?'':' style="margin-top:0"')+'>'+(pc?'By the end I want to…':'Goals')+'</div><ul class="goals">'+x.goals.map(function(g){return '<li>'+esc(g)+'</li>';}).join('')+'</ul>':'')+
+     (pc&&x.project?'<div class="sub2">Final project</div><div class="why">'+esc(x.project)+'</div>':'')+
+     (!x.why&&!x.goals.length&&!(pc&&x.project)?'<div class="empty">None yet</div>':'')+'</div>';
+  h+='<div class="card"><div class="ttl">Materials</div><div class="matadd"><input class="line" id="mtitle" placeholder="Paste a link or type a title" aria-label="Material"><select id="mkind" aria-label="Kind">'+Object.keys(MK).map(function(k){return '<option>'+k+'</option>';}).join('')+'</select><button class="btn dark" data-act="addmat" style="height:36px">Add</button></div>'+
+    (x.mats.length?'<div class="matlist">'+x.mats.map(function(m){return '<div class="mat"><i>'+(MK[m.kind]||'🔗')+'</i><span style="flex:1;min-width:0">'+esc(m.t)+'<small>'+esc(m.kind)+' · '+esc(m.src)+(m.unit!=null&&x.units[m.unit]?' · Unit '+(m.unit+1):'')+'</small></span></div>';}).join('')+'</div>':'<div class="empty">None yet</div>')+'</div>';
+  h+='<div class="card"><div class="ttl">Notes<button class="link" data-act="newnote">+ Write</button></div>'+
+    (x.notes.length?x.notes.map(function(n,i){return '<button class="ne row" data-act="opennote" data-n="'+i+'"><i class="doci"></i><span>'+esc(n.title||'Untitled')+'<small>'+esc(n.date)+'</small></span></button>';}).join(''):'<div class="empty">None yet</div>')+'</div>';
   return h;
 }
 function topbar(x,newLabel){
-  return '<div class="bar"><select class="pick" id="pick" aria-label="Choose">'+list().map(function(s){return '<option value="'+s.id+'"'+(s.id===x.id?' selected':'')+'>'+esc(s.title)+(s.sub?' · '+esc(s.sub):'')+'</option>';}).join('')+'</select>'+
+  return '<div class="bar"><select class="pick" id="pick" aria-label="Choose">'+list().map(function(s){return '<option value="'+s.id+'"'+(s.id===x.id?' selected':'')+'>'+esc(s.title)+(subOf(s)?' · '+esc(subOf(s)):'')+'</option>';}).join('')+'</select>'+
     '<span class="grow"></span><button class="btn" data-act="fake" data-msg="Saves this as a PDF, like the other pages">Save PDF</button>'+
     '<button class="btn" data-act="fake" data-msg="The preview isn’t connected to Google. On the real page this opens the folder '+esc(folder(x))+' in your Drive.">Drive folder ↗</button>'+
     '<button class="btn dark" data-act="new">+ '+newLabel+'</button></div>';
 }
-/* ── notes tab: one list per study (unit notes + your own notes and essays) ── */
-function allNotes(x){
-  var out=[];x.units.forEach(function(u,i){if((x.unitNotes[i]||'').replace(/<[^>]*>/g,'').trim())out.push({unit:i,title:u.name,date:(S.page==='pc'?'Unit ':'Section ')+(i+1)});});
-  x.notes.forEach(function(n,i){out.push({own:i,title:n.title,date:n.date});});return out;
-}
-function notesTab(x){
-  var l=allNotes(x),sel=Math.min(S.note[S.page],Math.max(0,l.length-1)),n=l[sel],text=n?(n.unit!=null?x.unitNotes[n.unit]:x.notes[n.own].text):'';
-  var h=topbar(x,S.page==='pc'?'New study':'New course')+'<div class="ncols"><div class="card nl">'+
-    (l.length?l.map(function(e,i){return '<button class="ne'+(i===sel?' on':'')+'" data-act="selnote" data-n="'+i+'">'+esc(e.title)+'<small>'+esc(e.date)+'</small></button>';}).join(''):'<div class="empty" style="padding:8px 12px">No notes yet</div>')+
-    '<div style="padding:8px 8px 4px"><button class="btn" data-act="newnote" style="width:100%;justify-content:center">+ New note or essay</button></div></div>';
-  h+='<div class="card editor">'+(n?'<input class="etitle" id="ntitle" value="'+esc(n.title)+'"'+(n.unit!=null?' readonly':'')+' aria-label="Title">'+
-    '<div class="doc"><i></i><span>Google Doc: <b id="docname">'+esc(n.title)+'</b> · in '+esc(folder(x))+'</span><span class="grow"></span><button class="link" data-act="fake" data-msg="On the real page this opens the note in Google Docs. The preview isn’t connected to Google.">Open in Google Docs ↗</button></div>'+
+/* ── a note opens as its own page; on the real page each one is a Google Doc in the study's folder ── */
+function allNotes(x){return x.notes.map(function(n,i){return {own:i,title:n.title,date:n.date};});}
+function noteView(x){
+  var n=x.notes[S.note[S.page]];if(!n){S.noteOpen=false;return '';}
+  return '<div class="bar"><button class="btn" data-act="closenote">← '+esc(x.title)+'</button><span class="grow"></span><button class="btn del" data-act="delnote">Delete note</button></div>'+
+    '<div class="card editor" style="max-width:860px;margin:0 auto"><input class="etitle" id="ntitle" value="'+esc(n.title)+'" placeholder="Title" aria-label="Title">'+
+    '<div class="doc"><i></i><span>Google Doc: <b id="docname">'+esc(n.title||'Untitled')+'</b> · in '+esc(folder(x))+'</span><span class="grow"></span><button class="link" data-act="fake" data-msg="On the real page this opens the note in Google Docs. The preview isn’t connected to Google.">Open in Google Docs ↗</button></div>'+
     '<div class="tools"><button data-fmt="h3" title="Make this line a heading">Heading</button><button data-fmt="bold" title="Bold"><b>B</b></button><button data-fmt="ul" title="Bulleted list">• List</button><button data-fmt="p" title="Back to normal text">Normal</button><span class="grow"></span><span class="saved" id="nsaved" style="margin:0;align-self:center"></span></div>'+
-    '<div class="rich" id="nbody" contenteditable="true" data-ph="Write here…">'+(text||'')+'</div>':'<div class="empty">Pick a note, or start a new one</div>')+'</div></div>';
-  return h;
+    '<div class="rich" id="nbody" contenteditable="true" data-ph="Write here…">'+(n.text||'')+'</div></div>';
 }
 /* ── ideas (Personal Curriculum only) ── */
 function ideasTab(){
   var themes=[];IDEAS.forEach(function(i){if(i.theme&&themes.indexOf(i.theme)<0)themes.push(i.theme);});
   return '<div class="bar" style="margin-bottom:6px"></div><div class="card"><div class="addrow"><input class="line" id="idea" placeholder="Add an idea" aria-label="Idea"><input class="line" id="itheme" list="themes" placeholder="Theme" style="width:190px;flex:none" aria-label="Theme"><datalist id="themes">'+themes.map(function(t){return '<option value="'+esc(t)+'">';}).join('')+'</datalist><button class="btn dark" data-act="addidea" style="height:42px">Add</button></div>'+
-    '<table><thead><tr><th style="width:36%">Idea</th><th style="width:15%">Theme</th><th>Note</th><th style="width:10%">Added</th><th style="width:11%"></th></tr></thead><tbody>'+
-    IDEAS.map(function(i,n){return '<tr><td class="t">'+esc(i.t)+'</td><td>'+(i.theme?'<span class="chip">'+esc(i.theme)+'</span>':'')+'</td><td class="m">'+esc(i.note)+'</td><td class="m">'+esc(i.added)+'</td><td>'+(i.study?'<span class="chip g">Studying</span>':'<button class="link" data-act="start" data-n="'+n+'">Start →</button>')+'</td></tr>';}).join('')+'</tbody></table></div>';
+    '<table><thead><tr><th style="width:36%">Idea</th><th style="width:15%">Theme</th><th>Note</th><th style="width:10%">Added</th><th style="width:16%"></th></tr></thead><tbody>'+
+    IDEAS.map(function(i,n){return '<tr><td class="t">'+esc(i.t)+'</td><td>'+(i.theme?'<span class="chip">'+esc(i.theme)+'</span>':'')+'</td><td class="m">'+esc(i.note)+'</td><td class="m">'+esc(i.added)+'</td><td>'+(i.study?'<span class="chip g">Studying</span>':'<button class="link" data-act="start" data-n="'+n+'">Start →</button>')+' <button class="link" data-act="editidea" data-n="'+n+'" style="margin-left:8px;color:var(--muted)">Edit</button></td></tr>';}).join('')+'</tbody></table></div>';
 }
 /* ── practice (a course with a test) ── */
 function practiceTab(x){
   var by={};x.units.forEach(function(u){by[u.name]={r:0,t:0};});
   x.sets.forEach(function(s){if(!by[s.sec])by[s.sec]={r:0,t:0};by[s.sec].r+=s.right;by[s.sec].t+=s.total;});
   var done=Object.keys(by).filter(function(k){return by[k].t;}),low=done.slice().sort(function(a,b){return by[a].r/by[a].t-by[b].r/by[b].t;})[0];
-  var h=topbar(x,'New course')+'<div class="card" style="margin-bottom:18px"><div class="tintro"><div class="ttl" style="margin:0">Practice test</div><span class="grow"></span><select id="tver" aria-label="Version"><option value="A">Version A</option><option value="B">Version B</option><option value="C">Version C</option></select><button class="btn dark" data-act="tstart" style="height:36px">Start timed test</button></div></div>'+
+  var h=topbar(x,'New course')+'<div class="card" style="margin-bottom:18px"><div class="tintro"><div class="ttl" style="margin:0">Practice test</div><span class="grow"></span><select id="tver" aria-label="Test"><option value="1">Test 1</option><option value="2">Test 2</option><option value="3">Test 3</option><option value="4">Test 4</option></select><button class="btn dark" data-act="tstart" style="height:36px">Start timed test</button></div></div>'+
     '<div class="cols"><div><div class="card"><div class="ttl">Practice questions</div>'+
-    '<div class="setadd"><select id="ssec" aria-label="Section">'+x.units.map(function(u){return '<option>'+esc(u.name)+'</option>';}).join('')+'</select><input id="sright" type="number" min="0" placeholder="right" aria-label="Right"><input id="stotal" type="number" min="1" placeholder="of" aria-label="Out of"><button class="btn dark" data-act="addset" style="height:36px">Add</button></div>'+
+    '<div class="setadd"><select id="ssec" aria-label="Unit">'+x.units.map(function(u){return '<option>'+esc(u.name)+'</option>';}).join('')+'</select><input id="sright" type="number" min="0" placeholder="right" aria-label="Right"><input id="stotal" type="number" min="1" placeholder="of" aria-label="Out of"><button class="btn dark" data-act="addset" style="height:36px">Add</button></div>'+
     (x.sets.length?x.sets.map(function(s){var p=Math.round(s.right/s.total*100);return '<div class="row"><span class="g">'+esc(s.sec)+'<small style="display:block;color:var(--muted);font-size:11.5px">'+esc(s.d)+'</small></span><span>'+s.right+' / '+s.total+'</span><b style="width:44px;text-align:right">'+p+'%</b></div>';}).join(''):'<div class="empty">No question sets yet</div>')+'</div></div>'+
-    '<div><div class="card"><div class="ttl">By section</div>'+Object.keys(by).map(function(k){var b=by[k],p=b.t?Math.round(b.r/b.t*100):0;
+    '<div><div class="card"><div class="ttl">By unit</div>'+Object.keys(by).map(function(k){var b=by[k],p=b.t?Math.round(b.r/b.t*100):0;
       return '<div class="row"><span style="width:44%;min-width:0">'+esc(k)+(k===low&&done.length>1?' <span class="chip w">weakest</span>':'')+'</span><span class="pbar'+(k===low&&done.length>1?' low':'')+'"><i style="width:'+p+'%"></i></span><b style="width:40px;text-align:right">'+(b.t?p+'%':'–')+'</b></div>';}).join('')+'</div>'+
     '<div class="card"><div class="ttl">Practice tests<button class="link" data-act="addscore">+ Add a score</button></div>'+(x.scores.length?x.scores.map(function(s){return '<div class="row"><span class="g">'+esc(s.d)+(s.label?'<small style="display:block;color:var(--muted);font-size:11.5px">'+esc(s.label)+'</small>':'')+'</span><b>'+esc(s.score)+'</b></div>';}).join(''):'<div class="empty">None yet</div>')+'</div></div></div>';
   return h;
@@ -350,7 +482,7 @@ var QB=[
 function rng(seed){return function(){seed|=0;seed=seed+0x6D2B79F5|0;var t=Math.imul(seed^seed>>>15,1|seed);t=t+Math.imul(t^t>>>7,61|t)^t;return ((t^t>>>14)>>>0)/4294967296;};}
 function shuffled(arr,r){var a=arr.slice();for(var i=a.length-1;i>0;i--){var j=Math.floor(r()*(i+1)),x=a[i];a[i]=a[j];a[j]=x;}return a;}
 var T=null,tick=null;
-/* each version orders the questions and the answer choices differently (the real page would also draw different questions) */
+/* each test orders the questions and the answer choices differently (the real page would also draw different questions) */
 function startTest(ver){
   var r=rng(ver.charCodeAt(0)*7919),parts=PARTS.map(function(_,p){
     return shuffled(QB.filter(function(q){return q.p===p;}),r).map(function(q){var order=shuffled([0,1,2,3],r);return {q:q,order:order,pick:-1,flag:false};});});
@@ -363,14 +495,14 @@ function nextPart(){if(T.p<PARTS.length-1){T.p++;T.i=0;T.left=PART_SECS;render()
 function finishTest(){
   T.done=true;clearInterval(tick);var x=cur(),right=0,total=0;
   T.parts.forEach(function(qs,p){var r=qs.filter(function(a){return a.pick>=0&&a.order[a.pick]===a.q.a;}).length;right+=r;total+=qs.length;x.sets.unshift({d:today(),sec:PARTS[p],right:r,total:qs.length});});
-  T.right=right;T.total=total;x.scores.unshift({d:today(),score:Math.round(right/total*100)+'%',label:'Version '+T.ver+' · '+right+' of '+total});x.weeks[x.weeks.length-1]=1;
+  T.right=right;T.total=total;x.scores.unshift({d:today(),score:Math.round(right/total*100)+'%',label:'Test '+T.ver+' · '+right+' of '+total});x.weeks[x.weeks.length-1]=1;
   render();window.scrollTo(0,0);
 }
 function testView(){
   if(T.done){
-    var h='<div class="trun"><div class="card"><div class="lab" style="margin-top:0">Practice test · version '+T.ver+'</div><div class="big">'+Math.round(T.right/T.total*100)+'%<small>'+T.right+' of '+T.total+' right · '+clock(T.used)+' used</small></div>'+
+    var h='<div class="trun"><div class="card"><div class="lab" style="margin-top:0">Practice test · Test '+T.ver+'</div><div class="big">'+Math.round(T.right/T.total*100)+'%<small>'+T.right+' of '+T.total+' right · '+clock(T.used)+' used</small></div>'+
       '<div style="margin-top:16px">'+T.parts.map(function(qs,p){var r=qs.filter(function(a){return a.pick>=0&&a.order[a.pick]===a.q.a;}).length;return '<div class="row"><span style="width:46%">'+PARTS[p]+'</span><span class="pbar"><i style="width:'+(r/qs.length*100)+'%"></i></span><b style="width:54px;text-align:right">'+r+' / '+qs.length+'</b></div>';}).join('')+'</div>'+
-      '<div class="tfoot"><button class="btn dark" data-act="tclose">Back to Practice</button><button class="btn" data-act="tagain">Take another version</button></div></div>'+
+      '<div class="tfoot"><button class="btn dark" data-act="tclose">Back to Practice</button><button class="btn" data-act="tagain">Take another test</button></div></div>'+
       '<div class="card"><div class="ttl">Review your answers</div>';
     var n=0;T.parts.forEach(function(qs){qs.forEach(function(a){n++;var ok=a.pick>=0&&a.order[a.pick]===a.q.a;
       h+='<div class="rev"><div class="rq"><span class="mark'+(ok?'':' x')+'">'+(ok?'✓':'✕')+'</span><span>'+n+'. '+esc(a.q.q)+'</span></div>'+
@@ -391,13 +523,12 @@ function testView(){
 function render(){
   var x=cur(),t=S.tab[S.page],pc=S.page==='pc';
   [].forEach.call(document.querySelectorAll('#lmenu button'),function(b){b.classList.toggle('on',b.getAttribute('data-go')===S.page);});
-  var tabs=pc?[['study','Studying'],['notes','Notes'],['mats','Materials'],['ideas','Ideas']]:[['plan','Plan']].concat(x.test?[['practice','Practice']]:[]).concat([['notes','Notes'],['mats','Materials']]);
+  var tabs=pc?[['study','Syllabus'],['ideas','Ideas']]:[['plan','Syllabus']].concat(x.testDate?[['practice','Practice tests']]:[]);
   if(!tabs.some(function(a){return a[0]===t;}))t=S.tab[S.page]=tabs[0][0];
-  var h='<div class="head"><h1>'+(pc?'Personal Curriculum':'Courses')+'</h1><div class="tabs">'+tabs.map(function(a){return '<button data-act="tab" data-tab="'+a[0]+'" class="'+(a[0]===t?'on':'')+'">'+a[1]+'</button>';}).join('')+'</div></div>';
+  var h='<div class="head"><h1>'+(pc?'Personal Curriculum':'Courses')+'</h1>'+(tabs.length>1&&!S.noteOpen?'<div class="tabs">'+tabs.map(function(a){return '<button data-act="tab" data-tab="'+a[0]+'" class="'+(a[0]===t?'on':'')+'">'+a[1]+'</button>';}).join('')+'</div>':'')+'</div>';
   if(T&&!pc){$('#page').innerHTML='<div class="head"><h1>Courses</h1></div>'+testView();return;}
-  if(t==='study'||t==='plan')h+=topbar(x,pc?'New study':'New course')+'<div class="cols"><div>'+outline(x)+'</div><div>'+side(x)+'</div></div>';
-  else if(t==='notes')h+=notesTab(x);
-  else if(t==='mats')h+=matsTab(x);
+  if(S.noteOpen)h+=noteView(x);
+  else if(t==='study'||t==='plan')h+=topbar(x,pc?'New study':'New course')+'<div class="cols"><div>'+outline(x)+'</div><div>'+side(x)+'</div></div>';
   else if(t==='ideas')h+=ideasTab();
   else if(t==='practice')h+=practiceTab(x);
   $('#page').innerHTML=h;
@@ -407,54 +538,59 @@ var toastT;function say(msg){var t=$('#toast');if(!t){t=document.createElement('
 function today(){var d=new Date();return ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'][d.getMonth()]+' '+d.getDate();}
 
 document.addEventListener('click',function(e){
-  var go=e.target.closest('[data-go]');if(go){if(T){clearInterval(tick);T=null;}S.page=go.getAttribute('data-go');render();window.scrollTo(0,0);return;}
+  var go=e.target.closest('[data-go]');if(go){if(T){clearInterval(tick);T=null;}S.page=go.getAttribute('data-go');S.noteOpen=false;render();window.scrollTo(0,0);return;}
   var el=e.target.closest('[data-act]');if(!el)return;
   var a=el.getAttribute('data-act'),x=cur();
-  if(a==='tab'){S.tab[S.page]=el.getAttribute('data-tab');render();}
-  else if(a==='toggle'){var u=+el.getAttribute('data-u'),was=x.units[u].open;x.units.forEach(function(q){q.open=false;});x.units[u].open=!was;render();}
+  if(a==='tab'){S.tab[S.page]=el.getAttribute('data-tab');S.noteOpen=false;render();}
+  else if(a==='pick'){S.unit[x.id]=+el.getAttribute('data-u');render();}
   else if(a==='tick'){var it=x.units[+el.getAttribute('data-u')].items[+el.getAttribute('data-i')];it.done=!it.done;x.weeks[x.weeks.length-1]=1;render();}
   else if(a==='fake'){say(el.getAttribute('data-msg'));}
-  else if(a==='addgoal'){var g=prompt('Goal');if(g&&g.trim()){x.goals.push(g.trim());render();}}
-  else if(a==='addunit'){var n=prompt(S.page==='pc'?'Unit name':'Section name');if(n&&n.trim()){x.units.forEach(function(q){q.open=false;});x.units.push({name:n.trim(),q:'',open:true,items:[]});render();}}
-  else if(a==='editproj'){var p=$('#proj');if(p.isContentEditable){x.project=p.textContent.trim();render();}else{p.textContent=x.project;p.contentEditable='true';p.focus();el.textContent='Done';}}
-  else if(a==='new'){var t=prompt(S.page==='pc'?'What do you want to study?':'Course name');if(t&&t.trim()){var id='n'+Date.now();list().push({id:id,title:t.trim(),sub:S.page==='pc'?'':'Online course',weeks:[0,0,0,0,0,0,0,0],goals:[],units:[],project:'',unitNotes:{},notes:[],mats:[]});S.cur[S.page]=id;S.tab[S.page]=S.page==='pc'?'study':'plan';render();say('Created. On the real page it also gets its own Drive folder: '+folder(cur()));}}
-  else if(a==='selnote'){S.note[S.page]=+el.getAttribute('data-n');render();}
-  else if(a==='newnote'){x.notes.push({title:'Untitled',date:today(),text:''});S.note[S.page]=allNotes(x).length-1;render();var nt=$('#ntitle');if(nt){nt.focus();nt.select();}}
-  else if(a==='mf'){S.mf=el.getAttribute('data-k');render();}
+  else if(a==='editmain'){mainForm(x);}
+  else if(a==='new'){mainForm(null);}
+  else if(a==='editwhy'){whyForm(x);}
+  else if(a==='addunit'){unitForm(x,null);}
+  else if(a==='editunit'){unitForm(x,+el.getAttribute('data-u'));}
+  else if(a==='edittodo'){todoForm(x,+el.getAttribute('data-u'),+el.getAttribute('data-i'));}
+  else if(a==='editidea'){ideaForm(+el.getAttribute('data-n'));}
+  else if(a==='opennote'){S.note[S.page]=+el.getAttribute('data-n');S.noteOpen=true;render();window.scrollTo(0,0);}
+  else if(a==='closenote'){S.noteOpen=false;render();}
+  else if(a==='delnote'){if(!el.getAttribute('data-armed')){el.setAttribute('data-armed','1');el.textContent='Click again to delete';return;}x.notes.splice(S.note[S.page],1);S.noteOpen=false;render();}
+  else if(a==='newnote'){x.notes.unshift({title:'',date:today(),text:''});S.note[S.page]=0;S.noteOpen=true;render();window.scrollTo(0,0);var nt=$('#ntitle');if(nt)nt.focus();}
+  else if(a==='unitnote'){var un=+el.getAttribute('data-u'),k=-1;x.notes.forEach(function(n,i){if(n.unit===un&&k<0)k=i;});
+    if(k<0){x.notes.unshift({title:x.units[un].name+' notes',date:'Unit '+(un+1),text:'',unit:un});k=0;}S.note[S.page]=k;S.noteOpen=true;render();window.scrollTo(0,0);var nb=$('#nbody');if(nb)nb.focus();}
   else if(a==='tstart'){startTest($('#tver').value);}
   else if(a==='tpick'){T.parts[T.p][T.i].pick=+el.getAttribute('data-k');render();}
   else if(a==='tgo'){T.i=Math.max(0,Math.min(T.parts[T.p].length-1,T.i+ +el.getAttribute('data-d')));render();}
   else if(a==='tjump'){T.i=+el.getAttribute('data-k');render();}
   else if(a==='tflag'){var fq=T.parts[T.p][T.i];fq.flag=!fq.flag;render();}
-  else if(a==='tpart'){var open=T.parts[T.p].filter(function(z){return z.pick<0;}).length;if(open&&!confirm(open+' question'+(open===1?' is':'s are')+' not answered. Finish this part anyway?'))return;nextPart();}
-  else if(a==='tend'){if(confirm('End the test now? Unanswered questions count as wrong.'))finishTest();}
+  else if(a==='tpart'){var open=T.parts[T.p].filter(function(z){return z.pick<0;}).length;if(open&&!el.getAttribute('data-armed')){el.setAttribute('data-armed','1');el.textContent=open+' not answered · click again to finish';return;}nextPart();}
+  else if(a==='tend'){if(!el.getAttribute('data-armed')){el.setAttribute('data-armed','1');el.textContent='Click again to end the test (unanswered questions count as wrong)';return;}finishTest();}
   else if(a==='tclose'){T=null;S.tab.co='practice';render();}
-  else if(a==='tagain'){var nv={A:'B',B:'C',C:'A'}[T.ver];T=null;startTest(nv);}
+  else if(a==='tagain'){var nv={'1':'2','2':'3','3':'4','4':'1'}[T.ver];T=null;startTest(nv);}
   else if(a==='addmat'){var mv=$('#mtitle').value.trim();if(!mv)return;var host='';try{host=new URL(mv).hostname.replace(/^www\./,'');}catch(err){}
-    x.mats.unshift(M(host?mv.replace(/^https?:\/\/(www\.)?/,'').slice(0,60):mv,$('#mkind').value,host||'Added by hand'));S.mf='All';render();$('#mtitle').focus();}
+    x.mats.unshift(M(host?mv.replace(/^https?:\/\/(www\.)?/,'').slice(0,60):mv,$('#mkind').value,host||'Added by hand'));render();$('#mtitle').focus();}
   else if(a==='addidea'){var v=$('#idea').value.trim();if(!v)return;IDEAS.push({t:v,theme:$('#itheme').value.trim(),note:'',added:today()});render();$('#idea').focus();}
-  else if(a==='start'){var idea=IDEAS[+el.getAttribute('data-n')],sid='n'+Date.now();PC.push({id:sid,title:idea.t,weeks:[0,0,0,0,0,0,0,0],goals:[],units:[],project:'',unitNotes:{},notes:[],mats:[]});idea.study=sid;S.cur.pc=sid;S.tab.pc='study';render();say('Started. On the real page it also gets its own Drive folder: '+folder(cur()));}
+  else if(a==='start'){var idea=IDEAS[+el.getAttribute('data-n')],sid='n'+Date.now();var ns=blank(idea.t);ns.id=sid;ns.theme=idea.theme||'';ns.why=idea.note||'';PC.push(ns);idea.study=sid;S.cur.pc=sid;S.tab.pc='study';S.noteOpen=false;render();say('Started. On the real page it also gets its own Drive folder: '+folder(cur()));}
   else if(a==='addset'){var r=+$('#sright').value,tt=+$('#stotal').value;if(!(tt>0)||r<0||r>tt){say('Enter how many you got right, out of how many');return;}x.sets.unshift({d:today(),sec:$('#ssec').value,right:r,total:tt});render();}
-  else if(a==='addscore'){var s=prompt('Practice test score');if(s&&s.trim()){x.scores.unshift({d:today(),score:s.trim(),label:'Added by hand'});render();}}
+  else if(a==='addscore'){scoreForm(x);}
 });
 /* formatting buttons act on the note being edited (mousedown, so the cursor stays in the note) */
 document.addEventListener('mousedown',function(e){var b=e.target.closest('[data-fmt]');if(!b)return;e.preventDefault();var f=b.getAttribute('data-fmt');$('#nbody').focus();
   if(f==='bold')document.execCommand('bold');else if(f==='ul')document.execCommand('insertUnorderedList');else document.execCommand('formatBlock',false,f==='h3'?'h3':'div');
   $('#nbody').dispatchEvent(new Event('input',{bubbles:true}));});
-document.addEventListener('change',function(e){if(e.target.id==='pick'){S.cur[S.page]=e.target.value;S.note[S.page]=0;render();}});
+document.addEventListener('change',function(e){if(e.target.id==='pick'){S.cur[S.page]=e.target.value;S.note[S.page]=0;S.noteOpen=false;render();}});
 document.addEventListener('keydown',function(e){
   if(e.key!=='Enter')return;var t=e.target;
-  if(t.hasAttribute&&t.hasAttribute('data-add')){var v=t.value.trim();if(!v)return;var x=cur(),u=+t.getAttribute('data-add');x.units[u].items.push(I(v,t.previousElementSibling.value));render();var again=$('[data-add="'+u+'"]');if(again)again.focus();}
+  if(t.hasAttribute&&t.hasAttribute('data-add')){var v=t.value.trim();if(!v)return;var x=cur(),u=+t.getAttribute('data-add');x.units[u].items.push(I(v,t.previousElementSibling.value));S.unit[x.id]=u;render();var again=$('[data-add="'+u+'"]');if(again)again.focus();}
   if(t.id==='idea'||t.id==='itheme'){e.preventDefault();$('[data-act="addidea"]').click();}
   if(t.id==='mtitle'){e.preventDefault();$('[data-act="addmat"]').click();}
 });
 var saveT;
 document.addEventListener('input',function(e){
   var x=cur(),t=e.target;
-  if(t.id==='unote'){x.unitNotes[+t.getAttribute('data-u')]=t.innerHTML;x.weeks[x.weeks.length-1]=1;clearTimeout(saveT);saveT=setTimeout(function(){var s=$('#usaved');if(s)s.innerHTML='<b>Saved</b> · Google Doc in '+esc(folder(x));},500);}
-  if(t.id==='nbody'||t.id==='ntitle'){var n=allNotes(x)[S.note[S.page]];if(!n)return;
-    if(n.unit!=null){if(t.id==='nbody')x.unitNotes[n.unit]=t.innerHTML;}else{if(t.id==='nbody')x.notes[n.own].text=t.innerHTML;else{x.notes[n.own].title=t.value;$('#docname').textContent=t.value||'Untitled';var row=document.querySelector('.ne.on');if(row)row.firstChild.textContent=t.value||'Untitled';}}
-    clearTimeout(saveT);saveT=setTimeout(function(){var s=$('#nsaved');if(s)s.innerHTML='<b>Saved</b>';},500);}
+  if(t.id==='nbody'||t.id==='ntitle'){var n=x.notes[S.note[S.page]];if(!n)return;
+    if(t.id==='nbody')n.text=t.innerHTML;else{n.title=t.value;$('#docname').textContent=t.value||'Untitled';}
+    clearTimeout(saveT);saveT=setTimeout(function(){var z=$('#nsaved');if(z)z.innerHTML='<b>Saved</b>';},500);}
 });
 if(location.hash==='#courses')S.page='co';
 if(location.hash==='#course'){S.page='co';S.cur.co='excel';}
