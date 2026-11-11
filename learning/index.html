@@ -730,10 +730,12 @@
     .sea-row,.sea-h{grid-template-columns:1fr 1fr}
   }
 </style>
-<link rel="stylesheet" href="../assets/brain.css?v=2611110147">
+<link rel="stylesheet" href="../assets/brain.css?v=2611110221">
 </head>
 <body>
-<script src="../assets/shell.js?v=2611110147"></script>
+<script src="../assets/shell.js?v=2611110221"></script>
+<script src="../assets/gcal.js?v=2611110221"></script>
+<script src="../assets/pdf.js?v=2611110221"></script>
 
 <!-- ─────────── TITLE ROW ─────────── -->
 <div class="topbar">
@@ -2873,7 +2875,7 @@ var PR=(function(){
     el.innerHTML='<div class="pt">Save a syllabus</div><div class="ps">A clean, printable syllabus of “'+esc(nameOf(t,x))+'”. In the print window, choose “Save as PDF”.</div>'+
       '<label class="pr-o"><input type="checkbox" id="pr-prog"> Show my progress (ticks)</label>'+
       (hasNotes(t,x)?'<label class="pr-o"><input type="checkbox" id="pr-notes"> Include my notes</label>':'')+
-      '<div class="pf"><button class="btn sm" onclick="PR.close()">Cancel</button><button class="btn sm primary" id="pr-go" onclick="PR.go()">Save PDF</button></div>';
+      '<div class="pf"><button class="btn sm" onclick="PR.close()">Cancel</button><button class="btn sm" onclick="PR.drive()" title="Save it to your Google Drive">Save to Drive</button><button class="btn sm primary" id="pr-go" onclick="PR.go()">Save PDF</button></div>';
     document.body.appendChild(el);
     var r=btn?btn.getBoundingClientRect():{bottom:80,right:window.innerWidth-40}, w=el.offsetWidth;
     el.style.top=(r.bottom+8)+'px';el.style.left=Math.max(16,Math.min(window.innerWidth-w-16,r.right-w))+'px';
@@ -2884,12 +2886,18 @@ var PR=(function(){
     close();if(!build(track,o))return;
     try{window.print();}catch(e){cleanup();}
   }
+  /* the same syllabus, saved to Google Drive (assets/pdf.js) */
+  function drive(){
+    var o={progress:!!(g('pr-prog')&&g('pr-prog').checked),notes:!!(g('pr-notes')&&g('pr-notes').checked)},t=track,x=subject(t);
+    close();if(!x)return;
+    B2PDF.toDrive({build:function(){build(t,o);return g('syllabus');},cleanup:cleanup,name:nameOf(t,x)+' - Syllabus',folder:'Classes',landscape:false,margin:[16,16]});
+  }
   document.addEventListener('mousedown',function(e){var el=g('prPop');if(el&&!el.contains(e.target))close();});
   document.addEventListener('keydown',function(e){if(e.key==='Escape')close();});
   /* Ctrl+P on a track tab prints the same syllabus (defaults: no ticks, no notes) */
   window.addEventListener('beforeprint',function(){if(!built){var t=APP.cur();if(t==='formal'||t==='online'||t==='self')build(t,{});}});
   window.addEventListener('afterprint',function(){cleanup();});
-  return {open:open,close:close,go:go,build:build,cleanup:cleanup};
+  return {open:open,close:close,go:go,drive:drive,build:build,cleanup:cleanup};
 })();
 </script>
 <script>

@@ -13,6 +13,9 @@
    Google Drive backup (optional, cfg.drive): the same sign-in also asks for
    "drive.file" — access only to files this site creates — and keeps one file,
    "Brain 2.0 backup.json", in your Drive. cfg.driveFileId remembers it.
+   Saved PDFs go in a folder this site creates, "Brain 2.0 PDFs", with one
+   sub-folder per page (cfg.pdfFolders remembers their ids). You can move or
+   rename that folder in Drive; it is found by id, not by where it sits.
 
    Google tokens last about an hour and can only be renewed from a click
    (browsers block the sign-in popup otherwise), so after that the page
@@ -221,6 +224,36 @@
       return dfetch(DRIVE+'/files/'+encodeURIComponent(f.id)+'?alt=media',{text:true}).then(function(t){return {text:t,modifiedTime:f.modifiedTime};});});
   }
 
+  /* ── PDFs: "Brain 2.0 PDFs" › <sub-folder> › <name>.pdf ── */
+  var FOLDER_MIME='application/vnd.google-apps.folder',PDF_ROOT='Brain 2.0 PDFs';
+  function q1(q){return dfetch(DRIVE+'/files?spaces=drive&pageSize=1&fields='+encodeURIComponent('files(id,name)')+'&q='+encodeURIComponent(q)).then(function(j){return j&&j.files&&j.files[0]||null;});}
+  function lit(s){return "'"+String(s).replace(/\\/g,'\\\\').replace(/'/g,"\\'")+"'";}
+  /* the folder's id: remembered → still there? → else found by name → else created */
+  function folder(key,name,parent){
+    var map=cfg.pdfFolders||(cfg.pdfFolders={}),known=map[key];
+    function keep(id){map[key]=id;lsSet(CFG_KEY,cfg);return id;}
+    function find(){
+      return q1('name='+lit(name)+" and mimeType='"+FOLDER_MIME+"' and trashed=false"+(parent?' and '+lit(parent)+' in parents':'')).then(function(f){
+        if(f)return keep(f.id);
+        return dfetch(DRIVE+'/files?fields=id',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(Object.assign({name:name,mimeType:FOLDER_MIME},parent?{parents:[parent]}:{}))}).then(function(n){return keep(n.id);});
+      });
+    }
+    if(!known)return find();
+    return dfetch(DRIVE+'/files/'+encodeURIComponent(known)+'?fields=id,trashed').then(function(f){return f&&!f.trashed?known:find();},function(e){if(e.status===404)return find();throw e;});
+  }
+  /* save (or replace, when a PDF with that name is already there) and return {id, webViewLink} */
+  function drivePdf(blob,name,sub){
+    var file=String(name||'Brain 2.0').replace(/[\\/:*?"<>|]+/g,' ').replace(/\s+/g,' ').trim()+'.pdf';
+    return folder('root',PDF_ROOT,'').then(function(root){return sub?folder('sub:'+sub,sub,root):root;}).then(function(dir){
+      return q1('name='+lit(file)+' and '+lit(dir)+" in parents and trashed=false").then(function(old){
+        if(old)return dfetch(DRIVE_UP+'/files/'+encodeURIComponent(old.id)+'?uploadType=media&fields=id,webViewLink',{method:'PATCH',headers:{'Content-Type':'application/pdf'},body:blob});
+        var b='b2'+Date.now().toString(36)+Math.random().toString(36).slice(2);
+        var body=new Blob(['--'+b+'\r\nContent-Type: application/json; charset=UTF-8\r\n\r\n'+JSON.stringify({name:file,mimeType:'application/pdf',parents:[dir]})+'\r\n--'+b+'\r\nContent-Type: application/pdf\r\n\r\n',blob,'\r\n--'+b+'--']);
+        return dfetch(DRIVE_UP+'/files?uploadType=multipart&fields=id,webViewLink',{method:'POST',headers:{'Content-Type':'multipart/related; boundary='+b},body:body});
+      });
+    });
+  }
+
   window.GCal={
     configured:function(){return !!cfg.clientId;},
     connected:function(){return !!tok();},
@@ -233,7 +266,7 @@
     /* Drive backup: on = switched on in settings; ready = this sign-in can use it right now */
     drive:{on:function(){return !!cfg.drive;},ready:function(){return !!cfg.drive&&!!tok()&&tokDrive();},
       setOn:function(v){cfg.drive=!!v;if(!v){cfg.driveGranted=false;}lsSet(CFG_KEY,cfg);tokenClient=null;if(cfg.clientId)loadGIS().then(initClient).catch(function(){});},
-      save:driveSave,load:driveLoad,find:driveFind,fileName:DRIVE_NAME},
+      save:driveSave,load:driveLoad,find:driveFind,fileName:DRIVE_NAME,savePdf:drivePdf},
     /* writable calendars from the last fetch: [{id,summary,backgroundColor,primary}] */
     calList:function(){return (cfg.calList||[]).slice();},
     signIn:signIn, calendars:calendars, events:events, create:create, update:update, remove:remove,
