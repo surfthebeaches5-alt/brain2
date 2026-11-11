@@ -276,15 +276,19 @@ var IDEAS=[
   {t:'Wine regions',theme:'Food & drink',note:'',added:'Nov 10'}
 ];
 var CO=[
-  {id:'fsot',title:'FSOT',theme:'Tests',start:'2026-11-09',platform:'Self-study',status:'Active',url:'',testDate:'2027-02-01',why:'',weeks:[1,1,0,1,1,1,0,1],goals:['Cover every part once before January','Take three full practice tests'],
+  {id:'fsot',title:'FSOT',theme:'Tests',start:'2026-11-09',platform:'Self-study',status:'Active',url:'',testDate:'2027-02-01',why:'',weeks:[1,1,0,1,1,1,0,1],goals:['Cover every topic once before January','Take all four practice tests'],
    units:[
-     {name:'Job knowledge',q:'',open:true,items:[I('U.S. government, history and society: study guide chapter','Read',1),I('World history and geography: study guide chapter','Read',1),I('Economics: study guide chapter','Read'),I('Math and statistics review','Do'),I('20 practice questions','Do')]},
-     {name:'English usage and comprehension',q:'',items:[I('Grammar and usage review','Read',1),I('Reading comprehension set','Do'),I('20 practice questions','Do')]},
-     {name:'Logical reasoning',q:'',items:[I('How assumptions and flaws work','Read'),I('Practice set: inferences','Do'),I('Practice set: flaws and assumptions','Do')]}],
+     {name:'U.S. government',q:'',items:[I('The Constitution and the three branches: study guide chapter','Read',1),I('Crash Course Government, episodes 1–10','Watch',1),I('One page: how a bill becomes law','Write')]},
+     {name:'U.S. history',q:'',items:[I('Study guide chapter','Read'),I('Timeline of the 20th century','Write')]},
+     {name:'World history and geography',q:'',items:[I('Study guide chapter','Read'),I('Map quiz: every region','Do')]},
+     {name:'Economics',q:'',items:[I('Study guide chapter','Read'),I('Supply, demand and trade: video series','Watch')]},
+     {name:'Culture and society',q:'',items:[]},
+     {name:'Math and statistics',q:'',items:[I('Review: mean, median, percentages','Do')]}],
    project:'',unitNotes:{0:'Checks and balances: who can stop whom.\nI mix up the 14th and 15th amendments. Review again.'},
    notes:[{title:'Logic mistakes I keep making',date:'Nov 9',text:'Confusing “some” with “most”.\nMissing the unstated assumption.'}],
-   sets:[{d:'Nov 10',sec:'Job knowledge',right:15,total:20},{d:'Nov 8',sec:'English usage and comprehension',right:14,total:20},{d:'Nov 5',sec:'Logical reasoning',right:9,total:20},{d:'Nov 3',sec:'Job knowledge',right:13,total:20}],
-   scores:[{d:'Nov 2',score:'74%',label:'Test 1'},{d:'Oct 12',score:'68%',label:'Test 2'}]},
+   sets:[{d:'Nov 2',sec:'Job knowledge',right:36,total:50},{d:'Nov 2',sec:'English usage and comprehension',right:35,total:45},{d:'Nov 2',sec:'Logical reasoning',right:21,total:30},
+         {d:'Oct 12',sec:'Job knowledge',right:33,total:50},{d:'Oct 12',sec:'English usage and comprehension',right:32,total:45},{d:'Oct 12',sec:'Logical reasoning',right:20,total:30}],
+   scores:[{d:'Nov 2',score:'74%',label:'Test 1 · 92 of 125'},{d:'Oct 12',score:'68%',label:'Test 2 · 85 of 125'}]},
   {id:'excel',title:'Data Skills for Excel Professionals',theme:'Career',start:'2026-10-19',platform:'',status:'Active',url:'',testDate:'',why:'',weeks:[1,0,1,1,0,0,1,0],goals:[],
    units:[{name:'Fundamentals of data analysis',q:'',open:true,items:[I('Videos 1–6','Watch',1),I('Practice workbook','Do',1),I('Module quiz','Do')]},{name:'Dictionaries, quality and communication',q:'',items:[I('Videos 1–5','Watch'),I('Module quiz','Do')]}],
    project:'',unitNotes:{},notes:[]}
@@ -295,7 +299,7 @@ PC[0].mats=[M('The Death and Life of Great American Cities','Book','Jane Jacobs'
 PC[1].mats=[M('Great Art Explained','Video','youtube.com',0)];
 CO[0].mats=[M('Crash Course Government','Video','youtube.com',0),M('Study guide','Book','Book'),M('Official practice test','Link','careers.state.gov',null,'https://careers.state.gov')];
 CO[1].mats=[];
-[[PC[0],[2,2,1]],[PC[1],[3]],[CO[0],[4,4,4]],[CO[1],[3,3]]].forEach(function(a){a[0].units.forEach(function(u,i){u.w=a[1][i]||1;});});
+[[PC[0],[2,2,1]],[PC[1],[3]],[CO[0],[2,2,3,2,2,1]],[CO[1],[3,3]]].forEach(function(a){a[0].units.forEach(function(u,i){u.w=a[1][i]||1;});});
 /* notes are simple rich text: plain lines become paragraphs */
 function toHtml(t){return String(t||'').split('\n').map(function(l){return '<div>'+(esc(l)||'<br>')+'</div>';}).join('');}
 /* a unit's notes are ordinary notes that belong to that unit */
@@ -437,7 +441,7 @@ function outline(x){
   h+='<div class="card"><div class="chead"><div style="min-width:0"><div class="eb">'+esc(eb)+'</div><h2>'+esc(x.title)+'</h2></div><div class="acts"><button class="btn sm" data-act="fake" title="Save this '+(pc?'study':'course')+' as a PDF" data-msg="Saves this '+(pc?'study':'course')+' as a PDF, like the other pages"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" x2="12" y1="15" y2="3"/></svg>PDF</button><button class="btn sm" data-act="fake" title="Open this '+(pc?'study':'course')+'’s Drive folder" data-msg="The preview isn’t connected to Google. On the real page this opens this '+(pc?'study':'course')+'’s own folder: '+esc(folder(x))+'"><svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 13v8"/><path d="m8 17 4-4 4 4"/><path d="M20 16.6A4.5 4.5 0 0 0 17.5 8h-1.8A7 7 0 1 0 4 14.9"/></svg>Drive</button><button class="btn sm" data-act="editmain">Edit</button></div></div>'+
      '<div class="meta">'+(!pc&&x.platform?'<span>'+esc(x.platform)+'</span>':'')+(!pc&&x.status&&x.status!=='Active'?'<span class="chip w">'+esc(x.status)+'</span>':'')+'<span>'+when+'</span><span>'+c.d+' of '+c.t+' to-dos done</span></div>';
   if(tst){var sc=x.scores&&x.scores[0];
-    h+='<div class="stats"><div><b>'+wk(tst.weeks)+'</b><span>until the test · '+esc(tst.label)+'</span></div><div><b>'+c.d+' / '+c.t+'</b><span>covered</span></div><div><b>'+(sc?esc(sc.score):'–')+'</b><span>latest practice test</span></div></div>';}
+    h+='<div class="stats"><div><b>'+wk(tst.weeks)+'</b><span>until the test · '+esc(tst.label)+'</span></div><div><b>'+(sc?esc(sc.score):'–')+'</b><span>latest practice test</span></div><div><b>'+(x.scores?x.scores.length:0)+'</b><span>practice tests taken</span></div></div>';}
   h+='</div>';
   /* the unit you are on */
   var u=x.units[sel];
@@ -500,17 +504,14 @@ function ideasTab(){
 }
 /* ── practice (a course with a test) ── */
 function practiceTab(x){
-  var by={};x.units.forEach(function(u){by[u.name]={r:0,t:0};});
-  x.sets.forEach(function(s){if(!by[s.sec])by[s.sec]={r:0,t:0};by[s.sec].r+=s.right;by[s.sec].t+=s.total;});
-  var done=Object.keys(by).filter(function(k){return by[k].t;}),low=done.slice().sort(function(a,b){return by[a].r/by[a].t-by[b].r/by[b].t;})[0];
-  var h=topbar(x,'New course')+'<div class="card" style="margin-bottom:18px"><div class="tintro"><div class="ttl" style="margin:0">Practice test</div><span class="grow"></span><select id="tver" aria-label="Test"><option value="1">Test 1</option><option value="2">Test 2</option><option value="3">Test 3</option><option value="4">Test 4</option></select><button class="btn dark" data-act="tstart" style="height:36px">Start timed test</button></div></div>'+
-    '<div class="cols"><div><div class="card"><div class="ttl">Practice questions</div>'+
-    '<div class="setadd"><select id="ssec" aria-label="Unit">'+x.units.map(function(u){return '<option>'+esc(u.name)+'</option>';}).join('')+'</select><input id="sright" type="number" min="0" placeholder="right" aria-label="Right"><input id="stotal" type="number" min="1" placeholder="of" aria-label="Out of"><button class="btn dark" data-act="addset" style="height:36px">Add</button></div>'+
-    (x.sets.length?x.sets.map(function(s){var p=Math.round(s.right/s.total*100);return '<div class="row"><span class="g">'+esc(s.sec)+'<small style="display:block;color:var(--muted);font-size:11.5px">'+esc(s.d)+'</small></span><span>'+s.right+' / '+s.total+'</span><b style="width:44px;text-align:right">'+p+'%</b></div>';}).join(''):'<div class="empty">No question sets yet</div>')+'</div></div>'+
-    '<div><div class="card"><div class="ttl">By unit</div>'+Object.keys(by).map(function(k){var b=by[k],p=b.t?Math.round(b.r/b.t*100):0;
-      return '<div class="row"><span style="width:44%;min-width:0">'+esc(k)+(k===low&&done.length>1?' <span class="chip w">weakest</span>':'')+'</span><span class="pbar'+(k===low&&done.length>1?' low':'')+'"><i style="width:'+p+'%"></i></span><b style="width:40px;text-align:right">'+(b.t?p+'%':'–')+'</b></div>';}).join('')+'</div>'+
-    '<div class="card"><div class="ttl">Practice tests<button class="link" data-act="addscore">+ Add a score</button></div>'+(x.scores.length?x.scores.map(function(s){return '<div class="row"><span class="g">'+esc(s.d)+(s.label?'<small style="display:block;color:var(--muted);font-size:11.5px">'+esc(s.label)+'</small>':'')+'</span><b>'+esc(s.score)+'</b></div>';}).join(''):'<div class="empty">None yet</div>')+'</div></div></div>';
-  return h;
+  var by={};PARTS.forEach(function(n){by[n]={r:0,t:0};});
+  x.sets.forEach(function(z){if(by[z.sec]){by[z.sec].r+=z.right;by[z.sec].t+=z.total;}});
+  var done=PARTS.filter(function(k){return by[k].t;}),low=done.slice().sort(function(a,b){return by[a].r/by[a].t-by[b].r/by[b].t;})[0];
+  return topbar(x,'New course')+'<div class="card" style="margin-bottom:18px"><div class="tintro"><div class="ttl" style="margin:0">Take a practice test</div><span class="grow"></span><select id="tver" aria-label="Test"><option value="1">Test 1</option><option value="2">Test 2</option><option value="3">Test 3</option><option value="4">Test 4</option></select><button class="btn dark" data-act="tstart" style="height:36px">Start timed test</button></div>'+
+    '<div class="saved" style="margin-top:10px">Preview: 4 sample questions and 3 minutes per part. The real tests have 50, 45 and 30 questions, timed at 35, 35 and 45 minutes.</div></div>'+
+    '<div class="cols"><div><div class="card"><div class="ttl">Tests taken<button class="link" data-act="addscore">+ Add a score</button></div>'+(x.scores.length?x.scores.map(function(z){return '<div class="row"><span class="g">'+esc(z.label||'')+'<small style="display:block;color:var(--muted);font-size:11.5px">'+esc(z.d)+'</small></span><b>'+esc(z.score)+'</b></div>';}).join(''):'<div class="empty">None yet</div>')+'</div></div>'+
+    '<div><div class="card"><div class="ttl">By section</div>'+PARTS.map(function(k){var q=by[k],pc=q.t?Math.round(q.r/q.t*100):0,weak=k===low&&done.length>1;
+      return '<div class="row"><span style="width:44%;min-width:0">'+esc(k)+(weak?' <span class="chip w">weakest</span>':'')+'</span><span class="pbar'+(weak?' low':'')+'"><i style="width:'+pc+'%"></i></span><b style="width:40px;text-align:right">'+(q.t?pc+'%':'–')+'</b></div>';}).join('')+'</div></div></div>';
 }
 /* ── practice test ──
    Example questions written for this preview, in the style of the three parts. They are not real
@@ -623,7 +624,6 @@ document.addEventListener('click',function(e){
   else if(a==='editmat'){matForm(x,+el.getAttribute('data-n'));}
   else if(a==='addidea'){var v=$('#idea').value.trim();if(!v)return;IDEAS.push({t:v,theme:$('#itheme').value.trim(),note:'',added:today()});render();$('#idea').focus();}
   else if(a==='start'){var idea=IDEAS[+el.getAttribute('data-n')],sid='n'+Date.now();var ns=blank(idea.t);ns.id=sid;ns.theme=idea.theme||'';ns.why=idea.note||'';PC.push(ns);idea.study=sid;S.cur.pc=sid;S.tab.pc='study';S.noteOpen=false;render();say('Started. On the real page it also gets its own Drive folder: '+folder(cur()));}
-  else if(a==='addset'){var r=+$('#sright').value,tt=+$('#stotal').value;if(!(tt>0)||r<0||r>tt){say('Enter how many you got right, out of how many');return;}x.sets.unshift({d:today(),sec:$('#ssec').value,right:r,total:tt});render();}
   else if(a==='addscore'){scoreForm(x);}
 });
 /* formatting buttons act on the note being edited (mousedown, so the cursor stays in the note) */
