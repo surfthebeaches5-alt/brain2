@@ -53,6 +53,8 @@
     wishlist:P('<path d="M12 4l2.3 4.8 5.2.7-3.8 3.6 1 5.1-4.7-2.6-4.7 2.6 1-5.1L5 9.5l5.2-.7Z"/>'),
     lang:P('<circle cx="12" cy="12" r="8"/><path d="M4 12h16M12 4c2.4 2.4 2.4 13.6 0 16M12 4c-2.4 2.4-2.4 13.6 0 16"/>'),
     classes:P('<path d="M3 8l9-4 9 4-9 4Z"/><path d="M7 10v5c0 1 5 3 5 3s5-2 5-3v-5"/>'),
+    seasons:P('<rect x="4" y="5" width="16" height="15" rx="2"/><path d="M4 10h16M9 3v4M15 3v4"/>'),
+    book:P('<path d="M12 7c-2-1.4-4.6-2-8-2v13c3.4 0 6 .6 8 2 2-1.4 4.6-2 8-2V5c-3.4 0-6 .6-8 2Z"/><path d="M12 7v13"/>'),
     fitness:P('<path d="M4 9v6M7 7v10M17 7v10M20 9v6M7 12h10"/>'),
     meals:P('<path d="M4 11h16a8 8 0 0 1-16 0Z"/><path d="M9 6.5c0-1 .6-1.5 1-2M13 6.5c0-1 .6-1.5 1-2"/>'),
     travel:P('<path d="M17.8 19.2 16 11l3.5-3.5C21 6 21.5 4 21 3c-1-.5-3 0-4.5 1.5L13 8 4.8 6.2c-.5-.1-.9.1-1.1.5l-.3.5c-.2.5-.1 1 .3 1.3L9 12l-2 3H4l-1 1 3 2 2 3 1-1v-3l3-2 3.5 5.3c.3.4.8.5 1.3.3l.5-.2c.4-.3.6-.7.5-1.2z"/>'),
@@ -75,7 +77,11 @@
     {label:'Library',p:'media/'},
     {label:'Learning',pages:[
       {p:'language-portal/',label:'Languages',sub:'75-day challenge & flashcards',icon:'lang'},
-      {p:'learning/',label:'Classes',sub:'Courses & self-study',icon:'classes'}]},
+      {p:'learn/overview/',label:'Overview',sub:'Each season at a glance',icon:'seasons'},
+      {p:'learn/personal/',label:'Personal Curriculum',sub:'What I study on my own',icon:'book'},
+      {p:'learn/courses/',label:'Courses',sub:'Online courses & the FSOT',icon:'classes'},
+      {sep:true},
+      {p:'learning/',label:'Classes (old page)',sub:'Kept until the new pages are confirmed',icon:'guide'}]},
     {label:'Life',pages:[
       {p:'fitness/',label:'Fitness',sub:'Weekly plan & habits',icon:'fitness'},
       {p:'meals/',label:'Meals & Groceries',sub:'Staples & shopping',icon:'meals'},
