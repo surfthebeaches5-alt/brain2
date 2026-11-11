@@ -492,7 +492,7 @@ var FORM=(function(){
   function open(o){now=o;$('#formBody').innerHTML='<h3>'+esc(o.title)+'</h3>'+o.fields.map(field).join('')+
       '<div class="modal-foot">'+(o.onDelete?'<button class="btn del" data-form="del">'+esc(o.deleteLabel||'Delete')+'</button>':'')+
       '<div><button class="btn" data-form="cancel">Cancel</button><button class="btn dark" data-form="save">'+esc(o.saveLabel||'Save')+'</button></div></div>';
-    $('#formModal').classList.add('show');var f=$('#formBody input,#formBody textarea');if(f)setTimeout(function(){f.focus();},30);}
+    $('#formModal').classList.add('show');var f=$('#formBody input,#formBody textarea');if(f)f.focus();}
   function close(){now=null;$('#formModal').classList.remove('show');}
   function save(){if(!now)return;var v={};names(now.fields,[]).forEach(function(n){v[n]=$('#ff-'+n).value;});var o=now;if(o.onSave(v)!==false&&now===o)close();}
   function del(btn){if(!now||!now.onDelete)return;if(!btn.getAttribute('data-armed')){btn.setAttribute('data-armed','1');btn.textContent='Click again to delete';return;}var o=now;o.onDelete();if(now===o)close();}
@@ -920,7 +920,7 @@ document.addEventListener('input',function(e){
     clearTimeout(saveT);saveT=setTimeout(function(){var z=$('#nsaved');if(z)z.innerHTML='<b>Saved</b>';},500);}
 });
 /* the preview updates itself: if a newer copy has been published, load it (once per copy) */
-var PV='2611111942';
+var PV='2611111944';
 (function(){try{fetch(location.pathname+'?pv='+Date.now(),{cache:'no-store'}).then(function(r){return r.ok?r.text():'';}).then(function(t){
   var m=/var PV='(\d+)'/.exec(t);if(!m||m[1]===PV)return;var done='';try{done=sessionStorage.getItem('pv-seen')||'';}catch(e){}
   if(done===m[1])return;try{sessionStorage.setItem('pv-seen',m[1]);}catch(e){}
