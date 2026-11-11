@@ -239,10 +239,10 @@ button,input,select{font-family:inherit;}
   .cal-tools .seg{display:none;}
 }
 </style>
-<link rel="stylesheet" href="assets/brain.css?v=2611110234">
+<link rel="stylesheet" href="assets/brain.css?v=2611110242">
 </head>
 <body>
-<script src="assets/shell.js?v=2611110234"></script>
+<script src="assets/shell.js?v=2611110242"></script>
 
 <main class="page">
   <div class="head">
@@ -331,8 +331,9 @@ button,input,select{font-family:inherit;}
   </div>
 </div>
 
-<script src="assets/gcal.js?v=2611110234"></script>
-<script src="assets/backup.js?v=2611110234"></script>
+<script src="assets/gcal.js?v=2611110242"></script>
+<script src="assets/backup.js?v=2611110242"></script>
+<script src="assets/lessons.js?v=2611110242"></script>
 <script>
 /* ───────── helpers ───────── */
 function lsGet(k){try{var r=localStorage.getItem(k);return r?JSON.parse(r):null;}catch(e){return null;}}
@@ -885,7 +886,7 @@ $('tasks').addEventListener('click',function(e){var row=e.target.closest('.task'
   lsSet(TASK_SK,l);renderTasks();renderCount();});
 
 /* Languages — today's tasks from the active 75-day challenge (langChallenge1) */
-var LANG={es:'Spanish',pt:'Portuguese',fr:'French',it:'Italian',de:'German',ja:'Japanese',ko:'Korean'};
+var LANG={es:'Spanish',pt:'Portuguese',fr:'French',it:'Italian',de:'German',ja:'Japanese',ko:'Korean',zh:'Chinese'};
 function lcActive(db){if(!db||!Array.isArray(db.challenges))return null;return db.challenges.find(function(c){return c.id===db.active;})||null;}
 function lcStreak(c){var n=0,d=today(),ids=(c.tasks||[]).map(function(t){return t.id;});
   function full(k){var x=(c.days||{})[k];return !!x&&ids.length>0&&ids.every(function(id){return (x.done||[]).indexOf(id)>=0;});}
@@ -910,10 +911,10 @@ $('lang').addEventListener('click',function(e){if(e.target.closest('a'))return;v
    language ("Spanish"). Once it has ended it waits here to be confirmed: "Count it" adds its length to
    that day's study time for the language (the active challenge's day log, else the quick log), and
    "Didn't happen" drops it. Nothing is counted on its own, because lessons get cancelled.
-   brain2Lessons1 {key: {s:'done'|'skip', mins, lang, date, ch?, ticked?[], logId?, t}}   key = the lesson's start time */
+   The record itself lives in assets/lessons.js (brain2Lessons1), shared with Languages › Log. */
 var LESSON_SK='brain2Lessons1',LESSON_RE=/\b(preply|italki|lingoda|verbling|cambly)\b/i;
-var LANG_WORDS={es:/spanish|espa[nñ]ol/i,pt:/portugu/i,fr:/french|fran[cç]ais/i,it:/italian/i,de:/german|deutsch/i,ja:/japanese/i,ko:/korean/i};
-function lessons(){var s=lsGet(LESSON_SK);return s&&typeof s==='object'&&!Array.isArray(s)?s:{};}
+var LANG_WORDS={es:/spanish|espa[nñ]ol/i,pt:/portugu/i,fr:/french|fran[cç]ais/i,it:/italian/i,de:/german|deutsch/i,ja:/japanese/i,ko:/korean/i,zh:/chinese|mandarin|cantonese/i};
+function lessons(){return B2Lessons.all();}
 function lessonText(e){return [e.title,e.location,e.join].join(' ');}
 function isLesson(e){
   if(!e||e.allDay||!e.time||(e.source!=='google'&&e.source!=='local'))return false;
@@ -938,45 +939,16 @@ function lessonList(){
   return out.sort(function(a,b){return lessonEnd(a)-lessonEnd(b);});
 }
 function lessonByKey(k){return lessonList().filter(function(e){return lessonKey(e)===k;})[0]||null;}
-/* add (sign +1) or take back (sign −1) a lesson's minutes */
-function lessonLog(st,sign){
-  var db=lsGet('langChallenge1'),ch=null;
-  if(db&&Array.isArray(db.challenges)){
-    if(sign<0)ch=db.challenges.filter(function(c){return c.id===st.ch;})[0]||null;
-    else{var cand=db.challenges.filter(function(c){return !c.endedAt&&c.lang===st.lang&&c.start&&st.date>=c.start&&st.date<=dk(addDays(parseDk(c.start),(c.length||75)-1));});
-      ch=cand.filter(function(c){return c.id===db.active;})[0]||cand[0]||null;}
-  }
-  if(ch){
-    ch.days=ch.days||{};var d=ch.days[st.date]||(ch.days[st.date]={done:[]});if(!Array.isArray(d.done))d.done=[];
-    var before=+d.minutes||0,after=Math.max(0,before+sign*st.mins);
-    if(after)d.minutes=after;else delete d.minutes;
-    if(sign>0){(Array.isArray(d.sessions)?d.sessions:(d.sessions=[])).push({at:st.at,min:st.mins,what:'lesson'});st.ch=ch.id;st.ticked=[];}
-    else if(Array.isArray(d.sessions)){for(var i=d.sessions.length-1;i>=0;i--){var x=d.sessions[i];if(x&&x.what==='lesson'&&x.at===st.at&&+x.min===st.mins){d.sessions.splice(i,1);break;}}if(!d.sessions.length)delete d.sessions;}
-    /* the "minutes logged" rule ticks itself when the lesson takes the day over the line (and unticks on undo) */
-    (ch.tasks||[]).forEach(function(t){var a=t.auto,j=d.done.indexOf(t.id);if(!a||a.kind!=='minutes')return;
-      if(sign>0&&before<a.min&&after>=a.min&&j<0){d.done.push(t.id);st.ticked.push(t.id);}
-      if(sign<0&&(st.ticked||[]).indexOf(t.id)>=0&&after<a.min&&j>=0)d.done.splice(j,1);});
-    lsSet('langChallenge1',db);return;
-  }
-  var lp=lsGet('langPortal5')||{};lp.hours=lp.hours&&typeof lp.hours==='object'?lp.hours:{};lp.log=Array.isArray(lp.log)?lp.log:[];
-  if(sign>0){st.logId='l_'+Date.now();
-    lp.log.unshift({id:st.logId,lang:st.lang,skill:'lesson',skillLabel:'Lesson',resource:'--',note:'',mins:st.mins,date:new Date(st.date+'T'+st.at+':00').toISOString()});
-    lp.hours[st.lang]=(+lp.hours[st.lang]||0)+st.mins/60;}
-  else{var n=lp.log.length;lp.log=lp.log.filter(function(x){return x.id!==st.logId;});if(lp.log.length<n)lp.hours[st.lang]=Math.max(0,(+lp.hours[st.lang]||0)-st.mins/60);}
-  lsSet('langPortal5',lp);
-}
 function lessonAct(key,act){
-  var all=lessons(),st=all[key],e=lessonByKey(key);
-  if(act==='undo'){if(!st)return;if(st.s==='done')lessonLog(st,-1);delete all[key];flash('Undone');}
+  var st=lessons()[key],e=lessonByKey(key);
+  if(act==='undo'){if(!st)return;B2Lessons.undo(key);flash('Undone');}
   else{
     if(!e||st)return;
-    if(act==='skip')all[key]={s:'skip',date:e.date,t:Date.now()};
-    else{st={s:'done',mins:lessonMins(e),lang:lessonLang(e),date:e.date,at:e.time,t:Date.now()};lessonLog(st,1);all[key]=st;
+    if(act==='skip')B2Lessons.skip(key,e.date);
+    else{st=B2Lessons.count(key,{mins:lessonMins(e),lang:lessonLang(e),date:e.date,at:e.time,title:e.title});
       flash('Counted '+st.mins+' min of '+(LANG[st.lang]||'language')+' for '+DS[parseDk(e.date).getDay()]+' '+MS[parseDk(e.date).getMonth()]+' '+parseDk(e.date).getDate()+' ✓');}
   }
-  /* forget decisions older than four months */
-  Object.keys(all).forEach(function(k){if(all[k]&&all[k].t&&Date.now()-all[k].t>120*864e5)delete all[k];});
-  lsSet(LESSON_SK,all);renderLessons();renderLang();renderCount();
+  renderLessons();renderLang();renderCount();
 }
 function lessonWhen(e){var d=parseDk(e.date),t=today(),n=Math.round((t-d)/864e5);return (n===0?'Today':n===1?'Yesterday':DS[d.getDay()]+' '+MS[d.getMonth()]+' '+d.getDate())+' · '+fmtTime(e.time);}
 function renderLessons(){
