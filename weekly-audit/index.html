@@ -287,10 +287,11 @@ button{font-family:inherit;}
   .grid{gap:12px;}
 }
 </style>
-<link rel="stylesheet" href="../assets/brain.css?v=1026a">
+<link rel="stylesheet" href="../assets/brain.css?v=1111a">
 </head>
 <body>
-<script src="../assets/shell.js?v=1026a"></script>
+<script src="../assets/shell.js?v=1111a"></script>
+<script src="../assets/stats.js?v=1111a"></script>
 
 <div class="topbar">
   <div class="topbar-left">
@@ -339,6 +340,10 @@ button{font-family:inherit;}
     <h2 class="print-h">1 · Look back<span class="ph-range" data-range="this"></span></h2>
     <p class="lead">Everything in this step is about the week that just ended.</p>
     <div class="grid">
+      <section class="card s12">
+        <div class="card-h"><div class="card-t"><span id="nums-range">This week</span> in numbers</div><span class="card-m">from your other pages</span></div>
+        <div id="nums"></div>
+      </section>
       <section class="card s7">
         <div class="card-h"><div class="card-t">Last week’s goals</div><span class="chip" id="lg-chip" hidden></span></div>
         <div id="last-goals-list"></div>
@@ -841,7 +846,14 @@ function weekChanged(){
   }
   curStart=ns;curEnd=ne;
   clearTimeout(saveTimer);saveData();
-  refreshSteps();renderCalendar();
+  refreshSteps();renderCalendar();renderNumbers();
+}
+
+/* ── THE WEEK IN NUMBERS (read-only, from the other pages: assets/stats.js) ── */
+function renderNumbers(){
+  var ws=val('week_start'),we=val('week_end')||(weekEndD()?isoLocal(weekEndD()):'');
+  $('nums-range').textContent=ws&&we?thisRangeText():'This week';
+  B2Stats.render($('nums'),ws,we,{onPick:function(text){if(!text)return;$('wins-input').value=text;addItem('wins');}});
 }
 
 /* ── CALENDAR (read-only: lifeCalendar1, Google cache, card due dates) ── */
@@ -1217,7 +1229,10 @@ CATS.forEach(function(_,i){updateArea(i);});
 renderLastGoals();refreshBrainDump();refreshPlan();loadFocusBanner();
 document.querySelectorAll('.panel').forEach(function(p){p.classList.toggle('active',p.id==='s'+step);});
 setView(view,true);
-refreshSteps();drawRadar();renderCalendar();
+refreshSteps();drawRadar();renderCalendar();renderNumbers();
+/* numbers follow what you do on other pages while this one is open */
+window.addEventListener('storage',function(e){if(e.key&&/^(langChallenge1|langPortal5|mediaTracker3|finTrackerState2|brain2Tasks1|fitnessTracker1_day_)/.test(e.key))renderNumbers();});
+window.addEventListener('focus',renderNumbers);
 setTimeout(function(){expandIn($('s'+step));},100);
 </script>
 </body>

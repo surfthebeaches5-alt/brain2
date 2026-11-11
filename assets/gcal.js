@@ -8,7 +8,11 @@
      brain2GCal1       {clientId, calendars:[ids], defaultCal, lastCal, calList:[{id,summary,backgroundColor,primary}], email}
      brain2GCalCache1  {from, to, at, events:[normalized]}  (last fetch, so the
                         page shows your week instantly; refreshed on demand)
-     sessionStorage brain2GCalTok {token, exp}  (≈1 hour, this tab only)
+     sessionStorage brain2GCalTok {token, exp, scope}  (≈1 hour, this tab only)
+
+   Google Drive backup (optional, cfg.drive): the same sign-in also asks for
+   "drive.file" — access only to files this site creates — and keeps one file,
+   "Brain 2.0 backup.json", in your Drive. cfg.driveFileId remembers it.
 
    Google tokens last about an hour and can only be renewed from a click
    (browsers block the sign-in popup otherwise), so after that the page
@@ -17,6 +21,8 @@
 (function(){
   var CFG_KEY='brain2GCal1', CACHE_KEY='brain2GCalCache1', TOK_KEY='brain2GCalTok';
   var SCOPES='https://www.googleapis.com/auth/calendar.events https://www.googleapis.com/auth/calendar.calendarlist.readonly';
+  var DRIVE_SCOPE='https://www.googleapis.com/auth/drive.file', DRIVE='https://www.googleapis.com/drive/v3', DRIVE_UP='https://www.googleapis.com/upload/drive/v3';
+  var DRIVE_NAME='Brain 2.0 backup.json';
   var API='https://www.googleapis.com/calendar/v3';
 
   function lsGet(k,fb){try{var r=localStorage.getItem(k);return r?JSON.parse(r):fb;}catch(e){return fb;}}
@@ -28,7 +34,10 @@
   if(cfg.clientId===undefined)cfg.clientId=DEFAULT_CLIENT_ID;   // '' means the user disconnected on purpose
 
   function tok(){try{var t=JSON.parse(sessionStorage.getItem(TOK_KEY)||'null');return t&&t.exp>Date.now()+60000?t.token:null;}catch(e){return null;}}
-  function setTok(t,secs){try{sessionStorage.setItem(TOK_KEY,JSON.stringify({token:t,exp:Date.now()+(secs||3500)*1000}));}catch(e){}}
+  function setTok(t,secs,scope){try{sessionStorage.setItem(TOK_KEY,JSON.stringify({token:t,exp:Date.now()+(secs||3500)*1000,scope:scope||''}));}catch(e){}}
+  /* the current sign-in includes permission for the Drive backup file */
+  function tokDrive(){try{var t=JSON.parse(sessionStorage.getItem(TOK_KEY)||'null');return !!(t&&t.exp>Date.now()+60000&&String(t.scope||'').indexOf(DRIVE_SCOPE)>=0);}catch(e){return false;}}
+  function scopes(){return SCOPES+(cfg.drive?' '+DRIVE_SCOPE:'');}
   function clearTok(){try{sessionStorage.removeItem(TOK_KEY);}catch(e){}}
 
   function loadGIS(){
@@ -45,10 +54,10 @@
   function initClient(){
     if(tokenClient||!cfg.clientId||!(window.google&&google.accounts&&google.accounts.oauth2))return tokenClient;
     tokenClient=google.accounts.oauth2.initTokenClient({
-      client_id:cfg.clientId, scope:SCOPES,
+      client_id:cfg.clientId, scope:scopes(),
       callback:function(r){
         var p=pending;pending=null;
-        if(r&&r.access_token){setTok(r.access_token,r.expires_in);if(p)p.res(r.access_token);}
+        if(r&&r.access_token){setTok(r.access_token,r.expires_in,r.scope);if(p)p.res(r.access_token);}
         else if(p)p.rej(new Error((r&&r.error_description)||(r&&r.error)||'Google sign-in was cancelled.'));
       },
       error_callback:function(e){var p=pending;pending=null;if(p)p.rej(new Error(e&&e.type==='popup_closed'?'Sign-in window was closed.':'Google sign-in failed.'));}
@@ -61,9 +70,10 @@
     if(!initClient())return Promise.reject(new Error('Google sign-in is still loading — try again in a second.'));
     return new Promise(function(res,rej){
       pending={res:res,rej:rej};
-      tokenClient.requestAccessToken({prompt:cfg.everConnected?'':'consent'});
+      /* ask again (consent) the first time, and the first time after the Drive backup is switched on */
+      tokenClient.requestAccessToken({prompt:cfg.everConnected&&(!cfg.drive||cfg.driveGranted)?'':'consent'});
     }).then(function(t){
-      cfg.everConnected=true;lsSet(CFG_KEY,cfg);
+      cfg.everConnected=true;if(cfg.drive&&tokDrive())cfg.driveGranted=true;lsSet(CFG_KEY,cfg);
       return t;
     });
   }
@@ -165,6 +175,52 @@
     });
   }
 
+  /* ── Google Drive backup file ── */
+  function driveErr(r,j){
+    var e=j&&j.error||{},msg=e.message||('Google Drive error '+r.status),why=JSON.stringify(e.errors||e.details||'');
+    if(r.status===401){clearTok();return Object.assign(new Error('Needs a quick refresh from Google.'),{code:'auth'});}
+    if(r.status===403&&/accessNotConfigured|SERVICE_DISABLED|has not been used in project|is disabled/i.test(msg+why))
+      return Object.assign(new Error('Google Drive isn’t switched on for your Google project yet.'),{code:'drive-off'});
+    if(r.status===403&&/insufficient/i.test(msg+why)){cfg.driveGranted=false;lsSet(CFG_KEY,cfg);clearTok();return Object.assign(new Error('Google needs you to allow the Drive backup. Sign in again.'),{code:'auth'});}
+    return Object.assign(new Error(msg),{status:r.status});
+  }
+  function dfetch(url,opts){
+    var t=tok();
+    if(!t||!tokDrive())return Promise.reject(Object.assign(new Error('Needs a quick refresh from Google.'),{code:'auth'}));
+    opts=opts||{};
+    return fetch(url,{method:opts.method||'GET',headers:Object.assign({'Authorization':'Bearer '+t},opts.headers||{}),body:opts.body})
+      .then(function(r){
+        if(r.ok)return opts.text?r.text():(r.status===204?null:r.json());
+        return r.json().catch(function(){return null;}).then(function(j){throw driveErr(r,j);});
+      });
+  }
+  /* the backup file's {id, modifiedTime, size}, or null if there isn't one yet */
+  function driveFind(){
+    var q="name='"+DRIVE_NAME+"' and trashed=false";
+    return dfetch(DRIVE+'/files?spaces=drive&orderBy=modifiedTime desc&pageSize=1&fields='+encodeURIComponent('files(id,modifiedTime,size)')+'&q='+encodeURIComponent(q))
+      .then(function(j){var f=j&&j.files&&j.files[0]||null;if(f&&cfg.driveFileId!==f.id){cfg.driveFileId=f.id;lsSet(CFG_KEY,cfg);}return f;});
+  }
+  /* save text as the backup file (replaces its contents; Drive keeps earlier versions for a while) */
+  function driveSave(text){
+    function create(){
+      var b='b2'+Date.now().toString(36)+Math.random().toString(36).slice(2);
+      var body='--'+b+'\r\nContent-Type: application/json; charset=UTF-8\r\n\r\n'+JSON.stringify({name:DRIVE_NAME,mimeType:'application/json'})+
+        '\r\n--'+b+'\r\nContent-Type: application/json; charset=UTF-8\r\n\r\n'+text+'\r\n--'+b+'--';
+      return dfetch(DRIVE_UP+'/files?uploadType=multipart&fields=id,modifiedTime,size',{method:'POST',headers:{'Content-Type':'multipart/related; boundary='+b},body:body});
+    }
+    function put(id){
+      return dfetch(DRIVE_UP+'/files/'+encodeURIComponent(id)+'?uploadType=media&fields=id,modifiedTime,size',{method:'PATCH',headers:{'Content-Type':'application/json; charset=UTF-8'},body:text});
+    }
+    var go=cfg.driveFileId?put(cfg.driveFileId).catch(function(e){if(e.status===404){cfg.driveFileId='';return driveFind().then(function(f){return f?put(f.id):create();});}throw e;})
+      :driveFind().then(function(f){return f?put(f.id):create();});
+    return go.then(function(f){if(f&&f.id&&cfg.driveFileId!==f.id){cfg.driveFileId=f.id;lsSet(CFG_KEY,cfg);}return f;});
+  }
+  /* → {text, modifiedTime} of the backup file, or null */
+  function driveLoad(){
+    return driveFind().then(function(f){if(!f)return null;
+      return dfetch(DRIVE+'/files/'+encodeURIComponent(f.id)+'?alt=media',{text:true}).then(function(t){return {text:t,modifiedTime:f.modifiedTime};});});
+  }
+
   window.GCal={
     configured:function(){return !!cfg.clientId;},
     connected:function(){return !!tok();},
@@ -174,6 +230,10 @@
     disconnect:function(){var t=tok();clearTok();if(t&&window.google&&google.accounts&&google.accounts.oauth2)google.accounts.oauth2.revoke(t,function(){});cfg.everConnected=false;lsSet(CFG_KEY,cfg);},
     cached:function(){var c=lsGet(CACHE_KEY,null);if(c&&Array.isArray(c.events))c.events=c.events.map(localize);return c;},
     localize:localize,
+    /* Drive backup: on = switched on in settings; ready = this sign-in can use it right now */
+    drive:{on:function(){return !!cfg.drive;},ready:function(){return !!cfg.drive&&!!tok()&&tokDrive();},
+      setOn:function(v){cfg.drive=!!v;if(!v){cfg.driveGranted=false;}lsSet(CFG_KEY,cfg);tokenClient=null;if(cfg.clientId)loadGIS().then(initClient).catch(function(){});},
+      save:driveSave,load:driveLoad,find:driveFind,fileName:DRIVE_NAME},
     /* writable calendars from the last fetch: [{id,summary,backgroundColor,primary}] */
     calList:function(){return (cfg.calList||[]).slice();},
     signIn:signIn, calendars:calendars, events:events, create:create, update:update, remove:remove,

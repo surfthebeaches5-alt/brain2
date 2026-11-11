@@ -20,6 +20,12 @@ button,input,select{font-family:inherit;}
 .year{display:flex;align-items:center;gap:12px;margin-top:10px;font-size:13px;color:var(--muted);font-weight:600;flex-wrap:wrap;}
 .year b{color:var(--ink-2);font-weight:700;}
 .year .bar{width:180px;}
+.bk{margin-left:auto;display:inline-flex;align-items:center;gap:6px;height:26px;padding:0 10px;border-radius:20px;border:1px solid transparent;background:transparent;color:var(--muted);font:600 12px var(--b2-sans);text-decoration:none;cursor:pointer;white-space:nowrap;}
+.bk:hover{border-color:var(--line);color:var(--ink-2);}
+.bk i{width:7px;height:7px;border-radius:50%;background:var(--ok);}
+.bk.warn{background:var(--warn-bg);color:var(--warn);}
+.bk.warn i{background:var(--warn);}
+.bk[hidden]{display:none;}
 
 .grid{display:grid;grid-template-columns:minmax(0,2fr) minmax(0,1fr);gap:18px;align-items:start;}
 .stack{display:flex;flex-direction:column;gap:18px;min-width:0;}
@@ -222,15 +228,15 @@ button,input,select{font-family:inherit;}
   .cal-tools .seg{display:none;}
 }
 </style>
-<link rel="stylesheet" href="assets/brain.css?v=1026a">
+<link rel="stylesheet" href="assets/brain.css?v=1111a">
 </head>
 <body>
-<script src="assets/shell.js?v=1026a"></script>
+<script src="assets/shell.js?v=1111a"></script>
 
 <main class="page">
   <div class="head">
     <div class="h1" id="greet">Hello</div>
-    <div class="year" id="year"></div>
+    <div class="year"><span id="year" style="display:contents"></span><button type="button" class="bk" id="bk" hidden></button></div>
   </div>
 
   <div class="grid">
@@ -313,7 +319,8 @@ button,input,select{font-family:inherit;}
   </div>
 </div>
 
-<script src="assets/gcal.js?v=1110a"></script>
+<script src="assets/gcal.js?v=1111a"></script>
+<script src="assets/backup.js?v=1111a"></script>
 <script>
 /* ───────── helpers ───────── */
 function lsGet(k){try{var r=localStorage.getItem(k);return r?JSON.parse(r):null;}catch(e){return null;}}
@@ -628,9 +635,27 @@ function loadGoogle(force){
   var from=addDays(today(),-14),to=addDays(today(),49),r=range();if(r[0]<from)from=addDays(r[0],-7);if(r[1]>to)to=addDays(r[1],7);
   if(!force&&gRange&&from>=gRange[0]&&to<=gRange[1]){renderCal();return Promise.resolve();}
   setSync('on busy','Syncing…');
-  return GCal.events(from,to).then(function(list){gEvents=list;gRange=[from,to];gAt=Date.now();syncLabel();renderCal();})
+  return GCal.events(from,to).then(function(list){gEvents=list;gRange=[from,to];gAt=Date.now();syncLabel();renderCal();autoBackup();})
     .catch(function(err){syncLabel();if(err.code!=='auth')flash(err.message,true);});
 }
+/* ───────── backup status ─────────
+   Quiet when a backup is recent; amber after a week without one. With the Google Drive
+   backup on, a copy is saved once a day whenever Google is signed in (see assets/backup.js). */
+function renderBackup(){
+  var b=$('bk');if(!window.B2Backup||!B2Backup.keys().length){b.hidden=true;return;}
+  var at=B2Backup.lastAt(),days=at?Math.floor((Date.now()-at)/864e5):-1,drive=GCal.drive.on(),stale=days<0||days>=7;
+  b.hidden=false;b.className='bk'+(stale?' warn':'');
+  b.innerHTML='<i></i>'+(days<0?'Not backed up yet':days===0?'Backed up today':days===1?'Backed up yesterday':'Last backup '+days+' days ago')+(stale?' · '+(drive?'Back up now':'Back up'):'');
+  b.title=drive?'Saves a copy to your Google Drive. Click to back up now':'Open Backup & Restore';
+}
+function autoBackup(){if(window.B2Backup)B2Backup.auto().then(function(did){if(did)renderBackup();}).catch(function(){});}
+$('bk').onclick=function(){
+  if(!GCal.drive.on()||!GCal.configured()){location.href='backup/';return;}
+  var b=$('bk');b.innerHTML='<i></i>Backing up…';
+  (GCal.drive.ready()?Promise.resolve():GCal.signIn()).then(function(){return B2Backup.driveNow();})
+    .then(function(){renderBackup();syncLabel();flash('Backed up to Google Drive ✓');})
+    .catch(function(err){renderBackup();if(err.code==='drive-off')location.href='backup/';else flash(err.message,true);});
+};
 $('sync').onclick=function(){
   if(!GCal.configured())return openModal();
   if(GCal.connected())return loadGoogle(true);
@@ -779,13 +804,24 @@ function finLoad(){
       c.paid=finPaid(c,'paid');c.paid2=finPaid(c,'paid2');});
     s.paidByStatement=true;lsSet(FIN_SK,s);
   }
+  if(!s.overdueFrom){s.overdueFrom=dk(today());lsSet(FIN_SK,s);}
   return s;
+}
+/* same rule as Finances: a statement due in the last 7 days that wasn't marked paid (never before the
+   check existed, never before the card was added) */
+function finOverdue(c,s){
+  if(!c.active||!c.day)return null;
+  var n=nextDue(c.day),last=dueIn(n.getFullYear(),n.getMonth()-1,c.day),key=dk(last);
+  if(finList(c,'paid').indexOf(key)>=0||!s.overdueFrom||key<s.overdueFrom||(c.added&&key<c.added))return null;
+  var days=Math.round((today()-last)/864e5);
+  return days>=1&&days<=7?{date:last,key:key,days:days}:null;
 }
 function renderBills(){
   var s=finLoad(),el=$('bills');
   if(!s){el.innerHTML='<div class="empty">Open Money → Finances once to load your cards.</div>';return;}
   var rows=[];
   s.cards.forEach(function(c){if(!c.active)return;
+    var od=finOverdue(c,s);if(od)rows.push({c:c,w:'paid',kind:'Statement · overdue',d:od.date,od:od});
     if(c.day&&!finPaid(c,'paid'))rows.push({c:c,w:'paid',kind:'Statement',d:nextDue(c.day)});
     if(c.day2&&!finPaid(c,'paid2'))rows.push({c:c,w:'paid2',kind:'Mid-cycle',d:nextDue(c.day2)});});
   rows.sort(function(a,b){return a.d-b.d;});
@@ -793,16 +829,16 @@ function renderBills(){
   var T=today();
   el.innerHTML=rows.slice(0,4).map(function(r){
     var n=Math.round((r.d-T)/864e5),col=n<=3?'var(--over)':n<=7?'var(--warn)':'var(--muted)';
-    var when=n===0?'Today':n===1?'Tomorrow':n<7?DS[r.d.getDay()]:MS[r.d.getMonth()]+' '+r.d.getDate();
+    var when=r.od?'Was due '+MS[r.d.getMonth()]+' '+r.d.getDate():n===0?'Today':n===1?'Tomorrow':n<7?DS[r.d.getDay()]:MS[r.d.getMonth()]+' '+r.d.getDate();
     return '<div class="bill"><span class="dot" style="background:'+esc(r.c.color||'#d8cdea')+'"></span><span class="nm">'+esc(r.c.name)+'<small>'+r.kind+'</small></span>'+
       '<span class="when" style="color:'+col+'">'+when+'</span>'+(r.c.url?'<a class="pay" href="'+esc(r.c.url)+'" target="_blank" rel="noopener">Pay ↗</a>':'')+
-      '<button class="ck" type="button" title="Mark paid" aria-label="Mark '+esc(r.c.name)+' paid" data-id="'+esc(r.c.id)+'" data-w="'+r.w+'"></button></div>';
+      '<button class="ck" type="button" title="Mark paid" aria-label="Mark '+esc(r.c.name)+' paid" data-id="'+esc(r.c.id)+'" data-w="'+r.w+'"'+(r.od?' data-od="'+r.od.key+'"':'')+'></button></div>';
   }).join('')+(rows.length>4?'<div class="empty" style="padding-bottom:0">+'+(rows.length-4)+' more in Money</div>':'');
 }
 $('bills').addEventListener('click',function(e){var b=e.target.closest('.ck');if(!b)return;
   var s=finLoad();if(!s)return;var c=s.cards.find(function(x){return x.id===b.getAttribute('data-id');});if(!c)return;
-  var w=b.getAttribute('data-w'),l=finList(c,w),key=dk(nextDue(w==='paid2'?c.day2:c.day));if(l.indexOf(key)<0){l.push(key);l.sort();while(l.length>12)l.shift();}
-  c[w]=true;s.lastReset=finMonthKey();lsSet(FIN_SK,s);renderBills();renderCal();});
+  var w=b.getAttribute('data-w'),l=finList(c,w),key=b.getAttribute('data-od')||dk(nextDue(w==='paid2'?c.day2:c.day)),od=!!b.getAttribute('data-od');if(l.indexOf(key)<0){l.push(key);l.sort();while(l.length>12)l.shift();}
+  if(!od)c[w]=true;s.lastReset=finMonthKey();lsSet(FIN_SK,s);renderBills();renderCal();});
 
 /* ═════════════════ CHECKLIST ═════════════════ */
 /* Tasks — quick notes-to-self, separate from the calendar (brain2Tasks1) */
@@ -868,11 +904,12 @@ function renderCount(){
 /* ───────── boot ───────── */
 safe(renderHead);safe(renderBills);safe(renderNow);safe(renderTasks);safe(renderLang);safe(renderBody);safe(renderCount);
 safe(function(){var c=GCal.cached();if(GCal.configured()&&c){gEvents=c.events||[];gAt=c.at;}});
-safe(renderCal);safe(syncLabel);
+safe(renderCal);safe(syncLabel);safe(renderBackup);
 if(GCal.configured()&&GCal.connected())loadGoogle(true);
 /* stay in step when another tab (Finances, Library, Languages…) changes data */
 window.addEventListener('storage',function(e){
   if(e.key==='finTrackerState2'){safe(renderBills);safe(renderCal);}
+  if(e.key==='brain2BackupMeta1'||e.key==='brain2GCal1')safe(renderBackup);
   else if(e.key==='mediaTracker3')safe(renderNow);
   else if(e.key==='langChallenge1'){safe(renderLang);safe(renderCount);}
   else if(e.key===TASK_SK){safe(renderTasks);safe(renderCount);}

@@ -93,6 +93,10 @@ a{color:inherit;text-decoration:none;}
 .tile .th.noimg img{display:none;}
 .tile .th .ph{display:none;flex-direction:column;align-items:center;gap:8px;color:var(--faint);font-size:11.5px;font-weight:650;}
 .tile .th.noimg .ph{display:flex;}
+/* a move with no picture stays a short strip (tick, edit, demo link) instead of a big empty square */
+.tile .th.noimg{aspect-ratio:auto;height:72px;}
+.tile .th.noimg .ph svg{width:24px;height:24px;}
+.tile .th.noimg .ph span{display:none;}
 .tile .th .ph svg{width:40px;height:40px;stroke-width:1.4;}
 .tile .play{position:absolute;left:50%;top:50%;width:44px;height:44px;margin:-22px 0 0 -22px;border-radius:50%;background:rgba(255,253,248,.92);display:flex;align-items:center;justify-content:center;box-shadow:0 4px 14px rgba(0,0,0,.2);pointer-events:none;}
 .tile .play svg{width:16px;height:16px;fill:var(--ink);margin-left:3px;}
@@ -354,10 +358,10 @@ a{color:inherit;text-decoration:none;}
 }
 @media print{.ov,.focus-overlay{display:none!important;}body{background:#fff!important;}}
 </style>
-<link rel="stylesheet" href="../assets/brain.css?v=1026a">
+<link rel="stylesheet" href="../assets/brain.css?v=1111a">
 </head>
 <body>
-<script src="../assets/shell.js?v=1026a"></script>
+<script src="../assets/shell.js?v=1111a"></script>
 
 <!-- TITLE ROW -->
 <div class="topbar">
