@@ -198,3 +198,49 @@
 
   window.B2={root:ROOT};
 })();
+
+/* ─────────────────────────────────────────────────────────────
+   Always the newest version.
+   Browsers keep a copy of each page for a while, so a page can open from an
+   old copy after the site has been updated. Every published version has one
+   stamp: it is the ?v=… on this script and the "v" in version.json.
+   When a page opens, the stamp it was built with is compared with the site's
+   current one (asked fresh, never from a copy). If the site is newer, the
+   page fetches itself fresh and reloads, once. While a page stays open, the
+   check repeats when you come back to the tab; then it only offers a
+   "Refresh" bar, so nothing you have open is interrupted.
+   ───────────────────────────────────────────────────────────── */
+(function(){
+  var me=document.currentScript&&document.currentScript.src||'',m=/[?&]v=([\w.-]+)/.exec(me);
+  if(!m||!/^https?:$/.test(location.protocol))return;
+  var BUILD=m[1],ROOT=new URL('..',me).href,KEY='b2-updated-to',busy=false,last=0,shown=false;
+  function fresh(){
+    /* cache:'reload' replaces the browser's saved copy of this page before reloading */
+    fetch(location.href,{cache:'reload'}).catch(function(){}).then(function(){location.reload();});
+  }
+  function bar(){
+    if(shown||!document.body)return;shown=true;
+    var b=document.createElement('div');
+    b.setAttribute('role','status');
+    b.style.cssText='position:fixed;left:50%;bottom:22px;transform:translateX(-50%);z-index:2000;display:flex;align-items:center;gap:12px;background:#241f17;color:#fffdf9;padding:10px 10px 10px 16px;border-radius:14px;box-shadow:0 14px 34px rgba(36,31,23,.3);font:600 13px/1.3 "Plus Jakarta Sans",system-ui,sans-serif;max-width:calc(100vw - 32px);';
+    b.innerHTML='<span>A newer version of Brain 2.0 is ready.</span><button type="button" style="height:30px;padding:0 12px;border-radius:9px;border:0;background:#fffdf9;color:#241f17;font:inherit;font-weight:700;cursor:pointer">Refresh</button>';
+    b.querySelector('button').onclick=fresh;
+    document.body.appendChild(b);
+  }
+  function check(onOpen){
+    if(busy||shown||Date.now()-last<30000)return;busy=true;last=Date.now();
+    fetch(ROOT+'version.json?t='+Date.now(),{cache:'no-store'}).then(function(r){return r.ok?r.json():null;}).then(function(j){
+      busy=false;
+      if(!j||!j.v||j.v===BUILD)return;
+      var tried=null;try{tried=sessionStorage.getItem(KEY);}catch(e){}
+      /* reload by itself only when the page has just opened, and only once per version (no loops) */
+      if(onOpen&&tried!==j.v){try{sessionStorage.setItem(KEY,j.v);}catch(e){bar();return;}fresh();}
+      else bar();
+    }).catch(function(){busy=false;});
+  }
+  check(true);
+  document.addEventListener('visibilitychange',function(){if(document.visibilityState==='visible')check(false);});
+  window.addEventListener('focus',function(){check(false);});
+  window.addEventListener('pageshow',function(e){if(e.persisted)check(false);});
+  setInterval(function(){if(document.visibilityState==='visible')check(false);},15*60000);
+})();
