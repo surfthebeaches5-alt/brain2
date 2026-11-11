@@ -26,9 +26,13 @@ button{cursor:pointer}
 .ddb span{font-size:10px;color:var(--muted)}
 .ddm{display:none;position:absolute;top:calc(100% + 4px);left:-12px;min-width:256px;background:#fff;border:1px solid var(--line);border-radius:14px;padding:6px;box-shadow:0 14px 34px rgba(60,50,30,.14);z-index:30}
 .dd.open .ddm{display:block}
-.ddm button{display:block;width:100%;text-align:left;border:0;background:none;padding:9px 11px;border-radius:10px;font-size:13.5px;font-weight:600;color:var(--ink-2)}
+.ddm button{display:flex;align-items:center;gap:11px;width:100%;text-align:left;line-height:1.25;border:0;background:none;padding:9px 11px;border-radius:10px;font-size:13.5px;font-weight:600;color:var(--ink-2)}
 .ddm button:hover{background:var(--accent-soft);color:var(--accent-deep)}
 .ddm button.on{color:var(--accent-deep)}
+.ddm .mi{width:30px;height:30px;border-radius:9px;background:var(--warm);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.ddm button:hover .mi,.ddm button.on .mi{background:#fff}
+.ddm button.on:not(:hover) .mi{background:var(--accent-soft)}
+.ddm .mi svg{width:16px;height:16px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
 .ddm small{display:block;font-size:11.5px;color:var(--muted);font-weight:500;margin-top:2px}
 .pv{margin-left:auto;font-size:12px;font-weight:650;color:var(--warn);background:var(--warn-bg);padding:6px 12px;border-radius:20px;white-space:nowrap}
 .page{max-width:1200px;margin:0 auto;padding:28px 32px 70px}
@@ -236,9 +240,9 @@ button.srow:hover{background:var(--warm)}
 <div class="nav">
   <div class="logo">Brain <em>2.0</em></div>
   <div class="dd" id="lmenu"><button class="ddb" data-dd="1">Learning <span>▾</span></button>
-    <div class="ddm"><button data-act="fake" data-msg="Languages stays as it is. This preview only covers the two pages below it.">Languages<small>75-day challenge &amp; flashcards</small></button>
-      <button data-go="pc">Personal Curriculum<small>What I study on my own</small></button>
-      <button data-go="co">Courses<small>Online courses &amp; the FSOT</small></button></div></div>
+    <div class="ddm"><button data-act="fake" data-msg="Languages stays as it is. This preview only covers the two pages below it."><span class="mi"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8"/><path d="M4 12h16M12 4c2.4 2.4 2.4 13.6 0 16M12 4c-2.4 2.4-2.4 13.6 0 16"/></svg></span><span>Languages<small>75-day challenge &amp; flashcards</small></span></button>
+      <button data-go="pc"><span class="mi"><svg viewBox="0 0 24 24"><path d="M12 7c-2-1.4-4.6-2-8-2v13c3.4 0 6 .6 8 2 2-1.4 4.6-2 8-2V5c-3.4 0-6 .6-8 2Z"/><path d="M12 7v13"/></svg></span><span>Personal Curriculum<small>What I study on my own</small></span></button>
+      <button data-go="co"><span class="mi"><svg viewBox="0 0 24 24"><path d="M3 8l9-4 9 4-9 4Z"/><path d="M7 10v5c0 1 5 3 5 3s5-2 5-3v-5"/></svg></span><span>Courses<small>Online courses &amp; the FSOT</small></span></button></div></div>
   <span class="pv">Preview · example content, nothing is saved</span>
 </div>
 <div class="page" id="page"></div>
