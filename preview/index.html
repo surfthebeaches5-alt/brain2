@@ -383,11 +383,13 @@ function matForm(x,mi,unit){
     fields:[{name:'t',label:'Title',placeholder:'e.g. The Death and Life of Great American Cities',value:m?m.t:''},
       {name:'url',label:'Link',opt:'optional',placeholder:'https://…',value:m?m.url:''},
       {row:[{name:'kind',label:'Kind',type:'select',options:Object.keys(MK),value:m?m.kind:'Video'},{name:'unit',label:'For',type:'select',options:opts,value:opts[at==null?0:at+1]}]},
-      {name:'src',label:'Author or source',opt:'optional',placeholder:'Who made it',value:m?m.src:''}],
+      {name:'src',label:'Author or source',opt:'optional',placeholder:'Who made it',value:m?m.src:''}].concat(m?[]:[{name:'todo',label:'Also put it on the to-do list',type:'select',options:['Yes','No'],value:unit==null?'No':'Yes'}]),
     onDelete:m?function(){x.mats.splice(mi,1);render();}:null,
     onSave:function(o){var u=link(o.url),t=o.t.trim()||hostOf(u);if(!t){$('#ff-t').focus();return false;}
       var v={t:t,kind:o.kind,src:o.src.trim()||hostOf(u),unit:opts.indexOf(o.unit)>0?opts.indexOf(o.unit)-1:null,url:u};
-      if(m)x.mats[mi]=v;else x.mats.unshift(v);render();}});
+      if(m)x.mats[mi]=v;else{x.mats.unshift(v);
+        if(o.todo==='Yes'&&x.units.length){var tu=v.unit==null?selUnit(x):v.unit,it=I(v.t,{Video:'Watch',Podcast:'Listen',Book:'Read',Article:'Read'}[v.kind]||'Do');it.url=v.url;x.units[tu].items.push(it);S.unit[x.id]=tu;}}
+      render();}});
 }
 function whyForm(x){
   var pc=S.page==='pc',f=[{name:'why',label:pc?'Why this, and why now?':'Why I’m taking it',type:'textarea',value:x.why},{name:'goals',label:pc?'By the end I want to…':'Goals',opt:'one per line',type:'textarea',value:x.goals.join('\n')}];
@@ -507,8 +509,8 @@ function practiceTab(x){
   var by={};PARTS.forEach(function(n){by[n]={r:0,t:0};});
   x.sets.forEach(function(z){if(by[z.sec]){by[z.sec].r+=z.right;by[z.sec].t+=z.total;}});
   var done=PARTS.filter(function(k){return by[k].t;}),low=done.slice().sort(function(a,b){return by[a].r/by[a].t-by[b].r/by[b].t;})[0];
-  return topbar(x,'New course')+'<div class="card" style="margin-bottom:18px"><div class="tintro"><div class="ttl" style="margin:0">Take a practice test</div><span class="grow"></span><select id="tver" aria-label="Test"><option value="1">Test 1</option><option value="2">Test 2</option><option value="3">Test 3</option><option value="4">Test 4</option></select><button class="btn dark" data-act="tstart" style="height:36px">Start timed test</button></div>'+
-    '<div class="saved" style="margin-top:10px">Preview: 4 sample questions and 3 minutes per part. The real tests have 50, 45 and 30 questions, timed at 35, 35 and 45 minutes.</div></div>'+
+  return topbar(x,'New course')+'<div class="card" style="margin-bottom:18px"><div class="tintro"><div class="ttl" style="margin:0">Take a practice test</div><span class="grow"></span><select id="tver" aria-label="Test"><option value="1">Test 1</option><option value="2">Test 2</option><option value="3">Test 3</option><option value="4">Test 4</option></select><select id="tlen" aria-label="Length"><option value="Full">Full · 125 questions · 115 min</option><option value="Half">Half · 63 questions · 59 min</option><option value="Quick">Quick · 30 questions · 29 min</option></select><button class="btn dark" data-act="tstart" style="height:36px">Start timed test</button></div>'+
+    '<div class="saved" style="margin-top:10px">Preview: a few sample questions per part (4, 2 or 1 by length). The real tests use the question counts and times shown in the length list.</div></div>'+
     '<div class="cols"><div><div class="card"><div class="ttl">Tests taken<button class="link" data-act="addscore">+ Add a score</button></div>'+(x.scores.length?x.scores.map(function(z){return '<div class="row"><span class="g">'+esc(z.label||'')+'<small style="display:block;color:var(--muted);font-size:11.5px">'+esc(z.d)+'</small></span><b>'+esc(z.score)+'</b></div>';}).join(''):'<div class="empty">None yet</div>')+'</div></div>'+
     '<div><div class="card"><div class="ttl">By section</div>'+PARTS.map(function(k){var q=by[k],pc=q.t?Math.round(q.r/q.t*100):0,weak=k===low&&done.length>1;
       return '<div class="row"><span style="width:44%;min-width:0">'+esc(k)+(weak?' <span class="chip w">weakest</span>':'')+'</span><span class="pbar'+(weak?' low':'')+'"><i style="width:'+pc+'%"></i></span><b style="width:40px;text-align:right">'+(q.t?pc+'%':'–')+'</b></div>';}).join('')+'</div></div></div>';
@@ -536,24 +538,25 @@ function rng(seed){return function(){seed|=0;seed=seed+0x6D2B79F5|0;var t=Math.i
 function shuffled(arr,r){var a=arr.slice();for(var i=a.length-1;i>0;i--){var j=Math.floor(r()*(i+1)),x=a[i];a[i]=a[j];a[j]=x;}return a;}
 var T=null,tick=null;
 /* each test orders the questions and the answer choices differently (the real page would also draw different questions) */
-function startTest(ver){
-  var r=rng(ver.charCodeAt(0)*7919),parts=PARTS.map(function(_,p){
-    return shuffled(QB.filter(function(q){return q.p===p;}),r).map(function(q){var order=shuffled([0,1,2,3],r);return {q:q,order:order,pick:-1,flag:false};});});
-  T={ver:ver,parts:parts,p:0,i:0,left:PART_SECS,used:0,done:false};
+var LENS={Full:{n:4,secs:180},Half:{n:2,secs:90},Quick:{n:1,secs:45}};
+function startTest(ver,len){
+  var L=LENS[len]||LENS.Full,r=rng(ver.charCodeAt(0)*7919),parts=PARTS.map(function(_,p){
+    return shuffled(QB.filter(function(q){return q.p===p;}),r).slice(0,L.n).map(function(q){var order=shuffled([0,1,2,3],r);return {q:q,order:order,pick:-1,flag:false};});});
+  T={ver:ver,len:LENS[len]?len:'Full',secs:L.secs,parts:parts,p:0,i:0,left:L.secs,used:0,done:false};
   clearInterval(tick);tick=setInterval(function(){if(!T||T.done)return;T.left--;T.used++;var c=$('#clock');if(c){c.textContent=clock(T.left);c.classList.toggle('low',T.left<=30);}if(T.left<=0)nextPart();},1000);
   render();window.scrollTo(0,0);
 }
 function clock(s){s=Math.max(0,s);return Math.floor(s/60)+':'+(s%60<10?'0':'')+s%60;}
-function nextPart(){if(T.p<PARTS.length-1){T.p++;T.i=0;T.left=PART_SECS;render();window.scrollTo(0,0);}else finishTest();}
+function nextPart(){if(T.p<PARTS.length-1){T.p++;T.i=0;T.left=T.secs;render();window.scrollTo(0,0);}else finishTest();}
 function finishTest(){
   T.done=true;clearInterval(tick);var x=cur(),right=0,total=0;
   T.parts.forEach(function(qs,p){var r=qs.filter(function(a){return a.pick>=0&&a.order[a.pick]===a.q.a;}).length;right+=r;total+=qs.length;x.sets.unshift({d:today(),sec:PARTS[p],right:r,total:qs.length});});
-  T.right=right;T.total=total;x.scores.unshift({d:today(),score:Math.round(right/total*100)+'%',label:'Test '+T.ver+' · '+right+' of '+total});x.weeks[x.weeks.length-1]=1;
+  T.right=right;T.total=total;x.scores.unshift({d:today(),score:Math.round(right/total*100)+'%',label:(T.len==='Full'?'':T.len+' · ')+'Test '+T.ver+' · '+right+' of '+total});x.weeks[x.weeks.length-1]=1;
   render();window.scrollTo(0,0);
 }
 function testView(){
   if(T.done){
-    var h='<div class="trun"><div class="card"><div class="lab" style="margin-top:0">Practice test · Test '+T.ver+'</div><div class="big">'+Math.round(T.right/T.total*100)+'%<small>'+T.right+' of '+T.total+' right · '+clock(T.used)+' used</small></div>'+
+    var h='<div class="trun"><div class="card"><div class="lab" style="margin-top:0">Practice test · '+(T.len==='Full'?'':T.len+' · ')+'Test '+T.ver+'</div><div class="big">'+Math.round(T.right/T.total*100)+'%<small>'+T.right+' of '+T.total+' right · '+clock(T.used)+' used</small></div>'+
       '<div style="margin-top:16px">'+T.parts.map(function(qs,p){var r=qs.filter(function(a){return a.pick>=0&&a.order[a.pick]===a.q.a;}).length;return '<div class="row"><span style="width:46%">'+PARTS[p]+'</span><span class="pbar"><i style="width:'+(r/qs.length*100)+'%"></i></span><b style="width:54px;text-align:right">'+r+' / '+qs.length+'</b></div>';}).join('')+'</div>'+
       '<div class="tfoot"><button class="btn dark" data-act="tclose">Back to Practice</button><button class="btn" data-act="tagain">Take another test</button></div></div>'+
       '<div class="card"><div class="ttl">Review your answers</div>';
@@ -611,7 +614,7 @@ document.addEventListener('click',function(e){
   else if(a==='closenote'){S.noteOpen=false;render();}
   else if(a==='delnote'){if(!el.getAttribute('data-armed')){el.setAttribute('data-armed','1');el.textContent='Click again to delete';return;}x.notes.splice(S.note[S.page],1);S.noteOpen=false;render();say('Deleted. On the real page its Google Doc moves to your Drive trash, where it can be restored for 30 days.');}
   else if(a==='newnote'){var nu=el.getAttribute('data-u');x.notes.unshift({title:'',date:today(),text:'',unit:nu==null?null:+nu});S.note[S.page]=0;S.noteOpen=true;render();window.scrollTo(0,0);var nt=$('#ntitle');if(nt)nt.focus();}
-  else if(a==='tstart'){startTest($('#tver').value);}
+  else if(a==='tstart'){startTest($('#tver').value,$('#tlen').value);}
   else if(a==='tpick'){T.parts[T.p][T.i].pick=+el.getAttribute('data-k');render();}
   else if(a==='tgo'){T.i=Math.max(0,Math.min(T.parts[T.p].length-1,T.i+ +el.getAttribute('data-d')));render();}
   else if(a==='tjump'){T.i=+el.getAttribute('data-k');render();}
@@ -619,7 +622,7 @@ document.addEventListener('click',function(e){
   else if(a==='tpart'){var open=T.parts[T.p].filter(function(z){return z.pick<0;}).length;if(open&&!el.getAttribute('data-armed')){el.setAttribute('data-armed','1');el.textContent=open+' not answered · click again to finish';return;}nextPart();}
   else if(a==='tend'){if(!el.getAttribute('data-armed')){el.setAttribute('data-armed','1');el.textContent='Click again to end the test (unanswered questions count as wrong)';return;}finishTest();}
   else if(a==='tclose'){T=null;S.tab.co='practice';render();}
-  else if(a==='tagain'){var nv={'1':'2','2':'3','3':'4','4':'1'}[T.ver];T=null;startTest(nv);}
+  else if(a==='tagain'){var nv={'1':'2','2':'3','3':'4','4':'1'}[T.ver];var ln=T.len;T=null;startTest(nv,ln);}
   else if(a==='addmat'){var mu=el.getAttribute('data-u');matForm(x,null,mu==null?null:+mu);}
   else if(a==='editmat'){matForm(x,+el.getAttribute('data-n'));}
   else if(a==='addidea'){var v=$('#idea').value.trim();if(!v)return;IDEAS.push({t:v,theme:$('#itheme').value.trim(),note:'',added:today()});render();$('#idea').focus();}
@@ -645,7 +648,7 @@ document.addEventListener('input',function(e){
     clearTimeout(saveT);saveT=setTimeout(function(){var z=$('#nsaved');if(z)z.innerHTML='<b>Saved</b>';},500);}
 });
 /* the preview updates itself: if a newer copy has been published, load it (once per copy) */
-var PV='2611111658';
+var PV='2611111717';
 (function(){try{fetch(location.pathname+'?pv='+Date.now(),{cache:'no-store'}).then(function(r){return r.ok?r.text():'';}).then(function(t){
   var m=/var PV='(\d+)'/.exec(t);if(!m||m[1]===PV)return;var done='';try{done=sessionStorage.getItem('pv-seen')||'';}catch(e){}
   if(done===m[1])return;try{sessionStorage.setItem('pv-seen',m[1]);}catch(e){}
