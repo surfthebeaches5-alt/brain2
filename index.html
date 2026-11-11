@@ -239,10 +239,10 @@ button,input,select{font-family:inherit;}
   .cal-tools .seg{display:none;}
 }
 </style>
-<link rel="stylesheet" href="assets/brain.css?v=2611110221">
+<link rel="stylesheet" href="assets/brain.css?v=2611110234">
 </head>
 <body>
-<script src="assets/shell.js?v=2611110221"></script>
+<script src="assets/shell.js?v=2611110234"></script>
 
 <main class="page">
   <div class="head">
@@ -331,8 +331,8 @@ button,input,select{font-family:inherit;}
   </div>
 </div>
 
-<script src="assets/gcal.js?v=2611110221"></script>
-<script src="assets/backup.js?v=2611110221"></script>
+<script src="assets/gcal.js?v=2611110234"></script>
+<script src="assets/backup.js?v=2611110234"></script>
 <script>
 /* ───────── helpers ───────── */
 function lsGet(k){try{var r=localStorage.getItem(k);return r?JSON.parse(r):null;}catch(e){return null;}}
@@ -988,8 +988,8 @@ function renderLessons(){
     h+='<div class="task lesson"><span class="tx" title="'+esc(e.title)+'">'+esc(e.title)+'</span><span class="lsub">'+lessonWhen(e)+' · '+lessonMins(e)+' min</span>'+
       (e.join?'<a class="tag" href="'+esc(e.join)+'" target="_blank" rel="noopener">JOIN ↗</a>':'')+'</div>';});
   wait.forEach(function(e){
-    h+='<div class="task lesson" data-lk="'+esc(lessonKey(e))+'"><span class="tx" title="'+esc(e.title)+'">'+esc(e.title)+'</span><span class="lsub">'+lessonWhen(e)+' · '+lessonMins(e)+' min of '+esc(LANG[lessonLang(e)]||'language')+'</span>'+
-      '<button type="button" class="lbtn ok" data-la="count" title="Add '+lessonMins(e)+' minutes to that day’s study time">Count it</button>'+
+    h+='<div class="task lesson" data-lk="'+esc(lessonKey(e))+'"><span class="tx" title="'+esc(e.title)+'">'+esc(e.title)+'</span><span class="lsub">'+lessonWhen(e)+' · '+esc(LANG[lessonLang(e)]||'language')+'</span>'+
+      '<button type="button" class="lbtn ok" data-la="count" title="Add '+lessonMins(e)+' minutes to that day’s study time">Count '+lessonMins(e)+' min</button>'+
       '<button type="button" class="lbtn" data-la="skip" title="Cancelled or missed: don’t count it">Didn’t happen</button></div>';});
   el.innerHTML=h?'<div class="grp"><span>Lessons</span>'+(wait.length?'<span>'+wait.length+' to confirm</span>':'')+'</div>'+h:'';
 }
