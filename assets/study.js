@@ -78,9 +78,11 @@ var KEY='study1',HOME=new URL('..',document.currentScript.src).href;
 function readOld(k){try{return JSON.parse(localStorage.getItem(k));}catch(e){return null;}}
 function loadDB(){var d=readOld(KEY);
   if(!d||d.v!==1){var r=convertAll(readOld),ss=readOld('learnSeasons1');
-    d={v:1,pc:r.PC,co:r.CO,ideas:r.IDEAS,loose:r.loose,seasons:null,focus:{},cur:{},made:Date.now()};
+    d={v:1,pc:r.PC,co:r.CO,ideas:r.IDEAS,seasons:null,focus:{},cur:{},made:Date.now()};
     if(Array.isArray(ss))ss.forEach(function(z){if(z&&z.name&&z.focus)d.focus[z.name]=z.focus;});
     try{localStorage.setItem(KEY,JSON.stringify(d));}catch(e){}}
+  /* resources that belonged to no class or course are not carried over (they live on the Languages page) */
+  if(d.loose)delete d.loose;
   ['pc','co','ideas'].forEach(function(k){if(!Array.isArray(d[k]))d[k]=[];});d.focus=d.focus||{};d.cur=d.cur||{};return d;}
 var DB=loadDB(),PC=DB.pc,CO=DB.co,IDEAS=DB.ideas,saveFail=false;
 function save(){DB.cur={pc:S.cur.pc,co:S.cur.co};try{localStorage.setItem(KEY,JSON.stringify(DB));saveFail=false;}catch(e){if(!saveFail){saveFail=true;say('This change could not be saved: the browser’s storage is full.');}}}
