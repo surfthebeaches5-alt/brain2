@@ -501,7 +501,9 @@ document.addEventListener('click',function(e){
   else if(a==='editunit'){unitForm(x,+el.getAttribute('data-u'));}
   else if(a==='edittodo'){todoForm(x,+el.getAttribute('data-u'),+el.getAttribute('data-i'));}
   else if(a==='editidea'){ideaForm(+el.getAttribute('data-n'));}
-  else if(a==='opennote'){S.note[S.page]=+el.getAttribute('data-n');S.noteOpen=true;render();window.scrollTo(0,0);}
+  else if(a==='opennote'){S.note[S.page]=+el.getAttribute('data-n');S.noteOpen=true;render();window.scrollTo(0,0);
+    /* its Google Doc missed the last changes (the tab was closed first): bring it up to date now */
+    var on=x.notes[S.note[S.page]];if(on&&on.docDirty)syncDoc(x,on);}
   else if(a==='closenote'){var cn=x.notes[S.note[S.page]];if(cn&&cn.docDirty){clearTimeout(docT);syncDoc(x,cn);}S.noteOpen=false;render();}
   else if(a==='gconnect'){var gn=x.notes[S.note[S.page]];window.GCal.signIn().then(function(){setDocLine(gn);if(gn.docDirty||!gn.docId)syncDoc(x,gn);},function(err){say(err&&err.message||'Google sign-in did not finish');});}
   else if(a==='delnote'){if(!el.getAttribute('data-armed')){el.setAttribute('data-armed','1');el.textContent='Click again to delete';return;}var dn=x.notes[S.note[S.page]],dg=gd();clearTimeout(docT);x.notes.splice(S.note[S.page],1);S.noteOpen=false;render();
