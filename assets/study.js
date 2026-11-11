@@ -343,10 +343,35 @@ function noteView(x){
   var n=x.notes[S.note[S.page]];if(!n){S.noteOpen=false;return '';}
   return '<div class="bar"><button class="btn" data-act="closenote">← '+esc(x.title)+'</button><span class="grow"></span><button class="btn del" data-act="delnote">Delete note</button></div>'+
     '<div class="card editor" style="max-width:860px;margin:0 auto"><input class="etitle" id="ntitle" value="'+esc(n.title)+'" placeholder="Title" aria-label="Title">'+
-    '<div class="doc"><span>Belongs to</span><select id="nunit" aria-label="Belongs to">'+unitOpts(x).map(function(o,i){return '<option value="'+(i-1)+'"'+((n.unit==null?-1:n.unit)===i-1?' selected':'')+'>'+esc(o)+'</option>';}).join('')+'</select></div>'+
+    '<div class="doc"><i></i><span id="gdoc">'+docLine(n)+'</span><span class="grow"></span><select id="nunit" aria-label="Belongs to">'+unitOpts(x).map(function(o,i){return '<option value="'+(i-1)+'"'+((n.unit==null?-1:n.unit)===i-1?' selected':'')+'>'+esc(o)+'</option>';}).join('')+'</select></div>'+
     '<div class="tools"><button data-fmt="h3" title="Make this line a heading">Heading</button><button data-fmt="bold" title="Bold"><b>B</b></button><button data-fmt="ul" title="Bulleted list">• List</button><button data-fmt="p" title="Back to normal text">Normal</button><span class="grow"></span><span class="saved" id="nsaved" style="margin:0;align-self:center"></span></div>'+
     '<div class="rich" id="nbody" contenteditable="true" data-ph="Write here…">'+(n.text||'')+'</div></div>';
 }
+/* ── a note is also kept as a Google Doc ──
+   The Doc is made the first time the note has something in it, in the Drive folder
+   Brain 2.0 Notes › Personal Curriculum (or Courses) › the study's name, and is brought up to date a
+   moment after you stop typing. Nothing is made for a note that was never written in. */
+function gd(){var g=window.GCal;return g&&g.configured()&&g.drive?g:null;}
+function docLine(n,msg){var g=gd(),open=n.docUrl?' · <a href="'+esc(n.docUrl)+'" target="_blank" rel="noopener" style="color:var(--accent-deep);font-weight:650;text-decoration:none">Open in Google Docs ↗</a>':'';
+  if(msg)return esc(msg)+open;
+  if(!g)return 'Saved in this browser';
+  if(!g.drive.on())return 'Saved in this browser · turn on Google Drive on the <a href="'+HOME+'backup/" style="color:var(--accent-deep)">Backup page</a> to keep notes as Google Docs';
+  if(!g.drive.ready())return (n.docUrl?'Google Doc'+open+' · ':'')+'<button class="link" data-act="gconnect">Connect Google to '+(n.docUrl?'update it':'keep this as a Google Doc')+'</button>';
+  return n.docUrl?'Google Doc'+open:'Becomes a Google Doc when you start writing';}
+function setDocLine(n,msg){var el=$('#gdoc');if(el&&cur()&&cur().notes[S.note[S.page]]===n)el.innerHTML=docLine(n,msg);}
+var docT=null,docBusy=false,docAgain=null;
+function syncDoc(x,n){
+  var g=gd();if(!g||!g.drive.ready()||!n)return;
+  if(!n.docId&&!String(n.title||'').trim()&&!String(n.text||'').replace(/<[^>]*>/g,'').trim())return;
+  if(docBusy){docAgain=[x,n];return;}
+  docBusy=true;setDocLine(n,'Saving to Google Docs…');
+  var title=String(n.title||'').trim()||'Untitled',pc=PC.indexOf(x)>=0;
+  g.drive.saveDoc({id:n.docId||'',name:title,html:'<html><head><meta charset="utf-8"></head><body><h1>'+esc(title)+'</h1>'+(n.text||'')+'</body></html>',group:pc?'Personal Curriculum':'Courses',folderKey:x.id,folderName:x.title})
+    .then(function(f){n.docId=f.id;n.docUrl=f.webViewLink||('https://docs.google.com/document/d/'+f.id+'/edit');n.docDirty=false;save();setDocLine(n);},
+          function(e){setDocLine(n,e&&e.code==='auth'?'':'Could not save to Google Docs: '+(e&&e.message||'try again'));})
+    .then(function(){docBusy=false;if(docAgain){var a=docAgain;docAgain=null;syncDoc(a[0],a[1]);}});
+}
+function docSoon(x,n){n.docDirty=true;clearTimeout(docT);docT=setTimeout(function(){syncDoc(x,n);},2500);}
 /* ── ideas (Personal Curriculum only) ── */
 function ideasTab(){
   var themeList=themes();
@@ -469,8 +494,10 @@ document.addEventListener('click',function(e){
   else if(a==='edittodo'){todoForm(x,+el.getAttribute('data-u'),+el.getAttribute('data-i'));}
   else if(a==='editidea'){ideaForm(+el.getAttribute('data-n'));}
   else if(a==='opennote'){S.note[S.page]=+el.getAttribute('data-n');S.noteOpen=true;render();window.scrollTo(0,0);}
-  else if(a==='closenote'){S.noteOpen=false;render();}
-  else if(a==='delnote'){if(!el.getAttribute('data-armed')){el.setAttribute('data-armed','1');el.textContent='Click again to delete';return;}x.notes.splice(S.note[S.page],1);S.noteOpen=false;render();}
+  else if(a==='closenote'){var cn=x.notes[S.note[S.page]];if(cn&&cn.docDirty){clearTimeout(docT);syncDoc(x,cn);}S.noteOpen=false;render();}
+  else if(a==='gconnect'){var gn=x.notes[S.note[S.page]];window.GCal.signIn().then(function(){setDocLine(gn);if(gn.docDirty||!gn.docId)syncDoc(x,gn);},function(err){say(err&&err.message||'Google sign-in did not finish');});}
+  else if(a==='delnote'){if(!el.getAttribute('data-armed')){el.setAttribute('data-armed','1');el.textContent='Click again to delete';return;}var dn=x.notes[S.note[S.page]],dg=gd();clearTimeout(docT);x.notes.splice(S.note[S.page],1);S.noteOpen=false;render();
+    if(dn&&dn.docId){if(dg&&dg.drive.ready())dg.drive.trash(dn.docId).then(function(){say('Deleted. Its Google Doc is in your Drive trash for 30 days.');},function(){say('Deleted here. Its Google Doc could not be removed from Drive.');});else say('Deleted here. Its Google Doc is still in your Drive.');}}
   else if(a==='newnote'){var nu=el.getAttribute('data-u');x.notes.unshift({title:'',date:today(),text:'',unit:nu==null?null:+nu});S.note[S.page]=0;S.noteOpen=true;render();window.scrollTo(0,0);var nt=$('#ntitle');if(nt)nt.focus();}
   else if(a==='tstart'){startTest($('#tver').value,$('#tlen').value);}
   else if(a==='tpick'){var tq=T.parts[T.p][T.i],tk=+el.getAttribute('data-k');tq.pick=tq.pick===tk?-1:tk;keepT();render();}
@@ -504,7 +531,7 @@ document.addEventListener('input',function(e){
   var x=cur(),t=e.target;
   if(t.id==='nbody'||t.id==='ntitle'){var n=x.notes[S.note[S.page]];if(!n)return;
     if(t.id==='nbody')n.text=t.innerHTML;else n.title=t.value;
-    clearTimeout(saveT);saveT=setTimeout(function(){save();var z=$('#nsaved');if(z)z.innerHTML='<b>Saved</b>';},500);}
+    clearTimeout(saveT);saveT=setTimeout(function(){save();var z=$('#nsaved');if(z)z.innerHTML='<b>Saved</b>';},500);docSoon(x,n);}
 });
 /* start: a link from the Overview can name the study or course to open */
 (function(){var m=/[#&]id=([^&]+)/.exec(location.hash);if(m&&S.page!=='ov'){var id=decodeURIComponent(m[1]);if(list().some(function(z){return z.id===id;}))S.cur[S.page]=id;}
