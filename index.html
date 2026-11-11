@@ -239,10 +239,10 @@ button,input,select{font-family:inherit;}
   .cal-tools .seg{display:none;}
 }
 </style>
-<link rel="stylesheet" href="assets/brain.css?v=2611112004">
+<link rel="stylesheet" href="assets/brain.css?v=2611112014">
 </head>
 <body>
-<script src="assets/shell.js?v=2611112004"></script>
+<script src="assets/shell.js?v=2611112014"></script>
 
 <main class="page">
   <div class="head">
@@ -331,9 +331,9 @@ button,input,select{font-family:inherit;}
   </div>
 </div>
 
-<script src="assets/gcal.js?v=2611112004"></script>
-<script src="assets/backup.js?v=2611112004"></script>
-<script src="assets/lessons.js?v=2611112004"></script>
+<script src="assets/gcal.js?v=2611112014"></script>
+<script src="assets/backup.js?v=2611112014"></script>
+<script src="assets/lessons.js?v=2611112014"></script>
 <script>
 /* ───────── helpers ───────── */
 function lsGet(k){try{var r=localStorage.getItem(k);return r?JSON.parse(r):null;}catch(e){return null;}}
@@ -481,7 +481,7 @@ function linkify(text){
 }
 function openPop(key,node){
   var e=CUR.find(function(x){return evKey(x)===key;});if(!e)return;
-  if(e.source==='self'){try{localStorage.setItem('learningTab','self');}catch(x){}location.href='learning/index.html';return;}
+  if(e.source==='self'){try{localStorage.setItem('learningTab','self');}catch(x){}location.href='learn/personal/';return;}
   var d=parseDk(e.date);
   $('pop-t').textContent=e.title;
   $('pop-m').innerHTML=DF[d.getDay()]+', '+MF[d.getMonth()]+' '+d.getDate()+(e.allDay?' · all day':' · '+fmtTime(e.time)+(e.endTime?' – '+fmtTime(e.endTime):'')+' '+esc(tzName()))+
@@ -489,7 +489,7 @@ function openPop(key,node){
   var a='';
   if(e.source==='google'&&e.link)a+='<a class="btn sm" href="'+esc(e.link)+'" target="_blank" rel="noopener">Open in Google ↗</a>';
   if(e.source==='bill')a+=(e.url?'<a class="btn sm" href="'+esc(e.url)+'" target="_blank" rel="noopener">Pay ↗</a>':'')+'<a class="btn sm" href="finances/">Finances</a>';
-  if(e.source==='class')a+='<a class="btn sm" href="learning/">Open Classes</a>';
+  if(e.source==='class')a+='<a class="btn sm" href="learn/courses/">Open Courses</a>';
   if((e.source==='google'&&!e.ro)||e.source==='local')a+='<button class="btn sm" type="button" id="pop-edit">Edit</button>';
   if(e.source==='google')a+='<button class="btn sm" type="button" id="pop-copy">Copy to…</button>';
   if(e.source==='local'||(e.source==='google'&&!e.ro))a+='<button class="btn sm" type="button" id="pop-del">Delete</button>';

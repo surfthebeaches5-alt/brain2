@@ -309,6 +309,11 @@ td.t small{display:block;font-weight:500;color:var(--muted);font-size:12px;margi
 .lw .tt{flex:1;min-width:0;font-size:14px;font-weight:650}.lw .tt small{display:block;font-size:12px;color:var(--muted);font-weight:500;margin-top:1px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .lw .pb{width:70px;height:6px;border-radius:3px;background:var(--warm-deep);overflow:hidden;flex-shrink:0}.lw .pb i{display:block;height:100%;background:var(--accent)}.lw .pb.co i{background:#6a8fc2}
 .lw:hover .tt{color:var(--accent-deep)}
+.mini{display:flex;align-items:center;gap:12px;width:100%;text-align:left;border:0;background:var(--warm);border-radius:11px;padding:10px 12px;margin-bottom:6px}
+.mini:hover{background:var(--warm-deep)}
+.mini .tt{flex:1;min-width:0;font-size:13.5px;font-weight:650}.mini .tt small{display:block;font-size:11.5px;color:var(--muted);font-weight:500;margin-top:1px}
+.mini .pb{width:64px;height:6px;border-radius:3px;background:var(--warm-deep);overflow:hidden;flex-shrink:0}.mini:hover .pb{background:#e2d8c2}.mini .pb i{display:block;height:100%;background:var(--accent)}
+.grp a,.grp .link{font-size:11.5px;letter-spacing:0;text-transform:none}
 .chead{display:flex;justify-content:space-between;align-items:flex-start;gap:14px}
 .eb{font-size:10.5px;letter-spacing:.15em;text-transform:uppercase;color:var(--accent-deep);font-weight:700;margin-bottom:4px}
 .why{font-size:14px;font-weight:500;line-height:1.55;white-space:pre-wrap}
@@ -654,6 +659,7 @@ function topbar(x,newLabel){
 function activeNow(){var t=pd('');return PC.map(function(x){return {x:x,pg:'pc'};}).concat(CO.map(function(x){return {x:x,pg:'co'};})).filter(function(o){
     o.sp=span(o.x);o.c=counts(o.x);if(o.x.status==='Finished'||o.x.status==='Queued'||o.x.status==='On hold')return false;
     return o.sp.dated?(t>=o.sp.from&&t<=o.sp.to):o.c.t>o.c.d;});}
+function tdRow(k,t,sub){var on=(S.tdOn||{})[k];return '<div class="ck2'+(on?' on':'')+'" data-act="tdown" data-k="'+k+'"><span class="ck'+(on?' on':'')+'">'+(on?'✓':'')+'</span><span class="tx"><b>'+esc(t)+'</b>'+(sub?'<small>'+esc(sub)+'</small>':'')+'</span></div>';}
 function todayPage(){
   var t=pd(''),act=activeNow(),rows=[];
   act.forEach(function(o){var x=o.x,u=nowUnit(x);if(u<0){var k=nextOf(x);u=k?k.u:0;}var n=0;
@@ -665,19 +671,17 @@ function todayPage(){
   var DAY=['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'],D3=['SUN','MON','TUE','WED','THU','FRI','SAT'],hr=new Date().getHours();
   var h='<h1 class="tdh">Good '+(hr<12?'morning':hr<18?'afternoon':'evening')+'</h1><div class="tdsub">'+DAY[t.getDay()]+', '+MONTHS[t.getMonth()]+' '+t.getDate()+'</div><div class="tdgrid"><div>';
   h+='<div class="card same"><div class="ttl">This week</div><div class="ph">Your calendar, as it is now</div><div class="calph">'+[0,1,2,3,4,5,6].map(function(i){var d=addDays(t,i);return '<span>'+D3[d.getDay()]+' '+d.getDate()+'</span>';}).join('')+'</div></div>';
-  h+='<div class="half"><div class="card"><div class="ttl">Learning this week<button class="link" data-go="ov">Overview →</button></div>'+
-     (act.length?act.map(function(o){var x=o.x,u=nowUnit(x);if(u<0){var k=nextOf(x);u=k?k.u:0;}var un=x.units[u],d=un?un.items.filter(function(q){return q.done;}).length:0,n=un?un.items.length:0,r=o.sp.units[u];
-        return '<button class="lw" data-act="open" data-pg="'+o.pg+'" data-id="'+esc(x.id)+'"><span class="edge '+o.pg+'"></span><span class="tt">'+esc(x.title)+'<small>'+(un?'Unit '+(u+1)+' of '+x.units.length+' · '+esc(un.name)+(o.sp.dated&&r?' · until '+fd(r.to):''):'No units yet')+'</small></span><span class="pb '+o.pg+'" title="'+d+' of '+n+' done in this unit"><i style="width:'+(n?d/n*100:0)+'%"></i></span></button>';}).join(''):'<div class="empty">Nothing running this week</div>')+'</div>'+
-     '<div class="card same"><div class="ttl">Reading, watching &amp; listening</div><div class="ph">Your Library card, as it is now, narrower</div></div></div></div>';
+  h+='<div class="card same" style="margin-top:18px"><div class="ttl">Reading, watching &amp; listening</div><div class="ph">Your Library card, as it is now</div></div></div>';
   h+='<div><div class="card same"><div class="ttl">Bills due</div><div class="ph">As it is now</div></div>'+
-     '<div class="card"><div class="ttl">Checklist<span class="chip">'+(rows.length+(due?1:0))+' for learning</span></div>'+
-     '<div class="grp">Tasks</div><div class="ck2 ph">As it is now</div>'+
-     '<div class="grp">Languages</div><div class="ck2 ph">As it is now</div>'+
+     '<div class="card"><div class="ttl">Checklist</div>'+
+     '<div class="grp">Tasks</div>'+tdRow('task','Book the dentist','')+'<div class="ck2 ph" style="padding:8px 12px">+ Add a task…</div>'+
+     '<div class="grp">Languages<button class="link" data-act="fake" data-msg="Opens the Languages page">Languages →</button></div>'+
+     '<button class="mini" data-act="fake" data-msg="Opens Spanish on the Languages page, where you tick the day’s rules"><span class="tt">Spanish · Day 2 of 75<small>1 of 6 done today</small></span><span class="pb"><i style="width:17%"></i></span></button>'+
      '<div class="grp new">Learning<button class="link" data-go="ov">Overview →</button></div>'+
      (due?'<div class="nudge"><span>'+esc(test.title)+' practice test<small>'+(ago==null?'None taken yet':'Last one '+ago+' days ago')+' · '+wk(testOf(test).weeks)+' to the test</small></span><button class="btn sm" data-act="quick" data-id="'+esc(test.id)+'">Take one</button></div>':doneToday?'<div class="ck2 on" style="cursor:default"><span class="ck on">✓</span><span class="tx"><b>'+esc(test.title)+' practice test</b><small>Taken today · ticked on its own</small></span></div>':'')+
      (rows.length||due||doneToday?rows.map(function(r,n){var it=r.it,x=r.o.x;return '<div class="ck2'+(it.done?' on':'')+'" data-act="tdtick" data-n="'+n+'"><span class="ck'+(it.done?' on':'')+'">'+(it.done?'✓':'')+'</span><span class="tx"><b>'+esc(it.t)+'</b>'+(it.url?' <a href="'+esc(it.url)+'" target="_blank" rel="noopener">↗</a>':'')+
-        '<small>'+esc(x.title)+' · '+esc(x.units[r.u].name)+'</small></span><span class="k" style="font-size:9.5px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--faint)">'+esc(it.k)+'</span></div>';}).join(''):'<div class="empty">Nothing to do for your courses right now</div>')+
-     '<div class="grp">Body · Workout</div><div class="ck2 ph">As it is now</div></div></div></div>';
+        '<small><button class="link" data-act="open" data-pg="'+r.o.pg+'" data-id="'+esc(x.id)+'" style="font-size:11.5px;color:var(--muted);font-weight:600">'+esc(x.title)+'</button> · '+esc(x.units[r.u].name)+'</small></span><span class="k" style="font-size:9.5px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--faint)">'+esc(it.k)+'</span></div>';}).join(''):'<div class="empty">Nothing to do for your courses right now</div>')+
+     '<div class="grp">Body<button class="link" data-act="fake" data-msg="Opens the Fitness page">Fitness →</button></div>'+tdRow('move','Move today','A walk or the walking pad counts')+tdRow('water','Water','4 cups')+'</div></div></div>';
   S.tdRows=rows;return h;
 }
 /* ── overview: what runs in a season, week by week ── */
@@ -868,6 +872,7 @@ document.addEventListener('click',function(e){
     cs.forEach(function(z,i){ff.push({name:'n'+i,label:'Season '+(i+1)+' name',value:z.name});ff.push({row:[{name:'s'+i,label:'Starts',type:'date',value:z.start},{name:'e'+i,label:'Ends',type:'date',value:z.end}]});});
     FORM.open({title:'Season dates',fields:ff,onSave:function(o){var bad=-1;cs.forEach(function(z,i){z.name=o['n'+i].trim()||z.name;z.start=o['s'+i]||z.start;z.end=o['e'+i]||z.end;if(z.start>z.end&&bad<0)bad=i;});
       if(bad>=0){say(cs[bad].name+' ends before it starts');return false;}cs.sort(function(p,q){return p.start<q.start?-1:1;});S.seasons=cs;S.season=null;render();}});}
+  else if(a==='tdown'){S.tdOn=S.tdOn||{};var tk=el.getAttribute('data-k');S.tdOn[tk]=!S.tdOn[tk];render();}
   else if(a==='tdtick'){var tr=S.tdRows[+el.getAttribute('data-n')];if(tr){tr.it.done=!tr.it.done;render();}}
   else if(a==='quick'){S.page='co';S.cur.co=el.getAttribute('data-id');S.tab.co='practice';S.noteOpen=false;render();var tl=$('#tlen');if(tl)tl.value='Quick';window.scrollTo(0,0);}
   else if(a==='season'){S.season=+el.getAttribute('data-n');render();}
@@ -920,7 +925,7 @@ document.addEventListener('input',function(e){
     clearTimeout(saveT);saveT=setTimeout(function(){var z=$('#nsaved');if(z)z.innerHTML='<b>Saved</b>';},500);}
 });
 /* the preview updates itself: if a newer copy has been published, load it (once per copy) */
-var PV='2611111944';
+var PV='2611112011';
 (function(){try{fetch(location.pathname+'?pv='+Date.now(),{cache:'no-store'}).then(function(r){return r.ok?r.text():'';}).then(function(t){
   var m=/var PV='(\d+)'/.exec(t);if(!m||m[1]===PV)return;var done='';try{done=sessionStorage.getItem('pv-seen')||'';}catch(e){}
   if(done===m[1])return;try{sessionStorage.setItem('pv-seen',m[1]);}catch(e){}
