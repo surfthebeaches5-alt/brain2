@@ -269,10 +269,10 @@ button,input,select{font-family:inherit;}
   .cal-tools .seg{display:none;}
 }
 </style>
-<link rel="stylesheet" href="assets/brain.css?v=2611112337">
+<link rel="stylesheet" href="assets/brain.css?v=2611120004">
 </head>
 <body>
-<script src="assets/shell.js?v=2611112337"></script>
+<script src="assets/shell.js?v=2611120004"></script>
 
 <main class="page">
   <div class="head">
@@ -368,10 +368,10 @@ button,input,select{font-family:inherit;}
   </div>
 </div>
 
-<script src="assets/gcal.js?v=2611112337"></script>
-<script src="assets/backup.js?v=2611112337"></script>
-<script src="assets/learn-today.js?v=2611112337"></script>
-<script src="assets/lessons.js?v=2611112337"></script>
+<script src="assets/gcal.js?v=2611120004"></script>
+<script src="assets/backup.js?v=2611120004"></script>
+<script src="assets/learn-today.js?v=2611120004"></script>
+<script src="assets/lessons.js?v=2611120004"></script>
 <script>
 /* ───────── helpers ───────── */
 function lsGet(k){try{var r=localStorage.getItem(k);return r?JSON.parse(r):null;}catch(e){return null;}}
@@ -1036,17 +1036,21 @@ $('body').addEventListener('click',function(e){if(e.target.closest('a'))return;v
    and the next one takes its place. A course with a test asks for a practice test every two weeks. */
 var learnRows=[];
 function renderLearn(){
-  var el=$('learn'),L=window.B2Learn?B2Learn.today():{rows:[],test:null},t=L.test;learnRows=L.rows;
-  if(!L.rows.length&&!(t&&(t.due||t.doneToday))){el.innerHTML='';return;}
+  var el=$('learn'),L=window.B2Learn?B2Learn.today():{rows:[],test:null,reg:null},t=L.test,rg=L.reg;learnRows=L.rows;
+  if(!L.rows.length&&!(t&&(t.due||t.doneToday))&&!rg){el.innerHTML='';return;}
+  var dd=function(v){var d=parseDk(v);return MS[d.getMonth()]+' '+d.getDate();},days=function(n){return n+(n===1?' day':' days');};
   var wk=function(n){return n+(n===1?' week':' weeks');};
   el.innerHTML='<div class="grp"><span>Learning</span><a href="learn/overview/">Overview →</a></div>'+
+    (rg?(rg.open?'<div class="nudge"><span>Register for the '+esc(rg.title)+'<small>'+(rg.date?'Closes '+dd(rg.date)+' · '+days(rg.left)+' left':'Registration is open')+'</small></span>'+(rg.url?'<a class="btn sm" href="'+esc(rg.url)+'" target="_blank" rel="noopener">Register ↗</a>':'')+'<button class="btn sm" type="button" data-reg="'+esc(rg.id)+'">Done</button></div>'
+      :'<div class="nudge" style="background:var(--warm)"><span>'+esc(rg.title)+' registration opens '+dd(rg.date)+'<small>In '+days(rg.days)+'</small></span></div>'):'')+
     (t&&t.due?'<div class="nudge"><span>'+esc(t.title)+' practice test<small>'+(t.ago==null?'None taken yet':'Last one '+t.ago+' days ago')+' · '+wk(t.weeks)+' to the test</small></span><a class="btn sm" href="learn/courses/#id='+encodeURIComponent(t.id)+'&practice=Quick">Take one</a></div>'
      :t&&t.doneToday?'<div class="task on" style="cursor:default"><span class="ck on">✓</span><span class="tx2"><b>'+esc(t.title)+' practice test</b><small>Taken today</small></span></div>':'')+
     L.rows.map(function(r,n){var href='learn/'+(r.pg==='pc'?'personal':'courses')+'/#id='+encodeURIComponent(r.id);
       return '<div class="task '+r.pg+'" data-lr="'+n+'"><span class="ck"></span><span class="tx2"><b>'+esc(r.text)+'</b><small><a href="'+href+'">'+esc(r.title)+'</a>'+(r.unit?' · '+esc(r.unit):'')+'</small></span>'+
         (r.url?'<a class="go" href="'+esc(r.url)+'" target="_blank" rel="noopener" title="Open the link">↗</a>':'')+(r.kind?'<span class="tag">'+esc(r.kind).toUpperCase()+'</span>':'')+'</div>';}).join('');
 }
-$('learn').addEventListener('click',function(e){if(e.target.closest('a'))return;var row=e.target.closest('[data-lr]');if(!row)return;
+$('learn').addEventListener('click',function(e){if(e.target.closest('a'))return;var rb=e.target.closest('[data-reg]');if(rb){if(window.B2Learn)B2Learn.registered(rb.getAttribute('data-reg'));renderLearn();return;}
+  var row=e.target.closest('[data-lr]');if(!row)return;
   var r=learnRows[+row.getAttribute('data-lr')];if(r&&window.B2Learn)B2Learn.tick(r);renderLearn();renderCount();});
 
 /* Out in DC — a few things saved there for this month (then anytime ideas, then places not visited yet) */

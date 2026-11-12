@@ -5,9 +5,11 @@
      B2Learn.today() → { rows:[…], test:{…}|null }
         rows   at most two to-dos: one from Personal Curriculum and one from Courses. On each side it
                is the next to-do of the study or course that is furthest behind in its current unit.
+        reg    a course whose registration is open, or opens within two weeks, and is not marked done.
         test   a course with a test date: weeks to go, days since the last practice test, whether one
                is due (none for two weeks) and whether one was taken today.
      B2Learn.tick(row) → marks that to-do done, exactly as ticking it on its own page would.
+     B2Learn.registered(id) → marks that course as registered for.
 
    The date arithmetic (a unit runs for its weeks or until its due date, one after another from the
    start date) is the same as in assets/study.js and has to stay the same.
@@ -31,7 +33,7 @@
     return !!nextOf(x);                                   /* no dates yet, but there is something left to do */
   }
   function today(){
-    var d=load(),t=pd(''),out={rows:[],test:null};if(!d)return out;
+    var d=load(),t=pd(''),out={rows:[],test:null,reg:null};if(!d)return out;
     [['pc',d.pc],['co',d.co]].forEach(function(side){var best=null;
       (side[1]||[]).forEach(function(x){if(!x||!Array.isArray(x.units))return;var sp=span(x);if(!running(x,sp,t))return;
         var u=nowUnit(x,sp,t);if(u<0){var k=nextOf(x);if(!k)return;u=k.u;}
@@ -47,8 +49,16 @@
       var ago=last?Math.floor((Date.now()-last)/86400000):null;
       out.test={id:x.id,title:x.title||'',weeks:Math.max(0,Math.ceil((td-t)/604800000)),ago:ago,due:ago==null||ago>=14,doneToday:ago===0};
       return true;});
+    (d.co||[]).some(function(x){
+      if(!x||x.regDone||x.status==='Finished'||(!x.regOpen&&!x.regClose))return false;
+      var o=x.regOpen?pd(x.regOpen):null,c=x.regClose?pd(x.regClose):null;
+      if(c&&t>c)return false;
+      if(o&&t<o){var days=Math.round((o-t)/86400000);if(days>14)return false;out.reg={id:x.id,title:x.title||'',open:false,days:days,date:x.regOpen,url:x.regUrl||''};return true;}
+      out.reg={id:x.id,title:x.title||'',open:true,left:c?Math.round((c-t)/86400000):null,date:x.regClose||'',url:x.regUrl||''};return true;});
     return out;
   }
+  function registered(id){var d=load();if(!d)return false;var x=(d.co||[]).filter(function(z){return z&&z.id===id;})[0];if(!x)return false;
+    x.regDone=true;try{localStorage.setItem(KEY,JSON.stringify(d));}catch(e){return false;}return true;}
   function tick(row){
     var d=load();if(!d||!row)return false;
     var x=(row.pg==='pc'?d.pc:d.co||[]).filter(function(z){return z&&z.id===row.id;})[0];
@@ -58,5 +68,5 @@
     try{localStorage.setItem(KEY,JSON.stringify(d));}catch(e){return false;}
     return true;
   }
-  window.B2Learn={today:today,tick:tick};
+  window.B2Learn={today:today,tick:tick,registered:registered};
 })();

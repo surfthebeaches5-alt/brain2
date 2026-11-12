@@ -258,6 +258,11 @@ button.srow:hover{background:var(--warm)}
 .ub .qrow{display:flex;gap:12px;align-items:baseline;justify-content:space-between}
 .st-app [hidden]{display:none !important}
 @media(max-width:900px){.cols,.ncols{grid-template-columns:1fr}}
+.reg{display:flex;align-items:center;gap:8px;margin-top:12px;padding:9px 12px 9px 14px;border-radius:12px;background:var(--warm);font-size:13px;font-weight:600}
+.reg span{flex:1;min-width:0}
+.reg.open{background:#e3ebf6}
+.reg.done{background:var(--ok-bg);color:var(--ok)}
+.reg a.btn{text-decoration:none}
 .passage p{margin:0 0 8px}.passage p:last-child{margin:0}.passage u{text-decoration-thickness:2px;text-underline-offset:3px;text-decoration-color:var(--accent-deep)}
 .bank{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
 .foot{margin-top:26px;font-size:12px;color:var(--muted);font-weight:600}.foot a{color:var(--accent-deep)}

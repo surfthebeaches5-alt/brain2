@@ -141,6 +141,8 @@ function mainForm(x){
       {row:[{name:'start',label:'Start date',type:'date',value:v.start},{name:'end',label:'End date',type:'date',value:v.end}]},
       {row:[{name:'status',label:'Status',type:'select',options:['Active','Queued','On hold','Finished'],value:v.status},{name:'testDate',label:'Test date',opt:'if it ends in a test',type:'date',value:v.testDate}]},
       {name:'url',label:'Course link',opt:'optional',placeholder:'https://…',value:v.url},
+      {row:[{name:'regOpen',label:'Registration opens',opt:'optional',type:'date',value:v.regOpen||''},{name:'regClose',label:'Registration closes',opt:'optional',type:'date',value:v.regClose||''}]},
+      {name:'regUrl',label:'Registration link',opt:'where you sign up',placeholder:'https://…',value:v.regUrl||''},
       {name:'why',label:'Why I’m taking it',type:'textarea',value:v.why},
       {name:'goals',label:'Goals',opt:'one per line',type:'textarea',value:v.goals.join('\n')}];
   if(isNew)f.push({name:'units',label:'Units',opt:'one per line; set how many weeks each takes afterwards',type:'textarea',rows:3});
@@ -149,7 +151,7 @@ function mainForm(x){
     onDelete:isNew?null:function(){var l=list();l.splice(l.indexOf(x),1);if(!l.length)l.push(blank('Untitled'));S.cur[S.page]=l[0].id;render();},
     onSave:function(o){if(!o.title.trim()){$('#ff-title').focus();return false;}
       v.title=o.title.trim();v.why=o.why.trim();v.goals=lines(o.goals);v.start=o.start||'';if(pc)v.sub=(o.sub||'').trim();else v.end=o.end||'';
-      v.theme=o.theme.trim();if(pc){v.project=o.project.trim();}else{v.platform=o.platform.trim();v.status=o.status;v.url=o.url.trim();v.testDate=o.testDate;}
+      v.theme=o.theme.trim();if(pc){v.project=o.project.trim();}else{v.platform=o.platform.trim();v.status=o.status;v.url=o.url.trim();v.testDate=o.testDate;v.regOpen=o.regOpen||'';v.regClose=o.regClose||'';v.regUrl=link(o.regUrl);}
       if(isNew){lines(o.units).forEach(function(n,i){v.units.push({name:n,q:'',w:1,items:[]});});list().push(v);S.cur[S.page]=v.id;S.tab[S.page]=pc?'study':'plan';S.noteOpen=false;}
       render();}});
 }
@@ -223,6 +225,19 @@ function span(x){var st=pd(x.start),out=[],prev=null;
 function nowUnit(x){var sp=span(x),t=pd('');if(!sp.dated)return -1;for(var i=0;i<sp.units.length;i++)if(t>=sp.units[i].from&&t<=sp.units[i].to)return i;return -1;}
 function selUnit(x){var k=S.unit[x.id];if(k==null||k>=x.units.length){k=nowUnit(x);if(k<0)k=0;}return k;}
 
+/* ── registering for a course or test: when sign-up opens and closes, where to do it, and whether it is done ── */
+function regState(x){
+  if(!x||(!x.regOpen&&!x.regClose&&!x.regUrl))return null;var t=pd(''),o=x.regOpen?pd(x.regOpen):null,c=x.regClose?pd(x.regClose):null,day=86400000;
+  if(x.regDone)return {k:'done'};
+  if(o&&t<o)return {k:'soon',days:Math.round((o-t)/day),open:o,close:c};
+  if(c&&t>c)return {k:'closed',close:c};
+  return {k:'open',left:c?Math.round((c-t)/day):null,close:c};
+}
+function regLine(x){var r=regState(x);if(!r)return '';var go=x.regUrl?'<a class="btn sm" href="'+esc(x.regUrl)+'" target="_blank" rel="noopener">'+(r.k==='open'?'Register':'Sign-up page')+' ↗</a>':'';
+  if(r.k==='done')return '<div class="reg done"><span>Registered ✓</span><button class="link" data-act="regdone">Undo</button></div>';
+  if(r.k==='soon')return '<div class="reg"><span>Registration opens '+fd(r.open)+(r.close?' and closes '+fd(r.close):'')+' · in '+r.days+' day'+(r.days===1?'':'s')+'</span>'+go+'</div>';
+  if(r.k==='closed')return '<div class="reg"><span>Registration closed '+fd(r.close)+'</span><button class="btn sm" data-act="regdone">I registered</button></div>';
+  return '<div class="reg open"><span>Registration is open'+(r.close?' until '+fd(r.close)+' · '+r.left+' day'+(r.left===1?'':'s')+' left':'')+'</span>'+go+'<button class="btn sm" data-act="regdone">I’ve registered</button></div>';}
 /* ── the left column: title, the unit you are on with its to-dos, and the syllabus ── */
 function outline(x){
   var pc=S.page==='pc',c=counts(x),nx=nextOf(x),sp=span(x),now=nowUnit(x),sel=selUnit(x),tst=testOf(x),t=pd(''),h='';
@@ -232,7 +247,7 @@ function outline(x){
      '<div class="meta">'+(!pc&&x.platform?'<span>'+esc(x.platform)+'</span>':'')+(!pc&&x.status&&x.status!=='Active'?'<span class="chip w">'+esc(x.status)+'</span>':'')+'<span>'+when+'</span><span>'+c.d+' of '+c.t+' to-dos done</span></div>';
   if(tst){var sc=x.scores&&x.scores[0];
     h+='<div class="stats"><div><b>'+wk(tst.weeks)+'</b><span>until the test · '+esc(tst.label)+'</span></div><div><b>'+(sc?esc(sc.score):'–')+'</b><span>latest practice test</span></div><div><b>'+(x.scores?x.scores.length:0)+'</b><span>practice tests taken</span></div></div>';}
-  h+='</div>';
+  h+=regLine(x)+'</div>';
   /* the unit you are on */
   var u=x.units[sel];
   if(u){var r=sp.units[sel],lab=(sel===now?'Now · ':'')+'Unit '+(sel+1)+' of '+x.units.length+(sp.dated&&sel!==now&&t<r.from?' · starts '+fd(r.from):'');
@@ -302,6 +317,7 @@ function overview(){
       u.items.forEach(function(it){if(it.due)ev.push({d:pd(it.due),pg:o.pg,o:o,t:it.t+' due',s:x.title,done:it.done});});});
     if(o.pg==='pc'&&x.units.length)ev.push({d:sp.to,pg:'pc',o:o,t:x.title+' · final project due',s:x.project||''});
     if(x.testDate)ev.push({d:pd(x.testDate),pg:'co',o:o,t:x.title+' · test day',s:''});
+    if(o.pg==='co'&&!x.regDone){if(x.regOpen)ev.push({d:pd(x.regOpen),pg:'co',o:o,t:x.title+' · registration opens',s:''});if(x.regClose)ev.push({d:pd(x.regClose),pg:'co',o:o,t:x.title+' · last day to register',s:''});}
     else if(o.pg==='co'&&x.end)ev.push({d:pd(x.end),pg:'co',o:o,t:x.title+' ends',s:''});});
   ev=ev.filter(function(e){return e.d>=a&&e.d<=b;}).sort(function(p,q){return p.d-q.d;});
   var busy=[];for(var w=0;w<W;w++)busy.push({pc:0,co:0});
@@ -495,6 +511,7 @@ document.addEventListener('click',function(e){
   else if(a==='bankpick'){$('#bankfile').click();}
   else if(a==='bankdel'){if(!el.getAttribute('data-armed')){el.setAttribute('data-armed','1');el.textContent='Click again to remove them';return;}try{localStorage.removeItem(BANKKEY);}catch(err){}BANK=undefined;render();}
   else if(a==='editmain'){mainForm(x);}
+  else if(a==='regdone'){x.regDone=!x.regDone;render();}
   else if(a==='new'){mainForm(null);}
   else if(a==='editwhy'){whyForm(x);}
   else if(a==='addunit'){unitForm(x,null);}
