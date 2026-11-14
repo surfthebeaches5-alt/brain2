@@ -121,7 +121,7 @@ button,input,select{font-family:inherit;}
 .e:hover{box-shadow:0 4px 12px rgba(60,50,30,.14);z-index:2;}
 .e.one{white-space:nowrap;text-overflow:ellipsis;}
 .e small{display:block;font-weight:550;color:var(--muted);font-size:10px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
-.e.done{opacity:.55;text-decoration:line-through;}
+.e.done,.ad.done,.mo-e.done{opacity:.55;text-decoration:line-through;}
 .nowl{position:absolute;left:0;right:0;height:2px;background:var(--over);z-index:3;pointer-events:none;}
 .nowl::before{content:"";position:absolute;left:-4px;top:-3px;width:8px;height:8px;border-radius:50%;background:var(--over);}
 .mo{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));border-top:1px solid var(--hair);border-left:1px solid var(--hair);}
@@ -269,10 +269,10 @@ button,input,select{font-family:inherit;}
   .cal-tools .seg{display:none;}
 }
 </style>
-<link rel="stylesheet" href="assets/brain.css?v=2611141932">
+<link rel="stylesheet" href="assets/brain.css?v=2611141945">
 </head>
 <body>
-<script src="assets/shell.js?v=2611141932"></script>
+<script src="assets/shell.js?v=2611141945"></script>
 
 <main class="page">
   <div class="head">
@@ -368,10 +368,10 @@ button,input,select{font-family:inherit;}
   </div>
 </div>
 
-<script src="assets/gcal.js?v=2611141932"></script>
-<script src="assets/backup.js?v=2611141932"></script>
-<script src="assets/learn-today.js?v=2611141932"></script>
-<script src="assets/lessons.js?v=2611141932"></script>
+<script src="assets/gcal.js?v=2611141945"></script>
+<script src="assets/backup.js?v=2611141945"></script>
+<script src="assets/learn-today.js?v=2611141945"></script>
+<script src="assets/lessons.js?v=2611141945"></script>
 <script>
 /* ───────── helpers ───────── */
 function lsGet(k){try{var r=localStorage.getItem(k);return r?JSON.parse(r):null;}catch(e){return null;}}
@@ -429,8 +429,24 @@ function billDue(from,to){var s=finLoad();if(!s)return [];var out=[];
   s.cards.forEach(function(c){if(!c.active)return;[['day','paid','statement'],['day2','paid2','mid-cycle']].forEach(function(k){
     if(!c[k[0]]||finPaid(c,k[1]))return;var d=nextDue(c[k[0]]);if(d<from||d>=to)return;
     out.push({id:'bill:'+c.id+k[0],source:'bill',title:c.name+' due',date:dk(d),allDay:true,color:'#cc5a70',calName:'Bills',url:c.url});});});return out;}
+/* reminders to sit down and plan:
+     Weekly Audit      every Sunday, for the Monday-to-Sunday week it closes (the week that page opens on that day)
+     Monthly Planner   the last day of each month, for the month ahead (that page turns to next month from the 25th)
+   Each shows as done once that week is in the audit's history, or that month's plan has something written in it. */
+function planDue(from,to){
+  var out=[],weeks={},arch=lsGet('weeklyAuditArchive');
+  (Array.isArray(arch)?arch:[]).forEach(function(r){if(r&&r.weekStart)weeks[r.weekStart]=1;});
+  function filled(v){return typeof v==='string'?!!v.trim():Array.isArray(v)?v.some(filled):v&&typeof v==='object'?Object.keys(v).some(function(k){return filled(v[k]);}):typeof v==='number'?v>0:v===true;}
+  for(var d=mid(from);d<to;d=addDays(d,1)){
+    if(d.getDay()===0)out.push({id:'plan:week',source:'plan',page:'weekly-audit/',pageName:'Weekly Audit',title:'Weekly Audit',date:dk(d),allDay:true,done:!!weeks[dk(addDays(d,-6))],color:'#8e71d3',calName:'Planning'});
+    var nx=addDays(d,1);
+    if(nx.getDate()===1)out.push({id:'plan:month',source:'plan',page:'monthly/',pageName:'Monthly Planner',title:'Monthly Planner · '+MF[nx.getMonth()],date:dk(d),allDay:true,
+      done:filled(lsGet('monthlyPlanner1_'+nx.getFullYear()+'_'+nx.getMonth())),color:'#8e71d3',calName:'Planning'});
+  }
+  return out;
+}
 function eventsIn(from,to){
-  var a=localEvents().concat(classDue()).concat(selfDue()).concat(gEvents).concat(billDue(from,to));
+  var a=localEvents().concat(classDue()).concat(selfDue()).concat(gEvents).concat(billDue(from,to)).concat(planDue(from,to));
   var f=dk(from),t=dk(addDays(to,-1));
   return a.filter(function(e){var end=e.endDate||e.date;return end>=f&&e.date<=t;});
 }
@@ -453,7 +469,7 @@ function renderCal(){
     for(var i=0;i<42;i++){
       var d=addDays(r[0],i),evs=onDay(list,d).sort(function(a,b){return (a.allDay?0:1)-(b.allDay?0:1)||mins(a.time)-mins(b.time);});
       h+='<div class="mo-d'+(d.getMonth()!==anchor.getMonth()?' out':'')+(+d===+T?' today':'')+'" data-day="'+dk(d)+'"><span class="mo-n">'+d.getDate()+'</span>'+
-        evs.slice(0,3).map(function(e){return '<div class="mo-e'+(e.allDay?'':' timed')+'" data-ev="'+esc(evKey(e))+'" style="--c:'+e.color+';--bgc:'+tint(e.color,.16)+'">'+(e.allDay?'':'<span style="color:var(--muted)">'+fmtTime(e.time)+'</span> ')+esc(e.title)+'</div>';}).join('')+
+        evs.slice(0,3).map(function(e){return '<div class="mo-e'+(e.allDay?'':' timed')+(e.done?' done':'')+'" data-ev="'+esc(evKey(e))+'" style="--c:'+e.color+';--bgc:'+tint(e.color,.16)+'">'+(e.allDay?'':'<span style="color:var(--muted)">'+fmtTime(e.time)+'</span> ')+esc(e.title)+'</div>';}).join('')+
         (evs.length>3?'<div class="mo-more">+'+(evs.length-3)+' more</div>':'')+'</div>';
     }
     el.innerHTML=h+'</div>';
@@ -468,7 +484,7 @@ function renderCal(){
     days.forEach(function(d){g+='<div class="wk-h'+(+d===+T?' today':'')+'" data-day="'+dk(d)+'">'+DS[d.getDay()].toUpperCase()+'<b>'+d.getDate()+'</b></div>';});
     g+='<div class="ad-lab">all day<small title="Times are shown in your device’s time zone">'+esc(tzName())+'</small></div>';
     days.forEach(function(d){g+='<div class="allday">'+onDay(list,d).filter(function(e){return e.allDay;}).map(function(e){
-      return '<div class="ad" data-ev="'+esc(evKey(e))+'" style="--c:'+e.color+';--bgc:'+tint(e.color,.15)+'" title="'+esc(e.title)+'">'+esc(e.title)+'</div>';}).join('')+'</div>';});
+      return '<div class="ad'+(e.done?' done':'')+'" data-ev="'+esc(evKey(e))+'" style="--c:'+e.color+';--bgc:'+tint(e.color,.15)+'" title="'+esc(e.title)+'">'+esc(e.title)+'</div>';}).join('')+'</div>';});
     var hrs='';for(var t=lo;t<hi;t++)hrs+='<div class="hr">'+(t%12||12)+(t<12?'a':'p')+'</div>';
     g+='<div class="hours">'+hrs+'</div>';
     var now=new Date();
@@ -528,6 +544,7 @@ function openPop(key,node){
   if(e.source==='google'&&e.link)a+='<a class="btn sm" href="'+esc(e.link)+'" target="_blank" rel="noopener">Open in Google ↗</a>';
   if(e.source==='bill')a+=(e.url?'<a class="btn sm" href="'+esc(e.url)+'" target="_blank" rel="noopener">Pay ↗</a>':'')+'<a class="btn sm" href="finances/">Finances</a>';
   if(e.source==='class')a+='<a class="btn sm" href="learn/courses/">Open Courses</a>';
+  if(e.source==='plan')a+='<a class="btn sm" href="'+e.page+'">'+(e.done?'Open the ':'Do the ')+esc(e.pageName)+'</a>';
   if((e.source==='google'&&!e.ro)||e.source==='local')a+='<button class="btn sm" type="button" id="pop-edit">Edit</button>';
   if(e.source==='google')a+='<button class="btn sm" type="button" id="pop-copy">Copy to…</button>';
   if(e.source==='local'||(e.source==='google'&&!e.ro))a+='<button class="btn sm" type="button" id="pop-del">Delete</button>';
@@ -1092,7 +1109,7 @@ window.addEventListener('storage',function(e){
   if(e.key==='brain2Lessons1'||e.key==='lifeCalendar1')safe(renderLessons);
   else if(e.key===TASK_SK){safe(renderTasks);safe(renderCount);}
   else if(e.key&&e.key.indexOf('fitnessTracker1_day_')===0){safe(renderBody);safe(renderCount);}
-  else if(e.key==='lifeCalendar1'||e.key==='classTracker1'||e.key==='curriculum1')safe(renderCal);
+  else if(e.key==='lifeCalendar1'||e.key==='classTracker1'||e.key==='curriculum1'||e.key==='weeklyAuditArchive'||(e.key&&e.key.indexOf('monthlyPlanner1_')===0))safe(renderCal);
 });
 setInterval(function(){safe(renderHead);if(view!=='month'&&+anchor===+today())safe(renderCal);},60000);
 </script>
