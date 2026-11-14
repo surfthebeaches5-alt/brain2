@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex">
+<title>Stoic Workbook mock-up · Brain 2.0</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Archivo:wght@500;600;700;800;900&family=Playfair+Display:ital,wght@0,500;0,600;1,400;1,500;1,600&family=Fraunces:ital,opsz,wght@0,9..144,500;0,9..144,600;1,9..144,500&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../../assets/brain.css?v=2611142028">
+<!-- the module's own styles are added here when its text is loaded; the rules below then restyle it -->
+<style id="sw-own">
+/* ─────────────────────────────────────────────────────────────
+   A mock-up of one Stoic Workbook module, laid out a new way.
+   The words come from stoic/module-1-the-foundation.html, loaded as they are. Nothing typed here is
+   saved and the real workbook is not changed. Every class this page adds starts with "sw-".
+   ───────────────────────────────────────────────────────────── */
+html body{background:var(--bg);color:var(--ink);font-family:var(--b2-sans);padding-bottom:0;line-height:1.5}
+.sw{--sw-coral:#D64C63;--sw-coral-deep:#B83A51;--sw-coral-soft:#FBE9EC;--sw-coral-line:#F3C9D1;--sw-field:#e2d8c5;
+  --font-body:var(--b2-sans);--cream:#fff;--coral-faint:#b9b09e;
+  max-width:1180px;margin:0 auto;padding:26px 40px 90px;display:grid;grid-template-columns:270px minmax(0,1fr);gap:52px;align-items:start}
+
+/* ── the list of sections ── */
+.sw-side{position:sticky;top:calc(var(--b2-nav-h,64px) + 22px);font-size:14px}
+.sw-back{display:inline-block;font-size:12.5px;font-weight:650;color:var(--muted);text-decoration:none;margin-bottom:16px}
+.sw-back:hover{color:var(--sw-coral-deep)}
+.sw-mod{font:italic 500 17px 'Playfair Display',Georgia,serif;color:var(--sw-coral)}
+.sw-name{font-family:'Archivo Black','Archivo',sans-serif;font-size:25px;line-height:1;text-transform:uppercase;color:var(--sw-coral);letter-spacing:-.2px;margin:2px 0 5px}
+.sw-sub{font-size:13px;color:var(--muted);font-weight:600}
+.sw-prog{margin:16px 0 20px}
+.sw-prog b{display:block;font-size:12px;font-weight:700;color:var(--ink-2);margin-bottom:6px}
+.sw-track{height:6px;border-radius:4px;background:var(--warm-deep);overflow:hidden}
+.sw-track i{display:block;height:100%;background:var(--sw-coral);border-radius:4px;transition:width .25s}
+.sw-grp{font-size:10.5px;letter-spacing:.15em;text-transform:uppercase;color:var(--muted);font-weight:700;margin:16px 0 6px}
+.sw-step{display:flex;align-items:flex-start;gap:10px;width:100%;text-align:left;border:0;background:none;padding:8px 10px;border-radius:10px;font:inherit;color:var(--ink-2);cursor:pointer;line-height:1.3}
+.sw-step:hover{background:var(--warm)}
+.sw-step.on{background:var(--surface);box-shadow:0 1px 2px rgba(60,50,30,.08);color:var(--ink)}
+.sw-step .sw-dot{flex:none;width:18px;height:18px;border-radius:50%;border:1.6px solid var(--faint);margin-top:1px;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:800;color:#fff}
+.sw-step.done .sw-dot{background:var(--sw-coral);border-color:var(--sw-coral)}
+.sw-step .sw-t{flex:1;min-width:0;font-weight:600;font-size:13.5px}
+.sw-step .sw-t small{display:block;font-size:11.5px;font-weight:600;color:var(--muted);margin-top:1px}
+.sw-step.on .sw-t{font-weight:700}
+.sw-line{border:0;border-top:1px solid var(--line);margin:16px 0 10px}
+.sw-tools{display:flex;gap:8px;margin-top:14px;position:relative}
+.sw-btn{height:34px;padding:0 14px;border-radius:99px;border:1px solid var(--line);background:var(--surface);font:650 12.5px var(--b2-sans);color:var(--ink-2);cursor:pointer}
+.sw-btn:hover{border-color:var(--sw-coral-line);color:var(--sw-coral-deep)}
+.sw-menu{position:absolute;left:92px;bottom:40px;background:#fff;border:1px solid var(--line);border-radius:12px;box-shadow:0 10px 30px rgba(60,50,30,.14);padding:6px;display:none;min-width:200px;z-index:5}
+.sw-menu.show{display:block}
+.sw-menu button{display:block;width:100%;text-align:left;border:0;background:none;padding:8px 10px;border-radius:8px;font:600 13px var(--b2-sans);color:var(--ink-2);cursor:pointer}
+.sw-menu button:hover{background:var(--warm)}
+.sw-menu button.sw-danger{color:var(--over)}
+
+/* ── the section being read ── */
+.sw-note{background:var(--accent-soft);border:1px solid var(--accent-line);border-radius:12px;padding:10px 14px;font-size:12.5px;font-weight:600;color:var(--ink-2);margin-bottom:22px}
+.sw-eb{font-size:10.5px;letter-spacing:.15em;text-transform:uppercase;font-weight:700;color:var(--sw-coral);margin-bottom:14px}
+.sw-card{background:var(--surface);border:1px solid var(--line);border-radius:20px;padding:40px 46px 36px;box-shadow:0 1px 2px rgba(60,50,30,.04),0 10px 28px rgba(60,50,30,.05)}
+.sw-nav{display:flex;align-items:center;gap:12px;margin-top:22px}
+.sw-nav .sw-grow{flex:1}
+.sw-go{height:46px;padding:0 24px;border-radius:99px;border:0;background:var(--sw-coral);color:#fff;font:800 14px var(--b2-sans);cursor:pointer;max-width:100%;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.sw-go:hover{background:var(--sw-coral-deep)}
+.sw-prev{height:46px;padding:0 18px;border-radius:99px;border:1px solid var(--line);background:none;font:700 13.5px var(--b2-sans);color:var(--ink-2);cursor:pointer}
+.sw-prev:hover{border-color:var(--sw-coral-line);color:var(--sw-coral-deep)}
+.sw-fin{font:italic 500 17px 'Playfair Display',Georgia,serif;color:var(--sw-coral-deep)}
+
+/* entries: one per time an exercise is done */
+.sw-entries{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin:26px 0 18px;padding:12px 14px;border-radius:14px;background:var(--sw-coral-soft)}
+.sw-entries .sw-lab{font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;font-weight:700;color:var(--sw-coral-deep);margin-right:4px}
+.sw-chip{height:30px;padding:0 12px;border-radius:99px;border:1px solid var(--sw-coral-line);background:#fff;font:650 12.5px var(--b2-sans);color:var(--ink-2);cursor:pointer}
+.sw-chip.on{background:var(--sw-coral);border-color:var(--sw-coral);color:#fff}
+.sw-chip.sw-new{border-style:dashed;color:var(--sw-coral-deep);background:transparent}
+.sw-entries+hr.rule{display:none}
+.sw-entries small{flex-basis:100%;font-size:12px;color:var(--ink-2);font-weight:500}
+
+/* my answers */
+.sw-ans h2{font-family:'Archivo Black','Archivo',sans-serif;text-transform:uppercase;color:var(--sw-coral);font-size:34px;line-height:1;margin:0 0 6px}
+.sw-ans .sw-lead{font-size:15px;color:var(--muted);margin:0 0 22px}
+.sw-ans h3{font:600 21px 'Playfair Display',Georgia,serif;margin:26px 0 2px;color:var(--ink)}
+.sw-ans h3 button{border:0;background:none;font:650 12.5px var(--b2-sans);color:var(--sw-coral-deep);cursor:pointer;margin-left:10px}
+.sw-ans .sw-when{font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;font-weight:700;color:var(--sw-coral);margin:16px 0 8px}
+.sw-qa{border-left:3px solid var(--sw-coral-line);padding:2px 0 2px 14px;margin:0 0 12px}
+.sw-qa b{display:block;font-size:12.5px;font-weight:650;color:var(--muted);margin-bottom:2px}
+.sw-qa span{font-size:15.5px;line-height:1.6;color:var(--ink);white-space:pre-wrap;overflow-wrap:anywhere}
+.sw-empty{font-size:15px;color:var(--muted);padding:26px 0}
+#sw-toast{position:fixed;left:50%;bottom:28px;transform:translateX(-50%);background:var(--ink);color:#fff;font:600 13px var(--b2-sans);padding:10px 18px;border-radius:99px;opacity:0;pointer-events:none;transition:opacity .2s;z-index:60}
+#sw-toast.show{opacity:1}
+
+/* ── the module's own text, restyled: dark ink to read, coral for headings and accents ── */
+.sw-card .page{background:none;border:0;box-shadow:none;padding:0;margin:0;overflow:visible;border-radius:0;color:var(--ink)}
+.sw-card .page+.page{margin-top:34px;padding-top:32px;border-top:1px solid var(--line)}
+.sw-card .runhead,.sw-card .runfoot,.sw-card .sw-hide{display:none}
+.sw-card .eyebrow{font-size:19px;margin-bottom:4px}
+.sw-card .display,.sw-card .display.sm{font-size:clamp(28px,3.3vw,40px);line-height:1}
+.sw-card .kicker{font-size:20px;margin:0 0 10px}
+.sw-card .cols{column-count:1!important;max-width:680px;margin-top:26px!important}
+.sw-card .colblock{margin-bottom:26px}
+.sw-card .body,.sw-card .lead{font-size:16px;line-height:1.7;color:var(--ink);text-align:left;hyphens:manual;max-width:680px!important}
+.sw-card .body em{color:inherit}
+.sw-card .body strong{color:var(--sw-coral-deep)}
+.sw-card p{margin:0 0 13px}
+.sw-card .cap{font-size:13px;color:var(--muted)}
+.sw-card blockquote.frankl{font-size:18px;line-height:1.5;max-width:640px}
+.sw-card .callout,.sw-card .hint-box{font-size:14px;line-height:1.55;color:var(--ink-2);max-width:680px}
+.sw-card .lesson .n{font-size:38px}
+.sw-card .lesson h4{font-size:15.5px}
+.sw-card .lesson p{font-size:14.5px;line-height:1.55;color:var(--ink-2)}
+.sw-card .phil h4{font-size:16px}
+.sw-card .phil p{font-size:14.5px;line-height:1.55;color:var(--ink-2)}
+.sw-card ol.pillars li{padding-bottom:16px}
+.sw-card ol.pillars b{font-size:15.5px}
+.sw-card ol.pillars span{font-size:15px;line-height:1.6;color:var(--ink)}
+.sw-card ul.tick li{font-size:15px;line-height:1.5;color:var(--ink-2)}
+.sw-card ul.tick li::before{top:9px}
+.sw-card .twosys .sys b{font-size:15px}
+.sw-card .twosys .sys span{font-size:14.5px;color:var(--ink-2)}
+.sw-card .purpose-bar{font-size:13.5px;line-height:1.5;color:var(--ink-2);background:var(--sw-coral-soft);border-color:var(--sw-coral-line);border-radius:12px}
+.sw-card .field-label{font-size:14.5px;margin-bottom:4px}
+.sw-card .field-label .qh{font-size:15px}
+.sw-card .field-sub,.sw-card .reflect3 .mini-label{font-size:14.5px!important;line-height:1.5;color:var(--ink-2)!important;font-weight:500;margin-bottom:8px}
+.sw-card .prompt-group-title{font-size:16.5px;margin:26px 0 12px}
+.sw-card .lines,.sw-card .boxfield{background:#fff;background-image:none;border:1px solid var(--sw-field);border-radius:12px;padding:11px 14px;font-size:15.5px;line-height:1.55;color:var(--ink);min-height:88px!important;resize:none;display:block}
+.sw-card .lines:focus,.sw-card .boxfield:focus{border-color:var(--sw-coral);box-shadow:0 0 0 3px rgba(214,76,99,.14)}
+.sw-card .tt-box{background:var(--warm);border-color:var(--line);border-radius:14px;padding:14px}
+.sw-card table.dist{font-size:14px;color:var(--ink)}
+.sw-card table.dist td{line-height:1.5}
+.sw-card table.dist td.ex{color:var(--ink-2)}
+.sw-card .grid2.sw-stack{gap:22px}
+.sw-card .bingo{grid-template-columns:repeat(4,minmax(0,1fr))}
+.sw-card .bingo .cell{font-size:13.5px;min-height:86px;flex-direction:column}
+.sw-card .bingo .cell small{font-size:11.5px;color:var(--muted)}
+.sw-card .reflect3 .ex-title{font-size:15px}
+.sw-card .ready{font-size:17px}
+@media (max-width:1000px){.sw{grid-template-columns:1fr;gap:20px}.sw-side{position:static}}
+</style>
+</head>
+<body>
+<script src="../../assets/shell.js?v=2611142028"></script>
+
+<div class="sw">
+  <aside class="sw-side" id="sw-side"></aside>
+  <main>
+    <div class="sw-note" id="sw-note">This is a mock-up of Module 1 in a new layout. Your real workbook is not changed, and nothing you type here is saved.</div>
+    <div id="sw-main"><div class="sw-empty">Opening the module…</div></div>
+  </main>
+</div>
+<div id="sw-toast"></div>
+
+<script>
+(function(){
+  var SRC='../../stoic/module-1-the-foundation.html',STORE='blussomly_stoic_m1_v1';
+  /* which of the module's pages make one sitting: a part printed over several pages is one section here */
+  var STEPS=[
+    {id:'lessons',kind:'read',pages:['p-lessons']},
+    {id:'a',kind:'read',pages:['p-a1','p-a2']},
+    {id:'b',kind:'read',pages:['p-b1','p-b2','p-b3']},
+    {id:'exintro',kind:'read',pages:['p-exintro']},
+    {id:'ex1',kind:'ex',num:'1.1',pages:['p-ex1']},
+    {id:'ex2',kind:'ex',num:'1.2',pages:['p-ex2']},
+    {id:'ex3',kind:'ex',num:'1.3',pages:['p-ex3','p-ex3b']}
+  ];
+  var MOD={eyebrow:'',name:'',sub:''},S={at:0,view:'step',done:{}},E={},CUR={};
+  var $=function(q,r){return (r||document).querySelector(q);},$$=function(q,r){return Array.prototype.slice.call((r||document).querySelectorAll(q));};
+  function esc(s){return String(s==null?'':s).replace(/[&<>"']/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];});}
+  function clean(s){return String(s||'').replace(/\s*\(\d+\/\d+\)/g,'').replace(/[­​]/g,'').replace(/\s+/g,' ').trim();}
+  function toast(t){var el=$('#sw-toast');el.textContent=t;el.classList.add('show');clearTimeout(toast.t);toast.t=setTimeout(function(){el.classList.remove('show');},2200);}
+  var MON=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  function when(e,list){if(!e.at)return 'Earlier answers';var d=new Date(e.at),lab=MON[d.getMonth()]+' '+d.getDate(),same=list.filter(function(z){return z.at&&new Date(z.at).toDateString()===d.toDateString();});
+    return lab+(same.length>1?' · '+(same.indexOf(e)+1):'');}
+  function blank(e){for(var k in e.text)if(String(e.text[k]||'').trim())return false;for(var b in e.bingo)if(e.bingo[b])return false;return true;}
+  function filled(e){var n=0;for(var k in e.text)if(String(e.text[k]||'').trim())n++;return n;}
+
+  /* the question a writing box answers: the nearest line of text above it */
+  function labelOf(el){var n=el;for(var up=0;up<3&&n;up++){for(var p=n.previousElementSibling;p;p=p.previousElementSibling){
+      if(/^(P|H3|H4|DIV)$/.test(p.tagName)&&!p.querySelector('textarea,input')&&clean(p.textContent))return clean(p.textContent);}n=n.parentElement;}
+    return el.getAttribute('placeholder')||'';}
+
+  function build(doc){
+    var css=$$('style',doc).map(function(s){return s.textContent;}).join('\n'),st=document.createElement('style');st.textContent=css;
+    document.head.insertBefore(st,$('#sw-own'));
+    var div=$('#p-divider',doc);
+    if(div){MOD.eyebrow=clean(($('.eyebrow',div)||{}).textContent).replace(/:$/,'');MOD.name=clean(($('.display',div)||{}).textContent);MOD.sub=clean(($('.subtitle',div)||{}).textContent);}
+    var saved=null;try{saved=JSON.parse(localStorage.getItem(STORE));}catch(e){}
+    STEPS.forEach(function(s){
+      s.nodes=s.pages.map(function(id){return $('#'+id,doc);}).filter(Boolean);
+      s.nodes.forEach(function(pg,i){
+        pg.removeAttribute('id');
+        $$('.display',pg).forEach(function(h){h.innerHTML=h.innerHTML.replace(/\s*\(\d+\/\d+\)/g,'');});
+        if(i>0)$$('.eyebrow,.display,.purpose-bar',pg).forEach(function(x){x.classList.add('sw-hide');});
+        /* sizes and colours set for the printed page give way to this page's own; side-by-side blocks made for print stack */
+        $$('p[style],span[style],li[style]',pg).forEach(function(x){x.style.fontSize='';x.style.color='';});
+        $$('.grid2',pg).forEach(function(g){if(g.style.gridTemplateColumns||!$('textarea',g)){g.style.gridTemplateColumns='1fr';g.style.alignItems='';g.classList.add('sw-stack');}});
+      });
+      var h=s.nodes[0]&&$('.display',s.nodes[0]);
+      s.title=clean(h?h.innerHTML.replace(/<br\s*\/?>/gi,' ').replace(/<[^>]+>/g,''):s.id).replace(/- /g,'-');
+      var words=s.nodes.reduce(function(n,pg){return n+clean(pg.textContent).split(' ').length;},0);
+      var est=s.nodes[0]&&$$('.purpose-bar div',s.nodes[0]).map(function(d){return clean(d.textContent);}).filter(function(t){return /^Time estimate/i.test(t);})[0];
+      s.time=est?est.replace(/^Time estimate:\s*/i,''):'about '+Math.max(1,Math.round(words/220))+' min';
+      s.fields=[];s.cells=[];
+      s.nodes.forEach(function(pg){$$('[data-field]',pg).forEach(function(el){s.fields.push({k:el.getAttribute('data-field'),q:labelOf(el)});});
+        $$('[data-bingo]',pg).forEach(function(el){s.cells.push({k:el.getAttribute('data-bingo'),q:clean(el.childNodes[0]&&el.childNodes[0].textContent)});});});
+      if(s.fields.length||s.cells.length){
+        var e={at:0,text:{},bingo:{}},any=false;
+        s.fields.forEach(function(f){var v=saved&&saved.text&&saved.text[f.k];if(String(v||'').trim()){e.text[f.k]=v;any=true;}});
+        s.cells.forEach(function(c){if(saved&&saved.bingo&&saved.bingo[c.k]){e.bingo[c.k]=true;any=true;}});
+        if(!any)e.at=Date.now();else S.mine=true;
+        E[s.id]=[e];CUR[s.id]=0;
+      }
+    });
+    if(S.mine)$('#sw-note').textContent+=' The answers you already saved in Module 1 are shown so you can see how they would look.';
+    var m=/[#&]s=(\d+)/.exec(location.hash);if(m)S.at=Math.min(STEPS.length-1,Math.max(0,+m[1]-1));
+    if(/[#&]answers/.test(location.hash))S.view='ans';
+    render();
+  }
+
+  function side(){
+    var done=STEPS.filter(function(s){return S.done[s.id];}).length,all=done===STEPS.length;
+    var row=function(s){var i=STEPS.indexOf(s),n=E[s.id]?E[s.id].filter(function(e){return !blank(e);}).length:0;
+      return '<button class="sw-step'+(S.view==='step'&&S.at===i?' on':'')+(S.done[s.id]?' done':'')+'" data-go="'+i+'"><span class="sw-dot">'+(S.done[s.id]?'✓':'')+'</span><span class="sw-t">'+(s.num?s.num+' · ':'')+esc(s.title)+
+        '<small>'+esc(s.time)+(n?' · '+n+(n===1?' entry':' entries'):'')+'</small></span></button>';};
+    var total=0;for(var k in E)total+=E[k].filter(function(e){return !blank(e);}).length;
+    $('#sw-side').innerHTML='<a class="sw-back" href="../../stoic/">← Stoic Workbook</a>'+
+      '<div class="sw-mod">'+esc(MOD.eyebrow)+'</div><div class="sw-name">'+esc(MOD.name)+'</div><div class="sw-sub">'+esc(MOD.sub)+'</div>'+
+      '<div class="sw-prog"><b>'+(all?'Module finished ✓':done+' of '+STEPS.length+' sections done')+'</b><div class="sw-track"><i style="width:'+(done/STEPS.length*100)+'%"></i></div></div>'+
+      '<div class="sw-grp">Read</div>'+STEPS.filter(function(s){return s.kind==='read';}).map(row).join('')+
+      '<div class="sw-grp">Practice</div>'+STEPS.filter(function(s){return s.kind==='ex';}).map(row).join('')+
+      '<hr class="sw-line"><button class="sw-step'+(S.view==='ans'?' on':'')+'" data-view="ans"><span class="sw-t">My answers<small>'+(total?total+(total===1?' entry':' entries')+' written':'Everything you have written, in one place')+'</small></span></button>'+
+      '<div class="sw-tools"><button class="sw-btn" data-mock="Save PDF">Save PDF</button><button class="sw-btn" data-menu aria-label="More">More ⋯</button>'+
+        '<div class="sw-menu" id="sw-menu"><button data-mock="Export">Export my answers</button><button data-mock="Import">Import answers</button><button class="sw-danger" data-mock="Start over">Start this module over</button></div></div>';
+  }
+  function autosize(el){if(el.tagName!=='TEXTAREA')return;el.style.height='auto';el.style.height=Math.max(el.scrollHeight+2,88)+'px';}
+  function entryBar(s){var list=E[s.id];
+    return '<div class="sw-entries"><span class="sw-lab">Entries</span>'+list.map(function(e,i){return '<button class="sw-chip'+(i===CUR[s.id]?' on':'')+'" data-entry="'+i+'">'+esc(when(e,list))+'</button>';}).join('')+
+      '<button class="sw-chip sw-new" data-entry="new">+ New entry</button><small>Each time you do this exercise it is kept as its own entry, so nothing gets written over.</small></div>';}
+  function fill(s){var e=E[s.id][CUR[s.id]],box=$('#sw-card');
+    $$('[data-field]',box).forEach(function(el){el.value=e.text[el.getAttribute('data-field')]||'';autosize(el);});
+    $$('[data-bingo]',box).forEach(function(el){el.classList.toggle('circled',!!e.bingo[el.getAttribute('data-bingo')]);});}
+  function step(){
+    var s=STEPS[S.at],next=STEPS[S.at+1],all=STEPS.every(function(z){return S.done[z.id];});
+    var h='<div class="sw-eb">'+(s.kind==='ex'?'Exercise '+s.num:'Read')+' · section '+(S.at+1)+' of '+STEPS.length+' · '+esc(s.time)+'</div><div class="sw-card" id="sw-card"></div>'+
+      '<div class="sw-nav">'+(S.at?'<button class="sw-prev" data-go="'+(S.at-1)+'">← Back</button>':'')+'<span class="sw-grow"></span>'+
+      (next?'<button class="sw-go" data-done>'+(S.done[s.id]?'Next':'Done')+' · '+esc((next.num?next.num+' ':'')+next.title)+' →</button>'
+           :(S.done[s.id]?'<span class="sw-fin">'+(all?'Module finished.':'Marked done.')+'</span>':'<button class="sw-go" data-done>Mark this section done</button>'))+'</div>';
+    $('#sw-main').innerHTML=h;
+    var card=$('#sw-card');s.nodes.forEach(function(pg){card.appendChild(pg.cloneNode(true));});
+    if(E[s.id]){
+      var first=$('[data-field],[data-bingo]',card),pg=first&&first.closest('.page'),head=pg&&$('.exhead',pg),bar=document.createElement('div');
+      bar.innerHTML=entryBar(s);bar=bar.firstChild;
+      if(head)head.parentNode.insertBefore(bar,head.nextSibling);else if(pg){var top=first;while(top.parentNode!==pg)top=top.parentNode;pg.insertBefore(bar,top);}
+      fill(s);
+    }
+  }
+  function answers(){
+    var h='<div class="sw-card sw-ans"><h2>My answers</h2><p class="sw-lead">'+esc(MOD.eyebrow+' · '+MOD.name)+'. Only what you wrote, without the lesson around it.</p>',any=false;
+    STEPS.forEach(function(s,i){if(!E[s.id])return;var list=E[s.id].filter(function(e){return !blank(e);});if(!list.length)return;any=true;
+      h+='<h3>'+esc(s.num+' · '+s.title)+'<button data-go="'+i+'">Open the exercise →</button></h3>';
+      list.slice().reverse().forEach(function(e){
+        h+='<div class="sw-when">'+esc(when(e,E[s.id]))+'</div>';
+        var on=s.cells.filter(function(c){return e.bingo[c.k];}).map(function(c){return c.q;});
+        if(on.length)h+='<div class="sw-qa"><b>Circled</b><span>'+esc(on.join(' · '))+'</span></div>';
+        s.fields.forEach(function(f){var v=String(e.text[f.k]||'').trim();if(v)h+='<div class="sw-qa"><b>'+esc(f.q)+'</b><span>'+esc(v)+'</span></div>';});});});
+    if(!any)h+='<div class="sw-empty">Nothing written yet. Whatever you write in the three exercises shows up here, newest first.</div>';
+    $('#sw-main').innerHTML=h+'</div>';
+  }
+  function render(top){side();if(S.view==='ans')answers();else step();if(top)window.scrollTo(0,0);}
+
+  document.addEventListener('click',function(e){
+    var t=e.target,b;
+    if(!t.closest('[data-menu]')&&$('#sw-menu'))$('#sw-menu').classList.remove('show');
+    if((b=t.closest('[data-menu]'))){$('#sw-menu').classList.toggle('show');return;}
+    if((b=t.closest('[data-mock]'))){toast(b.getAttribute('data-mock')+' works on the real page. It is switched off in this mock-up.');return;}
+    if((b=t.closest('[data-view]'))){S.view='ans';render(true);return;}
+    if((b=t.closest('[data-go]'))){S.at=+b.getAttribute('data-go');S.view='step';render(true);return;}
+    if((b=t.closest('[data-done]'))){S.done[STEPS[S.at].id]=true;if(STEPS[S.at+1]){S.at++;render(true);}else render();return;}
+    if((b=t.closest('[data-entry]'))){var s=STEPS[S.at],v=b.getAttribute('data-entry'),list=E[s.id];
+      if(v==='new'){var last=list[list.length-1];if(blank(last)){CUR[s.id]=list.length-1;toast('Your newest entry is still empty. Write in that one first.');}
+        else{list.push({at:Date.now(),text:{},bingo:{}});CUR[s.id]=list.length-1;}}
+      else CUR[s.id]=+v;
+      var old=$('.sw-entries'),nb=document.createElement('div');nb.innerHTML=entryBar(s);old.parentNode.replaceChild(nb.firstChild,old);fill(s);side();return;}
+    if((b=t.closest('[data-bingo]'))&&b.closest('#sw-card')){var s2=STEPS[S.at],en=E[s2.id][CUR[s2.id]],k=b.getAttribute('data-bingo');en.bingo[k]=!en.bingo[k];b.classList.toggle('circled',en.bingo[k]);side();}
+  });
+  document.addEventListener('input',function(e){var el=e.target;if(!el.hasAttribute||!el.hasAttribute('data-field')||!el.closest('#sw-card'))return;
+    var s=STEPS[S.at],en=E[s.id][CUR[s.id]],was=blank(en);en.text[el.getAttribute('data-field')]=el.value;autosize(el);if(was!==blank(en))side();});
+
+  fetch(SRC,{cache:'no-cache'}).then(function(r){if(!r.ok)throw new Error(r.status);return r.text();})
+    .then(function(t){build(new DOMParser().parseFromString(t,'text/html'));})
+    .catch(function(){$('#sw-main').innerHTML='<div class="sw-empty">The module could not be opened. Reload the page to try again.</div>';});
+})();
+</script>
+</body>
+</html>
