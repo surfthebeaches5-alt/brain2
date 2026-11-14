@@ -212,9 +212,9 @@ button.srow:hover{background:var(--warm)}
 .focus span.ph{color:var(--faint)}
 .busy{display:grid;gap:5px;align-items:end;height:118px;margin-top:22px}
 .busy .col{display:flex;flex-direction:column;justify-content:flex-end;align-items:stretch;height:100%;position:relative}
-.busy .n{text-align:center;font-size:10px;font-weight:700;color:var(--ink-2);margin-bottom:3px}
-.busy .bar{border-radius:4px 4px 0 0;min-height:3px;background:var(--warm-deep)}
-.busy .bar.pc{background:var(--accent)}.busy .bar.co{background:#6a8fc2}
+.busy .n{order:-2;text-align:center;font-size:10px;font-weight:700;color:var(--ink-2);margin-bottom:3px}
+.busy .wb{border-radius:4px 4px 0 0;min-height:3px;background:var(--warm-deep)}
+.busy .wb.pc{background:var(--accent)}.busy .wb.co{background:#6a8fc2}
 .wkn{display:grid;gap:5px;margin-top:7px;font-size:10px;font-weight:600;color:var(--faint);text-align:center}
 .wkn span.now{color:var(--accent-deep);font-weight:700}
 .wkn span.now::after{content:"NOW";display:block;font-size:8.5px;letter-spacing:.08em}
