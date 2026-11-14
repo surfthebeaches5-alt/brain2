@@ -407,8 +407,10 @@ function practiceTab(x){
       '<div class="tintro"><div class="ttl" style="margin:0">Take a practice test</div><span class="grow"></span><select id="tver" aria-label="Test">'+B.versions.map(function(v,i){return '<option value="'+i+'">'+esc(v.name||('Test '+(i+1)))+'</option>';}).join('')+'</select><select id="tlen" aria-label="Length">'+lens+'</select><button class="btn dark" data-act="tstart" style="height:36px">Start timed test</button></div>'+
       '<div class="saved" style="margin-top:10px">'+B.versions.length+' tests loaded · <button class="link" data-act="bankdel">Remove the questions from this browser</button></div>'
       :'<div class="ttl" style="margin-bottom:6px">Practice tests</div><div class="bank"><span style="flex:1;min-width:260px;font-size:13.5px;font-weight:500;line-height:1.5">Add your question file (fsot-questions.json, from the FSOT Practice Tests folder). It is kept in this browser only.</span><input type="file" id="bankfile" accept=".json,application/json" hidden><button class="btn dark" data-act="bankpick" style="height:36px">Choose the file</button></div>')+'</div>'+
-    '<div class="cols"><div><div class="card"><div class="ttl">Tests taken<button class="link" data-act="addscore">+ Add a score</button></div>'+(x.scores.length?x.scores.map(function(z){return '<div class="row"><span class="g">'+esc(z.label||'')+'<small style="display:block;color:var(--muted);font-size:11.5px">'+esc(z.d)+'</small></span><b>'+esc(z.score)+'</b></div>';}).join(''):'<div class="empty">None yet</div>')+'</div></div>'+
-    '<div><div class="card"><div class="ttl">By section</div>'+PARTS.map(function(k){var q=by[k],pc=q.t?Math.round(q.r/q.t*100):0,weak=k===low&&done.length>1;
+    '<div class="cols"><div><div class="card"><div class="ttl">Tests taken<button class="link" data-act="addscore">+ Add a score</button></div>'+(x.scores.length?x.scores.map(function(z,zi){return '<div class="row"><span class="g">'+esc(z.label||'')+'<small style="display:block;color:var(--muted);font-size:11.5px">'+esc(z.d)+'</small></span>'+(Array.isArray(z.miss)&&z.miss.length&&B?'<button class="link" data-act="cards" data-s="'+zi+'">'+z.miss.length+' missed →</button>':'')+'<b>'+esc(z.score)+'</b></div>';}).join(''):'<div class="empty">None yet</div>')+'</div></div>'+
+    '<div><div class="card"><div class="ttl">Missed questions</div>'+((x.missed||[]).length&&B?'<div class="row" style="border-top:0;padding-top:0"><span class="g">'+x.missed.length+' to go over<small style="display:block;color:var(--muted);font-size:11.5px">'+
+        PARTS.map(function(k,p){var c=x.missed.filter(function(m){return partOf(m.n)===p;}).length;return c?c+' '+k.toLowerCase():'';}).filter(Boolean).join(' · ')+'</small></span><button class="btn dark" data-act="cards" data-s="all" style="height:36px">Study as cards</button></div>':'<div class="empty">'+((x.missed||[]).length?'Add the question file to see them':'None yet')+'</div>')+'</div>'+
+    '<div class="card"><div class="ttl">By section</div>'+PARTS.map(function(k){var q=by[k],pc=q.t?Math.round(q.r/q.t*100):0,weak=k===low&&done.length>1;
       return '<div class="row"><span style="width:44%;min-width:0">'+esc(k)+(weak?' <span class="chip w">weakest</span>':'')+'</span><span class="pbar'+(weak?' low':'')+'"><i style="width:'+pc+'%"></i></span><b style="width:40px;text-align:right">'+(q.t?pc+'%':'–')+'</b></div>';}).join('')+'</div></div></div>';
 }
 /* ── practice test ──
@@ -439,12 +441,40 @@ function startTest(ver,len){
 function resumeTest(){var k=readOld(TKEY);if(!k||!bank()||!CO.some(function(c){return c.id===k.cid;}))return;
   try{var parts=k.nums.map(function(ns,p){return ns.map(function(n,i){return {q:bankQ(k.ver,n),order:[0,1,2,3],pick:k.pick[p][i],flag:!!k.flag[p][i]};});});
     T={cid:k.cid,ver:k.ver,len:k.len,secs:k.secs,parts:parts,p:k.p,i:k.i,left:k.left,used:k.used,done:false};S.cur.co=k.cid;runClock();}catch(e){T=null;}}
+/* ── missed questions as cards: the question on the front, the answer and why on the back ── */
+function partOf(n){return n<=50?0:n<=95?1:2;}
+function openCards(x,src){var list,label;
+  if(src==='all'){list=(x.missed||[]).slice().sort(function(a,b){return a.ver-b.ver||a.n-b.n;});label='All missed questions';}
+  else{var z=x.scores[+src];if(!z||!Array.isArray(z.miss))return;list=z.miss.map(function(m){return {ver:z.ver,n:m[0],pick:m[1]};});label=z.label||'';}
+  if(!list.length||!bank())return;S.cards={cid:x.id,list:list,i:0,flip:false,label:label,got:0};render();window.scrollTo(0,0);}
+function cardsView(){
+  var C=S.cards,n=C.list.length;
+  if(C.i>=n)return '<div class="trun"><div class="card"><div class="lab" style="margin-top:0">'+esc(C.label)+'</div><div class="big">'+C.got+'<small>of '+(n+C.got)+' marked “Got it”</small></div>'+
+    '<div class="tfoot"><button class="btn dark" data-act="cclose">Back to Practice tests</button>'+(n?'<button class="btn" data-act="cagain">Go through the '+n+' left again</button>':'')+'</div></div></div>';
+  var m=C.list[C.i],q;try{q=bankQ(m.ver,m.n);}catch(e){q=null;}
+  if(!q)return '<div class="trun"><div class="card"><div class="empty">This question is not in the question file any more.</div><div class="tfoot"><button class="btn dark" data-act="cclose">Back to Practice tests</button></div></div></div>';
+  var tn=(bank().versions[m.ver]||{}).name||('Test '+(m.ver+1)),eb=esc(tn)+' · '+PARTS[partOf(m.n)]+' · Question '+m.n;
+  var opts=function(mark){return q.o.map(function(o,k){var cls=mark?(k===q.a?' good':k===m.pick?' bad':''):'';
+    return '<div class="copt'+cls+'"><i>'+'ABCD'.charAt(k)+'</i><span>'+esc(o)+(mark&&k===q.a?'<small>Correct answer</small>':mark&&k===m.pick?'<small>Your answer</small>':'')+'</span></div>';}).join('');};
+  return '<div class="trun"><div class="thead"><span><b>'+esc(C.label)+'</b></span><span>Card '+(C.i+1)+' of '+n+'</span><span class="grow"></span><button class="link" data-act="cclose">Back to Practice tests</button></div>'+
+    '<div class="flip'+(C.flip?' on':'')+'" data-act="cflip" title="Click to flip"><div class="inner">'+
+      '<div class="face card"><div class="eb">'+eb+'</div>'+(q.pre?'<div class="passage">'+q.pre+'</div>':'')+'<p class="qtext">'+esc(q.q)+'</p>'+opts(false)+'<div class="chint">Click the card to see the answer</div></div>'+
+      '<div class="face back card"><div class="eb">'+eb+'</div><p class="qtext" style="font-size:16px">'+esc(q.q)+'</p>'+opts(true)+(m.pick<0?'<div class="chint" style="text-align:left;margin:8px 0 0">You left this one blank</div>':'')+
+        (q.why?'<div class="cwhy"><b>Why</b>'+esc(q.why)+'</div>':'')+'</div>'+
+    '</div></div>'+
+    '<div class="tfoot"><button class="btn" data-act="cgo" data-d="-1"'+(C.i?'':' disabled style="opacity:.4"')+'>Back</button><button class="btn" data-act="cflip2">Flip</button><span class="grow"></span>'+
+      '<button class="btn" data-act="cgo" data-d="1">Keep for later</button><button class="btn dark" data-act="cgot">Got it ✓</button></div></div>';
+}
 function clock(s){s=Math.max(0,s);return Math.floor(s/60)+':'+(s%60<10?'0':'')+s%60;}
 function nextPart(){if(T.p<PARTS.length-1){T.p++;T.i=0;T.left=T.secs[T.p];keepT();render();window.scrollTo(0,0);}else finishTest();}
 function finishTest(){
   T.done=true;clearInterval(tick);keepT();var x=CO.filter(function(c){return c.id===T.cid;})[0]||cur(),right=0,total=0,tname=(bank().versions[T.ver]||{}).name||('Test '+(T.ver+1));
   T.parts.forEach(function(qs,p){var r=qs.filter(function(a){return a.pick>=0&&a.order[a.pick]===a.q.a;}).length;right+=r;total+=qs.length;x.sets.unshift({d:today(),sec:PARTS[p],right:r,total:qs.length});});
-  T.right=right;T.total=total;x.scores.unshift({d:today(),at:Date.now(),score:Math.round(right/total*100)+'%',label:(T.len==='Full'?'':T.len+' · ')+tname+' · '+right+' of '+total});T.name=tname;x.weeks[x.weeks.length-1]=1;
+  var miss=[];x.missed=Array.isArray(x.missed)?x.missed:[];
+  T.parts.forEach(function(qs){qs.forEach(function(a){var ok=a.pick>=0&&a.order[a.pick]===a.q.a,pk=a.pick>=0?a.order[a.pick]:-1;
+    x.missed=x.missed.filter(function(m){return !(m.ver===T.ver&&m.n===a.q.n);});          /* answered right this time: it leaves the list */
+    if(!ok){miss.push([a.q.n,pk]);x.missed.push({ver:T.ver,n:a.q.n,pick:pk,at:Date.now()});}});});
+  T.right=right;T.total=total;x.scores.unshift({d:today(),at:Date.now(),score:Math.round(right/total*100)+'%',label:(T.len==='Full'?'':T.len+' · ')+tname+' · '+right+' of '+total,ver:T.ver,miss:miss});T.name=tname;x.weeks[x.weeks.length-1]=1;
   render();window.scrollTo(0,0);
 }
 function testView(){
@@ -476,6 +506,7 @@ function render(){
   if(!tabs.some(function(a){return a[0]===t;}))t=S.tab[S.page]=tabs[0][0];
   var h='<div class="head"><h1>'+(pc?'Personal Curriculum':'Courses')+'</h1>'+(tabs.length>1&&!S.noteOpen?'<div class="tabs">'+tabs.map(function(a){return '<button data-act="tab" data-tab="'+a[0]+'" class="'+(a[0]===t?'on':'')+'">'+a[1]+'</button>';}).join('')+'</div>':'')+'</div>';
   if(T&&!pc){$('#page').innerHTML='<div class="head"><h1>Courses</h1></div>'+testView();save();return;}
+  if(S.cards&&!pc){$('#page').innerHTML='<div class="head"><h1>Courses</h1></div>'+cardsView();save();return;}
   if(!x&&t!=='ideas'){$('#page').innerHTML=h+'<div class="bar"><button class="btn dark" data-act="new" style="height:40px">+ '+(pc?'New study':'New course')+'</button></div><div class="card"><div class="empty">Nothing here yet</div></div>';return;}
   if(S.noteOpen)h+=noteView(x);
   else if(t==='study'||t==='plan')h+=topbar(x,pc?'New study':'New course')+'<div class="cols"><div>'+outline(x)+'</div><div>'+side(x)+'</div></div>';
@@ -491,7 +522,7 @@ document.addEventListener('click',function(e){
   if(e.target.closest('a[href]'))return;
   var el=e.target.closest('[data-act]');if(!el)return;
   var a=el.getAttribute('data-act'),x=S.page==='ov'?null:cur();
-  if(a==='tab'){S.tab[S.page]=el.getAttribute('data-tab');S.noteOpen=false;render();}
+  if(a==='tab'){S.tab[S.page]=el.getAttribute('data-tab');S.noteOpen=false;S.cards=null;render();}
   else if(a==='focus'){var sz=seasons()[S.season];FORM.open({title:sz.name,fields:[{name:'f',label:'This season I’m focusing on',type:'textarea',rows:3,value:DB.focus[sz.name]!=null?DB.focus[sz.name]:(sz.focus||'')}],onSave:function(o){DB.focus[sz.name]=o.f.trim();render();}});}
   else if(a==='seasondates'){var cs=seasons().map(function(z){return {name:z.name,start:z.start,end:z.end,focus:z.focus||''};}),ff=[];
     cs.forEach(function(z,i){ff.push({name:'n'+i,label:'Season '+(i+1)+' name',value:z.name});ff.push({row:[{name:'s'+i,label:'Starts',type:'date',value:z.start},{name:'e'+i,label:'Ends',type:'date',value:z.end}]});});
@@ -528,12 +559,19 @@ document.addEventListener('click',function(e){
   else if(a==='newnote'){var nu=el.getAttribute('data-u');x.notes.unshift({title:'',date:today(),text:'',unit:nu==null?null:+nu});S.note[S.page]=0;S.noteOpen=true;render();window.scrollTo(0,0);var nt=$('#ntitle');if(nt)nt.focus();}
   else if(a==='tstart'){startTest($('#tver').value,$('#tlen').value);}
   else if(a==='tpick'){var tq=T.parts[T.p][T.i],tk=+el.getAttribute('data-k');tq.pick=tq.pick===tk?-1:tk;keepT();render();}
-  else if(a==='tgo'){T.i=Math.max(0,Math.min(T.parts[T.p].length-1,T.i+ +el.getAttribute('data-d')));render();}
-  else if(a==='tjump'){T.i=+el.getAttribute('data-k');render();}
+  else if(a==='tgo'){T.i=Math.max(0,Math.min(T.parts[T.p].length-1,T.i+ +el.getAttribute('data-d')));keepT();render();}
+  else if(a==='tjump'){T.i=+el.getAttribute('data-k');keepT();render();}
   else if(a==='tflag'){var fq=T.parts[T.p][T.i];fq.flag=!fq.flag;keepT();render();}
   else if(a==='tpart'){var open=T.parts[T.p].filter(function(z){return z.pick<0;}).length;if(open&&!el.getAttribute('data-armed')){el.setAttribute('data-armed','1');el.textContent=open+' not answered · click again to finish';return;}nextPart();}
   else if(a==='tend'){if(!el.getAttribute('data-armed')){el.setAttribute('data-armed','1');el.textContent='Click again to end the test (unanswered questions count as wrong)';return;}finishTest();}
   else if(a==='tclose'){T=null;S.tab.co='practice';render();}
+  else if(a==='cards'){openCards(x,el.getAttribute('data-s'));}
+  else if(a==='cflip'||a==='cflip2'){S.cards.flip=!S.cards.flip;var fc=$('.flip');if(fc)fc.classList.toggle('on',S.cards.flip);}
+  else if(a==='cgo'){S.cards.i=Math.max(0,S.cards.i+ +el.getAttribute('data-d'));S.cards.flip=false;render();window.scrollTo(0,0);}
+  else if(a==='cgot'){var gm=S.cards.list.splice(S.cards.i,1)[0],gx=CO.filter(function(c){return c.id===S.cards.cid;})[0];S.cards.got++;S.cards.flip=false;
+    if(gx&&gm)gx.missed=(gx.missed||[]).filter(function(q){return !(q.ver===gm.ver&&q.n===gm.n);});render();window.scrollTo(0,0);}
+  else if(a==='cagain'){S.cards.i=0;S.cards.flip=false;render();}
+  else if(a==='cclose'){S.cards=null;S.tab.co='practice';render();}
   else if(a==='tagain'){var nv=(T.ver+1)%bank().versions.length,ln=T.len;T=null;startTest(nv,ln);}
   else if(a==='addmat'){var mu=el.getAttribute('data-u');matForm(x,null,mu==null?null:+mu);}
   else if(a==='editmat'){matForm(x,+el.getAttribute('data-n'));}
@@ -549,6 +587,11 @@ document.addEventListener('change',function(e){if(e.target.id==='bankfile'){var 
   if(e.target.id==='nunit'){var nn=cur().notes[S.note[S.page]];if(nn){nn.unit=+e.target.value<0?null:+e.target.value;save();}return;}
   if(e.target.id==='pick'){S.cur[S.page]=e.target.value;S.note[S.page]=0;S.noteOpen=false;render();}});
 document.addEventListener('keydown',function(e){
+  /* cards: Space or Enter flips, the arrows move */
+  if(S.cards&&S.page==='co'&&!/INPUT|TEXTAREA|SELECT/.test(e.target.tagName)&&S.cards.i<S.cards.list.length){
+    if(e.key===' '||e.key==='Enter'){e.preventDefault();S.cards.flip=!S.cards.flip;var fc=$('.flip');if(fc)fc.classList.toggle('on',S.cards.flip);return;}
+    if(e.key==='ArrowRight'){S.cards.i++;S.cards.flip=false;render();return;}
+    if(e.key==='ArrowLeft'&&S.cards.i>0){S.cards.i--;S.cards.flip=false;render();return;}}
   if(e.key!=='Enter')return;var t=e.target;
   if(t.hasAttribute&&t.hasAttribute('data-add')){var v=t.value.trim();if(!v)return;var x=cur(),u=+t.getAttribute('data-add');var kd=t.previousElementSibling.value,it=I(v,kd),lk=/^(https?:\/\/|www\.)\S+$/i.test(v)?link(v):'';if(lk){it.url=lk;it.t=hostOf(lk)+(new URL(lk).pathname.length>1?new URL(lk).pathname.slice(0,40):'');keepLink(x,u,it.t,lk,kd);}x.units[u].items.push(it);S.unit[x.id]=u;render();var again=$('[data-add="'+u+'"]');if(again)again.focus();}
   if(t.id==='idea'||t.id==='itheme'){e.preventDefault();$('[data-act="addidea"]').click();}
