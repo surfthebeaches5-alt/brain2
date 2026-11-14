@@ -362,7 +362,7 @@ function noteView(x){
   return '<div class="bar"><button class="btn" data-act="closenote">← '+esc(x.title)+'</button><span class="grow"></span><button class="btn del" data-act="delnote">Delete note</button></div>'+
     '<div class="card editor" style="max-width:860px;margin:0 auto"><input class="etitle" id="ntitle" value="'+esc(n.title)+'" placeholder="Title" aria-label="Title">'+
     '<div class="doc"><i></i><span id="gdoc">'+docLine(n)+'</span><span class="grow"></span><select id="nunit" aria-label="Belongs to">'+unitOpts(x).map(function(o,i){return '<option value="'+(i-1)+'"'+((n.unit==null?-1:n.unit)===i-1?' selected':'')+'>'+esc(o)+'</option>';}).join('')+'</select></div>'+
-    '<div class="tools"><button data-fmt="h3" title="Make this line a heading">Heading</button><button data-fmt="bold" title="Bold"><b>B</b></button><button data-fmt="ul" title="Bulleted list">• List</button><button data-fmt="p" title="Back to normal text">Normal</button><span class="grow"></span><span class="saved" id="nsaved" style="margin:0;align-self:center"></span></div>'+
+    '<div class="tools"><button data-fmt="h3" title="Make this line a heading">Heading</button><button data-fmt="bold" title="Bold"><b>B</b></button><button data-fmt="ul" title="Bulleted list">• List</button><button data-fmt="out" title="Move the bullet back out a level (Shift+Tab)">← Outdent</button><button data-fmt="in" title="Move the bullet in a level, under the one above (Tab)">Indent →</button><button data-fmt="p" title="Back to normal text">Normal</button><span class="grow"></span><span class="saved" id="nsaved" style="margin:0;align-self:center"></span></div>'+
     '<div class="rich" id="nbody" contenteditable="true" data-ph="Write here…">'+(n.text||'')+'</div></div>';
 }
 /* ── a note is also kept as a Google Doc ──
@@ -579,8 +579,39 @@ document.addEventListener('click',function(e){
   else if(a==='start'){var idea=IDEAS[+el.getAttribute('data-n')],sid='n'+Date.now();var ns=blank(idea.t);ns.id=sid;ns.sub=idea.sub||'';ns.theme=idea.theme||'';ns.why=idea.note||'';PC.push(ns);idea.study=sid;S.cur.pc=sid;S.tab.pc='study';S.noteOpen=false;render();}
   else if(a==='addscore'){scoreForm(x);}
 });
+/* bullets in a note: Tab moves a bullet in a level, under the one above it; Shift+Tab moves it back out.
+   A bullet that moves takes the bullets under it along. Answers false when the cursor is not in a list. */
+function isList(el){return !!el&&/^(UL|OL)$/.test(el.tagName);}
+function bulletsAt(){
+  var s=window.getSelection(),box=$('#nbody');if(!box||!s.rangeCount)return [];
+  var r=s.getRangeAt(0),liOf=function(n){n=n.nodeType===1?n:n.parentNode;n=n&&n.closest?n.closest('li'):null;return n&&box.contains(n)?n:null;};
+  var a=liOf(r.startContainer),b=liOf(r.endContainer),out=a?[a]:[];
+  if(a&&b&&b!==a&&!a.contains(b)){
+    var pre=document.createRange();pre.selectNodeContents(b);pre.setEnd(r.endContainer,r.endOffset);
+    var skip=!pre.toString();                               /* the selection only just reaches into the last bullet */
+    for(var z=a.nextElementSibling;z;z=z.nextElementSibling){var last=z===b||z.contains(b);if(last&&skip&&z===b)break;out.push(z);if(last)break;}}
+  return out;
+}
+function shiftBullets(dir){
+  var lis=bulletsAt();if(!lis.length)return false;
+  var s=window.getSelection(),r=s.getRangeAt(0),keep=[r.startContainer,r.startOffset,r.endContainer,r.endOffset],listEl=lis[0].parentNode;
+  if(dir>0){
+    var prev=lis[0].previousElementSibling;if(!prev||prev.tagName!=='LI')return true;        /* the first bullet has nothing to sit under */
+    var sub=prev.lastElementChild;if(!isList(sub)){sub=document.createElement(listEl.tagName.toLowerCase());prev.appendChild(sub);}
+    lis.forEach(function(li){sub.appendChild(li);});
+  }else{
+    var host=listEl.parentNode;if(!host||host.tagName!=='LI')return true;                     /* already at the left edge */
+    var end=lis[lis.length-1],rest=[];for(var z=end.nextElementSibling;z;z=z.nextElementSibling)rest.push(z);
+    if(rest.length){var own=end.lastElementChild;if(!isList(own)){own=document.createElement(listEl.tagName.toLowerCase());end.appendChild(own);}rest.forEach(function(q){own.appendChild(q);});}
+    var after=host;lis.forEach(function(li){host.parentNode.insertBefore(li,after.nextSibling);after=li;});
+    if(!listEl.children.length)listEl.remove();
+  }
+  try{var nr=document.createRange();nr.setStart(keep[0],keep[1]);nr.setEnd(keep[2],keep[3]);s.removeAllRanges();s.addRange(nr);}catch(e){}
+  $('#nbody').dispatchEvent(new Event('input',{bubbles:true}));return true;
+}
 /* formatting buttons act on the note being edited (mousedown, so the cursor stays in the note) */
 document.addEventListener('mousedown',function(e){var b=e.target.closest('[data-fmt]');if(!b)return;e.preventDefault();var f=b.getAttribute('data-fmt');$('#nbody').focus();
+  if(f==='in'||f==='out'){shiftBullets(f==='in'?1:-1);return;}
   if(f==='bold')document.execCommand('bold');else if(f==='ul')document.execCommand('insertUnorderedList');else document.execCommand('formatBlock',false,f==='h3'?'h3':'div');
   $('#nbody').dispatchEvent(new Event('input',{bubbles:true}));});
 document.addEventListener('change',function(e){if(e.target.id==='bankfile'){var f=e.target.files[0];if(f){var rd=new FileReader();rd.onload=function(){useBank(String(rd.result||''));};rd.readAsText(f);}return;}
@@ -592,6 +623,7 @@ document.addEventListener('keydown',function(e){
     if(e.key===' '||e.key==='Enter'){e.preventDefault();S.cards.flip=!S.cards.flip;var fc=$('.flip');if(fc)fc.classList.toggle('on',S.cards.flip);return;}
     if(e.key==='ArrowRight'){S.cards.i++;S.cards.flip=false;render();return;}
     if(e.key==='ArrowLeft'&&S.cards.i>0){S.cards.i--;S.cards.flip=false;render();return;}}
+  if(e.key==='Tab'&&e.target.id==='nbody'&&!e.ctrlKey&&!e.metaKey&&!e.altKey){if(shiftBullets(e.shiftKey?-1:1)||!e.shiftKey)e.preventDefault();return;}   /* a plain Tab never throws the cursor out of the note */
   if(e.key!=='Enter')return;var t=e.target;
   if(t.hasAttribute&&t.hasAttribute('data-add')){var v=t.value.trim();if(!v)return;var x=cur(),u=+t.getAttribute('data-add');var kd=t.previousElementSibling.value,it=I(v,kd),lk=/^(https?:\/\/|www\.)\S+$/i.test(v)?link(v):'';if(lk){it.url=lk;it.t=hostOf(lk)+(new URL(lk).pathname.length>1?new URL(lk).pathname.slice(0,40):'');keepLink(x,u,it.t,lk,kd);}x.units[u].items.push(it);S.unit[x.id]=u;render();var again=$('[data-add="'+u+'"]');if(again)again.focus();}
   if(t.id==='idea'||t.id==='itheme'){e.preventDefault();$('[data-act="addidea"]').click();}
