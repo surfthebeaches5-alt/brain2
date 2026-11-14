@@ -331,7 +331,7 @@ function overview(){
      '<button class="focus" data-act="focus"><b>This season I’m focusing on</b><span'+(fc?'':' class="ph"')+'>'+(fc?esc(fc):'Add a sentence about what matters this season…')+'</span></button></div>'+
      '<div><div class="ttl" style="margin-bottom:0">How busy each week is</div><div class="busy" style="grid-template-columns:repeat('+W+',1fr)">'+
        busy.map(function(q,i){var n=q.pc+q.co;return '<div class="col'+(isNow&&i+1===wkNow?' now':'')+'" title="Week '+(i+1)+' · '+fd(addDays(a,i*7))+' – '+fd(addDays(a,i*7+6))+(n?' · '+n+' thing'+(n>1?'s':''):'')+'">'+(n?'<div class="n">'+n+'</div>':'')+
-         (q.co?'<div class="bar co" style="height:'+(q.co/max*78)+'px'+(q.pc?';border-radius:0':'')+'"></div>':'')+(q.pc?'<div class="bar pc" style="height:'+(q.pc/max*78)+'px'+(q.co?';border-radius:0;order:-1':'')+'"></div>':'')+(n?'':'<div class="bar"></div>')+'</div>';}).join('')+'</div>'+
+         (q.co?'<div class="wb co" style="height:'+(q.co/max*78)+'px'+(q.pc?';border-radius:0':'')+'"></div>':'')+(q.pc?'<div class="wb pc" style="height:'+(q.pc/max*78)+'px'+(q.co?';order:-1':'')+'"></div>':'')+(n?'':'<div class="wb"></div>')+'</div>';}).join('')+'</div>'+
        '<div class="wkn" style="grid-template-columns:repeat('+W+',1fr)">'+busy.map(function(q,i){return '<span'+(isNow&&i+1===wkNow?' class="now"':'')+'>'+(i+1)+'</span>';}).join('')+'</div>'+
        '<div class="key"><span><i></i>Personal Curriculum</span><span><i class="co"></i>Courses</span></div></div></div>';
   /* one card each for Personal Curriculum and Courses */
