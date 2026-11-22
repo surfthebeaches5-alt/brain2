@@ -86,7 +86,7 @@ function loadDB(){var d=readOld(KEY);
   ['pc','co','ideas'].forEach(function(k){if(!Array.isArray(d[k]))d[k]=[];});d.focus=d.focus||{};d.cur=d.cur||{};return d;}
 var DB=loadDB(),PC=DB.pc,CO=DB.co,IDEAS=DB.ideas,saveFail=false;
 function save(){DB.cur={pc:S.cur.pc,co:S.cur.co};try{localStorage.setItem(KEY,JSON.stringify(DB));saveFail=false;}catch(e){if(!saveFail){saveFail=true;say('This change could not be saved: the browser’s storage is full.');}}}
-var S={page:window.STUDY_PAGE||'pc',tab:{pc:'study',co:'plan'},cur:{pc:DB.cur.pc||(PC[0]||{}).id,co:DB.cur.co||(CO[0]||{}).id},note:{pc:0,co:0},noteOpen:false,unit:{},season:null};
+var S={page:window.STUDY_PAGE||'pc',tab:{pc:'study',co:'plan'},cur:{pc:DB.cur.pc||(PC[0]||{}).id,co:DB.cur.co||(CO[0]||{}).id},note:{pc:0,co:0},noteOpen:false,unit:{},season:null,showDone:{},dayFor:null,drag:null};
 function go(pg,q){location.href=HOME+'learn/'+{ov:'overview',pc:'personal',co:'courses'}[pg]+'/'+(q||'');}
 
 /* ── helpers ── */
@@ -194,9 +194,9 @@ function unitForm(x,ui){
 function todoForm(x,ui,ii){
   var it=x.units[ui].items[ii];
   FORM.open({title:'Edit to-do',deleteLabel:'Delete to-do',
-    fields:[{name:'t',label:'To-do',type:'textarea',rows:2,value:it.t},{row:[{name:'k',label:'Kind',type:'select',options:KINDS,value:it.k},{name:'url',label:'Link',opt:'optional',placeholder:'https://…',value:it.url||''}]}],
+    fields:[{name:'t',label:'To-do',type:'textarea',rows:2,value:it.t},{row:[{name:'k',label:'Kind',type:'select',options:KINDS,value:it.k},{name:'due',label:'Day to do it',opt:'optional',type:'date',value:okDay(it.due)?it.due:''}]},{name:'url',label:'Link',opt:'optional',placeholder:'https://…',value:it.url||''}],
     onDelete:function(){x.units[ui].items.splice(ii,1);render();},
-    onSave:function(o){if(!o.t.trim()){$('#ff-t').focus();return false;}it.t=o.t.trim();it.k=o.k;it.url=link(o.url);keepLink(x,ui,it.t,it.url,it.k);render();}});
+    onSave:function(o){if(!o.t.trim()){$('#ff-t').focus();return false;}it.t=o.t.trim();it.k=o.k;setDay(it,o.due);it.url=link(o.url);keepLink(x,ui,it.t,it.url,it.k);render();}});
 }
 function scoreForm(x){
   FORM.open({title:'Add a practice test score',saveLabel:'Add score',
@@ -215,6 +215,10 @@ function pd(v){var q=String(v||'').split('-'),d=new Date(+q[0],+q[1]-1,+q[2]);if
 function addDays(d,n){var z=new Date(d);z.setDate(z.getDate()+n);return z;}
 function fd(d){return MS[d.getMonth()]+' '+d.getDate();}
 function wk(n){return n+(n===1?' week':' weeks');}
+var DAYN=['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+function isoDay(d){return d.getFullYear()+'-'+('0'+(d.getMonth()+1)).slice(-2)+'-'+('0'+d.getDate()).slice(-2);}
+function okDay(v){return /^\d{4}-\d\d-\d\d$/.test(v||'');}
+function setDay(it,v){if(okDay(v))it.due=v;else delete it.due;}
 /* each unit runs for its number of weeks, one after another, from the start date */
 function span(x){var st=pd(x.start),out=[],prev=null;
   x.units.forEach(function(u){var from=prev?addDays(prev,1):st,to;
@@ -238,6 +242,50 @@ function regLine(x){var r=regState(x);if(!r)return '';var go=x.regUrl?'<a class=
   if(r.k==='soon')return '<div class="reg"><span>Registration opens '+fd(r.open)+(r.close?' and closes '+fd(r.close):'')+' · in '+r.days+' day'+(r.days===1?'':'s')+'</span>'+go+'</div>';
   if(r.k==='closed')return '<div class="reg"><span>Registration closed '+fd(r.close)+'</span><button class="btn sm" data-act="regdone">I registered</button></div>';
   return '<div class="reg open"><span>Registration is open'+(r.close?' until '+fd(r.close)+' · '+r.left+' day'+(r.left===1?'':'s')+' left':'')+'</span>'+go+'<button class="btn sm" data-act="regdone">I’ve registered</button></div>';}
+/* ── a unit's to-dos, laid out as a plan: each one goes on a day ──
+   The day is "due" on the to-do, and it is the date the Today calendar shows it on. The list reads: Missed (its
+   day has passed and it is not done), the next seven days one by one, Later, the ones with no day yet, then
+   what is done. A to-do gets its day from the button on its row (dayMenu) or by being dragged onto a day.
+   The seven days start today, or on the unit's first day when the unit has not begun. */
+function planFirst(r,sp){var t=pd('');return sp.dated&&r&&r.from>t?r.from:t;}
+function dayLabel(k){var d=pd(k);return DAYN[d.getDay()]+' '+fd(d);}
+function missedIn(u){var tk=isoDay(pd(''));return u.items.filter(function(it){return !it.done&&okDay(it.due)&&it.due<tk;}).length;}
+function planList(x,sel,r,sp){
+  var u=x.units[sel],tk=isoDay(pd('')),first=planFirst(r,sp),days=[],by={},G={missed:[],later:[],none:[],done:[]},h='';
+  if(!u.items.length)return '<div class="empty">Nothing on this unit’s list yet</div>';
+  for(var n=0;n<7;n++){days.push(isoDay(addDays(first,n)));by[days[n]]=[];}
+  u.items.forEach(function(it,ii){var o={it:it,ii:ii},d=okDay(it.due)?it.due:'';
+    if(by[d])by[d].push(o);else if(it.done)G.done.push(o);else if(!d)G.none.push(o);else if(d<tk)G.missed.push(o);else G.later.push(o);});
+  var byDay=function(p,q){return (p.it.due||'')<(q.it.due||'')?-1:(p.it.due||'')>(q.it.due||'')?1:p.ii-q.ii;};
+  var row=function(o){var it=o.it,miss=!it.done&&okDay(it.due)&&it.due<tk;
+    return '<div class="it'+(it.done?' on':'')+'" draggable="true" data-act="tick" data-u="'+sel+'" data-i="'+o.ii+'"><span class="ck">'+(it.done?'✓':'')+'</span><span class="tx">'+esc(it.t)+(it.url?' <a class="tl" href="'+esc(it.url)+'" target="_blank" rel="noopener" title="Open the link">↗</a>':'')+'</span>'+
+      '<button class="dayb'+(okDay(it.due)?' set':'')+(miss?' miss':'')+'" data-act="day" data-u="'+sel+'" data-i="'+o.ii+'" title="Choose the day to do this">'+(okDay(it.due)?dayLabel(it.due):'+ Day')+'</button>'+
+      '<span class="k">'+esc(it.k)+'</span><button class="ed" data-act="edittodo" data-u="'+sel+'" data-i="'+o.ii+'">Edit</button></div>';};
+  var open=u.items.some(function(it){return !it.done;});
+  if(!open)return '<div class="pday"><div class="ph"><b>All done</b></div>'+u.items.map(function(it,ii){return row({it:it,ii:ii});}).join('')+'</div>';
+  if(G.missed.length)h+='<div class="pday miss"><div class="ph"><b>Missed</b><em>give each one a new day</em></div>'+G.missed.sort(byDay).map(row).join('')+'</div>';
+  days.forEach(function(k){var l=by[k],left=l.filter(function(o){return !o.it.done;}).length;
+    h+='<div class="pday'+(k===tk?' today':'')+(l.length?'':' none')+'" data-day="'+k+'"><div class="ph"><b>'+(k===tk?'Today':DAYN[pd(k).getDay()])+'</b><span>'+(k===tk?DAYN[pd(k).getDay()]+' ':'')+fd(pd(k))+'</span>'+
+      (l.length?(left?'':'<em>done ✓</em>'):'<em>nothing planned</em>')+'</div>'+l.map(row).join('')+'</div>';});
+  if(G.later.length)h+='<div class="pday"><div class="ph"><b>Later</b></div>'+G.later.sort(byDay).map(row).join('')+'</div>';
+  h+='<div class="pday'+(G.none.length?'':' none')+'" data-day=""><div class="ph"><b>No day yet</b>'+(G.none.length?'<em>pick a day on each, or drag it onto a day</em>':'<em>everything has a day</em>')+'</div>'+G.none.map(row).join('')+'</div>';
+  if(G.done.length){var key=x.id+':'+sel,show=!!S.showDone[key];
+    h+='<div class="pday"><div class="ph"><b>Done</b><span>'+G.done.length+'</span><button class="link" data-act="showdone" data-u="'+sel+'">'+(show?'Hide':'Show')+'</button></div>'+(show?G.done.map(row).join(''):'')+'</div>';}
+  return h;
+}
+/* the little calendar that opens from a to-do's day button: two weeks of days, any other date, or no day */
+function closeDayMenu(){var m=$('#daymenu');if(m)m.remove();S.dayFor=null;}
+function dayMenu(btn,x,ui,ii){
+  closeDayMenu();
+  var it=x.units[ui].items[ii],sp=span(x),first=planFirst(sp.units[ui],sp),tk=isoDay(pd('')),m=document.createElement('div'),h='<div class="dm-g">';
+  for(var n=0;n<14;n++){var d=addDays(first,n),k=isoDay(d);h+='<button data-act="setday" data-d="'+k+'" class="'+(k===it.due?'on':'')+(k===tk?' now':'')+'" title="'+dayLabel(k)+'"><small>'+DAYN[d.getDay()]+'</small>'+d.getDate()+'</button>';}
+  h+='</div><div class="dm-f"><label>Another date<input type="date" id="dm-date" value="'+(okDay(it.due)?it.due:'')+'"></label>'+(okDay(it.due)?'<button class="link" data-act="setday" data-d="">No day</button>':'')+'</div>';
+  m.id='daymenu';m.className='daymenu';m.innerHTML=h;document.body.appendChild(m);var b=btn.getBoundingClientRect();S.dayFor={id:x.id,u:ui,i:ii,btn:btn,top:b.top};
+  var w=m.offsetWidth,hh=m.offsetHeight,left=Math.max(8,Math.min(window.innerWidth-w-8,b.right-w)),top=b.bottom+6;
+  if(top+hh>window.innerHeight-8)top=Math.max(8,b.top-hh-6);
+  m.style.left=left+'px';m.style.top=top+'px';
+}
+function dayTo(v){var f=S.dayFor,x=cur();closeDayMenu();if(!f||!x||x.id!==f.id)return;var it=x.units[f.u]&&x.units[f.u].items[f.i];if(!it)return;setDay(it,v);render();}
 /* ── the left column: title, the unit you are on with its to-dos, and the syllabus ── */
 function outline(x){
   var pc=S.page==='pc',c=counts(x),nx=nextOf(x),sp=span(x),now=nowUnit(x),sel=selUnit(x),tst=testOf(x),t=pd(''),h='';
@@ -253,8 +301,7 @@ function outline(x){
   if(u){var r=sp.units[sel],lab=(sel===now?'Now · ':'')+'Unit '+(sel+1)+' of '+x.units.length+(sp.dated&&sel!==now&&t<r.from?' · starts '+fd(r.from):'');
     h+='<div class="card"><div class="chead"><div style="min-width:0"><div class="eb">'+esc(lab)+'</div><h2 style="font-size:22px">'+esc(u.name)+'</h2><div class="meta"><span>'+(sp.dated?fd(r.from)+' – '+fd(r.to)+' · ':'')+wk(r.w)+(u.due?' · due '+fd(r.to):'')+'</span></div></div><button class="btn" data-act="editunit" data-u="'+sel+'">Edit unit</button></div>';
     h+=u.q?'<div class="qbox">'+esc(u.q)+'</div>':'<div style="height:14px"></div>';
-    u.items.forEach(function(it,ii){h+='<div class="it'+(it.done?' on':'')+'" data-act="tick" data-u="'+sel+'" data-i="'+ii+'"><span class="ck">'+(it.done?'✓':'')+'</span><span class="tx">'+esc(it.t)+(it.url?' <a class="tl" href="'+esc(it.url)+'" target="_blank" rel="noopener" title="Open the link">↗</a>':'')+'</span>'+(it.due?'<span class="due">'+fd(pd(it.due))+'</span>':'')+'<span class="k">'+esc(it.k)+'</span><button class="ed" data-act="edittodo" data-u="'+sel+'" data-i="'+ii+'">Edit</button></div>';});
-    if(!u.items.length)h+='<div class="empty">Nothing on this unit’s list yet</div>';
+    h+=planList(x,sel,r,sp);
     h+='<div class="addit"><select aria-label="Kind">'+KINDS.map(function(k){return '<option>'+k+'</option>';}).join('')+'</select><input class="line" data-add="'+sel+'" placeholder="Add a to-do or paste a link" aria-label="Add a to-do"></div>'+
        '<div class="ulab">Materials<button class="link" data-act="addmat" data-u="'+sel+'">+ Add</button></div><div class="ulist">'+
        (x.mats.some(function(m){return m.unit===sel;})?x.mats.map(function(m){return m.unit!==sel?'':'<div class="r"><i title="'+esc(m.kind)+'">'+(MK[m.kind]||'🔗')+'</i><span>'+(m.url?'<a href="'+esc(m.url)+'" target="_blank" rel="noopener">'+esc(m.t)+'</a>':esc(m.t))+'</span></div>';}).join(''):'<div class="empty">None yet</div>')+'</div>'+
@@ -265,7 +312,7 @@ function outline(x){
   h+='<div class="card"><div class="ttl"><span>Syllabus<button class="link starts" data-act="editmain" title="Change the start date">'+(sp.dated?'starts '+fd(sp.from):'set a start date')+'</button></span><button class="link" data-act="addunit">+ Unit</button></div>';
   if(!x.units.length)h+='<div class="empty">No units yet</div>';
   x.units.forEach(function(q,i){var r=sp.units[i],d=q.items.filter(function(z){return z.done;}).length,n=q.items.length;
-    var chip=i===now?'<span class="chip now">Now</span>':n&&d===n?'<span class="chip g">Done</span>':n?'<span class="chip">'+d+' of '+n+'</span>':'<span class="chip">Not planned yet</span>';
+    var ms=missedIn(q),chip=(ms?'<span class="chip miss">'+ms+' missed</span>':'')+(i===now?'<span class="chip now">Now</span>':n&&d===n?'<span class="chip g">Done</span>':n?'<span class="chip">'+d+' of '+n+'</span>':'<span class="chip">Not planned yet</span>');
     h+='<button class="srow'+(i===sel?' sel':'')+'" data-act="pick" data-u="'+i+'"><span class="d">'+(sp.dated?fd(r.from)+' – '+fd(r.to)+'<small>'+wk(r.w)+'</small>':wk(r.w))+'</span><span class="t">'+(i+1)+' · '+esc(q.name)+'</span>'+chip+'</button>';});
   if(pc)h+='<div class="srow"><span class="d">'+(sp.dated?'due '+fd(sp.to):'Final project')+'<small>'+(sp.dated?'final project':'')+'</small></span><span class="t pj">'+(x.project?esc(x.project):'Not decided yet')+'</span><button class="link" data-act="editwhy">Edit</button></div>';
   return h+'</div>';
@@ -519,9 +566,14 @@ var toastT;function say(msg){var t=$('#toast');if(!t){t=document.createElement('
 function today(){var d=new Date();return ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'][d.getMonth()]+' '+d.getDate();}
 
 document.addEventListener('click',function(e){
+  if(S.dayFor&&!e.target.closest('#daymenu')){var same=e.target.closest('[data-act="day"]'),was=S.dayFor;closeDayMenu();   /* a click anywhere else only closes the little calendar */
+    if(!same||(+same.getAttribute('data-u')===was.u&&+same.getAttribute('data-i')===was.i))return;}
   if(e.target.closest('a[href]'))return;
   var el=e.target.closest('[data-act]');if(!el)return;
   var a=el.getAttribute('data-act'),x=S.page==='ov'?null:cur();
+  if(a==='day'){dayMenu(el,x,+el.getAttribute('data-u'),+el.getAttribute('data-i'));return;}
+  if(a==='setday'){dayTo(el.getAttribute('data-d'));return;}
+  if(a==='showdone'){var sk=x.id+':'+el.getAttribute('data-u');S.showDone[sk]=!S.showDone[sk];render();return;}
   if(a==='tab'){S.tab[S.page]=el.getAttribute('data-tab');S.noteOpen=false;S.cards=null;render();}
   else if(a==='focus'){var sz=seasons()[S.season];FORM.open({title:sz.name,fields:[{name:'f',label:'This season I’m focusing on',type:'textarea',rows:3,value:DB.focus[sz.name]!=null?DB.focus[sz.name]:(sz.focus||'')}],onSave:function(o){DB.focus[sz.name]=o.f.trim();render();}});}
   else if(a==='seasondates'){var cs=seasons().map(function(z){return {name:z.name,start:z.start,end:z.end,focus:z.focus||''};}),ff=[];
@@ -614,10 +666,12 @@ document.addEventListener('mousedown',function(e){var b=e.target.closest('[data-
   if(f==='in'||f==='out'){shiftBullets(f==='in'?1:-1);return;}
   if(f==='bold')document.execCommand('bold');else if(f==='ul')document.execCommand('insertUnorderedList');else document.execCommand('formatBlock',false,f==='h3'?'h3':'div');
   $('#nbody').dispatchEvent(new Event('input',{bubbles:true}));});
-document.addEventListener('change',function(e){if(e.target.id==='bankfile'){var f=e.target.files[0];if(f){var rd=new FileReader();rd.onload=function(){useBank(String(rd.result||''));};rd.readAsText(f);}return;}
+document.addEventListener('change',function(e){if(e.target.id==='dm-date'){if(okDay(e.target.value))dayTo(e.target.value);return;}
+  if(e.target.id==='bankfile'){var f=e.target.files[0];if(f){var rd=new FileReader();rd.onload=function(){useBank(String(rd.result||''));};rd.readAsText(f);}return;}
   if(e.target.id==='nunit'){var nn=cur().notes[S.note[S.page]];if(nn){nn.unit=+e.target.value<0?null:+e.target.value;save();}return;}
   if(e.target.id==='pick'){S.cur[S.page]=e.target.value;S.note[S.page]=0;S.noteOpen=false;render();}});
 document.addEventListener('keydown',function(e){
+  if(e.key==='Escape'&&S.dayFor){closeDayMenu();return;}
   /* cards: Space or Enter flips, the arrows move */
   if(S.cards&&S.page==='co'&&!/INPUT|TEXTAREA|SELECT/.test(e.target.tagName)&&S.cards.i<S.cards.list.length){
     if(e.key===' '||e.key==='Enter'){e.preventDefault();S.cards.flip=!S.cards.flip;var fc=$('.flip');if(fc)fc.classList.toggle('on',S.cards.flip);return;}
@@ -628,6 +682,16 @@ document.addEventListener('keydown',function(e){
   if(t.hasAttribute&&t.hasAttribute('data-add')){var v=t.value.trim();if(!v)return;var x=cur(),u=+t.getAttribute('data-add');var kd=t.previousElementSibling.value,it=I(v,kd),lk=/^(https?:\/\/|www\.)\S+$/i.test(v)?link(v):'';if(lk){it.url=lk;it.t=hostOf(lk)+(new URL(lk).pathname.length>1?new URL(lk).pathname.slice(0,40):'');keepLink(x,u,it.t,lk,kd);}x.units[u].items.push(it);S.unit[x.id]=u;render();var again=$('[data-add="'+u+'"]');if(again)again.focus();}
   if(t.id==='idea'||t.id==='itheme'){e.preventDefault();$('[data-act="addidea"]').click();}
 });
+/* a to-do can be dragged onto a day (or onto "No day yet") */
+document.addEventListener('dragstart',function(e){var r=e.target.closest&&e.target.closest('.it[draggable]');if(!r)return;closeDayMenu();
+  S.drag={u:+r.getAttribute('data-u'),i:+r.getAttribute('data-i')};r.classList.add('drag');try{e.dataTransfer.effectAllowed='move';e.dataTransfer.setData('text/plain',r.textContent);}catch(z){}});
+document.addEventListener('dragover',function(e){if(!S.drag)return;var z=e.target.closest&&e.target.closest('.pday[data-day]');
+  Array.prototype.forEach.call(document.querySelectorAll('.pday.over'),function(q){if(q!==z)q.classList.remove('over');});if(!z)return;e.preventDefault();z.classList.add('over');});
+document.addEventListener('drop',function(e){if(!S.drag)return;var z=e.target.closest&&e.target.closest('.pday[data-day]'),g=S.drag,x=cur();S.drag=null;if(!z||!x)return;e.preventDefault();
+  var it=x.units[g.u]&&x.units[g.u].items[g.i];if(it){setDay(it,z.getAttribute('data-day'));render();}});
+document.addEventListener('dragend',function(){S.drag=null;Array.prototype.forEach.call(document.querySelectorAll('.pday.over,.it.drag'),function(q){q.classList.remove('over');q.classList.remove('drag');});});
+/* the little calendar stays put on the screen, so it closes once the page has really moved under it */
+window.addEventListener('scroll',function(){var f=S.dayFor;if(f&&(!document.contains(f.btn)||Math.abs(f.btn.getBoundingClientRect().top-f.top)>4))closeDayMenu();},true);
 var saveT;
 document.addEventListener('input',function(e){
   var x=cur(),t=e.target;
