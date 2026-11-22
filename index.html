@@ -122,6 +122,8 @@ button,input,select{font-family:inherit;}
 .e.one{white-space:nowrap;text-overflow:ellipsis;}
 .e small{display:block;font-weight:550;color:var(--muted);font-size:10px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
 .e.done,.ad.done,.mo-e.done{opacity:.55;text-decoration:line-through;}
+.pop-move{display:inline-flex;align-items:center;gap:6px;font-size:12px;font-weight:650;color:var(--muted);}
+.pop-move input{height:30px;border:1px solid var(--line);border-radius:9px;padding:0 6px;font:600 12px var(--b2-sans);color:var(--ink-2);background:#fff;}
 .nowl{position:absolute;left:0;right:0;height:2px;background:var(--over);z-index:3;pointer-events:none;}
 .nowl::before{content:"";position:absolute;left:-4px;top:-3px;width:8px;height:8px;border-radius:50%;background:var(--over);}
 .mo{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));border-top:1px solid var(--hair);border-left:1px solid var(--hair);}
@@ -269,10 +271,10 @@ button,input,select{font-family:inherit;}
   .cal-tools .seg{display:none;}
 }
 </style>
-<link rel="stylesheet" href="assets/brain.css?v=2611142028">
+<link rel="stylesheet" href="assets/brain.css?v=2611221817">
 </head>
 <body>
-<script src="assets/shell.js?v=2611142028"></script>
+<script src="assets/shell.js?v=2611221817"></script>
 
 <main class="page">
   <div class="head">
@@ -368,10 +370,10 @@ button,input,select{font-family:inherit;}
   </div>
 </div>
 
-<script src="assets/gcal.js?v=2611142028"></script>
-<script src="assets/backup.js?v=2611142028"></script>
-<script src="assets/learn-today.js?v=2611142028"></script>
-<script src="assets/lessons.js?v=2611142028"></script>
+<script src="assets/gcal.js?v=2611221817"></script>
+<script src="assets/backup.js?v=2611221817"></script>
+<script src="assets/learn-today.js?v=2611221817"></script>
+<script src="assets/lessons.js?v=2611221817"></script>
 <script>
 /* ───────── helpers ───────── */
 function lsGet(k){try{var r=localStorage.getItem(k);return r?JSON.parse(r):null;}catch(e){return null;}}
@@ -412,19 +414,19 @@ function cats(){var a=lsGet('calCategories1');return Array.isArray(a)&&a.length?
 function catOf(id){return cats().find(function(c){return c.id===id;})||{label:id||'Personal',dot:'#a98fe0'};}
 function tint(hex,a){var m=/^#?([0-9a-f]{6})$/i.exec(hex||'');if(!m)return 'rgba(169,143,224,'+a+')';var n=parseInt(m[1],16);return 'rgba('+(n>>16)+','+((n>>8)&255)+','+(n&255)+','+a+')';}
 
-/* local events (lifeCalendar1) + read-only overlays: class due dates, card due dates */
+/* local events (lifeCalendar1) + overlays from other pages: course to-dos, card due dates, planning reminders */
 function localEvents(){var d=lsGet('lifeCalendar1');var a=d?(Array.isArray(d)?d:(d.events||[])):[];
   return a.map(function(e){var c=catOf(e.cat);return {id:e.id,source:'local',title:e.title,date:e.date,time:e.time||'',endTime:e.endTime||'',allDay:!e.time,done:!!e.done,color:c.dot,calName:c.label};});}
-function classDue(){var db=lsGet('classTracker1');if(!db)return [];var out=[];
-  (Array.isArray(db)?db:(db.classes||[])).forEach(function(c){(c.modules||[]).forEach(function(m){(m.tasks||[]).forEach(function(t){
-    var due=t.due||m.due;if(!due||t.done)return;out.push({id:'class:'+t.id,source:'class',title:t.label,date:due,allDay:true,color:'#8e71d3',calName:c.name||'Class'});});});});return out;}
-/* self-study topics with "Show on Today & Calendar" on (curriculum1 calendarSync): unit starts + project due dates */
-function selfDue(){var l=lsGet('curriculum1');if(!Array.isArray(l))return [];var out=[];
-  function ok(d){return typeof d==='string'&&/^\d{4}-\d{2}-\d{2}$/.test(d);}
-  l.forEach(function(c){if(!c||typeof c!=='object'||!c.calendarSync)return;var name=String(c.title||'Self-study');
-    (Array.isArray(c.units)?c.units:[]).forEach(function(u,i){if(u&&ok(u.start))out.push({id:'self:'+c.id+':'+(u.id||i),source:'self',title:'Unit '+(i+1)+' begins · '+name,date:u.start,allDay:true,color:'#5f9568',calName:'Self-study'});});
-    var p=c.project;if(p&&typeof p==='object'&&ok(p.due)&&!p.done)out.push({id:'self:'+c.id+':project',source:'self',title:'Project due · '+name,date:p.due,allDay:true,color:'#5f9568',calName:'Self-study'});});
-  return out;}
+/* Personal Curriculum and Courses (study1, read by assets/learn-today.js): every to-do on the day it was given, each
+   test day, and for Personal Curriculum each unit's first day and the final project's due date.
+   A to-do can be marked done or moved to another day from its pop-up. */
+function studyDue(from,to){
+  if(!window.B2Learn||!B2Learn.events)return [];
+  return B2Learn.events(dk(from),dk(addDays(to,-1))).map(function(v){var pc=v.pg==='pc';
+    return {id:'study:'+v.kind+':'+v.id+(v.row?':'+v.row.u+':'+v.row.i:''),source:'study',kind:v.kind,title:v.title,date:v.date,allDay:true,done:!!v.done,row:v.row||null,
+      color:pc?'#a98fe0':'#6a8fc2',calName:v.kind==='todo'?v.course:(pc?'Personal Curriculum':'Courses'),
+      page:'learn/'+(pc?'personal':'courses')+'/#id='+encodeURIComponent(v.id),pageName:pc?'study':'course'};});
+}
 function billDue(from,to){var s=finLoad();if(!s)return [];var out=[];
   s.cards.forEach(function(c){if(!c.active)return;[['day','paid','statement'],['day2','paid2','mid-cycle']].forEach(function(k){
     if(!c[k[0]]||finPaid(c,k[1]))return;var d=nextDue(c[k[0]]);if(d<from||d>=to)return;
@@ -446,7 +448,7 @@ function planDue(from,to){
   return out;
 }
 function eventsIn(from,to){
-  var a=localEvents().concat(classDue()).concat(selfDue()).concat(gEvents).concat(billDue(from,to)).concat(planDue(from,to));
+  var a=localEvents().concat(studyDue(from,to)).concat(gEvents).concat(billDue(from,to)).concat(planDue(from,to));
   var f=dk(from),t=dk(addDays(to,-1));
   return a.filter(function(e){var end=e.endDate||e.date;return end>=f&&e.date<=t;});
 }
@@ -535,7 +537,6 @@ function linkify(text){
 }
 function openPop(key,node){
   var e=CUR.find(function(x){return evKey(x)===key;});if(!e)return;
-  if(e.source==='self'){try{localStorage.setItem('learningTab','self');}catch(x){}location.href='learn/personal/';return;}
   var d=parseDk(e.date);
   $('pop-t').textContent=e.title;
   $('pop-m').innerHTML=DF[d.getDay()]+', '+MF[d.getMonth()]+' '+d.getDate()+(e.allDay?' · all day':' · '+fmtTime(e.time)+(e.endTime?' – '+fmtTime(e.endTime):'')+' '+esc(tzName()))+
@@ -543,7 +544,8 @@ function openPop(key,node){
   var a='';
   if(e.source==='google'&&e.link)a+='<a class="btn sm" href="'+esc(e.link)+'" target="_blank" rel="noopener">Open in Google ↗</a>';
   if(e.source==='bill')a+=(e.url?'<a class="btn sm" href="'+esc(e.url)+'" target="_blank" rel="noopener">Pay ↗</a>':'')+'<a class="btn sm" href="finances/">Finances</a>';
-  if(e.source==='class')a+='<a class="btn sm" href="learn/courses/">Open Courses</a>';
+  if(e.source==='study')a+=(e.row?'<button class="btn sm" type="button" id="pop-sdone">'+(e.done?'Not done':'Mark done')+'</button><label class="pop-move">Move to<input type="date" id="pop-smove" value="'+esc(e.date)+'"></label>':'')+
+    '<a class="btn sm" href="'+esc(e.page)+'">Open the '+e.pageName+'</a>';
   if(e.source==='plan')a+='<a class="btn sm" href="'+e.page+'">'+(e.done?'Open the ':'Do the ')+esc(e.pageName)+'</a>';
   if((e.source==='google'&&!e.ro)||e.source==='local')a+='<button class="btn sm" type="button" id="pop-edit">Edit</button>';
   if(e.source==='google')a+='<button class="btn sm" type="button" id="pop-copy">Copy to…</button>';
@@ -551,6 +553,9 @@ function openPop(key,node){
   $('pop-a').innerHTML=lessonPopHtml(e)+a;
   var lb=$('pop-a').querySelector('.pop-lesson');if(lb)lb.onclick=function(ev2){var b=ev2.target.closest('[data-la]');if(!b)return;ev2.stopPropagation();lessonAct(lessonKey(e),b.getAttribute('data-la'));closePop();};
   var del=$('pop-del');if(del)del.onclick=function(){deleteEvent(e);};
+  var redraw=function(ok){closePop();if(!ok)flash('That to-do has changed. Open the '+e.pageName+' to update it.',true);safe(renderCal);safe(renderLearn);safe(renderCount);};
+  var sd=$('pop-sdone');if(sd)sd.onclick=function(ev2){ev2.stopPropagation();redraw(B2Learn.change(e.row,{done:!e.done}));};
+  var sm=$('pop-smove');if(sm){sm.onclick=function(ev2){ev2.stopPropagation();};sm.onchange=function(){if(/^\d{4}-\d\d-\d\d$/.test(sm.value)&&sm.value!==e.date)redraw(B2Learn.change(e.row,{due:sm.value}));};}
   var cp=$('pop-copy');if(cp)cp.onclick=function(ev2){ev2.stopPropagation();copyForm(e);};
   var ed=$('pop-edit');if(ed)ed.onclick=function(ev2){ev2.stopPropagation();editForm(e);};
   var p=$('pop'),r=node.getBoundingClientRect();p.classList.add('open');
@@ -1063,7 +1068,7 @@ function renderLearn(){
     (t&&t.due?'<div class="nudge"><span>'+esc(t.title)+' practice test<small>'+(t.ago==null?'None taken yet':'Last one '+t.ago+' days ago')+' · '+wk(t.weeks)+' to the test</small></span><a class="btn sm" href="learn/courses/#id='+encodeURIComponent(t.id)+'&practice=Quick">Take one</a></div>'
      :t&&t.doneToday?'<div class="task on" style="cursor:default"><span class="ck on">✓</span><span class="tx2"><b>'+esc(t.title)+' practice test</b><small>Taken today</small></span></div>':'')+
     L.rows.map(function(r,n){var href='learn/'+(r.pg==='pc'?'personal':'courses')+'/#id='+encodeURIComponent(r.id);
-      return '<div class="task '+r.pg+'" data-lr="'+n+'"><span class="ck"></span><span class="tx2"><b>'+esc(r.text)+'</b><small><a href="'+href+'">'+esc(r.title)+'</a>'+(r.unit?' · '+esc(r.unit):'')+'</small></span>'+
+      return '<div class="task '+r.pg+'" data-lr="'+n+'"><span class="ck"></span><span class="tx2"><b>'+esc(r.text)+'</b><small>'+(r.missed?'<span style="color:var(--over);font-weight:700">Missed '+dd(r.due)+'</span> · ':'')+'<a href="'+href+'">'+esc(r.title)+'</a>'+(r.unit?' · '+esc(r.unit):'')+'</small></span>'+
         (r.url?'<a class="go" href="'+esc(r.url)+'" target="_blank" rel="noopener" title="Open the link">↗</a>':'')+(r.kind?'<span class="tag">'+esc(r.kind).toUpperCase()+'</span>':'')+'</div>';}).join('');
 }
 $('learn').addEventListener('click',function(e){if(e.target.closest('a'))return;var rb=e.target.closest('[data-reg]');if(rb){if(window.B2Learn)B2Learn.registered(rb.getAttribute('data-reg'));renderLearn();return;}
@@ -1104,12 +1109,12 @@ window.addEventListener('storage',function(e){
   if(e.key==='brain2BackupMeta1'||e.key==='brain2GCal1')safe(renderBackup);
   else if(e.key==='mediaTracker3')safe(renderNow);
   else if(e.key==='langChallenge1'){safe(renderLang);safe(renderCount);}
-  else if(e.key==='study1'){safe(renderLearn);safe(renderCount);}
+  else if(e.key==='study1'){safe(renderLearn);safe(renderCount);safe(renderCal);}
   else if(e.key==='dcGuide1'||e.key==='dcPassport1')safe(renderDC);
   if(e.key==='brain2Lessons1'||e.key==='lifeCalendar1')safe(renderLessons);
   else if(e.key===TASK_SK){safe(renderTasks);safe(renderCount);}
   else if(e.key&&e.key.indexOf('fitnessTracker1_day_')===0){safe(renderBody);safe(renderCount);}
-  else if(e.key==='lifeCalendar1'||e.key==='classTracker1'||e.key==='curriculum1'||e.key==='weeklyAuditArchive'||(e.key&&e.key.indexOf('monthlyPlanner1_')===0))safe(renderCal);
+  else if(e.key==='lifeCalendar1'||e.key==='weeklyAuditArchive'||(e.key&&e.key.indexOf('monthlyPlanner1_')===0))safe(renderCal);
 });
 setInterval(function(){safe(renderHead);if(view!=='month'&&+anchor===+today())safe(renderCal);},60000);
 </script>

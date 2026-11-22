@@ -198,6 +198,36 @@ button.srow:hover{background:var(--warm)}
 .subt{font-family:var(--serif);font-style:italic;font-size:15px;color:var(--ink-2);margin-top:3px;line-height:1.35}
 :where(.st-app) td.t small{display:block;font-weight:500;color:var(--muted);font-size:12px;margin-top:2px;font-style:italic}
 .it .due{font-size:10.5px;font-weight:700;color:var(--muted);white-space:nowrap}
+/* a unit's to-dos as a plan: day by day, with a button on each to-do for its day */
+.pday{border-radius:12px;padding:2px 0 4px;margin:0 -6px;padding-left:6px;padding-right:6px;border:1.5px dashed transparent}
+.pday .ph{display:flex;align-items:baseline;gap:8px;padding:9px 4px 5px;font-size:12px;color:var(--muted);font-weight:600}
+.pday .ph b{font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;font-weight:700;color:var(--ink-2)}
+.pday .ph em{font-style:normal;color:var(--faint);font-weight:500;margin-left:auto}
+.pday .ph .link{margin-left:auto}
+.pday.none .ph{padding-bottom:3px}
+.pday.today .ph b{color:var(--accent-deep)}
+.pday.miss .ph b{color:var(--over)}
+.pday.miss .ph em{color:var(--over);opacity:.8}
+.pday.over{border-color:var(--accent);background:var(--accent-soft)}
+.it[draggable]{cursor:grab}.it.drag{opacity:.45}
+.pday .it .k{min-width:46px;text-align:right}
+.it .dayb{border:1px solid var(--line);background:#fff;border-radius:99px;height:24px;padding:0 9px;font-size:11px;font-weight:700;color:var(--muted);white-space:nowrap;cursor:pointer}
+.it .dayb:hover{border-color:var(--accent);color:var(--accent-deep)}
+.it .dayb.set{color:var(--ink-2)}
+.it .dayb.miss{color:var(--over);border-color:var(--over-soft);background:var(--over-soft)}
+.it.on .dayb{opacity:.6}
+.chip.miss{background:var(--over-soft);color:var(--over)}
+.daymenu{position:fixed;z-index:40;background:#fff;border:1px solid var(--line);border-radius:14px;box-shadow:0 14px 34px rgba(36,31,23,.18);padding:10px;width:282px;font-family:var(--b2-sans)}
+.daymenu .dm-g{display:grid;grid-template-columns:repeat(7,1fr);gap:4px}
+.daymenu .dm-g button{border:1px solid transparent;background:var(--warm);border-radius:9px;padding:5px 0 6px;font:700 13px var(--b2-sans);color:var(--ink);cursor:pointer;line-height:1.15}
+.daymenu .dm-g button small{display:block;font-size:9px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);font-weight:700}
+.daymenu .dm-g button:hover{border-color:var(--accent)}
+.daymenu .dm-g button.now{box-shadow:inset 0 0 0 1.5px var(--accent-line)}
+.daymenu .dm-g button.on{background:var(--accent-deep);color:#fff}.daymenu .dm-g button.on small{color:#fff;opacity:.85}
+.daymenu .dm-f{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-top:9px;padding-top:9px;border-top:1px solid var(--hair)}
+.daymenu label{font-size:11.5px;font-weight:650;color:var(--muted);display:flex;align-items:center;gap:6px}
+.daymenu input[type=date]{height:28px;border:1px solid var(--line);border-radius:8px;padding:0 6px;font:600 12px var(--b2-sans);color:var(--ink-2);background:#fff}
+.daymenu .link{border:0;background:none;font:650 12px var(--b2-sans);color:var(--accent-deep);cursor:pointer;padding:0}
 .stabs{display:inline-flex;background:var(--warm-deep);border-radius:14px;padding:4px;margin:18px 0 16px}
 .stabs button{border:0;background:transparent;padding:6px 16px;border-radius:10px;font-size:13.5px;font-weight:650;color:var(--muted);line-height:1.2;text-align:center}
 .stabs button small{display:block;font-size:10.5px;font-weight:600;margin-top:2px}
@@ -281,7 +311,7 @@ button.srow:hover{background:var(--warm)}
 .bank{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
 .foot{margin-top:26px;font-size:12px;color:var(--muted);font-weight:600}.foot a{color:var(--accent-deep)}
 @media print{
-  .b2-nav,.st-app .bar,.st-app .acts,.st-app .addit,.st-app .tabs,.st-app .modal-bg,.st-app .link,.st-app .ed,.st-app .edu,.st-app .foot,#toast{display:none !important}
+  .b2-nav,.st-app .bar,.st-app .acts,.st-app .addit,.st-app .tabs,.st-app .modal-bg,.st-app .link,.st-app .ed,.st-app .edu,.st-app .foot,.st-app .dayb,.daymenu,#toast{display:none !important}
   .st-app .cols{grid-template-columns:1fr}
   .st-app .card{box-shadow:none;break-inside:avoid}
   .st-app .page{padding:0;max-width:none}
