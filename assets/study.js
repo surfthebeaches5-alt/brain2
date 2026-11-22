@@ -101,7 +101,8 @@ var MONTHS=['January','February','March','April','May','June','July','August','S
 function testOf(x){if(!x.testDate)return null;var p=x.testDate.split('-'),d=new Date(+p[0],+p[1]-1,+p[2]);if(isNaN(d))return null;return {label:MONTHS[d.getMonth()],weeks:Math.max(0,Math.ceil((d-new Date())/604800000))};}
 function subOf(x){return x.theme||'';}
 function lines(t){return String(t||'').split('\n').map(function(l){return l.replace(/^\s*[-•*]\s*/,'').trim();}).filter(Boolean);}
-function blank(title){var d=new Date();return {id:'n'+Date.now(),title:title,sub:'',end:'',pw:0,start:d.getFullYear()+'-'+('0'+(d.getMonth()+1)).slice(-2)+'-'+('0'+d.getDate()).slice(-2),theme:'',platform:'',status:'Active',url:'',testDate:'',why:'',weeks:[0,0,0,0,0,0,0,0],goals:[],units:[],project:'',unitNotes:{},notes:[],mats:[],sets:[],scores:[]};}
+/* a new study or course starts with no dates: the units, to-dos and materials can all go in first, and the dates after */
+function blank(title){return {id:'n'+Date.now(),title:title,sub:'',end:'',pw:0,start:'',theme:'',platform:'',status:'Active',url:'',testDate:'',why:'',weeks:[0,0,0,0,0,0,0,0],goals:[],units:[],project:'',unitNotes:{},notes:[],mats:[],sets:[],scores:[]};}
 /* the fill-in form, the same kind the current Classes page uses */
 var FORM=(function(){
   var now=null;
@@ -132,20 +133,20 @@ function mainForm(x){
   var pc=S.page==='pc',isNew=!x,v=x||blank('');
   var f=pc?[{name:'title',label:'What do you want to study?',placeholder:'e.g. The history of jazz',value:v.title},
       {name:'sub',label:'Subtitle',opt:'optional',value:v.sub},
-      {row:[{name:'theme',label:'Theme',opt:'optional',placeholder:'Pick one or type a new one',value:v.theme,list:themes()},{name:'start',label:'Start date',type:'date',value:v.start}]},
+      {row:[{name:'theme',label:'Theme',opt:'optional',placeholder:'Pick one or type a new one',value:v.theme,list:themes()},{name:'start',label:'Start date',opt:'can wait',type:'date',value:v.start}]},
       {name:'why',label:'Why this, and why now?',type:'textarea',value:v.why},
       {name:'goals',label:'By the end I want to…',opt:'one per line',type:'textarea',value:v.goals.join('\n')},
       {name:'project',label:'Final project',opt:'optional',type:'textarea',rows:2,placeholder:'Something you make to show what you learned',value:v.project}]
     :[{name:'title',label:'Course name',placeholder:'e.g. Intro to Data Analysis',value:v.title},
       {row:[{name:'theme',label:'Theme',opt:'optional',placeholder:'Pick one or type a new one',value:v.theme,list:themes()},{name:'platform',label:'Platform',opt:'optional',placeholder:'e.g. Coursera',value:v.platform}]},
-      {row:[{name:'start',label:'Start date',type:'date',value:v.start},{name:'end',label:'End date',type:'date',value:v.end}]},
+      {row:[{name:'start',label:'Start date',opt:'can wait',type:'date',value:v.start},{name:'end',label:'End date',opt:'can wait',type:'date',value:v.end}]},
       {row:[{name:'status',label:'Status',type:'select',options:['Active','Queued','On hold','Finished'],value:v.status},{name:'testDate',label:'Test date',opt:'if it ends in a test',type:'date',value:v.testDate}]},
       {name:'url',label:'Course link',opt:'optional',placeholder:'https://…',value:v.url},
       {row:[{name:'regOpen',label:'Registration opens',opt:'optional',type:'date',value:v.regOpen||''},{name:'regClose',label:'Registration closes',opt:'optional',type:'date',value:v.regClose||''}]},
       {name:'regUrl',label:'Registration link',opt:'where you sign up',placeholder:'https://…',value:v.regUrl||''},
       {name:'why',label:'Why I’m taking it',type:'textarea',value:v.why},
       {name:'goals',label:'Goals',opt:'one per line',type:'textarea',value:v.goals.join('\n')}];
-  if(isNew)f.push({name:'units',label:'Units',opt:'one per line; set how many weeks each takes afterwards',type:'textarea',rows:3});
+  if(isNew)f.push({name:'units',label:'Units',opt:'one per line; you can add more, and set how long each takes, afterwards',type:'textarea',rows:3});
   FORM.open({title:isNew?(pc?'Start a new study':'Add a course'):(pc?'Edit study':'Edit course'),fields:f,saveLabel:isNew?(pc?'Start studying':'Add course'):'Save',
     deleteLabel:pc?'Delete study':'Delete course',
     onDelete:isNew?null:function(){var l=list();l.splice(l.indexOf(x),1);if(!l.length)l.push(blank('Untitled'));S.cur[S.page]=l[0].id;render();},
@@ -246,12 +247,13 @@ function regLine(x){var r=regState(x);if(!r)return '';var go=x.regUrl?'<a class=
    The day is "due" on the to-do, and it is the date the Today calendar shows it on. The list reads: Missed (its
    day has passed and it is not done), the next seven days one by one, Later, the ones with no day yet, then
    what is done. A to-do gets its day from the button on its row (dayMenu) or by being dragged onto a day.
-   The seven days start today, or on the unit's first day when the unit has not begun. */
-function planFirst(r,sp){var t=pd('');return sp.dated&&r&&r.from>t?r.from:t;}
+   The seven days start today, or on the unit's first day when the unit has not begun and nothing is planned sooner. */
+function planFirst(r,sp,u){var t=pd(''),tk=isoDay(t);if(!(sp.dated&&r&&r.from>t))return t;var fk=isoDay(r.from);
+  return u.items.some(function(it){return okDay(it.due)&&it.due>=tk&&it.due<fk;})?t:r.from;}   /* something is planned before the unit begins: start at today */
 function dayLabel(k){var d=pd(k);return DAYN[d.getDay()]+' '+fd(d);}
 function missedIn(u){var tk=isoDay(pd(''));return u.items.filter(function(it){return !it.done&&okDay(it.due)&&it.due<tk;}).length;}
 function planList(x,sel,r,sp){
-  var u=x.units[sel],tk=isoDay(pd('')),first=planFirst(r,sp),days=[],by={},G={missed:[],later:[],none:[],done:[]},h='';
+  var u=x.units[sel],tk=isoDay(pd('')),first=planFirst(r,sp,u),days=[],by={},G={missed:[],later:[],none:[],done:[]},h='';
   if(!u.items.length)return '<div class="empty">Nothing on this unit’s list yet</div>';
   for(var n=0;n<7;n++){days.push(isoDay(addDays(first,n)));by[days[n]]=[];}
   u.items.forEach(function(it,ii){var o={it:it,ii:ii},d=okDay(it.due)?it.due:'';
@@ -277,7 +279,7 @@ function planList(x,sel,r,sp){
 function closeDayMenu(){var m=$('#daymenu');if(m)m.remove();S.dayFor=null;}
 function dayMenu(btn,x,ui,ii){
   closeDayMenu();
-  var it=x.units[ui].items[ii],sp=span(x),first=planFirst(sp.units[ui],sp),tk=isoDay(pd('')),m=document.createElement('div'),h='<div class="dm-g">';
+  var it=x.units[ui].items[ii],sp=span(x),first=planFirst(sp.units[ui],sp,x.units[ui]),tk=isoDay(pd('')),m=document.createElement('div'),h='<div class="dm-g">';
   for(var n=0;n<14;n++){var d=addDays(first,n),k=isoDay(d);h+='<button data-act="setday" data-d="'+k+'" class="'+(k===it.due?'on':'')+(k===tk?' now':'')+'" title="'+dayLabel(k)+'"><small>'+DAYN[d.getDay()]+'</small>'+d.getDate()+'</button>';}
   h+='</div><div class="dm-f"><label>Another date<input type="date" id="dm-date" value="'+(okDay(it.due)?it.due:'')+'"></label>'+(okDay(it.due)?'<button class="link" data-act="setday" data-d="">No day</button>':'')+'</div>';
   m.id='daymenu';m.className='daymenu';m.innerHTML=h;document.body.appendChild(m);var b=btn.getBoundingClientRect();S.dayFor={id:x.id,u:ui,i:ii,btn:btn,top:b.top};

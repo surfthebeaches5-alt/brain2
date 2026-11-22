@@ -6,7 +6,8 @@
         rows   at most two to-dos: one from Personal Curriculum and one from Courses. On each side it is
                the to-do whose day is today or has passed (the longest-missed first; row.missed says so).
                When nothing is planned for today, it is the next to-do with no day yet of the study or
-               course that is furthest behind in its current unit. A to-do planned for a later day waits.
+               course that is furthest behind in its current unit. A to-do planned for a later day waits,
+               and a study with no dates that has not been begun (nothing ticked, no days given) stays off.
         reg    a course whose registration is open, or opens within two weeks, and is not marked done.
         test   a course with a test date: weeks to go, days since the last practice test, whether one
                is due (none for two weeks) and whether one was taken today.
@@ -40,7 +41,10 @@
   function running(x,sp,t,tk){
     if(x.status==='Finished'||x.status==='Queued'||x.status==='On hold')return false;
     if(sp.dated)return t>=sp.from&&t<=sp.to;
-    return !!nextOf(x,tk);                                /* no dates yet, but there is something left to do */
+    /* no dates yet: it counts once it is under way (something ticked, or a to-do given a day), so a study that is
+       still only being outlined stays off Today */
+    var begun=(x.units||[]).some(function(u){return (u.items||[]).some(function(it){return it&&(it.done||okDay(it.due));});});
+    return begun&&!!nextOf(x,tk);
   }
   function rowOf(pg,x,u,i,tk){var it=x.units[u].items[i],due=okDay(it.due)?it.due:'';
     return {pg:pg,id:x.id,title:x.title||'',unit:x.units[u].name||'',u:u,i:i,text:it.t||'',kind:it.k||'',url:it.url||'',due:due,missed:!!due&&due<tk};}
