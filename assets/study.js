@@ -86,7 +86,7 @@ function loadDB(){var d=readOld(KEY);
   ['pc','co','ideas'].forEach(function(k){if(!Array.isArray(d[k]))d[k]=[];});d.focus=d.focus||{};d.cur=d.cur||{};return d;}
 var DB=loadDB(),PC=DB.pc,CO=DB.co,IDEAS=DB.ideas,saveFail=false;
 function save(){DB.cur={pc:S.cur.pc,co:S.cur.co};try{localStorage.setItem(KEY,JSON.stringify(DB));saveFail=false;}catch(e){if(!saveFail){saveFail=true;say('This change could not be saved: the browser’s storage is full.');}}}
-var S={page:window.STUDY_PAGE||'pc',tab:{pc:'study',co:'plan'},cur:{pc:DB.cur.pc||(PC[0]||{}).id,co:DB.cur.co||(CO[0]||{}).id},note:{pc:0,co:0},noteOpen:false,unit:{},season:null,showDone:{},dayFor:null,drag:null};
+var S={page:window.STUDY_PAGE||'pc',tab:{pc:'study',co:'plan'},cur:{pc:DB.cur.pc||(PC[0]||{}).id,co:DB.cur.co||(CO[0]||{}).id},note:{pc:0,co:0},noteOpen:false,unit:{},season:null,matAll:{},showDone:{},dayFor:null,drag:null};
 function go(pg,q){location.href=HOME+'learn/'+{ov:'overview',pc:'personal',co:'courses'}[pg]+'/'+(q||'');}
 
 /* ── helpers ── */
@@ -164,18 +164,32 @@ function unitLabel(x,n){return n!=null&&x.units[n]?'Unit '+(n+1):'';}
 function keepLink(x,ui,title,url,k){if(!url||x.mats.some(function(m){return m.url===url;}))return;
   var h=hostOf(url),kind=/youtu\.?be|vimeo/.test(h)?'Video':/spotify|podcast|overcast/.test(h)?'Podcast':({Read:'Article',Watch:'Video',Listen:'Podcast'}[k]||'Link');
   x.mats.unshift(M(title,kind,h,ui,url));}
+/* A material that is for a unit is also a to-do of that unit, which is where it gets its day. The two are the
+   same thing seen twice, matched by their link (or by title when there is no link): adding a material for a
+   unit adds the to-do, moving it to another unit moves the to-do, and renaming it renames the to-do. */
+var MKIND={Video:'Watch',Podcast:'Listen',Book:'Read',Article:'Read'};
+function todoOf(x,m){if(!m)return null;for(var u=0;u<x.units.length;u++)for(var i=0;i<x.units[u].items.length;i++){var it=x.units[u].items[i];
+    if(m.url?it.url===m.url:(!it.url&&it.t===m.t))return {u:u,i:i,it:it};}return null;}
 function matForm(x,mi,unit){
   var m=mi==null?null:x.mats[mi],opts=unitOpts(x),at=m?m.unit:unit;
   FORM.open({title:m?'Edit material':'Add a material',saveLabel:m?'Save':'Add',deleteLabel:'Delete',
     fields:[{name:'t',label:'Title',placeholder:'e.g. The Death and Life of Great American Cities',value:m?m.t:''},
       {name:'url',label:'Link',opt:'optional',placeholder:'https://…',value:m?m.url:''},
-      {row:[{name:'kind',label:'Kind',type:'select',options:Object.keys(MK),value:m?m.kind:'Video'},{name:'unit',label:'For',type:'select',options:opts,value:opts[at==null?0:at+1]}]},
-      {name:'src',label:'Author or source',opt:'optional',placeholder:'Who made it',value:m?m.src:''}].concat(m?[]:[{name:'todo',label:'Also put it on the to-do list',type:'select',options:['Yes','No'],value:unit==null?'No':'Yes'}]),
+      {row:[{name:'kind',label:'Kind',type:'select',options:Object.keys(MK),value:m?m.kind:'Video'},{name:'unit',label:'For',opt:x.units.length?'a unit puts it on that unit’s to-do list':'',type:'select',options:opts,value:opts[at==null?0:at+1]}]},
+      {name:'src',label:'Author or source',opt:'optional',placeholder:'Who made it',value:m?m.src:''}],
     onDelete:m?function(){x.mats.splice(mi,1);render();}:null,
     onSave:function(o){var u=link(o.url),t=o.t.trim()||hostOf(u);if(!t){$('#ff-t').focus();return false;}
       var v={t:t,kind:o.kind,src:o.src.trim()||hostOf(u),unit:opts.indexOf(o.unit)>0?opts.indexOf(o.unit)-1:null,url:u};
-      if(m)x.mats[mi]=v;else{x.mats.unshift(v);
-        if(o.todo==='Yes'&&x.units.length){var tu=v.unit==null?selUnit(x):v.unit,it=I(v.t,{Video:'Watch',Podcast:'Listen',Book:'Read',Article:'Read'}[v.kind]||'Do');it.url=v.url;x.units[tu].items.push(it);S.unit[x.id]=tu;}}
+      var had=m?todoOf(x,m):todoOf(x,v);
+      if(had){                                              /* its to-do follows it */
+        if(m&&had.it.t===m.t)had.it.t=v.t;
+        if(m)had.it.url=v.url;
+        if(v.unit!=null&&v.unit!==had.u){x.units[had.u].items.splice(had.i,1);x.units[v.unit].items.push(had.it);}
+      }else if(v.unit!=null&&(!m||m.unit!==v.unit)){        /* new for this unit: it goes on the unit's list */
+        var it=I(v.t,MKIND[v.kind]||'Do');if(v.url)it.url=v.url;x.units[v.unit].items.push(it);
+      }
+      if(m)x.mats[mi]=v;else x.mats.unshift(v);
+      if(v.unit!=null)S.unit[x.id]=v.unit;
       render();}});
 }
 function whyForm(x){
@@ -304,11 +318,7 @@ function outline(x){
     h+='<div class="card"><div class="chead"><div style="min-width:0"><div class="eb">'+esc(lab)+'</div><h2 style="font-size:22px">'+esc(u.name)+'</h2><div class="meta"><span>'+(sp.dated?fd(r.from)+' – '+fd(r.to)+' · ':'')+wk(r.w)+(u.due?' · due '+fd(r.to):'')+'</span></div></div><button class="btn" data-act="editunit" data-u="'+sel+'">Edit unit</button></div>';
     h+=u.q?'<div class="qbox">'+esc(u.q)+'</div>':'<div style="height:14px"></div>';
     h+=planList(x,sel,r,sp);
-    h+='<div class="addit"><select aria-label="Kind">'+KINDS.map(function(k){return '<option>'+k+'</option>';}).join('')+'</select><input class="line" data-add="'+sel+'" placeholder="Add a to-do or paste a link" aria-label="Add a to-do"></div>'+
-       '<div class="ulab">Materials<button class="link" data-act="addmat" data-u="'+sel+'">+ Add</button></div><div class="ulist">'+
-       (x.mats.some(function(m){return m.unit===sel;})?x.mats.map(function(m){return m.unit!==sel?'':'<div class="r"><i title="'+esc(m.kind)+'">'+(MK[m.kind]||'🔗')+'</i><span>'+(m.url?'<a href="'+esc(m.url)+'" target="_blank" rel="noopener">'+esc(m.t)+'</a>':esc(m.t))+'</span></div>';}).join(''):'<div class="empty">None yet</div>')+'</div>'+
-       '<div class="ulab">Notes<button class="link" data-act="newnote" data-u="'+sel+'">+ Write</button></div><div class="ulist">'+
-       (x.notes.some(function(n){return n.unit===sel;})?x.notes.map(function(n,i){return n.unit!==sel?'':'<button class="r" data-act="opennote" data-n="'+i+'"><i class="doci"></i><span>'+esc(n.title||'Untitled')+' <small>'+esc(n.date)+'</small></span></button>';}).join(''):'<div class="empty">None yet</div>')+'</div></div>';
+    h+='<div class="addit"><select aria-label="Kind">'+KINDS.map(function(k){return '<option>'+k+'</option>';}).join('')+'</select><input class="line" data-add="'+sel+'" placeholder="Add a to-do or paste a link" aria-label="Add a to-do"></div></div>';
   }
   /* the syllabus: every unit with its dates */
   h+='<div class="card"><div class="ttl"><span>Syllabus<button class="link starts" data-act="editmain" title="Change the start date">'+(sp.dated?'starts '+fd(sp.from):'set a start date')+'</button></span><button class="link" data-act="addunit">+ Unit</button></div>';
@@ -326,9 +336,13 @@ function side(x){
      (x.goals.length?'<div class="sub2"'+(x.why?'':' style="margin-top:0"')+'>'+(pc?'By the end I want to…':'Goals')+'</div><ul class="goals">'+x.goals.map(function(g){return '<li>'+esc(g)+'</li>';}).join('')+'</ul>':'')+
      (pc&&x.project?'<div class="sub2">Final project</div><div class="why">'+esc(x.project)+'</div>':'')+
      (!x.why&&!x.goals.length&&!(pc&&x.project)?'<div class="empty">None yet</div>':'')+'</div>';
-  h+='<div class="card"><div class="ttl">Materials<button class="link" data-act="addmat">+ Add</button></div>'+
-    (x.mats.length?'<div class="matlist">'+x.mats.map(function(m,i){return '<div class="mat"><i title="'+esc(m.kind)+'">'+(MK[m.kind]||'🔗')+'</i><span style="flex:1;min-width:0">'+(m.url?'<a href="'+esc(m.url)+'" target="_blank" rel="noopener">'+esc(m.t)+'</a>':esc(m.t))+
-      '<small>'+[m.src,unitLabel(x,m.unit)].filter(Boolean).map(esc).join(' · ')+'</small></span><button class="ed" data-act="editmat" data-n="'+i+'">Edit</button></div>';}).join('')+'</div>':'<div class="empty">None yet</div>')+'</div>';
+  var sel=x.units.length?selUnit(x):-1,all=sel<0||!!S.matAll[x.id],mine=x.mats.filter(function(m){return m.unit===sel;}).length,tk=isoDay(pd(''));
+  var shown=x.mats.map(function(m,i){return {m:m,i:i};}).filter(function(o){return all||o.m.unit===sel;});
+  h+='<div class="card"><div class="ttl"><span>Materials'+(sel>=0?'<button class="link starts" data-act="matall" title="'+(all?'Show only the unit you are looking at':'Show the materials of every unit')+'">'+(all?'all · show Unit '+(sel+1)+' only':'Unit '+(sel+1)+' · show all '+x.mats.length)+'</button>':'')+'</span><button class="link" data-act="addmat"'+(sel>=0?' data-u="'+sel+'"':'')+'>+ Add</button></div>'+
+    (shown.length?'<div class="matlist">'+shown.map(function(o){var m=o.m,td=m.unit==null?null:todoOf(x,m),st=!td?'':td.it.done?'done ✓':okDay(td.it.due)?(td.it.due<tk?'missed · ':'')+dayLabel(td.it.due):'no day yet';
+      return '<div class="mat"><i title="'+esc(m.kind)+'">'+(MK[m.kind]||'🔗')+'</i><span style="flex:1;min-width:0">'+(m.url?'<a href="'+esc(m.url)+'" target="_blank" rel="noopener">'+esc(m.t)+'</a>':esc(m.t))+
+      '<small>'+[m.src,all?unitLabel(x,m.unit):'',st].filter(Boolean).map(esc).join(' · ')+'</small></span><button class="ed" data-act="editmat" data-n="'+o.i+'">Edit</button></div>';}).join('')+'</div>'
+     :'<div class="empty">'+(x.mats.length?'None for this unit yet':'None yet')+'</div>')+'</div>';
   h+='<div class="card"><div class="ttl">Notes<button class="link" data-act="newnote">+ Write</button></div>'+
     (x.notes.length?x.notes.map(function(n,i){return '<button class="ne row" data-act="opennote" data-n="'+i+'"><i class="doci"></i><span>'+esc(n.title||'Untitled')+'<small>'+[n.date,unitLabel(x,n.unit)].filter(Boolean).map(esc).join(' · ')+'</small></span></button>';}).join(''):'<div class="empty">None yet</div>')+'</div>';
   return h;
@@ -575,6 +589,7 @@ document.addEventListener('click',function(e){
   var a=el.getAttribute('data-act'),x=S.page==='ov'?null:cur();
   if(a==='day'){dayMenu(el,x,+el.getAttribute('data-u'),+el.getAttribute('data-i'));return;}
   if(a==='setday'){dayTo(el.getAttribute('data-d'));return;}
+  if(a==='matall'){S.matAll[x.id]=!S.matAll[x.id];render();return;}
   if(a==='showdone'){var sk=x.id+':'+el.getAttribute('data-u');S.showDone[sk]=!S.showDone[sk];render();return;}
   if(a==='tab'){S.tab[S.page]=el.getAttribute('data-tab');S.noteOpen=false;S.cards=null;render();}
   else if(a==='focus'){var sz=seasons()[S.season];FORM.open({title:sz.name,fields:[{name:'f',label:'This season I’m focusing on',type:'textarea',rows:3,value:DB.focus[sz.name]!=null?DB.focus[sz.name]:(sz.focus||'')}],onSave:function(o){DB.focus[sz.name]=o.f.trim();render();}});}
